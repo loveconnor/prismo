@@ -1,1 +1,328 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+:root {
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --bg: #0b0f14;
+  --surface: #12161b;
+  --surface-2: #151a20;
+  --border-custom: #1f2937;
+  --muted-custom: #9ca3af;
+  --text-custom: #e5e7eb;
+  --text-dim: #a9b1bb;
+  --primary-custom: #3b82f6;
+  --primary-strong: #2563eb;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --accent-custom: #60a5fa;
+
+  /* Default shadcn tokens */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Light theme override using a top-level class for broad coverage */
+.theme-light {
+  color-scheme: light;
+  /* Light palette for shadcn tokens so components (Switch, Dialog, etc.) look correct */
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(0.985 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(0.985 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.488 0.243 264.376); /* blue */
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.373 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.6 0.17 22);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.869 0 0);
+  --input: oklch(0.93 0 0);
+  --ring: oklch(0.67 0 0);
+
+  /* Light palette for custom sandbox variables */
+  --bg: #ffffff;
+  --surface: #f9fafb;
+  --surface-2: #eef2f7;
+  --border-custom: #e5e7eb;
+  --muted-custom: #6b7280;
+  --text-custom: #111827;
+  --text-dim: #374151;
+  --primary-custom: #3b82f6;
+  --primary-strong: #2563eb;
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --accent-custom: #60a5fa;
+}
+
+.theme-light body { background: #ffffff; color: #111827; }
+.theme-light .bg-\[\#0b0f14\],
+.theme-light .bg-\[\#0e1318\],
+.theme-light .bg-\[\#12161b\],
+.theme-light .bg-\[\#151a20\],
+.theme-light .bg-\[\#0a0d11\],
+.theme-light .bg-\[\#0d1117\] { background-color: #f9fafb !important; }
+.theme-light .bg-\[\#0f141a\] { background-color: #ffffff !important; }
+.theme-light .bg-\[\#0a0e12\] { background-color: #f3f4f6 !important; }
+.theme-light .bg-\[\#1a1f26\] { background-color: #eef2f7 !important; }
+/* Alpha variants used in sandbox footer */
+.theme-light .bg-\[\#0b0f14\]\/90 { background-color: rgba(255,255,255,0.90) !important; }
+.theme-light .supports-\[backdrop-filter\]\:bg-\[\#0b0f14\]\/75 { background-color: rgba(255,255,255,0.75) !important; }
+
+.theme-light .text-\[\#e5e7eb\] { color: #111827 !important; }
+.theme-light .text-\[\#a9b1bb\],
+.theme-light .text-\[\#9ca3af\] { color: #374151 !important; }
+.theme-light .text-\[\#dbeafe\] { color: #1d4ed8 !important; }
+.theme-light .text-\[\#cde0ff\] { color: #1d4ed8 !important; }
+.theme-light .text-\[\#d1d5db\] { color: #374151 !important; }
+
+/* Softer badge text colors in light mode */
+.theme-light .text-\[\#fcd34d\] { color: #92400e !important; }
+.theme-light .text-\[\#fca5a5\] { color: #b91c1c !important; }
+.theme-light .text-\[\#86efac\] { color: #065f46 !important; }
+
+.theme-light .border-\[\#1f2937\] { border-color: #e5e7eb !important; }
+.theme-light .border-\[\#30363d\] { border-color: #e5e7eb !important; }
+.theme-light .border-\[\#263244\] { border-color: #e5e7eb !important; }
+
+.theme-light .hover\:bg-\[\#151a20\]:hover { background-color: #eef2f7 !important; }
+.theme-light .hover\:bg-\[rgba\(255\,255\,255\,0\.04\)\]:hover { background-color: rgba(0,0,0,0.04) !important; }
+/* Additional common hovers used across cards, menus, and buttons */
+.theme-light .hover\:bg-\[\#12161b\]:hover { background-color: #eef2f7 !important; }
+.theme-light .hover\:bg-\[\#1a2430\]:hover { background-color: #eef2f7 !important; }
+.theme-light .hover\:bg-\[\#0f1319\]:hover { background-color: #eef2f7 !important; }
+.theme-light .hover\:bg-\[\#1f2937\]:hover { background-color: #eef2f7 !important; }
+.theme-light .hover\:bg-\[\#161b22\]:hover { background-color: #eef2f7 !important; }
+.theme-light .hover\:bg-\[\#1a1f26\]:hover { background-color: #eef2f7 !important; }
+.theme-light .hover\:bg-white\/10:hover { background-color: rgba(0,0,0,0.06) !important; }
+.theme-light .hover\:bg-white\/\[0\.05\]:hover { background-color: rgba(0,0,0,0.05) !important; }
+/* Static translucent backgrounds used in sandbox */
+.theme-light .bg-white\/5 { background-color: rgba(0,0,0,0.05) !important; }
+.theme-light .bg-white\/10 { background-color: rgba(0,0,0,0.10) !important; }
+.theme-light .bg-white\/\[0\.04\] { background-color: rgba(0,0,0,0.04) !important; }
+.theme-light .hover\:bg-white\/\[0\.08\]:hover { background-color: rgba(0,0,0,0.08) !important; }
+.theme-light .border-white\/10 { border-color: rgba(0,0,0,0.10) !important; }
+.theme-light .focus\:bg-\[\#151a20\]:focus { background-color: #eef2f7 !important; }
+.theme-light .focus\:bg-\[\#12161b\]:focus { background-color: #eef2f7 !important; }
+.theme-light .focus\:bg-\[\#1a2430\]:focus { background-color: #eef2f7 !important; }
+.theme-light .focus\:bg-\[\#0f1319\]:focus { background-color: #eef2f7 !important; }
+.theme-light .focus\:bg-\[\#1f2937\]:focus { background-color: #eef2f7 !important; }
+
+/* Menu/Dropdown panels that rely on semi-transparent white */
+.theme-light .hover\:bg-\[rgba\(255\,255\,255\,0\.06\)\]:hover { background-color: rgba(0,0,0,0.06) !important; }
+.theme-light .hover\:bg-white\/5:hover { background-color: rgba(0,0,0,0.05) !important; }
+
+/* Interactive borders/rings should feel light-friendly */
+.theme-light .hover\:border-\[rgba\(96\,165\,250\,0\.3\)\]:hover { border-color: rgba(37,99,235,0.35) !important; }
+.theme-light .focus\:ring-\[\#3b82f6\]:focus { box-shadow: 0 0 0 3px rgba(37,99,235,0.25) !important; }
+
+/* Light-mode reduction of heavy hover shadows on cards */
+.theme-light .hover\:shadow-\[0_6px_24px_rgba\(0\,0\,0\,0\.35\)\]:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10) !important;
+}
+
+/* Ensure dropdown/popover panels adopt light surfaces when hardcoded */
+.theme-light .bg-\[\#0b0f14\].data-\[side\=bottom\]\:slide-in-from-top-2,
+.theme-light .bg-\[\#12161b\].data-\[side\=bottom\]\:slide-in-from-top-2,
+.theme-light .bg-\[\#0b0f14\][role="menu"],
+.theme-light .bg-\[\#12161b\][role="menu"] {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* Hover text overrides for classes forcing dark text in light */
+.theme-light .hover\:text-\[\#e5e7eb\]:hover { color: #111827 !important; }
+
+/* Gradients used in sandbox fades */
+.theme-light .from-\[\#0b0f14\] {
+  --tw-gradient-from: #ffffff !important;
+  --tw-gradient-to: rgb(255 255 255 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+/* Monaco editor fallback background for light theme */
+.theme-light .monaco-editor, 
+.theme-light .monaco-editor .margin, 
+.theme-light .monaco-editor .monaco-editor-background {
+  background-color: #ffffff !important;
+}
+
+/* Additional light mappings for Code Labs */
+.theme-light .text-\[\#cbd5e1\] { color: #374151 !important; }
+.theme-light .text-\[\#bbd7ff\] { color: #1d4ed8 !important; }
+.theme-light .text-\[\#f9fafb\] { color: #111827 !important; }
+.theme-light .text-\[\#1f2937\] { color: #e5e7eb !important; }
+.theme-light .bg-\[\#0f172a\] { background-color: #ffffff !important; }
+.theme-light .bg-black\/30 { background-color: rgba(0,0,0,0.03) !important; }
+/* Drill review inline-code chip */
+.theme-light .bg-\[\#11151a\] { background-color: #f3f4f6 !important; }
+
+/* Writing lab toolbar + editor */
+.theme-light [data-writing-toolbar] {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+.theme-light [data-writing-toolbar] button { color: #374151 !important; }
+.theme-light [data-writing-toolbar] .hover\:bg-white\/10:hover { background-color: rgba(0,0,0,0.06) !important; }
+.theme-light [data-writing-editor] { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+
+/* Auth pages (scoped to data-auth) */
+.theme-light [data-auth] [data-auth-card] {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06) !important; /* subtle, non-cheap shadow */
+}
+.theme-light [data-auth] [role="tab"][data-state="active"] { background-color: #eaf2ff !important; color: #1d4ed8 !important; }
+.theme-light [data-auth] .ring-white\/10 { --tw-ring-color: rgba(37,99,235,0.25) !important; }
+.theme-light [data-auth] .bg-\[\#111111\],
+.theme-light [data-auth] .bg-\[\#0f0f10\] { background-color: #ffffff !important; color: #111827 !important; border-color: #e5e7eb !important; }
+.theme-light [data-auth] .text-white { color: #111827 !important; }
+/* Keep primary action readable */
+.theme-light [data-auth] .bg-\[\#3b82f6\] { color: #ffffff !important; }
+
+/* Force shadcn dropdown/select/poppers to light in light theme */
+.theme-light [data-slot="dropdown-menu-content"],
+.theme-light [data-slot="dropdown-menu-sub-content"],
+.theme-light [data-slot="select-content"],
+.theme-light [data-slot="popover-content"],
+.theme-light .radix-themes__popover-content {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
+
+@layer base {
+  * {
+    @apply border-gray-200 outline-blue-500/50;
+  }
+
+  body {
+    background-color: #0b0f14;
+    color: #e5e7eb;
+  }
+}
+
+@keyframes confetti {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-confetti {
+  animation: confetti 3s ease-out forwards;
+}
+.theme-light .bg-\[\#1f2937\] { background-color: #e5e7eb !important; }
