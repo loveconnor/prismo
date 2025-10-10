@@ -20,10 +20,12 @@
       <ng-content></ng-content>
     </a>
   } @else {
-    <button
+    <a
       [class]="itemClasses"
       [attr.data-current]="current ? 'true' : null"
-      [disabled]="disabled"
+      routerLink
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
       (click)="onItemClick($event)"
     >
       <!-- TouchTarget for mobile -->
@@ -32,6 +34,6 @@
         aria-hidden="true"
       ></span>
       <ng-content></ng-content>
-    </button>
+    </a>
   }
 </span>

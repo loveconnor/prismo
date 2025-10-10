@@ -1,13 +1,14 @@
 import { Component, Input, Output, EventEmitter, forwardRef, AfterViewInit, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { cn } from '../../../../lib/utils';
 import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-sidebar-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './sidebar-item.html',
   styleUrl: './sidebar-item.css',
   providers: [

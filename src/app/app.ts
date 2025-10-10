@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { SidebarComponent } from '../components/ui/sidebar/sidebar';
 import { SidebarHeaderComponent } from '../components/ui/sidebar/sidebar-header/sidebar-header';
 import { SidebarBodyComponent } from '../components/ui/sidebar/sidebar-body/sidebar-body';
@@ -17,7 +17,6 @@ import { ThemeService } from '../services/theme.service';
   imports: [
     RouterOutlet,
     RouterLink,
-    RouterLinkActive,
     SidebarComponent,
     SidebarHeaderComponent,
     SidebarBodyComponent,
@@ -33,7 +32,11 @@ import { ThemeService } from '../services/theme.service';
   styleUrl: './app.css'
 })
 export class App {
-  constructor(public themeService: ThemeService) {}
+  constructor(public themeService: ThemeService, private router: Router) {}
+
+  isActive(route: string): boolean {
+    return this.router.url === route;
+  }
 
   toggleTheme() {
     this.themeService.toggleTheme();
