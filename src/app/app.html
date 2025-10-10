@@ -166,8 +166,27 @@
       <app-tabs 
         [tabs]="tabItems" 
         [activeTab]="activeTab"
-        (tabChange)="activeTab = $event"
-      />
+        (tabChange)="onTabChange($event)"
+      >
+        @if (activeTab === 'tab1') {
+          <div class="p-4 bg-muted/50 rounded-lg">
+            <h3 class="font-semibold mb-2">Tab 1 Content</h3>
+            <p class="text-sm text-muted-foreground">This is the content for the first tab. It includes some sample text to demonstrate the tab switching functionality.</p>
+          </div>
+        }
+        @if (activeTab === 'tab2') {
+          <div class="p-4 bg-muted/50 rounded-lg">
+            <h3 class="font-semibold mb-2">Tab 2 Content</h3>
+            <p class="text-sm text-muted-foreground">This is the content for the second tab. Notice how the content animates when switching between tabs.</p>
+          </div>
+        }
+        @if (activeTab === 'tab3') {
+          <div class="p-4 bg-muted/50 rounded-lg">
+            <h3 class="font-semibold mb-2">Tab 3 Content</h3>
+            <p class="text-sm text-muted-foreground">This is the content for the third tab. The GSAP animations make the transitions smooth and engaging.</p>
+          </div>
+        }
+      </app-tabs>
       <div class="mt-4 p-4 border rounded-lg">
         <p class="text-sm text-muted-foreground">
           Active tab: {{ activeTab }}
@@ -182,6 +201,52 @@
         <app-progress [value]="progressValue" [showValue]="true" />
         <app-progress [value]="30" />
         <app-progress [value]="80" />
+      </div>
+    </section>
+
+    <!-- Table Component -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Table Component</h2>
+      <div class="rounded-md border">
+        <app-table [striped]="true" [hover]="true" #tableComponent ngSkipHydration>
+          <thead [class]="tableComponent.theadClasses">
+            <tr>
+              <th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground">ID</th>
+              <th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground">Name</th>
+              <th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground">Email</th>
+              <th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground">Role</th>
+            </tr>
+          </thead>
+          <tbody [class]="tableComponent.tbodyClasses">
+            @for (row of tableData; track row.id) {
+              <tr>
+                <td class="p-2 align-middle">{{ row.id }}</td>
+                <td class="p-2 align-middle font-medium">{{ row.name }}</td>
+                <td class="p-2 align-middle text-muted-foreground">{{ row.email }}</td>
+                <td class="p-2 align-middle">
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary">
+                    {{ row.role }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </app-table>
+      </div>
+    </section>
+
+    <!-- Pagination Component -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Pagination Component</h2>
+      <div class="space-y-4">
+        <app-pagination 
+          [currentPage]="currentPage" 
+          [totalPages]="totalPages"
+          (pageChange)="onPageChange($event)"
+        />
+        <div class="text-center text-sm text-muted-foreground">
+          Current page: {{ currentPage }} of {{ totalPages }}
+        </div>
       </div>
     </section>
 

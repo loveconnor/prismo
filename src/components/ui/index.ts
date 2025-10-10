@@ -23,3 +23,5 @@ export * from './radio/radio';
 export * from './tabs/tabs';
 export * from './alert/alert';
 export * from './progress/progress';
+export * from './table/table';
+export * from './pagination/pagination';

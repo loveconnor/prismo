@@ -1,12 +1,16 @@
-<div [class]="tabsClasses">
+<div [class]="tabsClasses" #tabList>
   @for (tab of tabs; track tab.id) {
     <button
-      [class]="tabClasses"
-      [class]="activeTab === tab.id ? activeTabClasses : ''"
+      [class]="getTabClasses(tab.id)"
       [disabled]="tab.disabled"
       (click)="onTabClick(tab.id)"
     >
       {{ tab.label }}
     </button>
   }
+</div>
+
+<!-- Content area for tab content -->
+<div #contentContainer class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+  <ng-content></ng-content>
 </div>

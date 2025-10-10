@@ -1,0 +1,39 @@
+<nav [class]="paginationClasses" aria-label="Page navigation" #paginationContainer>
+  @if (showPrevNext) {
+    <button
+      [class]="buttonClasses"
+      [disabled]="currentPage <= 1"
+      (click)="onPrevious()"
+      aria-label="Previous page"
+    >
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+  }
+
+  <div #pageButtons class="flex items-center space-x-1">
+    @for (page of pageNumbers; track page) {
+      <button
+        [class]="getPageButtonClasses(page)"
+        (click)="onPageClick(page)"
+        [attr.aria-current]="currentPage === page ? 'page' : null"
+      >
+        {{ page }}
+      </button>
+    }
+  </div>
+
+  @if (showPrevNext) {
+    <button
+      [class]="buttonClasses"
+      [disabled]="currentPage >= totalPages"
+      (click)="onNext()"
+      aria-label="Next page"
+    >
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+  }
+</nav>

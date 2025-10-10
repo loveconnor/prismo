@@ -25,6 +25,8 @@ import { RadioComponent } from '../components/ui/radio/radio';
 import { TabsComponent } from '../components/ui/tabs/tabs';
 import { AlertComponent } from '../components/ui/alert/alert';
 import { ProgressComponent } from '../components/ui/progress/progress';
+import { TableComponent } from '../components/ui/table/table';
+import { PaginationComponent } from '../components/ui/pagination/pagination';
 import { ThemeService } from '../services/theme.service';
 
 @Component({
@@ -54,7 +56,9 @@ import { ThemeService } from '../services/theme.service';
     RadioComponent,
     TabsComponent,
     AlertComponent,
-    ProgressComponent
+    ProgressComponent,
+    TableComponent,
+    PaginationComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -92,5 +96,27 @@ export class App {
     { id: 'tab3', label: 'Tab 3' }
   ];
 
-  constructor(public themeService: ThemeService) {}
+  // Table data
+  tableData = [
+    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
+    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User' },
+    { id: 4, name: 'Alice Brown', email: 'alice@example.com', role: 'Moderator' }
+  ];
+
+  // Pagination state
+  currentPage = 1;
+  totalPages = 10;
+
+  constructor(public themeService: ThemeService) {
+  
+  }
+
+  onTabChange(tabId: string): void {
+    this.activeTab = tabId;
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
 }
