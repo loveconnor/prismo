@@ -108,6 +108,38 @@ export class App {
   currentPage = 1;
   totalPages = 10;
 
+  // Form data
+  formData = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    country: '',
+    experience: '',
+    skills: {
+      angular: false,
+      react: false,
+      vue: false,
+      node: false
+    },
+    emailNotifications: false,
+    smsNotifications: false,
+    marketingEmails: false,
+    bio: '',
+    progress: 75
+  };
+
+  // Country options for select
+  countryOptions = [
+    { value: 'us', label: 'United States' },
+    { value: 'ca', label: 'Canada' },
+    { value: 'uk', label: 'United Kingdom' },
+    { value: 'de', label: 'Germany' },
+    { value: 'fr', label: 'France' },
+    { value: 'jp', label: 'Japan' },
+    { value: 'au', label: 'Australia' }
+  ];
+
   constructor(public themeService: ThemeService) {
   
   }
@@ -118,5 +150,39 @@ export class App {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+  }
+
+  // Form methods
+  resetForm(): void {
+    this.formData = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      country: '',
+      experience: '',
+      skills: {
+        angular: false,
+        react: false,
+        vue: false,
+        node: false
+      },
+      emailNotifications: false,
+      smsNotifications: false,
+      marketingEmails: false,
+      bio: '',
+      progress: 75
+    };
+  }
+
+  saveDraft(): void {
+    console.log('Saving draft...', this.formData);
+    // In a real app, this would save to localStorage or send to server
+  }
+
+  submitForm(): void {
+    console.log('Submitting form...', this.formData);
+    // In a real app, this would validate and submit to server
+    alert('Form submitted successfully! Check console for data.');
   }
 }

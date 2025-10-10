@@ -1,7 +1,8 @@
 <div [class]="progressClasses" role="progressbar" [attr.aria-valuenow]="value" [attr.aria-valuemax]="max">
   <div 
+    #progressBar
     [class]="barClasses"
-    [style.width.%]="percentage"
+    [style.width.%]="animated ? 0 : percentage"
   ></div>
   @if (showValue) {
     <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-foreground">

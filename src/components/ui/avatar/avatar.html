@@ -4,8 +4,9 @@
       [src]="src"
       [alt]="alt"
       [class]="imageClasses"
+      (error)="onImageError()"
     />
-  } @else {
+  } @else if (showFallback) {
     <div [class]="fallbackClasses">
       {{ fallback || '?' }}
     </div>

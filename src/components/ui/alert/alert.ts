@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { cn } from '../../../lib/utils';
+import { gsap } from 'gsap';
 
 export type AlertVariant = 'default' | 'destructive' | 'warning' | 'success';
 
@@ -11,9 +12,12 @@ export type AlertVariant = 'default' | 'destructive' | 'warning' | 'success';
   templateUrl: './alert.html',
   styleUrl: './alert.css'
 })
-export class AlertComponent {
+export class AlertComponent implements AfterViewInit {
   @Input() variant: AlertVariant = 'default';
   @Input() className = '';
+  @Input() animated = true;
+
+  @ViewChild('alertElement', { static: false }) alertElement!: ElementRef;
 
   get alertClasses(): string {
     const variantClasses = {
@@ -28,5 +32,25 @@ export class AlertComponent {
       variantClasses[this.variant],
       this.className
     );
+  }
+
+  ngAfterViewInit(): void {
+    if (this.animated && typeof window !== 'undefined') {
+      setTimeout(() => {
+        this.animateIn();
+      }, 50);
+    }
+  }
+
+  private animateIn(): void {
+    if (!this.alertElement || typeof window === 'undefined') return;
+
+    gsap.from(this.alertElement.nativeElement, {
+      opacity: 0,
+      y: -20,
+      scale: 0.95,
+      duration: 0.4,
+      ease: "back.out(1.7)"
+    });
   }
 }

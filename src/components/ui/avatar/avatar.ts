@@ -15,6 +15,7 @@ export class AvatarComponent {
   @Input() fallback?: string;
   @Input() className = '';
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() showFallback = true;
 
   get avatarClasses(): string {
     const sizeClasses = {
@@ -37,8 +38,20 @@ export class AvatarComponent {
   }
 
   get fallbackClasses(): string {
+    const sizeTextClasses = {
+      'sm': 'text-xs',
+      'md': 'text-sm',
+      'lg': 'text-base'
+    };
+
     return cn(
-      'flex h-full w-full items-center justify-center rounded-full bg-muted text-muted-foreground'
+      'flex h-full w-full items-center justify-center rounded-full bg-muted text-muted-foreground font-medium',
+      sizeTextClasses[this.size]
     );
+  }
+
+  onImageError(): void {
+    // Handle image load error by showing fallback
+    this.src = undefined;
   }
 }

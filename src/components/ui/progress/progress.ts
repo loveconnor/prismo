@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { cn } from '../../../lib/utils';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-progress',
@@ -9,11 +10,14 @@ import { cn } from '../../../lib/utils';
   templateUrl: './progress.html',
   styleUrl: './progress.css'
 })
-export class ProgressComponent {
+export class ProgressComponent implements AfterViewInit {
   @Input() value: number = 0;
   @Input() max: number = 100;
   @Input() className = '';
   @Input() showValue = false;
+  @Input() animated = true;
+
+  @ViewChild('progressBar', { static: false }) progressBar!: ElementRef;
 
   get progressClasses(): string {
     return cn(
@@ -34,5 +38,25 @@ export class ProgressComponent {
 
   getRoundedPercentage(): number {
     return Math.round(this.percentage);
+  }
+
+  ngAfterViewInit(): void {
+    if (this.animated && typeof window !== 'undefined') {
+      setTimeout(() => {
+        this.animateProgress();
+      }, 100);
+    }
+  }
+
+  private animateProgress(): void {
+    if (!this.progressBar || typeof window === 'undefined') return;
+
+    // Reset to 0 and animate to target
+    gsap.set(this.progressBar.nativeElement, { width: '0%' });
+    gsap.to(this.progressBar.nativeElement, {
+      width: `${this.percentage}%`,
+      duration: 0.8,
+      ease: "power2.out"
+    });
   }
 }
