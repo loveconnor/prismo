@@ -48,12 +48,58 @@
         <div class="flex flex-wrap gap-4">
           <app-button>Normal</app-button>
           <app-button [disabled]="true">Disabled</app-button>
-          <a class="text-primary hover:underline" href="https://angular.io"  >Link</a>
-
+          <a class="text-primary hover:underline" href="https://angular.io">Link</a>
     </div>
+  </div>
+    </section>
+
+    <!-- Input Component Demo -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Input Component</h2>
+      
+      <!-- Basic Inputs -->
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-foreground mb-4">Basic Inputs</h3>
+        <div class="space-y-4 max-w-md">
+          <app-input placeholder="Enter your name" />
+          <app-input type="email" placeholder="Enter your email" />
+          <app-input type="password" placeholder="Enter your password" />
+          <app-input type="number" placeholder="Enter a number" />
+        </div>
       </div>
       
+      <!-- Input States -->
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-foreground mb-4">Input States</h3>
+        <div class="space-y-4 max-w-md">
+          <app-input placeholder="Normal input" />
+          <app-input placeholder="Disabled input" [disabled]="true" />
+          <app-input placeholder="Readonly input" [readonly]="true" value="Readonly value" />
+        </div>
+      </div>
       
+      <!-- Input with InputGroup -->
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-foreground mb-4">Input with Icons</h3>
+        <div class="space-y-4 max-w-md">
+          <app-input-group>
+            <app-input placeholder="Search..." />
+            <span data-slot="icon" class="flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </span>
+          </app-input-group>
+          <app-input-group>
+            <span data-slot="icon" class="flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+              </svg>
+            </span>
+            <app-input placeholder="Email address" type="email" />
+          </app-input-group>
+        </div>
+      </div>
     </section>
   </div>
 </div>
