@@ -87,21 +87,162 @@
             <span data-slot="icon" class="flex items-center justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
+          </svg>
             </span>
           </app-input-group>
           <app-input-group>
             <span data-slot="icon" class="flex items-center justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
-              </svg>
+          </svg>
             </span>
             <app-input placeholder="Email address" type="email" />
           </app-input-group>
         </div>
       </div>
     </section>
+
+    <!-- Dialog Component Demo -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Dialog Component</h2>
+      
+      <!-- Dialog Triggers -->
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-foreground mb-4">Dialog Examples</h3>
+        <div class="flex flex-wrap gap-4">
+          <app-button (click)="openDialog = true">Middle Dialog</app-button>
+          <app-button variant="outline" (click)="openTopDialog = true">Top Dialog</app-button>
+          <app-button variant="outline" (click)="openBottomDialog = true">Bottom Dialog</app-button>
+          <app-button variant="secondary" (click)="openLargeDialog = true">Large 2XL Dialog</app-button>
+          <app-button variant="destructive" (click)="openConfirmDialog = true">Confirm Dialog</app-button>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
+
+<!-- Dialog Components -->
+<app-dialog 
+  [open]="openDialog" 
+  (openChange)="openDialog = $event"
+  size="md"
+  position="middle"
+>
+  <app-dialog-header>
+    <app-dialog-title>Middle Dialog</app-dialog-title>
+    <app-dialog-description>
+      This dialog appears in the middle of the screen with smooth animations.
+    </app-dialog-description>
+  </app-dialog-header>
+  
+  <div class="py-4">
+    <p class="text-sm text-muted-foreground">
+        Middle, boring
+    </p>
+  </div>
+  
+  <app-dialog-footer>
+    <app-button variant="outline" (click)="openDialog = false">Cancel</app-button>
+    <app-button (click)="openDialog = false">Continue</app-button>
+  </app-dialog-footer>
+</app-dialog>
+
+<app-dialog 
+  [open]="openTopDialog" 
+  (openChange)="openTopDialog = $event"
+  size="md"
+  position="top"
+>
+  <app-dialog-header>
+    <app-dialog-title>Top Dialog</app-dialog-title>
+    <app-dialog-description>
+      This dialog appears at the top of the screen.
+    </app-dialog-description>
+  </app-dialog-header>
+  
+  <div class="py-4">
+    <p class="text-sm text-muted-foreground">
+      Notice how this dialog slides in from the top with different animations.
+    </p>
+  </div>
+  
+  <app-dialog-footer>
+    <app-button variant="outline" (click)="openTopDialog = false">Cancel</app-button>
+    <app-button (click)="openTopDialog = false">Continue</app-button>
+  </app-dialog-footer>
+</app-dialog>
+
+<app-dialog 
+  [open]="openBottomDialog" 
+  (openChange)="openBottomDialog = $event"
+  size="md"
+  position="bottom"
+>
+  <app-dialog-header>
+    <app-dialog-title>Bottom Dialog</app-dialog-title>
+    <app-dialog-description>
+      Slide from bottom because GSAP is cool
+    </app-dialog-description>
+  </app-dialog-header>
+  
+  <div class="py-4">
+    <p class="text-sm text-muted-foreground">
+      This dialog slides in from the bottom.
+    </p>
+  </div>
+  
+  <app-dialog-footer>
+    <app-button variant="outline" (click)="openBottomDialog = false">Cancel</app-button>
+    <app-button (click)="openBottomDialog = false">Continue</app-button>
+  </app-dialog-footer>
+</app-dialog>
+
+<app-dialog 
+  [open]="openLargeDialog" 
+  (openChange)="openLargeDialog = $event"
+  size="2xl"
+  position="middle"
+>
+  <app-dialog-header>
+    <app-dialog-title>Large 2XL Dialog</app-dialog-title>
+    <app-dialog-description>
+      This is a 2XL size dialog to demonstrate the maximum width
+    </app-dialog-description>
+  </app-dialog-header>
+  
+  <div class="py-4">
+    <p class="text-sm text-muted-foreground mb-4">
+      This dialog uses the 2xl size variant.
+    </p>
+    <div class="space-y-4">
+      <app-input placeholder="Enter some text" />
+      <app-input type="email" placeholder="Enter your email" />
+      <app-input type="password" placeholder="Enter your password" />
+    </div>
+  </div>
+  
+  <app-dialog-footer>
+    <app-button variant="outline" (click)="openLargeDialog = false">Cancel</app-button>
+    <app-button (click)="openLargeDialog = false">Save Changes</app-button>
+  </app-dialog-footer>
+</app-dialog>
+
+<app-dialog 
+  [open]="openConfirmDialog" 
+  (openChange)="openConfirmDialog = $event"
+  size="sm"
+>
+  <app-dialog-header>
+    <app-dialog-title>Confirm Action</app-dialog-title>
+    <app-dialog-description>
+      Are you sure you want to perform this action? This cannot be undone.
+    </app-dialog-description>
+  </app-dialog-header>
+  
+  <app-dialog-footer>
+    <app-button variant="outline" (click)="openConfirmDialog = false">Cancel</app-button>
+    <app-button variant="destructive" (click)="openConfirmDialog = false">Delete</app-button>
+  </app-dialog-footer>
+</app-dialog>
 
 <router-outlet />
