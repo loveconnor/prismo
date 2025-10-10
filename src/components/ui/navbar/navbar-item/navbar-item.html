@@ -1,0 +1,37 @@
+<span [class]="wrapperClasses">
+  @if (current) {
+    <span 
+      #currentIndicator
+      class="absolute inset-x-2 -bottom-2.5 h-0.5 rounded-full bg-primary"
+    ></span>
+  }
+  @if (href) {
+    <a
+      [href]="href"
+      [class]="itemClasses"
+      [attr.data-current]="current ? 'true' : null"
+      (click)="onItemClick($event)"
+    >
+      <!-- TouchTarget for mobile -->
+      <span 
+        class="absolute top-1/2 left-1/2 size-[max(100%,2.75rem)] -translate-x-1/2 -translate-y-1/2 pointer-fine:hidden"
+        aria-hidden="true"
+      ></span>
+      <ng-content></ng-content>
+    </a>
+  } @else {
+    <button
+      [class]="itemClasses"
+      [attr.data-current]="current ? 'true' : null"
+      [disabled]="disabled"
+      (click)="onItemClick($event)"
+    >
+      <!-- TouchTarget for mobile -->
+      <span 
+        class="absolute top-1/2 left-1/2 size-[max(100%,2.75rem)] -translate-x-1/2 -translate-y-1/2 pointer-fine:hidden"
+        aria-hidden="true"
+      ></span>
+      <ng-content></ng-content>
+    </button>
+  }
+</span>

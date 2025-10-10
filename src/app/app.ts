@@ -27,6 +27,12 @@ import { AlertComponent } from '../components/ui/alert/alert';
 import { ProgressComponent } from '../components/ui/progress/progress';
 import { TableComponent } from '../components/ui/table/table';
 import { PaginationComponent } from '../components/ui/pagination/pagination';
+import { NavbarComponent } from '../components/ui/navbar/navbar';
+import { NavbarItemComponent } from '../components/ui/navbar/navbar-item/navbar-item';
+import { NavbarSectionComponent } from '../components/ui/navbar/navbar-section/navbar-section';
+import { NavbarDividerComponent } from '../components/ui/navbar/navbar-divider/navbar-divider';
+import { NavbarSpacerComponent } from '../components/ui/navbar/navbar-spacer/navbar-spacer';
+import { NavbarLabelComponent } from '../components/ui/navbar/navbar-label/navbar-label';
 import { ThemeService } from '../services/theme.service';
 
 @Component({
@@ -58,7 +64,13 @@ import { ThemeService } from '../services/theme.service';
     AlertComponent,
     ProgressComponent,
     TableComponent,
-    PaginationComponent
+    PaginationComponent,
+    NavbarComponent,
+    NavbarItemComponent,
+    NavbarSectionComponent,
+    NavbarDividerComponent,
+    NavbarSpacerComponent,
+    NavbarLabelComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'

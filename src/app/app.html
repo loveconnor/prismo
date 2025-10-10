@@ -173,11 +173,11 @@
         <!-- Select and Textarea -->
         <div class="space-y-4">
           <h3 class="text-lg font-medium text-foreground">Select & Textarea</h3>
-          <app-select 
-            [options]="selectOptions" 
+          <app-select
+            [options]="selectOptions"
             placeholder="Choose an option"
           />
-          <app-textarea 
+          <app-textarea
             placeholder="Enter your message"
             [rows]="3"
           />
@@ -227,8 +227,8 @@
     <!-- Tabs Component -->
     <section class="mb-12">
       <h2 class="text-2xl font-semibold text-foreground mb-6">Tabs Component</h2>
-      <app-tabs 
-        [tabs]="tabItems" 
+      <app-tabs
+        [tabs]="tabItems"
         [activeTab]="activeTab"
         (tabChange)="onTabChange($event)"
       >
@@ -248,7 +248,7 @@
           <div class="p-4 bg-muted/50 rounded-lg">
             <h3 class="font-semibold mb-2">Tab 3 Content</h3>
             <p class="text-sm text-muted-foreground">This is the content for the third tab. The GSAP animations make the transitions smooth and engaging.</p>
-          </div>
+    </div>
         }
       </app-tabs>
       <div class="mt-4 p-4 border rounded-lg">
@@ -312,8 +312,8 @@
     <section class="mb-12">
       <h2 class="text-2xl font-semibold text-foreground mb-6">Pagination Component</h2>
       <div class="space-y-4">
-        <app-pagination 
-          [currentPage]="currentPage" 
+        <app-pagination
+          [currentPage]="currentPage"
           [totalPages]="totalPages"
           (pageChange)="onPageChange($event)"
         />
@@ -369,11 +369,11 @@
             <!-- Personal Information -->
             <div class="space-y-4">
               <h3 class="text-lg font-medium text-foreground">Personal Information</h3>
-              
+
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-2">
                   <label class="text-sm font-medium text-foreground">First Name</label>
-                  <app-input 
+                  <app-input
                     placeholder="Enter your first name"
                     [(ngModel)]="formData.firstName"
                     name="firstName"
@@ -382,7 +382,7 @@
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm font-medium text-foreground">Last Name</label>
-                  <app-input 
+                  <app-input
                     placeholder="Enter your last name"
                     [(ngModel)]="formData.lastName"
                     name="lastName"
@@ -393,7 +393,7 @@
 
               <div class="space-y-2">
                 <label class="text-sm font-medium text-foreground">Email Address</label>
-                <app-input 
+                <app-input
                   type="email"
                   placeholder="Enter your email"
                   [(ngModel)]="formData.email"
@@ -405,7 +405,7 @@
               <div class="space-y-2">
                 <label class="text-sm font-medium text-foreground">Phone Number</label>
                 <app-input-group>
-                  <app-input 
+                  <app-input
                     type="tel"
                     placeholder="Enter your phone number"
                     [(ngModel)]="formData.phone"
@@ -414,7 +414,7 @@
                   <span data-slot="icon" class="flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                    </svg>
+          </svg>
                   </span>
                 </app-input-group>
               </div>
@@ -423,10 +423,10 @@
             <!-- Preferences -->
             <div class="space-y-4">
               <h3 class="text-lg font-medium text-foreground">Preferences</h3>
-              
+
               <div class="space-y-2">
                 <label class="text-sm font-medium text-foreground">Country</label>
-                <app-select 
+                <app-select
                   [options]="countryOptions"
                   placeholder="Select your country"
                   [(ngModel)]="formData.country"
@@ -438,7 +438,7 @@
                 <label class="text-sm font-medium text-foreground">Experience Level</label>
                 <div class="space-y-2">
                   <div class="flex items-center space-x-2">
-                    <app-radio 
+                    <app-radio
                       value="beginner"
                       name="experience"
                       [(ngModel)]="formData.experience"
@@ -446,7 +446,7 @@
                     <label class="text-sm">Beginner</label>
                   </div>
                   <div class="flex items-center space-x-2">
-                    <app-radio 
+                    <app-radio
                       value="intermediate"
                       name="experience"
                       [(ngModel)]="formData.experience"
@@ -454,7 +454,7 @@
                     <label class="text-sm">Intermediate</label>
                   </div>
                   <div class="flex items-center space-x-2">
-                    <app-radio 
+                    <app-radio
                       value="advanced"
                       name="experience"
                       [(ngModel)]="formData.experience"
@@ -490,7 +490,7 @@
             <!-- Settings -->
             <div class="space-y-4">
               <h3 class="text-lg font-medium text-foreground">Settings</h3>
-              
+
               <div class="space-y-4">
                 <div class="flex items-center justify-between">
                   <div>
@@ -521,10 +521,10 @@
             <!-- Additional Information -->
             <div class="space-y-4">
               <h3 class="text-lg font-medium text-foreground">Additional Information</h3>
-              
+
               <div class="space-y-2">
                 <label class="text-sm font-medium text-foreground">Bio</label>
-                <app-textarea 
+                <app-textarea
                   placeholder="Tell us about yourself..."
                   [rows]="4"
                   [(ngModel)]="formData.bio"
@@ -532,12 +532,12 @@
                 />
               </div>
 
-              
+
             </div>
 
             <!-- Form Actions -->
             <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t">
-              <app-button 
+              <app-button
                 type="button"
                 variant="outline"
                 (click)="resetForm()"
@@ -545,7 +545,7 @@
               >
                 Reset Form
               </app-button>
-              <app-button 
+              <app-button
                 type="button"
                 variant="secondary"
                 (click)="saveDraft()"
@@ -553,7 +553,7 @@
               >
                 Save Draft
               </app-button>
-              <app-button 
+              <app-button
                 type="submit"
                 (click)="submitForm()"
                 class="flex-1 sm:flex-none"
@@ -565,6 +565,155 @@
           </form>
         </app-card-content>
       </app-card>
+    </section>
+
+    <!-- Navbar Components -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Navbar Components</h2>
+      <div class="space-y-6">
+        <!-- Basic Navbar -->
+        <app-card>
+          <app-card-header>
+            <app-card-title>Basic Navbar</app-card-title>
+            <app-card-description>A simple navigation bar with items and sections</app-card-description>
+          </app-card-header>
+          <app-card-content>
+            <app-navbar>
+              <app-navbar-section>
+                <app-navbar-item [current]="true">
+                  <app-navbar-label>Dashboard</app-navbar-label>
+                </app-navbar-item>
+                <app-navbar-item>
+                  <app-navbar-label>Projects</app-navbar-label>
+                </app-navbar-item>
+                <app-navbar-item>
+                  <app-navbar-label>Team</app-navbar-label>
+                </app-navbar-item>
+              </app-navbar-section>
+
+              <app-navbar-spacer></app-navbar-spacer>
+
+              <app-navbar-section>
+                <app-navbar-item>
+                  <app-navbar-label>Settings</app-navbar-label>
+                </app-navbar-item>
+                <app-navbar-item>
+                  <app-navbar-label>Profile</app-navbar-label>
+                </app-navbar-item>
+              </app-navbar-section>
+            </app-navbar>
+          </app-card-content>
+        </app-card>
+
+        <!-- Navbar with Icons -->
+        <app-card>
+          <app-card-header>
+            <app-card-title>Navbar with Icons</app-card-title>
+            <app-card-description>Navigation items with icons and dividers</app-card-description>
+          </app-card-header>
+          <app-card-content>
+            <app-navbar>
+              <app-navbar-section>
+                <app-navbar-item [current]="true">
+                  <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+                  </svg>
+                  <app-navbar-label>Dashboard</app-navbar-label>
+                </app-navbar-item>
+                <app-navbar-item>
+                  <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                  </svg>
+                  <app-navbar-label>Projects</app-navbar-label>
+                </app-navbar-item>
+              </app-navbar-section>
+
+              <app-navbar-divider></app-navbar-divider>
+
+              <app-navbar-section>
+                <app-navbar-item>
+                  <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <app-navbar-label>Settings</app-navbar-label>
+                </app-navbar-item>
+              </app-navbar-section>
+
+              <app-navbar-spacer></app-navbar-spacer>
+
+              <app-navbar-section>
+                <app-navbar-item>
+                  <app-avatar src="https://github.com/monster0506.png" alt="User" size="sm" data-slot="avatar" />
+                  <app-navbar-label>John Doe</app-navbar-label>
+                </app-navbar-item>
+              </app-navbar-section>
+            </app-navbar>
+          </app-card-content>
+        </app-card>
+
+        <!-- Advanced Navbar Demo -->
+        <app-card>
+          <app-card-header>
+            <app-card-title>Advanced Navbar Demo</app-card-title>
+            <app-card-description>Complete navbar implementation with animations, touch targets, and theme support</app-card-description>
+          </app-card-header>
+          <app-card-content>
+            <div class="space-y-4">
+              <app-navbar>
+                <app-navbar-section>
+                  <app-navbar-item [current]="true">
+                    <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+                    </svg>
+                    <app-navbar-label>Dashboard</app-navbar-label>
+                  </app-navbar-item>
+                  <app-navbar-item>
+                    <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <app-navbar-label>Projects</app-navbar-label>
+                  </app-navbar-item>
+                  <app-navbar-item>
+                    <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <app-navbar-label>Team</app-navbar-label>
+                  </app-navbar-item>
+                </app-navbar-section>
+
+                <app-navbar-divider></app-navbar-divider>
+
+                <app-navbar-section>
+                  <app-navbar-item>
+                    <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <app-navbar-label>Search</app-navbar-label>
+                  </app-navbar-item>
+                </app-navbar-section>
+
+                <app-navbar-spacer></app-navbar-spacer>
+
+                <app-navbar-section>
+                  <app-navbar-item>
+                    <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.5 19.5a3 3 0 01-3-3V5a3 3 0 013-3h9a3 3 0 013 3v11.5a3 3 0 01-3 3H4.5z"></path>
+                    </svg>
+                    <app-navbar-label>Reports</app-navbar-label>
+                  </app-navbar-item>
+                  <app-navbar-item>
+                    <app-avatar src="https://github.com/monster0506.png" alt="User" size="sm" data-slot="avatar" />
+                    <app-navbar-label>John Doe</app-navbar-label>
+                  </app-navbar-item>
+                </app-navbar-section>
+              </app-navbar>
+            </div>
+          </app-card-content>
+        </app-card>
+      </div>
     </section>
 
     <!-- Dialog Components -->
@@ -582,8 +731,8 @@
 </div>
 
 <!-- Dialog Components -->
-<app-dialog 
-  [open]="openDialog" 
+<app-dialog
+  [open]="openDialog"
   (openChange)="openDialog = $event"
   size="md"
   position="middle"
@@ -594,21 +743,21 @@
       This is a sample dialog with GSAP animations.
     </app-dialog-description>
   </app-dialog-header>
-  
+
   <div class="py-4">
     <p class="text-sm text-muted-foreground">
       This dialog demonstrates the Angular implementation.
     </p>
   </div>
-  
+
   <app-dialog-footer>
     <app-button variant="outline" (click)="openDialog = false">Cancel</app-button>
     <app-button (click)="openDialog = false">Continue</app-button>
   </app-dialog-footer>
 </app-dialog>
 
-<app-dialog 
-  [open]="openTopDialog" 
+<app-dialog
+  [open]="openTopDialog"
   (openChange)="openTopDialog = $event"
   size="md"
   position="top"
@@ -619,21 +768,21 @@
       This dialog appears at the top of the screen.
     </app-dialog-description>
   </app-dialog-header>
-  
+
   <div class="py-4">
     <p class="text-sm text-muted-foreground">
       Notice how this dialog slides in from the top.
     </p>
   </div>
-  
+
   <app-dialog-footer>
     <app-button variant="outline" (click)="openTopDialog = false">Cancel</app-button>
     <app-button (click)="openTopDialog = false">Continue</app-button>
   </app-dialog-footer>
 </app-dialog>
 
-<app-dialog 
-  [open]="openBottomDialog" 
+<app-dialog
+  [open]="openBottomDialog"
   (openChange)="openBottomDialog = $event"
   size="md"
   position="bottom"
@@ -644,21 +793,21 @@
       This dialog appears at the bottom of the screen.
     </app-dialog-description>
   </app-dialog-header>
-  
+
   <div class="py-4">
     <p class="text-sm text-muted-foreground">
       This dialog slides in from the bottom.
     </p>
   </div>
-  
+
   <app-dialog-footer>
     <app-button variant="outline" (click)="openBottomDialog = false">Cancel</app-button>
     <app-button (click)="openBottomDialog = false">Continue</app-button>
   </app-dialog-footer>
 </app-dialog>
 
-<app-dialog 
-  [open]="openLargeDialog" 
+<app-dialog
+  [open]="openLargeDialog"
   (openChange)="openLargeDialog = $event"
   size="2xl"
   position="middle"
@@ -669,7 +818,7 @@
       This is a 2XL size dialog to demonstrate the maximum width.
     </app-dialog-description>
   </app-dialog-header>
-  
+
   <div class="py-4">
     <p class="text-sm text-muted-foreground mb-4">
       This dialog uses the 2xl size variant and shows how the component scales.
@@ -679,15 +828,15 @@
       <app-input type="email" placeholder="Enter your email" />
     </div>
   </div>
-  
+
   <app-dialog-footer>
     <app-button variant="outline" (click)="openLargeDialog = false">Cancel</app-button>
     <app-button (click)="openLargeDialog = false">Save Changes</app-button>
   </app-dialog-footer>
 </app-dialog>
 
-<app-dialog 
-  [open]="openConfirmDialog" 
+<app-dialog
+  [open]="openConfirmDialog"
   (openChange)="openConfirmDialog = $event"
   size="sm"
   position="middle"
@@ -698,7 +847,7 @@
       Are you sure you want to perform this action? This cannot be undone.
     </app-dialog-description>
   </app-dialog-header>
-  
+
   <app-dialog-footer>
     <app-button variant="outline" (click)="openConfirmDialog = false">Cancel</app-button>
     <app-button variant="destructive" (click)="openConfirmDialog = false">Delete</app-button>
