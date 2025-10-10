@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../components/ui/button/button';
@@ -33,6 +33,18 @@ import { NavbarSectionComponent } from '../components/ui/navbar/navbar-section/n
 import { NavbarDividerComponent } from '../components/ui/navbar/navbar-divider/navbar-divider';
 import { NavbarSpacerComponent } from '../components/ui/navbar/navbar-spacer/navbar-spacer';
 import { NavbarLabelComponent } from '../components/ui/navbar/navbar-label/navbar-label';
+
+// Sidebar Components
+import { SidebarComponent } from '../components/ui/sidebar/sidebar';
+import { SidebarHeaderComponent } from '../components/ui/sidebar/sidebar-header/sidebar-header';
+import { SidebarBodyComponent } from '../components/ui/sidebar/sidebar-body/sidebar-body';
+import { SidebarFooterComponent } from '../components/ui/sidebar/sidebar-footer/sidebar-footer';
+import { SidebarSectionComponent } from '../components/ui/sidebar/sidebar-section/sidebar-section';
+import { SidebarItemComponent } from '../components/ui/sidebar/sidebar-item/sidebar-item';
+import { SidebarDividerComponent } from '../components/ui/sidebar/sidebar-divider/sidebar-divider';
+import { SidebarSpacerComponent } from '../components/ui/sidebar/sidebar-spacer/sidebar-spacer';
+import { SidebarHeadingComponent } from '../components/ui/sidebar/sidebar-heading/sidebar-heading';
+import { SidebarLabelComponent } from '../components/ui/sidebar/sidebar-label/sidebar-label';
 import { ThemeService } from '../services/theme.service';
 
 @Component({
@@ -70,12 +82,22 @@ import { ThemeService } from '../services/theme.service';
     NavbarSectionComponent,
     NavbarDividerComponent,
     NavbarSpacerComponent,
-    NavbarLabelComponent
+    NavbarLabelComponent,
+    SidebarComponent,
+    SidebarHeaderComponent,
+    SidebarBodyComponent,
+    SidebarFooterComponent,
+    SidebarSectionComponent,
+    SidebarItemComponent,
+    SidebarDividerComponent,
+    SidebarSpacerComponent,
+    SidebarHeadingComponent,
+    SidebarLabelComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit, OnDestroy {
   protected readonly title = signal('prismo');
   
   // Dialog state
@@ -152,8 +174,46 @@ export class App {
     { value: 'au', label: 'Australia' }
   ];
 
+  // Navigation state
+  activeSection = 'buttons';
+
   constructor(public themeService: ThemeService) {
   
+  }
+
+  ngOnInit(): void {
+    // Initialize scroll spy
+    this.updateActiveSection();
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup if needed
+  }
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.updateActiveSection();
+  }
+
+  private updateActiveSection(): void {
+    if (typeof window === 'undefined') return;
+
+    const sections = ['buttons', 'inputs', 'dialogs', 'forms', 'sidebar', 'navbar'];
+    const scrollPosition = window.scrollY + 100; // Offset for better UX
+
+    for (const sectionId of sections) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const elementTop = rect.top + window.scrollY;
+        const elementBottom = elementTop + rect.height;
+
+        if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
+          this.activeSection = sectionId;
+          break;
+        }
+      }
+    }
   }
 
   onTabChange(tabId: string): void {
@@ -162,6 +222,14 @@ export class App {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+  }
+
+  navigateToSection(sectionId: string): void {
+    this.activeSection = sectionId;
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   // Form methods
