@@ -1,5 +1,68 @@
 @import "tailwindcss";
 
+@theme {
+  /* Shadcn color system - these will create utility classes */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  /* Custom design tokens */
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text-custom: var(--text-custom);
+  --color-text-dim: var(--text-dim);
+  --color-primary-custom: var(--primary-custom);
+  --color-primary-strong: var(--primary-strong);
+  --color-accent-custom: var(--accent-custom);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  
+  /* Sidebar colors */
+  --color-sidebar: var(--color-sidebar);
+  --color-sidebar-foreground: var(--color-sidebar-foreground);
+  --color-sidebar-primary: var(--color-sidebar-primary);
+  --color-sidebar-primary-foreground: var(--color-sidebar-primary-foreground);
+  --color-sidebar-accent: var(--color-sidebar-accent);
+  --color-sidebar-accent-foreground: var(--color-sidebar-accent-foreground);
+  --color-sidebar-border: var(--color-sidebar-border);
+  --color-sidebar-ring: var(--color-sidebar-ring);
+  
+  /* Chart colors */
+  --color-chart-1: var(--color-chart-1);
+  --color-chart-2: var(--color-chart-2);
+  --color-chart-3: var(--color-chart-3);
+  --color-chart-4: var(--color-chart-4);
+  --color-chart-5: var(--color-chart-5);
+  
+  /* Border radius */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Font families */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
 :root {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -325,4 +388,86 @@
 .animate-confetti {
   animation: confetti 3s ease-out forwards;
 }
-.theme-light .bg-\[\#1f2937\] { background-color: #e5e7eb !important; }
+
+/* Light theme (default) - no dark class */
+:root {
+  color-scheme: light;
+  /* Light palette for shadcn tokens */
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(0.985 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(0.985 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.145 0 0); /* dark text for better contrast */
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.373 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.6 0.17 22);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.869 0 0);
+  --input: oklch(0.93 0 0);
+  --ring: oklch(0.67 0 0);
+
+  /* Light palette for custom sandbox variables */
+  --bg: #ffffff;
+  --surface: #f9fafb;
+  --surface-2: #eef2f7;
+  --border-custom: #e5e7eb;
+  --muted-custom: #6b7280;
+  --text-custom: #111827;
+  --text-dim: #374151;
+  --primary-custom: #3b82f6;
+  --primary-strong: #2563eb;
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --accent-custom: #60a5fa;
+}
+
+/* Dark theme - when .dark class is present */
+.dark {
+  color-scheme: dark;
+  /* Dark palette for shadcn tokens */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+
+  /* Dark palette for custom sandbox variables */
+  --bg: #0b0f14;
+  --surface: #12161b;
+  --surface-2: #151a20;
+  --border-custom: #1f2937;
+  --muted-custom: #9ca3af;
+  --text-custom: #e5e7eb;
+  --text-dim: #a9b1bb;
+  --primary-custom: #3b82f6;
+  --primary-strong: #2563eb;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --accent-custom: #60a5fa;
+}
+
+/* All button styling is now handled by Tailwind v4 theme system */
+

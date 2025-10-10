@@ -1,0 +1,48 @@
+<!-- Touch target for accessibility -->
+<span
+  class="absolute top-1/2 left-1/2 size-[max(100%,2.75rem)] -translate-x-1/2 -translate-y-1/2 pointer-fine:hidden"
+  aria-hidden="true"
+></span>
+
+<!-- Button content with router link support -->
+@if (href) {
+  <a
+    [href]="href"
+    [class]="buttonClasses"
+    [attr.data-disabled]="disabled ? 'true' : null"
+    (click)="onClick($event)"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()"
+    (mousedown)="onMouseDown()"
+    (mouseup)="onMouseUp()"
+  >
+    <ng-content></ng-content>
+  </a>
+} @else if (routerLink) {
+  <a
+    [routerLink]="routerLink"
+    [class]="buttonClasses"
+    [attr.data-disabled]="disabled ? 'true' : null"
+    (click)="onClick($event)"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()"
+    (mousedown)="onMouseDown()"
+    (mouseup)="onMouseUp()"
+  >
+    <ng-content></ng-content>
+  </a>
+} @else {
+  <button
+    [type]="type"
+    [class]="buttonClasses"
+    [disabled]="disabled"
+    [attr.data-disabled]="disabled ? 'true' : null"
+    (click)="onClick($event)"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()"
+    (mousedown)="onMouseDown()"
+    (mouseup)="onMouseUp()"
+  >
+    <ng-content></ng-content>
+  </button>
+}
