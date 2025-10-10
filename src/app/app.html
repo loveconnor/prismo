@@ -1,121 +1,229 @@
 <div class="min-h-screen bg-background p-8">
-  <div class="max-w-4xl mx-auto">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
     <div class="flex justify-between items-center mb-8">
       <div>
         <h1 class="text-4xl font-bold text-foreground mb-2">Prismo UI Components</h1>
-        <p class="text-muted-foreground">Angular components migrated from React with TailwindCSS and Material CDK</p>
+        <p class="text-muted-foreground">Complete Angular component library migrated from React</p>
       </div>
-      <app-button 
-        variant="outline" 
+      <app-button
+        variant="outline"
         (click)="themeService.toggleTheme()"
         class="ml-4"
       >
         {{ themeService.isDarkMode() ? '☀️ Light' : '🌙 Dark' }} Mode
       </app-button>
     </div>
-    
-    <!-- Button Component Demo -->
+
+    <!-- Alert Components -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-foreground mb-6">Button Component</h2>
-      
-      <!-- Variants -->
-      <div class="mb-8">
-        <h3 class="text-lg font-medium text-foreground mb-4">Variants</h3>
-        <div class="flex flex-wrap gap-4">
-          <app-button variant="default">Default</app-button>
-          <app-button variant="destructive">Destructive</app-button>
-          <app-button variant="outline">Outline</app-button>
-          <app-button variant="secondary">Secondary</app-button>
-          <app-button variant="ghost">Ghost</app-button>
-          <app-button variant="link">Link</app-button>
-        </div>
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Alert Components</h2>
+      <div class="space-y-4">
+        <app-alert variant="default">
+          <div class="flex items-center gap-2">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>This is a default alert message.</span>
+          </div>
+        </app-alert>
+        <app-alert variant="destructive">
+          <div class="flex items-center gap-2">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            <span>This is a destructive alert message.</span>
+          </div>
+        </app-alert>
+        <app-alert variant="success">
+          <div class="flex items-center gap-2">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>This is a success alert message.</span>
+          </div>
+        </app-alert>
       </div>
-      
-      <!-- Sizes -->
-      <div class="mb-8">
-        <h3 class="text-lg font-medium text-foreground mb-4">Sizes</h3>
-        <div class="flex flex-wrap items-center gap-4">
-          <app-button size="sm">Small</app-button>
-          <app-button size="default">Default</app-button>
-          <app-button size="lg">Large</app-button>
-          <app-button size="icon">I</app-button>
-        </div>
-      </div>
-      
-      <!-- States -->
-      <div class="mb-8">
-        <h3 class="text-lg font-medium text-foreground mb-4">States</h3>
-        <div class="flex flex-wrap gap-4">
-          <app-button>Normal</app-button>
-          <app-button [disabled]="true">Disabled</app-button>
-          <a class="text-primary hover:underline" href="https://angular.io">Link</a>
-    </div>
-  </div>
     </section>
 
-    <!-- Input Component Demo -->
+    <!-- Card Components -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-foreground mb-6">Input Component</h2>
-      
-      <!-- Basic Inputs -->
-      <div class="mb-8">
-        <h3 class="text-lg font-medium text-foreground mb-4">Basic Inputs</h3>
-        <div class="space-y-4 max-w-md">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Card Components</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <app-card>
+          <app-card-header>
+            <app-card-title>Card Title</app-card-title>
+            <app-card-description>Card description goes here.</app-card-description>
+          </app-card-header>
+          <app-card-content>
+            <p class="text-sm text-muted-foreground">This is the card content area.</p>
+          </app-card-content>
+          <app-card-footer>
+            <app-button size="sm">Action</app-button>
+          </app-card-footer>
+        </app-card>
+
+        <app-card>
+          <app-card-header>
+            <app-card-title>Another Card</app-card-title>
+            <app-card-description>Another card description.</app-card-description>
+          </app-card-header>
+          <app-card-content>
+            <p class="text-sm text-muted-foreground">More card content here.</p>
+          </app-card-content>
+        </app-card>
+
+        <app-card>
+          <app-card-content>
+            <div class="flex items-center space-x-4">
+              <app-avatar src="https://github.com/monster0506.png" alt="User" />
+              <div>
+                <h4 class="text-sm font-medium">User Name</h4>
+                <p class="text-xs text-muted-foreground">user@example.com</p>
+              </div>
+            </div>
+          </app-card-content>
+        </app-card>
+      </div>
+    </section>
+
+    <!-- Form Components -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Form Components</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Inputs -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-foreground">Inputs</h3>
           <app-input placeholder="Enter your name" />
           <app-input type="email" placeholder="Enter your email" />
-          <app-input type="password" placeholder="Enter your password" />
-          <app-input type="number" placeholder="Enter a number" />
-        </div>
-      </div>
-      
-      <!-- Input States -->
-      <div class="mb-8">
-        <h3 class="text-lg font-medium text-foreground mb-4">Input States</h3>
-        <div class="space-y-4 max-w-md">
-          <app-input placeholder="Normal input" />
-          <app-input placeholder="Disabled input" [disabled]="true" />
-          <app-input placeholder="Readonly input" [readonly]="true" value="Readonly value" />
-        </div>
-      </div>
-      
-      <!-- Input with InputGroup -->
-      <div class="mb-8">
-        <h3 class="text-lg font-medium text-foreground mb-4">Input with Icons</h3>
-        <div class="space-y-4 max-w-md">
           <app-input-group>
             <app-input placeholder="Search..." />
             <span data-slot="icon" class="flex items-center justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
+              </svg>
             </span>
           </app-input-group>
-          <app-input-group>
-            <span data-slot="icon" class="flex items-center justify-center">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
-          </svg>
-            </span>
-            <app-input placeholder="Email address" type="email" />
-          </app-input-group>
+        </div>
+
+        <!-- Select and Textarea -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-foreground">Select & Textarea</h3>
+          <app-select 
+            [options]="selectOptions" 
+            placeholder="Choose an option"
+          />
+          <app-textarea 
+            placeholder="Enter your message"
+            [rows]="3"
+          />
         </div>
       </div>
     </section>
 
-    <!-- Dialog Component Demo -->
+    <!-- Toggle Components -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-foreground mb-6">Dialog Component</h2>
-      
-      <!-- Dialog Triggers -->
-      <div class="mb-8">
-        <h3 class="text-lg font-medium text-foreground mb-4">Dialog Examples</h3>
-        <div class="flex flex-wrap gap-4">
-          <app-button (click)="openDialog = true">Middle Dialog</app-button>
-          <app-button variant="outline" (click)="openTopDialog = true">Top Dialog</app-button>
-          <app-button variant="outline" (click)="openBottomDialog = true">Bottom Dialog</app-button>
-          <app-button variant="secondary" (click)="openLargeDialog = true">Large 2XL Dialog</app-button>
-          <app-button variant="destructive" (click)="openConfirmDialog = true">Confirm Dialog</app-button>
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Toggle Components</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Switch -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-foreground">Switch</h3>
+          <div class="flex items-center space-x-2">
+            <app-switch />
+            <label class="text-sm">Enable notifications</label>
+          </div>
         </div>
+
+        <!-- Checkbox -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-foreground">Checkbox</h3>
+          <div class="flex items-center space-x-2">
+            <app-checkbox />
+            <label class="text-sm">I agree to the terms</label>
+          </div>
+        </div>
+
+        <!-- Radio -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-foreground">Radio</h3>
+          <div class="space-y-2">
+            <div class="flex items-center space-x-2">
+              <app-radio name="radio-group" value="option1" />
+              <label class="text-sm">Option 1</label>
+            </div>
+            <div class="flex items-center space-x-2">
+              <app-radio name="radio-group" value="option2" />
+              <label class="text-sm">Option 2</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs Component -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Tabs Component</h2>
+      <app-tabs 
+        [tabs]="tabItems" 
+        [activeTab]="activeTab"
+        (tabChange)="activeTab = $event"
+      />
+      <div class="mt-4 p-4 border rounded-lg">
+        <p class="text-sm text-muted-foreground">
+          Active tab: {{ activeTab }}
+        </p>
+      </div>
+    </section>
+
+    <!-- Progress Component -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Progress Component</h2>
+      <div class="space-y-4">
+        <app-progress [value]="progressValue" [showValue]="true" />
+        <app-progress [value]="30" />
+        <app-progress [value]="80" />
+      </div>
+    </section>
+
+    <!-- Button Components -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Button Components</h2>
+      <div class="space-y-6">
+        <!-- Button Variants -->
+        <div>
+          <h3 class="text-lg font-medium text-foreground mb-4">Button Variants</h3>
+          <div class="flex flex-wrap gap-4">
+            <app-button variant="default">Default</app-button>
+            <app-button variant="destructive">Destructive</app-button>
+            <app-button variant="outline">Outline</app-button>
+            <app-button variant="secondary">Secondary</app-button>
+            <app-button variant="ghost">Ghost</app-button>
+            <app-button variant="link">Link</app-button>
+          </div>
+        </div>
+
+        <!-- Button Sizes -->
+        <div>
+          <h3 class="text-lg font-medium text-foreground mb-4">Button Sizes</h3>
+          <div class="flex flex-wrap items-center gap-4">
+            <app-button size="sm">Small</app-button>
+            <app-button size="default">Default</app-button>
+            <app-button size="lg">Large</app-button>
+            <app-button size="icon">I</app-button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dialog Components -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Dialog Components</h2>
+      <div class="flex flex-wrap gap-4">
+        <app-button (click)="openDialog = true">Open Dialog</app-button>
+        <app-button variant="outline" (click)="openTopDialog = true">Top Dialog</app-button>
+        <app-button variant="outline" (click)="openBottomDialog = true">Bottom Dialog</app-button>
+        <app-button variant="secondary" (click)="openLargeDialog = true">Large Dialog</app-button>
+        <app-button variant="destructive" (click)="openConfirmDialog = true">Confirm Dialog</app-button>
       </div>
     </section>
   </div>
@@ -129,15 +237,15 @@
   position="middle"
 >
   <app-dialog-header>
-    <app-dialog-title>Middle Dialog</app-dialog-title>
+    <app-dialog-title>Sample Dialog</app-dialog-title>
     <app-dialog-description>
-      This dialog appears in the middle of the screen with smooth animations.
+      This is a sample dialog with GSAP animations.
     </app-dialog-description>
   </app-dialog-header>
   
   <div class="py-4">
     <p class="text-sm text-muted-foreground">
-        Middle, boring
+      This dialog demonstrates the Angular implementation.
     </p>
   </div>
   
@@ -162,7 +270,7 @@
   
   <div class="py-4">
     <p class="text-sm text-muted-foreground">
-      Notice how this dialog slides in from the top with different animations.
+      Notice how this dialog slides in from the top.
     </p>
   </div>
   
@@ -181,7 +289,7 @@
   <app-dialog-header>
     <app-dialog-title>Bottom Dialog</app-dialog-title>
     <app-dialog-description>
-      Slide from bottom because GSAP is cool
+      This dialog appears at the bottom of the screen.
     </app-dialog-description>
   </app-dialog-header>
   
@@ -204,20 +312,19 @@
   position="middle"
 >
   <app-dialog-header>
-    <app-dialog-title>Large 2XL Dialog</app-dialog-title>
+    <app-dialog-title>Large Dialog</app-dialog-title>
     <app-dialog-description>
-      This is a 2XL size dialog to demonstrate the maximum width
+      This is a 2XL size dialog to demonstrate the maximum width.
     </app-dialog-description>
   </app-dialog-header>
   
   <div class="py-4">
     <p class="text-sm text-muted-foreground mb-4">
-      This dialog uses the 2xl size variant.
+      This dialog uses the 2xl size variant and shows how the component scales.
     </p>
     <div class="space-y-4">
       <app-input placeholder="Enter some text" />
       <app-input type="email" placeholder="Enter your email" />
-      <app-input type="password" placeholder="Enter your password" />
     </div>
   </div>
   
@@ -231,6 +338,7 @@
   [open]="openConfirmDialog" 
   (openChange)="openConfirmDialog = $event"
   size="sm"
+  position="middle"
 >
   <app-dialog-header>
     <app-dialog-title>Confirm Action</app-dialog-title>
