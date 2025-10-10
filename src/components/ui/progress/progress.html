@@ -1,0 +1,11 @@
+<div [class]="progressClasses" role="progressbar" [attr.aria-valuenow]="value" [attr.aria-valuemax]="max">
+  <div 
+    [class]="barClasses"
+    [style.width.%]="percentage"
+  ></div>
+  @if (showValue) {
+    <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-foreground">
+      {{ getRoundedPercentage() }}%
+    </span>
+  }
+</div>

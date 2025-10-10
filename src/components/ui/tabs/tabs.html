@@ -1,0 +1,12 @@
+<div [class]="tabsClasses">
+  @for (tab of tabs; track tab.id) {
+    <button
+      [class]="tabClasses"
+      [class]="activeTab === tab.id ? activeTabClasses : ''"
+      [disabled]="tab.disabled"
+      (click)="onTabClick(tab.id)"
+    >
+      {{ tab.label }}
+    </button>
+  }
+</div>

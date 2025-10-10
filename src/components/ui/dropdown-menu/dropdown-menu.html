@@ -1,0 +1,24 @@
+<div class="relative">
+  <!-- Trigger -->
+  <button
+    #triggerRef
+    [class]="triggerClasses"
+    (click)="toggle()"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-haspopup]="true"
+  >
+    <ng-content select="[slot=trigger]"></ng-content>
+  </button>
+
+  <!-- Content -->
+  @if (isOpen) {
+    <div
+      #contentRef
+      [class]="contentClasses"
+      role="menu"
+      [attr.aria-orientation]="'vertical'"
+    >
+      <ng-content select="[slot=content]"></ng-content>
+    </div>
+  }
+</div>

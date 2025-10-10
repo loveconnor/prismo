@@ -1,0 +1,11 @@
+<textarea
+  [class]="textareaClasses"
+  [placeholder]="placeholder"
+  [disabled]="disabled"
+  [readonly]="readonly"
+  [required]="required"
+  [rows]="rows"
+  [value]="currentValue"
+  (input)="onInput($event)"
+  (blur)="onBlur()"
+></textarea>

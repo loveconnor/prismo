@@ -1,0 +1,13 @@
+<div [class]="avatarClasses">
+  @if (src) {
+    <img
+      [src]="src"
+      [alt]="alt"
+      [class]="imageClasses"
+    />
+  } @else {
+    <div [class]="fallbackClasses">
+      {{ fallback || '?' }}
+    </div>
+  }
+</div>

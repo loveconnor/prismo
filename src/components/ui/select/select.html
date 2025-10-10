@@ -1,0 +1,13 @@
+<select
+  [class]="selectClasses"
+  [disabled]="disabled"
+  [value]="selectedValue"
+  (change)="onSelectionChange($any($event.target).value)"
+>
+  <option value="" disabled>{{ placeholder }}</option>
+  @for (option of options; track option.value) {
+    <option [value]="option.value" [disabled]="option.disabled">
+      {{ option.label }}
+    </option>
+  }
+</select>
