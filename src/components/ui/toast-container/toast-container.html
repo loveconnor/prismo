@@ -1,8 +1,27 @@
-<div class="fixed top-4 right-4 z-50 space-y-2">
-  <app-toast
-    *ngFor="let toast of toasts; trackBy: trackByToastId"
-    [toast]="toast"
-    (dismiss)="onDismiss($event)"
-    (action)="onAction($event)">
-  </app-toast>
+<div class="fixed top-4 right-4 z-50 max-w-sm w-full space-y-2" style="max-width: 24rem;">
+  <div
+    *ngFor="let toast of toasts.slice().reverse(); trackBy: trackByToastId; let i = index"
+    class="transition-all duration-300 ease-in-out relative"
+    [ngClass]="{
+      'opacity-0 scale-95 translate-y-2 pointer-events-none': i > 0 && !isHovered,
+      'opacity-100 scale-100 translate-y-0': i === 0 || isHovered
+    }"
+    [style.transform]="i === 0 || isHovered ? 'translateY(' + (i * 8) + 'px)' : 'translateY(0px)'"
+    [style.z-index]="1000 + i"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()">
+    <app-toast
+      [toast]="toast"
+      (dismiss)="onDismiss($event)"
+      (action)="onAction($event)">
+    </app-toast>
+    
+    <!-- Toast count indicator -->
+    <div 
+      *ngIf="i === 0 && toasts.length > 1 && !isHovered"
+      class="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium"
+      style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+      {{ toasts.length }}
+    </div>
+  </div>
 </div>

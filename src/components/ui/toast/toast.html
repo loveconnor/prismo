@@ -1,34 +1,43 @@
-<div class="fixed top-4 right-4 z-50 max-w-sm w-full">
-  <div class="flex items-start gap-3 p-4 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg">
-    <div class="flex-shrink-0 w-5 h-5">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path [attr.d]="getIconPath()"></path>
-      </svg>
+<div #toastElement class="relative">
+  <div class="flex items-start gap-3 p-4 bg-background border border-border rounded-lg backdrop-blur-sm transition-all duration-200 hover:scale-[1.02]" 
+       style="box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);"
+       [ngClass]="{
+         'border-l-4 border-l-green-500': toast.type === 'success',
+         'border-l-4 border-l-red-500': toast.type === 'error', 
+         'border-l-4 border-l-yellow-500': toast.type === 'warning',
+         'border-l-4 border-l-blue-500': toast.type === 'info'
+       }">
+    <!-- Icon -->
+    <div class="flex-shrink-0 w-5 h-5 mt-0.5">
+      <ng-icon 
+        [name]="getIconName()" 
+        class="w-5 h-5"
+        [ngClass]="getIconClass()">
+      </ng-icon>
     </div>
     
+    <!-- Content -->
     <div class="flex-1 min-w-0">
-      <div class="font-semibold text-gray-900 mb-1">{{ toast.title }}</div>
-      <div *ngIf="toast.description" class="text-sm text-gray-600 leading-relaxed">{{ toast.description }}</div>
+      <div class="font-semibold text-foreground mb-1">{{ toast.title }}</div>
+      <div *ngIf="toast.description" class="text-sm text-muted-foreground leading-relaxed">{{ toast.description }}</div>
     </div>
 
-    <div class="flex gap-2 mt-3">
+    <!-- Actions -->
+    <div class="flex gap-2 mt-1">
       <button 
         *ngIf="toast.action" 
         (click)="handleAction()"
-        class="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
+        class="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-md hover:bg-primary/20 transition-colors"
         type="button">
         {{ toast.action.label }}
       </button>
       
       <button 
         (click)="dismissToast()"
-        class="p-1 text-gray-400 hover:text-gray-600 transition-colors rounded"
+        class="p-1 text-muted-foreground hover:text-foreground transition-colors rounded"
         type="button"
         aria-label="Close notification">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
+        <ng-icon name="lucide-x" class="w-4 h-4"></ng-icon>
       </button>
     </div>
   </div>

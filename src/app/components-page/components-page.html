@@ -921,8 +921,50 @@
   </app-dialog-footer>
 </app-dialog>
 
+    <!-- Toast Components -->
+    <section id="toasts" class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Toast Components</h2>
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <app-button variant="default" (click)="showSuccessToast()">
+            <ng-icon name="lucide-circle-check" class="w-4 h-4 mr-2"></ng-icon>
+            Success Toast
+          </app-button>
+          <app-button variant="destructive" (click)="showErrorToast()">
+            <ng-icon name="lucide-triangle-alert" class="w-4 h-4 mr-2"></ng-icon>
+            Error Toast
+          </app-button>
+          <app-button variant="outline" (click)="showWarningToast()">
+            <ng-icon name="lucide-triangle-alert" class="w-4 h-4 mr-2"></ng-icon>
+            Warning Toast
+          </app-button>
+          <app-button variant="secondary" (click)="showInfoToast()">
+            <ng-icon name="lucide-info" class="w-4 h-4 mr-2"></ng-icon>
+            Info Toast
+          </app-button>
+          <app-button variant="outline" (click)="showToastWithAction()">
+            <ng-icon name="lucide-zap" class="w-4 h-4 mr-2"></ng-icon>
+            Toast with Action
+          </app-button>
+        </div>
+        <div class="mt-6 p-4 bg-muted rounded-lg">
+          <h3 class="text-lg font-medium text-foreground mb-2">Toast Features</h3>
+          <ul class="text-sm text-muted-foreground space-y-1">
+            <li>• Multiple toast types: success, error, warning, info</li>
+            <li>• Auto-dismiss with customizable duration</li>
+            <li>• Action buttons for user interaction</li>
+            <li>• Stacked display with proper z-index</li>
+            <li>• Responsive design with theme support</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     </div>
     </main>
 </div>
+
+<!-- Toast Container -->
+<app-toast-container></app-toast-container>
 
 <router-outlet />

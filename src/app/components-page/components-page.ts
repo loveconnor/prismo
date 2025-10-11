@@ -48,6 +48,9 @@ import { CardFooterComponent } from '../../components/ui/card/card-footer';
 import { AvatarComponent } from '../../components/ui/avatar/avatar';
 import { SelectComponent } from '../../components/ui/select/select';
 import { DropdownMenuComponent } from '../../components/ui/dropdown-menu/dropdown-menu';
+import { ToastComponent } from '../../components/ui/toast/toast';
+import { ToastContainerComponent } from '../../components/ui/toast-container/toast-container';
+import { ToastService } from '../../services/toast.service';
 import { CheckboxComponent } from '../../components/ui/checkbox/checkbox';
 import { TextareaComponent } from '../../components/ui/textarea/textarea';
 import { RadioComponent } from '../../components/ui/radio/radio';
@@ -130,6 +133,8 @@ import { ThemeService } from '../../services/theme.service';
     NavbarDividerComponent,
     NavbarSpacerComponent,
     NavbarLabelComponent,
+    ToastComponent,
+    ToastContainerComponent,
   ],
   templateUrl: './components-page.html',
   styleUrl: './components-page.css'
@@ -210,7 +215,7 @@ export class ComponentsPage implements OnInit, OnDestroy {
   // Scroll spy
   activeSection = 'buttons';
 
-  constructor(public themeService: ThemeService) {}
+  constructor(public themeService: ThemeService, private toastService: ToastService) {}
 
   ngOnInit(): void {
     // Avoid SSR errors when document/window are not available
@@ -292,5 +297,57 @@ export class ComponentsPage implements OnInit, OnDestroy {
 
   submitForm(): void {
     console.log('Submitting form...', this.formData);
+  }
+
+  // Toast methods
+  showSuccessToast(): void {
+    this.toastService.show({
+      title: 'Success!',
+      description: 'Your action was completed successfully.',
+      type: 'success'
+    });
+  }
+
+  showErrorToast(): void {
+    this.toastService.show({
+      title: 'Error',
+      description: 'Something went wrong. Please try again.',
+      type: 'error'
+    });
+  }
+
+  showWarningToast(): void {
+    this.toastService.show({
+      title: 'Warning',
+      description: 'Please review your input before proceeding.',
+      type: 'warning'
+    });
+  }
+
+  showInfoToast(): void {
+    this.toastService.show({
+      title: 'Information',
+      description: 'Here is some useful information for you.',
+      type: 'info'
+    });
+  }
+
+  showToastWithAction(): void {
+    this.toastService.show({
+      title: 'Action Required',
+      description: 'Please confirm this action.',
+      type: 'info',
+      action: {
+        label: 'Confirm',
+        onClick: () => {
+          console.log('Action confirmed!');
+          this.toastService.show({
+            title: 'Confirmed!',
+            description: 'Action has been confirmed.',
+            type: 'success'
+          });
+        }
+      }
+    });
   }
 }
