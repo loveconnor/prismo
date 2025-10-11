@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
-import { 
+import {
   lucidePlus,
   lucideSearch,
   lucideFolder,
@@ -15,7 +15,7 @@ import {
   lucideDatabase,
   lucideX
 } from '@ng-icons/lucide';
-import { 
+import {
   ButtonComponent,
   CardComponent,
   CardContentComponent,
@@ -52,7 +52,6 @@ import {
     CardComponent,
     CardContentComponent,
     CardHeaderComponent,
-    CardTitleComponent,
     ProgressComponent,
     InputComponent,
     SelectComponent

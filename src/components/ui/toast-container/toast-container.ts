@@ -17,7 +17,7 @@ import { ToastComponent } from '../toast/toast';
       lucideX
     })
   ],
-  imports: [CommonModule, NgIconComponent, ToastComponent],
+  imports: [CommonModule,  ToastComponent],
   templateUrl: './toast-container.html'
 })
 export class ToastContainerComponent implements OnInit, OnDestroy {

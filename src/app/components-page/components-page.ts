@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
-import { 
+import {
   lucideChevronDown,
   lucideUser,
   lucideSettings,
@@ -133,7 +133,6 @@ import { ThemeService } from '../../services/theme.service';
     NavbarDividerComponent,
     NavbarSpacerComponent,
     NavbarLabelComponent,
-    ToastComponent,
     ToastContainerComponent,
   ],
   templateUrl: './components-page.html',
@@ -148,7 +147,7 @@ export class ComponentsPage implements OnInit, OnDestroy {
   textareaValue = '';
   progressValue = 65;
   activeTab = 'tab1';
-  
+
   // Form data
   formData = {
     firstName: '',
@@ -170,7 +169,7 @@ export class ComponentsPage implements OnInit, OnDestroy {
     smsNotifications: false,
     marketingEmails: false
   };
-  
+
   // Options
   selectOptions = [
     { value: 'us', label: 'United States' },
@@ -179,7 +178,7 @@ export class ComponentsPage implements OnInit, OnDestroy {
     { value: 'de', label: 'Germany' },
     { value: 'fr', label: 'France' }
   ];
-  
+
   countryOptions = [
     { value: 'us', label: 'United States' },
     { value: 'ca', label: 'Canada' },
@@ -187,31 +186,31 @@ export class ComponentsPage implements OnInit, OnDestroy {
     { value: 'de', label: 'Germany' },
     { value: 'fr', label: 'France' }
   ];
-  
+
   tabItems = [
     { id: 'tab1', label: 'Overview' },
     { id: 'tab2', label: 'Details' },
     { id: 'tab3', label: 'Settings' }
   ];
-  
+
   // Table data
   tableData = [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
     { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User' }
   ];
-  
+
   // Pagination
   currentPage = 1;
   totalPages = 5;
-  
+
   // Dialog states
   openDialog = false;
   openTopDialog = false;
   openBottomDialog = false;
   openLargeDialog = false;
   openConfirmDialog = false;
-  
+
   // Scroll spy
   activeSection = 'buttons';
 
@@ -237,7 +236,7 @@ export class ComponentsPage implements OnInit, OnDestroy {
   private updateActiveSection(): void {
     if (typeof document === 'undefined') return;
     const sections = ['buttons', 'inputs', 'dialogs', 'forms', 'alerts', 'cards', 'toggles', 'tabs', 'progess', 'table', 'pagination', 'navbar'];
-    
+
     for (const section of sections) {
       const element = document.getElementById(section);
       if (element) {

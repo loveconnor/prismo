@@ -14,11 +14,6 @@ import { RecentLabsComponent } from './recent-labs.component';
   standalone: true,
   imports: [
     CommonModule,
-    ButtonComponent,
-    CardComponent,
-    CardContentComponent,
-    ProgressComponent,
-    AvatarComponent,
     HeroCardsComponent,
     RecommendedLabsComponent,
     RecentLabsComponent
