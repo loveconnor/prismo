@@ -198,4 +198,8 @@ export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnD
   isSelected(value: string): boolean {
     return this._value === value;
   }
+
+  onSelectionChange(value: string): void {
+    this.selectOption(value);
+  }
 }

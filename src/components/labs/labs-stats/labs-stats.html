@@ -1,0 +1,20 @@
+<div class="labs-stats-grid">
+  <div *ngFor="let stat of stats; trackBy: trackByLabel" class="stat-card">
+    <div class="stat-icon" *ngIf="stat.icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path [attr.d]="stat.icon"></path>
+      </svg>
+    </div>
+    <div class="stat-content">
+      <div class="stat-value">{{ stat.value }}</div>
+      <div class="stat-label">{{ stat.label }}</div>
+      <div class="stat-trend" *ngIf="stat.trend" [class]="'trend-' + stat.trend">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path *ngIf="stat.trend === 'up'" d="M7 17L17 7M17 7H7M17 7V17"></path>
+          <path *ngIf="stat.trend === 'down'" d="M17 7L7 17M7 17H17M7 17V7"></path>
+          <path *ngIf="stat.trend === 'neutral'" d="M8 12H16"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>

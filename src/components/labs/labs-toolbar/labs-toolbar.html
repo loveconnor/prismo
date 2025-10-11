@@ -1,0 +1,47 @@
+<div class="labs-toolbar">
+  <!-- Search Box -->
+  <div class="search-container">
+    <app-input
+      type="text"
+      placeholder="Search labs..."
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearchChange($event)"
+      class="search-input">
+    </app-input>
+        <ng-icon name="lucide-search" class="w-4 h-4 text-muted-foreground"></ng-icon>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs" role="tablist" aria-label="Lab filters">
+    <app-button
+      *ngFor="let option of filterOptions"
+      [variant]="filter === option.value ? 'default' : 'outline'"
+      (click)="onFilterChange(option.value)"
+      [attr.role]="'tab'"
+      [attr.aria-selected]="filter === option.value"
+      class="filter-tab">
+      {{ option.label }}
+    </app-button>
+  </div>
+
+  <!-- Sort Dropdown -->
+  <div class="sort-container">
+    <app-select
+      [(ngModel)]="sortBy"
+      (selectionChange)="onSortChange($event)"
+      [options]="sortOptions"
+      placeholder="Sort by"
+      class="sort-select">
+    </app-select>
+  </div>
+
+  <!-- Clear Filters -->
+  <app-button
+    *ngIf="hasActiveFilters"
+    variant="outline"
+    (click)="onClearFilters()"
+    class="clear-button">
+    <ng-icon name="lucide-x" class="w-4 h-4"></ng-icon>
+    Clear filters
+  </app-button>
+</div>

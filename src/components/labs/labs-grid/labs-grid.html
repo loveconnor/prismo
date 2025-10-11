@@ -1,0 +1,48 @@
+<div class="labs-grid">
+  <div *ngFor="let lab of labs; trackBy: trackByLabId" class="lab-card" (click)="onLabClick(lab)">
+    <app-card class="lab-card-inner">
+      <app-card-content>
+        <div class="lab-header">
+          <h3 class="lab-title">{{ lab.title }}</h3>
+          <div class="lab-status" [class]="'status-' + lab.status">
+            {{ lab.status | titlecase }}
+          </div>
+        </div>
+        
+        <p class="lab-description">{{ lab.description }}</p>
+        
+        <div class="lab-progress">
+          <div class="progress-label">Progress</div>
+          <app-progress [value]="lab.progress" class="progress-bar"></app-progress>
+          <div class="progress-value">{{ lab.progress }}%</div>
+        </div>
+        
+        <div class="lab-meta">
+          <div class="lab-difficulty" [class]="'difficulty-' + lab.difficulty">
+            {{ lab.difficulty | titlecase }}
+          </div>
+          <div class="lab-time">{{ lab.timeSpent }}</div>
+        </div>
+        
+        <div class="lab-tags" *ngIf="lab.tags.length > 0">
+          <span *ngFor="let tag of lab.tags" class="lab-tag">{{ tag }}</span>
+        </div>
+        
+        <div class="lab-actions">
+          <app-button 
+            variant="outline" 
+            size="sm"
+            (click)="onLabAction(lab, 'continue'); $event.stopPropagation()">
+            Continue
+          </app-button>
+          <app-button 
+            variant="ghost" 
+            size="sm"
+            (click)="onLabAction(lab, 'bookmark'); $event.stopPropagation()">
+            Bookmark
+          </app-button>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<app-dialog [open]="open" (openChange)="onOpenChange($event)">
+  <app-dialog-header>
+    <app-dialog-title>{{ title }}</app-dialog-title>
+    <app-dialog-description>{{ description }}</app-dialog-description>
+  </app-dialog-header>
+
+  <app-dialog-footer>
+    <div class="flex justify-end gap-2">
+      <app-button 
+        plain 
+        (click)="onCancel()"
+        [disabled]="loading">
+        {{ cancelLabel }}
+      </app-button>
+      <app-button 
+        [variant]="variant === 'danger' ? 'destructive' : 'default'"
+        (click)="onConfirm()"
+        [disabled]="loading">
+        {{ confirmLabel }}
+      </app-button>
+    </div>
+  </app-dialog-footer>
+</app-dialog>

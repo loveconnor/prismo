@@ -1,0 +1,8 @@
+<div class="fixed top-4 right-4 z-50 space-y-2">
+  <app-toast
+    *ngFor="let toast of toasts; trackBy: trackByToastId"
+    [toast]="toast"
+    (dismiss)="onDismiss($event)"
+    (action)="onAction($event)">
+  </app-toast>
+</div>
