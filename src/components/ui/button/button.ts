@@ -67,11 +67,10 @@ export class ButtonComponent implements ControlValueAccessor {
 
     // Size classes from shadcn/ui
     const sizeClasses = this.getSizeClasses();
-    
+
     // Style variants
     const styleClasses = this.getStyleClasses();
 
-    // Hover effects - only when not disabled
     const hoverClasses = this.disabled ? [] : [
       'hover:scale-[1.02] active:scale-[0.98]'
     ];
@@ -105,32 +104,32 @@ export class ButtonComponent implements ControlValueAccessor {
           'border border-border bg-background text-foreground shadow-sm',
           'hover:bg-accent hover:text-accent-foreground'
         ];
-      
+
       case 'secondary':
         return [
           'bg-secondary text-secondary-foreground',
           'hover:bg-secondary/80'
         ];
-      
+
       case 'ghost':
         return [
           'text-foreground',
           'hover:bg-accent hover:text-accent-foreground'
         ];
-      
+
       case 'link':
         return [
           'text-primary underline-offset-4',
           'hover:underline'
         ];
-      
+
       case 'destructive':
         return [
           'bg-destructive text-destructive-foreground',
           'hover:bg-destructive/90',
           'focus-visible:ring-destructive/20'
         ];
-      
+
       case 'default':
       default:
         return [
@@ -184,7 +183,7 @@ export class ButtonComponent implements ControlValueAccessor {
       event.stopPropagation();
       return;
     }
-    
+
     this.onTouched();
     this.onChange(this._value);
   }
