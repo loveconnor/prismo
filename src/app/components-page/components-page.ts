@@ -2,6 +2,32 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
+import { provideIcons, NgIconComponent } from '@ng-icons/core';
+import { 
+  lucideChevronDown,
+  lucideUser,
+  lucideSettings,
+  lucideLogOut,
+  lucidePencil,
+  lucideCopy,
+  lucideDownload,
+  lucideMenu,
+  lucideZap,
+  lucideCircleCheck,
+  lucideInfo,
+  lucideTriangleAlert,
+  lucideSearch,
+  lucideHouse,
+  lucideBookOpen,
+  lucideFolder,
+  lucideGrid3x3,
+  lucideFileText,
+  lucideChartBar,
+  lucideSparkles,
+  lucideBeaker,
+  lucideClock,
+  lucideStar
+} from '@ng-icons/lucide';
 
 // Import all UI components
 import { ButtonComponent } from '../../components/ui/button/button';
@@ -21,6 +47,7 @@ import { CardContentComponent } from '../../components/ui/card/card-content';
 import { CardFooterComponent } from '../../components/ui/card/card-footer';
 import { AvatarComponent } from '../../components/ui/avatar/avatar';
 import { SelectComponent } from '../../components/ui/select/select';
+import { DropdownMenuComponent } from '../../components/ui/dropdown-menu/dropdown-menu';
 import { CheckboxComponent } from '../../components/ui/checkbox/checkbox';
 import { TextareaComponent } from '../../components/ui/textarea/textarea';
 import { RadioComponent } from '../../components/ui/radio/radio';
@@ -39,10 +66,38 @@ import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-components-page',
+  providers: [
+    provideIcons({
+      lucideChevronDown,
+      lucideUser,
+      lucideSettings,
+      lucideLogOut,
+      lucidePencil,
+      lucideCopy,
+      lucideDownload,
+      lucideMenu,
+      lucideZap,
+      lucideCircleCheck,
+      lucideInfo,
+      lucideTriangleAlert,
+      lucideSearch,
+      lucideHouse,
+      lucideBookOpen,
+      lucideFolder,
+      lucideGrid3x3,
+      lucideFileText,
+      lucideChartBar,
+      lucideSparkles,
+      lucideBeaker,
+      lucideClock,
+      lucideStar
+    })
+  ],
   imports: [
     CommonModule,
     FormsModule,
     RouterOutlet,
+    NgIconComponent,
     ButtonComponent,
     InputComponent,
     InputGroupComponent,
@@ -60,6 +115,7 @@ import { ThemeService } from '../../services/theme.service';
     CardFooterComponent,
     AvatarComponent,
     SelectComponent,
+    DropdownMenuComponent,
     CheckboxComponent,
     TextareaComponent,
     RadioComponent,

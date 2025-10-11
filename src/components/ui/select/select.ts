@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { cn } from '../../../lib/utils';
 
 export interface SelectOption {
@@ -12,7 +13,7 @@ export interface SelectOption {
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, OverlayModule],
   templateUrl: './select.html',
   styleUrl: './select.css',
   providers: [
@@ -23,33 +24,137 @@ export interface SelectOption {
     }
   ]
 })
-export class SelectComponent implements ControlValueAccessor {
+export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
   @Input() options: SelectOption[] = [];
   @Input() placeholder = 'Select an option';
   @Input() disabled = false;
   @Input() className = '';
+  @Input() size: 'sm' | 'default' = 'default';
 
   @Output() selectionChange = new EventEmitter<string>();
+
+  @ViewChild('triggerRef', { static: false }) triggerRef!: ElementRef;
+  @ViewChild('contentRef', { static: false }) contentRef!: ElementRef;
 
   // Form control implementation
   private _value: string = '';
   private onChange = (value: string) => {};
   private onTouched = () => {};
 
+  isOpen = false;
+  selectedOption: SelectOption | null = null;
+
   get selectedValue(): string {
     return this._value;
   }
 
-  get selectClasses(): string {
+  get selectedLabel(): string {
+    return this.selectedOption?.label || this.placeholder;
+  }
+
+  get triggerClasses(): string {
     return cn(
-      'flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*="text-"])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+      this.size === 'default' ? 'h-9' : 'h-8',
       this.className
     );
+  }
+
+  get contentClasses(): string {
+    return cn(
+      'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] origin-[var(--radix-select-content-transform-origin)] overflow-x-hidden overflow-y-auto rounded-md border shadow-md p-1',
+      this.className
+    );
+  }
+
+  get optionClasses(): string {
+    return cn(
+      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'
+    );
+  }
+
+  ngAfterViewInit(): void {
+    this.updateSelectedOption();
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup if needed
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (this.isOpen && !this.triggerRef?.nativeElement.contains(event.target) && !this.contentRef?.nativeElement.contains(event.target)) {
+      this.close();
+    }
+  }
+
+  @HostListener('keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    if (!this.isOpen) {
+      if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        this.open();
+      }
+      return;
+    }
+
+    switch (event.key) {
+      case 'Escape':
+        event.preventDefault();
+        this.close();
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        this.focusNextOption();
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.focusPreviousOption();
+        break;
+      case 'Enter':
+        event.preventDefault();
+        this.selectFocusedOption();
+        break;
+    }
+  }
+
+  private updateSelectedOption(): void {
+    this.selectedOption = this.options.find(option => option.value === this._value) || null;
+  }
+
+  private focusNextOption(): void {
+    // Implementation for keyboard navigation
+    const options = this.contentRef?.nativeElement?.querySelectorAll('[role="option"]');
+    if (options && options.length > 0) {
+      const currentIndex = Array.from(options).findIndex((el: any) => el === document.activeElement);
+      const nextIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
+      (options[nextIndex] as HTMLElement)?.focus();
+    }
+  }
+
+  private focusPreviousOption(): void {
+    const options = this.contentRef?.nativeElement?.querySelectorAll('[role="option"]');
+    if (options && options.length > 0) {
+      const currentIndex = Array.from(options).findIndex((el: any) => el === document.activeElement);
+      const prevIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
+      (options[prevIndex] as HTMLElement)?.focus();
+    }
+  }
+
+  private selectFocusedOption(): void {
+    const focusedOption = document.activeElement as HTMLElement;
+    if (focusedOption && focusedOption.getAttribute('role') === 'option') {
+      const value = focusedOption.getAttribute('data-value');
+      if (value) {
+        this.selectOption(value);
+      }
+    }
   }
 
   // Form control methods
   writeValue(value: string): void {
     this._value = value;
+    this.updateSelectedOption();
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -64,10 +169,33 @@ export class SelectComponent implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
-  onSelectionChange(value: string): void {
+  toggle(): void {
+    if (this.disabled) return;
+    this.isOpen ? this.close() : this.open();
+  }
+
+  open(): void {
+    if (this.disabled) return;
+    this.isOpen = true;
+    this.onTouched();
+  }
+
+  close(): void {
+    this.isOpen = false;
+  }
+
+  selectOption(value: string): void {
+    if (this.disabled) return;
+    
     this._value = value;
     this.onChange(value);
     this.onTouched();
     this.selectionChange.emit(value);
+    this.updateSelectedOption();
+    this.close();
+  }
+
+  isSelected(value: string): boolean {
+    return this._value === value;
   }
 }

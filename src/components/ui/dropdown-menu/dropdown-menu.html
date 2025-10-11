@@ -1,22 +1,13 @@
-<div class="relative">
-  <!-- Trigger -->
-  <button
-    #triggerRef
-    [class]="triggerClasses"
-    (click)="toggle()"
-    [attr.aria-expanded]="isOpen"
-    [attr.aria-haspopup]="true"
-  >
-    <ng-content select="[slot=trigger]"></ng-content>
-  </button>
+<div class="relative" (click)="onTriggerClick($event)">
+  <!-- Trigger Content -->
+  <ng-content select="[slot=trigger]"></ng-content>
 
-  <!-- Content -->
+  <!-- Dropdown Content -->
   @if (isOpen) {
     <div
       #contentRef
       [class]="contentClasses"
       role="menu"
-      [attr.aria-orientation]="'vertical'"
     >
       <ng-content select="[slot=content]"></ng-content>
     </div>

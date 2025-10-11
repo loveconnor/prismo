@@ -28,25 +28,19 @@
       <div class="space-y-4">
         <app-alert variant="default">
           <div class="flex items-center gap-2">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
+            <ng-icon name="lucide-info" class="h-4 w-4"></ng-icon>
             <span>This is a default alert message.</span>
           </div>
         </app-alert>
         <app-alert variant="destructive">
           <div class="flex items-center gap-2">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-            </svg>
+            <ng-icon name="lucide-triangle-alert" class="h-4 w-4"></ng-icon>
             <span>This is a destructive alert message.</span>
           </div>
         </app-alert>
         <app-alert variant="success">
           <div class="flex items-center gap-2">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
+            <ng-icon name="lucide-circle-check" class="h-4 w-4"></ng-icon>
             <span>This is a success alert message.</span>
           </div>
         </app-alert>
@@ -170,9 +164,7 @@
           <app-input-group>
             <app-input placeholder="Search..." />
             <span data-slot="icon" class="flex items-center justify-center">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
+              <ng-icon name="lucide-search" class="w-4 h-4"></ng-icon>
             </span>
           </app-input-group>
         </div>
@@ -180,10 +172,22 @@
         <!-- Select and Textarea -->
         <div class="space-y-4">
           <h3 class="text-lg font-medium text-foreground">Select & Textarea</h3>
-          <app-select
-            [options]="selectOptions"
-            placeholder="Choose an option"
-          />
+          <div class="space-y-3">
+            <app-select
+              [options]="selectOptions"
+              placeholder="Choose an option"
+            />
+            <app-select
+              [options]="selectOptions"
+              placeholder="Small select"
+              size="sm"
+            />
+            <app-select
+              [options]="selectOptions"
+              placeholder="Disabled select"
+              [disabled]="true"
+            />
+          </div>
           <app-textarea
             placeholder="Enter your message"
             [rows]="3"
@@ -623,16 +627,11 @@
             <app-navbar>
               <app-navbar-section>
                 <app-navbar-item [current]="true">
-                  <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
-                  </svg>
+                  <ng-icon name="lucide-house" data-slot="icon" class="size-6"></ng-icon>
                   <app-navbar-label>Dashboard</app-navbar-label>
                 </app-navbar-item>
                 <app-navbar-item>
-                  <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                  </svg>
+                  <ng-icon name="lucide-folder" data-slot="icon" class="size-6"></ng-icon>
                   <app-navbar-label>Projects</app-navbar-label>
                 </app-navbar-item>
               </app-navbar-section>
@@ -641,10 +640,7 @@
 
               <app-navbar-section>
                 <app-navbar-item>
-                  <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
+                  <ng-icon name="lucide-settings" data-slot="icon" class="size-6"></ng-icon>
                   <app-navbar-label>Settings</app-navbar-label>
                 </app-navbar-item>
               </app-navbar-section>
@@ -672,16 +668,11 @@
               <app-navbar>
                 <app-navbar-section>
                   <app-navbar-item [current]="true">
-                    <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
-                    </svg>
+                    <ng-icon name="lucide-house" data-slot="icon" class="size-6"></ng-icon>
                     <app-navbar-label>Dashboard</app-navbar-label>
                   </app-navbar-item>
                   <app-navbar-item>
-                    <svg data-slot="icon" class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
+                    <ng-icon name="lucide-folder" data-slot="icon" class="size-6"></ng-icon>
                     <app-navbar-label>Projects</app-navbar-label>
                   </app-navbar-item>
                   <app-navbar-item>
@@ -721,6 +712,76 @@
             </div>
           </app-card-content>
         </app-card>
+      </div>
+    </section>
+
+    <!-- Dropdown Menu Components -->
+    <section id="dropdowns" class="mb-12">
+      <h2 class="text-2xl font-semibold text-foreground mb-6">Dropdown Menu Components</h2>
+      <div class="flex flex-wrap gap-4">
+        <app-dropdown-menu>
+          <button slot="trigger" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2">
+            Open Menu
+            <ng-icon name="lucide-chevron-down" class="ml-2 h-4 w-4"></ng-icon>
+          </button>
+          <div slot="content" class="w-56">
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-user" class="mr-2 h-4 w-4"></ng-icon>
+              Profile
+            </button>
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-settings" class="mr-2 h-4 w-4"></ng-icon>
+              Settings
+            </button>
+            <div class="my-1 h-px bg-muted"></div>
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-log-out" class="mr-2 h-4 w-4"></ng-icon>
+              Logout
+            </button>
+          </div>
+        </app-dropdown-menu>
+
+        <app-dropdown-menu align="end">
+          <button slot="trigger" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+            Actions
+            <ng-icon name="lucide-chevron-down" class="ml-2 h-4 w-4"></ng-icon>
+          </button>
+          <div slot="content" class="w-48">
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-pencil" class="mr-2 h-4 w-4"></ng-icon>
+              Edit
+            </button>
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-copy" class="mr-2 h-4 w-4"></ng-icon>
+              Copy
+            </button>
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-download" class="mr-2 h-4 w-4"></ng-icon>
+              Download
+            </button>
+          </div>
+        </app-dropdown-menu>
+
+        <app-dropdown-menu align="center">
+          <button slot="trigger" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+            Center Menu
+            <ng-icon name="lucide-chevron-down" class="ml-2 h-4 w-4"></ng-icon>
+          </button>
+          <div slot="content" class="w-40">
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-menu" class="mr-2 h-4 w-4"></ng-icon>
+              Option 1
+            </button>
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-zap" class="mr-2 h-4 w-4"></ng-icon>
+              Option 2
+            </button>
+            <button class="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50" role="menuitem">
+              <ng-icon name="lucide-circle-check" class="mr-2 h-4 w-4"></ng-icon>
+              Option 3
+            </button>
+          </div>
+        </app-dropdown-menu>
       </div>
     </section>
 
