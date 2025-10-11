@@ -85,10 +85,10 @@ export class SidebarItemComponent implements ControlValueAccessor, AfterViewInit
       '*:last:data-[slot=icon]:ml-auto *:last:data-[slot=icon]:size-5 sm:*:last:data-[slot=icon]:size-4',
       // Avatar
       '*:data-[slot=avatar]:-m-0.5 *:data-[slot=avatar]:size-7 sm:*:data-[slot=avatar]:size-6',
-      // Hover states
+      // Hover states (subtle background only)
       this.isDark
-        ? 'data-hover:bg-white/[0.04] data-hover:text-[#e5e7eb] data-hover:*:data-[slot=icon]:text-[#e5e7eb]'
-        : 'data-hover:bg-zinc-950/5 data-hover:text-zinc-900 data-hover:*:data-[slot=icon]:text-zinc-900',
+        ? 'hover:bg-white/5'
+        : 'hover:bg-zinc-950/5',
       // Active states
       this.isDark
         ? 'data-active:bg-white/[0.06] data-active:text-[#e5e7eb] data-active:*:data-[slot=icon]:text-[#e5e7eb]'

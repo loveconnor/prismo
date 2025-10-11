@@ -366,12 +366,13 @@
 
 @layer base {
   * {
-    @apply border-gray-200 outline-blue-500/50;
+    /* Use theme-driven border color so dark mode isn't too bright */
+    @apply border-border outline-blue-500/50;
   }
 
   body {
-    background-color: #0b0f14;
-    color: #e5e7eb;
+    /* Use theme tokens so light/dark switch correctly */
+    @apply bg-background text-foreground;
   }
 }
 

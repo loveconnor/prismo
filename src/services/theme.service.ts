@@ -39,9 +39,13 @@ export class ThemeService {
     if (isPlatformBrowser(this.platformId)) {
       if (isDark) {
         this.renderer.addClass(this.document.documentElement, 'dark');
+        // Ensure any light-forcing class is removed
+        this.renderer.removeClass(this.document.documentElement, 'theme-light');
         localStorage.setItem('theme', 'dark');
       } else {
         this.renderer.removeClass(this.document.documentElement, 'dark');
+        // Add a helper class to activate light-mode overrides
+        this.renderer.addClass(this.document.documentElement, 'theme-light');
         localStorage.setItem('theme', 'light');
       }
     }

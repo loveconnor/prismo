@@ -5,9 +5,7 @@ import { CardComponent } from '../../components/ui/card/card';
 import { CardHeaderComponent } from '../../components/ui/card/card-header';
 import { CardContentComponent } from '../../components/ui/card/card-content';
 import { CardFooterComponent } from '../../components/ui/card/card-footer';
-import { NgIcon } from '@ng-icons/core';
-import { provideIcons } from '@ng-icons/core';
-import { lucideClock } from '@ng-icons/lucide';
+import { SafeHtmlPipe } from '../lib/safe-html.pipe';
 
 type Lab = {
   title: string;
@@ -27,9 +25,8 @@ type Lab = {
     CardHeaderComponent,
     CardContentComponent,
     CardFooterComponent,
-    NgIcon
+    SafeHtmlPipe
   ],
-  providers: [provideIcons({ lucideClock })],
   template: `
     <section>
       <div class="mb-4 flex items-center justify-between">
@@ -42,7 +39,7 @@ type Lab = {
           >
             <app-card-header className="pb-0">
               <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#60a5fa]">
-                <ng-icon name="lucideBeaker" class="h-6 w-6"></ng-icon>
+                <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" [innerHTML]="lab.icon | safeHtml" aria-hidden="true"></svg>
               </div>
             </app-card-header>
             <app-card-content className="flex-1 flex flex-col gap-3 pt-4">
@@ -54,7 +51,10 @@ type Lab = {
                   {{ lab.difficulty }}
                 </span>
                 <span class="flex items-center gap-1 text-xs text-muted-foreground">
-                  <ng-icon name="lucideClock" class="h-3 w-3"></ng-icon>
+                  <!-- Clock icon -->
+                  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 1.75A10.25 10.25 0 1 0 22.25 12 10.262 10.262 0 0 0 12 1.75zm0 18.5A8.25 8.25 0 1 1 20.25 12 8.259 8.259 0 0 1 12 20.25zm.75-12.5a.75.75 0 0 0-1.5 0V12a.75.75 0 0 0 .22.53l3 3a.75.75 0 0 0 1.06-1.06l-2.78-2.78z"></path>
+                  </svg>
                   {{ lab.time }}
                 </span>
               </div>

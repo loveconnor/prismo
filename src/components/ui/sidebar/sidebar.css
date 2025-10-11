@@ -1,0 +1,5 @@
+/* Ensure the custom element fills the aside height so children can size to 100% */
+:host {
+  display: block;
+  height: 100%;
+}

@@ -157,7 +157,10 @@ export class ComponentsPage implements OnInit, OnDestroy {
   constructor(public themeService: ThemeService) {}
 
   ngOnInit(): void {
-    this.updateActiveSection();
+    // Avoid SSR errors when document/window are not available
+    if (typeof document !== 'undefined') {
+      this.updateActiveSection();
+    }
   }
 
   ngOnDestroy(): void {
@@ -166,10 +169,12 @@ export class ComponentsPage implements OnInit, OnDestroy {
 
   @HostListener('window:scroll')
   onScroll(): void {
+    if (typeof window === 'undefined') return;
     this.updateActiveSection();
   }
 
   private updateActiveSection(): void {
+    if (typeof document === 'undefined') return;
     const sections = ['buttons', 'inputs', 'dialogs', 'forms', 'alerts', 'cards', 'toggles', 'tabs', 'progess', 'table', 'pagination', 'navbar'];
     
     for (const section of sections) {
@@ -185,6 +190,7 @@ export class ComponentsPage implements OnInit, OnDestroy {
   }
 
   navigateToSection(sectionId: string): void {
+    if (typeof document === 'undefined') return;
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { cn } from '../../../../lib/utils';
 
@@ -12,9 +12,10 @@ import { cn } from '../../../../lib/utils';
 export class SidebarFooterComponent {
   @Input() className = '';
 
-  get footerClasses(): string {
+  @HostBinding('class')
+  get hostClasses(): string {
     return cn(
-      'flex flex-col border-t border-zinc-950/5 p-4 dark:border-white/5 [&>[data-slot=section]+[data-slot=section]]:mt-2.5',
+      'mt-auto flex flex-col border-t border-zinc-950/5 p-4 dark:border-white/5 [&>[data-slot=section]+[data-slot=section]]:mt-2.5',
       this.className
     );
   }

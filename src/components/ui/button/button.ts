@@ -45,6 +45,9 @@ export class ButtonComponent implements ControlValueAccessor {
     return this.getButtonClasses();
   }
 
+  // Make the host not generate a box so the inner element sizes as the flex/grid child
+  @HostBinding('class') hostClasses = 'contents';
+
   @HostBinding('attr.data-hover')
   get dataHover() {
     return this.isHovered ? 'true' : null;
