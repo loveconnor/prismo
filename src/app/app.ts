@@ -1,5 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, Router } from '@angular/router';
+import { provideIcons, NgIconComponent } from '@ng-icons/core';
+import {
+  lucideHouse,
+  lucideBookOpen,
+  lucideBeaker,
+  lucideSettings,
+  lucideGrid3x3,
+  lucideFileText,
+  lucideChartBar
+} from '@ng-icons/lucide';
 import { SidebarComponent } from '../components/ui/sidebar/sidebar';
 import { SidebarHeaderComponent } from '../components/ui/sidebar/sidebar-header/sidebar-header';
 import { SidebarBodyComponent } from '../components/ui/sidebar/sidebar-body/sidebar-body';
@@ -14,9 +24,21 @@ import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-root',
+  providers: [
+    provideIcons({
+      lucideHouse,
+      lucideBookOpen,
+      lucideBeaker,
+      lucideSettings,
+      lucideGrid3x3,
+      lucideFileText,
+      lucideChartBar
+    })
+  ],
   imports: [
     RouterOutlet,
     RouterLink,
+    NgIconComponent,
     SidebarComponent,
     SidebarHeaderComponent,
     SidebarBodyComponent,
