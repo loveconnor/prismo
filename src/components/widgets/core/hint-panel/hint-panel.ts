@@ -15,6 +15,7 @@ interface Hint {
   tier: number;
   text: string;
   revealed: boolean;
+  viewCount: number;
 }
 
 @Component({
@@ -72,6 +73,22 @@ interface Hint {
               
               <div class="text-sm text-foreground leading-relaxed" *ngIf="hint.revealed">
                 {{ hint.text }}
+              </div>
+              
+              <div class="flex items-center justify-between mt-2" *ngIf="hint.revealed">
+                <div class="text-xs text-muted-foreground">
+                  <span *ngIf="hint.viewCount > 0">Viewed {{ hint.viewCount }} time{{ hint.viewCount === 1 ? '' : 's' }}</span>
+                </div>
+                <app-button 
+                  variant="outline"
+                  size="sm"
+                  (click)="revealHint(hint.id)"
+                  [disabled]="isRevealing"
+                  className="text-xs"
+                >
+                  <ng-icon name="lucideEyeOff" class="w-3 h-3 mr-1"></ng-icon>
+                  Hide
+                </app-button>
               </div>
               
               <app-button 
@@ -132,13 +149,22 @@ export class HintPanelComponent extends WidgetBaseComponent {
     this.isRevealing = true;
     this.incrementAttempts();
 
-    // Reveal hint immediately
+    // Toggle hint visibility and track view count
     const hint = this.hints.find(h => h.id === hintId);
     if (hint) {
-      hint.revealed = true;
+      if (!hint.revealed) {
+        // Revealing hint for the first time
+        hint.revealed = true;
+        hint.viewCount = (hint.viewCount || 0) + 1;
+        this.setDataValue('total_hints_used', this.hintsUsed);
+        this.setDataValue('last_hint_revealed', new Date());
+      } else {
+        // Hiding hint
+        hint.revealed = false;
+      }
+      
       this.setDataValue('hints_revealed', this.hints.filter(h => h.revealed).map(h => h.id));
-      this.setDataValue('total_hints_used', this.hintsUsed);
-      this.setDataValue('last_hint_revealed', new Date());
+      this.setDataValue('hint_view_counts', this.hints.map(h => ({ id: h.id, viewCount: h.viewCount || 0 })));
       
       // Check if all hints are revealed
       if (this.hintsUsed === this.totalHints) {
@@ -153,6 +179,13 @@ export class HintPanelComponent extends WidgetBaseComponent {
     if (this.hints.length === 0) {
       this.hints = this.getConfigValue('hints', []);
     }
+
+    // Initialize viewCount for all hints
+    this.hints.forEach(hint => {
+      if (hint.viewCount === undefined) {
+        hint.viewCount = 0;
+      }
+    });
 
     // Mark initial state
     this.setDataValue('hints_available', this.totalHints);
