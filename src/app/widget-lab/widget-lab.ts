@@ -205,11 +205,48 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
 
           <!-- Category Widgets -->
           <div class="space-y-6">
+            
             <div>
-              <h3 class="text-lg font-semibold text-foreground mb-3">Code Editor</h3>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Code Editor (Full Features)</h3>
               <app-code-editor
                 [metadata]="codeEditorMetadata"
                 [config]="codeEditorConfig"
+                [width]="codeEditorConfig.width"
+                [height]="codeEditorConfig.height"
+                [minHeight]="codeEditorConfig.minHeight"
+                [enableSyntaxHighlighting]="codeEditorConfig.enableSyntaxHighlighting"
+                [enableAutoCompletion]="codeEditorConfig.enableAutoCompletion"
+                [enableLineNumbers]="codeEditorConfig.enableLineNumbers"
+                [enableBracketMatching]="codeEditorConfig.enableBracketMatching"
+                [enableCodeFolding]="codeEditorConfig.enableCodeFolding"
+                [enableSearch]="codeEditorConfig.enableSearch"
+                [enableIndentation]="codeEditorConfig.enableIndentation"
+                [enableWordWrap]="codeEditorConfig.enableWordWrap"
+                [enableMinimap]="codeEditorConfig.enableMinimap"
+                [allowUserSettings]="codeEditorConfig.allowUserSettings"
+                [showSettingsPanel]="codeEditorConfig.showSettingsPanel"
+              ></app-code-editor>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Code Editor (Restricted - Admin Disabled Features)</h3>
+              <app-code-editor
+                [metadata]="restrictedCodeEditorMetadata"
+                [config]="restrictedCodeEditorConfig"
+                [width]="'100%'"
+                [height]="'350px'"
+                [minHeight]="'250px'"
+                [enableSyntaxHighlighting]="false"
+                [enableAutoCompletion]="false"
+                [enableLineNumbers]="true"
+                [enableBracketMatching]="false"
+                [enableCodeFolding]="false"
+                [enableSearch]="true"
+                [enableIndentation]="true"
+                [enableWordWrap]="false"
+                [enableMinimap]="false"
+                [allowUserSettings]="true"
+                [showSettingsPanel]="true"
               ></app-code-editor>
             </div>
 
@@ -364,7 +401,62 @@ export class WidgetLabComponent implements OnInit, OnDestroy {
     title: 'Try the Code Editor',
     language: 'javascript',
     starterCode: '// Write a simple function\nfunction greet(name) {\n  return "Hello, " + name + "!";\n}\n\nconsole.log(greet("World"));',
-    placeholder: 'Write your code here...'
+    placeholder: 'Write your code here...',
+    width: '100%',
+    height: '450px',
+    minHeight: '350px',
+    // Admin Settings (can be disabled)
+    enableSyntaxHighlighting: true,
+    enableAutoCompletion: true,
+    enableLineNumbers: true,
+    enableBracketMatching: true,
+    enableCodeFolding: true,
+    enableSearch: true,
+    enableIndentation: true,
+    enableWordWrap: false,
+    enableMinimap: false,
+    // User Settings
+    allowUserSettings: true,
+    showSettingsPanel: true
+  };
+
+  // Restricted Code Editor Configuration (Admin Disabled Features)
+  public restrictedCodeEditorMetadata = {
+    id: 'restricted-code-editor',
+    title: 'Restricted Code Editor',
+    description: 'Code editor with admin-disabled features',
+    skills: ['coding', 'problem-solving'],
+    difficulty: 3,
+    estimated_time: 45,
+    category: 'coding' as any,
+    input_type: 'code' as any,
+    output_type: 'execution_result' as any,
+    dependencies: [],
+    adaptive_hooks: {},
+    version: '1.0.0'
+  };
+
+  public restrictedCodeEditorConfig = {
+    title: 'Restricted Editor (Admin Disabled Features)',
+    language: 'javascript',
+    starterCode: '// Basic coding without advanced features\nfunction simpleAdd(a, b) {\n  return a + b;\n}',
+    placeholder: 'Write simple code here...',
+    width: '100%',
+    height: '350px',
+    minHeight: '250px',
+    // Admin Settings (some features disabled)
+    enableSyntaxHighlighting: false,
+    enableAutoCompletion: false,
+    enableLineNumbers: true,
+    enableBracketMatching: false,
+    enableCodeFolding: false,
+    enableSearch: true,
+    enableIndentation: true,
+    enableWordWrap: false,
+    enableMinimap: false,
+    // User Settings
+    allowUserSettings: true,
+    showSettingsPanel: true
   };
 
   public equationInputMetadata = {

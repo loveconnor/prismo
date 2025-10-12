@@ -31,7 +31,10 @@ import { gsap } from 'gsap';
   ],
   template: `
     <app-card 
-      [className]="'min-h-[200px] transition-all duration-200'"
+      [className]="'transition-all duration-200'"
+      [style.width]="width"
+      [style.height]="height"
+      [style.min-height]="minHeight"
       [class.opacity-75]="isLoading"
       [class.pointer-events-none]="isLoading"
       [class.border-destructive]="hasError"
@@ -71,6 +74,9 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
   @Input() metadata!: WidgetMetadata;
   @Input() config: Record<string, any> = {};
   @Input() initialData: Record<string, any> = {};
+  @Input() width: string = '100%';
+  @Input() height: string = '300px';
+  @Input() minHeight: string = '200px';
   
   @Output() stateChange = new EventEmitter<WidgetEvent>();
   @ViewChild('widgetCard') widgetCard!: ElementRef;
