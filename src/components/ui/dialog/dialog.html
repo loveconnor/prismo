@@ -1,7 +1,6 @@
 @if (open) {
   <div 
     [class]="dialogClasses"
-    (click)="onBackdropClick($event)"
     (keydown)="onKeyDown($event)"
     tabindex="-1"
   >
@@ -10,10 +9,11 @@
       #backdrop
       [class]="backdropClasses"
       aria-hidden="true"
+      (click)="onBackdropClick($event)"
     ></div>
 
     <!-- Dialog Panel Container -->
-    <div class="flex items-center justify-center min-h-full p-4">
+    <div class="flex items-center justify-center min-h-full p-4 pointer-events-none">
       <div 
         #panel
         [class]="panelClasses"

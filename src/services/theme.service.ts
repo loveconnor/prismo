@@ -33,9 +33,9 @@ export class ThemeService {
     this.setTheme(!this.isDarkMode());
   }
 
-  private setTheme(isDark: boolean): void {
+  setTheme(isDark: boolean): void {
     this.isDarkMode.set(isDark);
-    
+
     if (isPlatformBrowser(this.platformId)) {
       if (isDark) {
         this.renderer.addClass(this.document.documentElement, 'dark');

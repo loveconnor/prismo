@@ -83,6 +83,7 @@ export class DialogComponent implements AfterViewInit, OnDestroy, OnChanges, Aft
       'relative w-full min-w-0 bg-background p-8 shadow-lg ring-1 ring-border',
       'text-foreground',
       'forced-colors:outline',
+      'pointer-events-auto',
       positionClasses[this.position],
       this.sizeClasses[this.size],
       this.className
@@ -123,7 +124,7 @@ export class DialogComponent implements AfterViewInit, OnDestroy, OnChanges, Aft
   }
 
   onBackdropClick(event: Event): void {
-    if (this.closeOnBackdropClick && event.target === event.currentTarget) {
+    if (this.closeOnBackdropClick) {
       this.close();
     }
   }

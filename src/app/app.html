@@ -23,7 +23,7 @@
             <ng-icon name="lucide-beaker" data-slot="icon" class="size-6"></ng-icon>
             <app-sidebar-label>Labs</app-sidebar-label>
           </app-sidebar-item>
-          <app-sidebar-item>
+          <app-sidebar-item (click)="openSettings($event)">
             <ng-icon name="lucide-settings" data-slot="icon" class="size-6"></ng-icon>
             <app-sidebar-label>Settings</app-sidebar-label>
           </app-sidebar-item>
@@ -49,7 +49,7 @@
       </app-sidebar-body>
 
       <app-sidebar-footer>
-        <app-sidebar-section className="px-3 pb-3 items-center">
+        <app-sidebar-section className="px-0 pb-3 flex items-center justify-center">
           <app-avatar-dropdown
             [user]="{
               name: 'John Doe',
@@ -58,7 +58,7 @@
               avatarUrl: 'https://github.com/monster0506.png'
             }"
             variant="sidebar"
-            [triggerClassName]="'w-full max-w-[220px] mx-auto'"
+            (profileClick)="openSettings()"
           ></app-avatar-dropdown>
         </app-sidebar-section>
       </app-sidebar-footer>
@@ -69,4 +69,6 @@
   <main class="flex-1 overflow-y-auto">
 <router-outlet />
   </main>
+
+  <app-settings-modal [open]="settingsOpen" (openChange)="settingsOpen = $event"></app-settings-modal>
 </div>

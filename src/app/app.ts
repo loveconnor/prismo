@@ -20,6 +20,7 @@ import { SidebarDividerComponent } from '../components/ui/sidebar/sidebar-divide
 import { SidebarHeadingComponent } from '../components/ui/sidebar/sidebar-heading/sidebar-heading';
 import { SidebarLabelComponent } from '../components/ui/sidebar/sidebar-label/sidebar-label';
 import { AvatarDropdownComponent } from '../components/ui/avatar-dropdown/avatar-dropdown';
+import { SettingsModalComponent } from '../components/settings/settings-modal/settings-modal';
 import { ThemeService } from '../services/theme.service';
 
 @Component({
@@ -48,12 +49,15 @@ import { ThemeService } from '../services/theme.service';
     SidebarDividerComponent,
     SidebarHeadingComponent,
     SidebarLabelComponent,
-    AvatarDropdownComponent
+    AvatarDropdownComponent,
+    SettingsModalComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
+  settingsOpen = false;
+
   constructor(public themeService: ThemeService, private router: Router) {}
 
   isActive(route: string): boolean {
@@ -62,5 +66,11 @@ export class App {
 
   toggleTheme() {
     this.themeService.toggleTheme();
+  }
+
+  openSettings(event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.settingsOpen = true;
   }
 }

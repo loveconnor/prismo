@@ -1,0 +1,20 @@
+<nav class="settings-left-nav">
+  <ng-container *ngFor="let group of navGroups; let i = index">
+    <div [class.mt-6]="i > 0">
+      <h3 class="settings-left-nav__group">{{ group.label }}</h3>
+      <div class="settings-left-nav__items">
+        <ng-container *ngFor="let item of group.items">
+          <app-button
+            type="button"
+            variant="ghost"
+            [className]="buttonClasses(activeSection === item.id)"
+            (click)="onSelect(item.id)"
+          >
+            <ng-icon [name]="item.icon" [class]="iconClasses(activeSection === item.id)"></ng-icon>
+            <span class="truncate">{{ item.label }}</span>
+          </app-button>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</nav>

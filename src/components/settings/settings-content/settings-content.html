@@ -1,0 +1,164 @@
+<div class="settings-content">
+  <div class="settings-content__inner" [ngSwitch]="activeSection">
+    <ng-container *ngSwitchCase="'profile'">
+      <app-settings-section title="Profile">
+        <app-settings-row
+          label="Display name"
+          description="This name appears on your shared labs and profile."
+        >
+          <app-input
+            [(ngModel)]="displayName"
+            placeholder="Enter name"
+            [className]="controlInputClasses"
+          ></app-input>
+        </app-settings-row>
+
+        <app-settings-row
+          label="Time zone"
+          description="Adjust for accurate due times and review schedules."
+        >
+          <app-select
+            [(ngModel)]="timeZone"
+            [options]="timeZoneOptions"
+            [className]="selectTriggerClasses"
+            [contentClassName]="selectContentClasses"
+            [optionClassName]="selectOptionClasses"
+            (selectionChange)="onTimeZoneChange($event)"
+          ></app-select>
+        </app-settings-row>
+      </app-settings-section>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'appearance'">
+      <app-settings-section title="Appearance">
+        <app-settings-row
+          label="Theme"
+          description="Choose how Prismo Labs looks across devices."
+        >
+          <app-select
+            [(ngModel)]="themeMode"
+            [options]="themeOptions"
+            [className]="selectTriggerClasses"
+            [contentClassName]="selectContentClasses"
+            [optionClassName]="selectOptionClasses"
+            (selectionChange)="onThemeChange($event)"
+          ></app-select>
+        </app-settings-row>
+
+        <app-settings-row
+          label="Interface text size"
+          description="Adjust type scale for comfort during longer sessions."
+        >
+          <app-select
+            [(ngModel)]="fontSize"
+            [options]="fontSizeOptions"
+            [className]="selectTriggerClasses"
+            [contentClassName]="selectContentClasses"
+            [optionClassName]="selectOptionClasses"
+            (selectionChange)="onFontSizeChange($event)"
+          ></app-select>
+        </app-settings-row>
+      </app-settings-section>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'notifications'">
+      <app-settings-section title="Notifications">
+        <app-settings-row
+          label="Email progress updates"
+          description="Receive weekly summaries of your skill growth."
+        >
+          <app-switch
+            [(ngModel)]="emailProgress"
+            [className]="'data-[state=checked]:bg-[#3b82f6]'"
+          ></app-switch>
+        </app-settings-row>
+
+        <app-settings-row
+          label="Remind me when I get stuck"
+          description="Notify me if I haven't completed a lab step in 3 days."
+        >
+          <app-switch
+            [(ngModel)]="reminderHints"
+            [className]="'data-[state=checked]:bg-[#3b82f6]'"
+          ></app-switch>
+        </app-settings-row>
+      </app-settings-section>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'adaptive'">
+      <app-settings-section title="Adaptive Learning">
+        <app-settings-row
+          label="Adjust difficulty automatically"
+          description="The system will tailor labs based on your mastery and confidence ratings."
+        >
+          <app-switch
+            [(ngModel)]="autoDifficulty"
+            [className]="'data-[state=checked]:bg-[#3b82f6]'"
+          ></app-switch>
+        </app-settings-row>
+
+        <app-settings-row
+          label="Show skill mastery map"
+          description="Visualize your current progress using color-coded topics."
+        >
+          <app-switch
+            [(ngModel)]="showMasteryMap"
+            [className]="'data-[state=checked]:bg-[#3b82f6]'"
+          ></app-switch>
+        </app-settings-row>
+      </app-settings-section>
+
+      <app-settings-section title="Danger Zone" variant="danger">
+        <app-settings-row
+          label="Delete all progress data"
+          description="Erase all lab attempts and mastery tracking while keeping your account intact."
+        >
+          <app-button
+            type="button"
+            variant="destructive"
+            [className]="'w-56 bg-[#dc2626] text-white hover:bg-[#b91c1c] shadow-[0_0_0_1px_rgba(220,38,38,0.2)]'"
+            (click)="openDeleteConfirmation()"
+          >
+            Delete progress
+          </app-button>
+        </app-settings-row>
+      </app-settings-section>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'privacy'">
+      <div class="settings-content__coming-soon">
+        <p>This section is coming soon.</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'security'">
+      <div class="settings-content__coming-soon">
+        <p>This section is coming soon.</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'progress'">
+      <div class="settings-content__coming-soon">
+        <p>This section is coming soon.</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'curriculum'">
+      <div class="settings-content__coming-soon">
+        <p>This section is coming soon.</p>
+      </div>
+    </ng-container>
+  </div>
+
+  <app-confirm-dialog
+    [open]="showDeleteDialog"
+    (openChange)="showDeleteDialog = $event"
+    title="Delete all progress data?"
+    description="This action cannot be undone. All your lab attempts, mastery tracking, and progress data will be permanently deleted."
+    confirmLabel="Delete progress"
+    cancelLabel="Cancel"
+    variant="danger"
+    (confirm)="confirmDelete()"
+    (cancel)="closeDeleteConfirmation()"
+  ></app-confirm-dialog>
+</div>

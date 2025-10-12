@@ -1,0 +1,20 @@
+<app-dialog
+  [open]="open"
+  (openChange)="onOpenChange($event)"
+  size="5xl"
+  position="middle"
+  [className]="'settings-modal__panel'"
+  [closeOnBackdropClick]="true"
+>
+  <app-dialog-header class="settings-modal__header">
+    <app-dialog-title class="settings-modal__title">Settings</app-dialog-title>
+  </app-dialog-header>
+
+  <div class="settings-modal__body">
+    <app-settings-left-nav
+      [activeSection]="activeSection"
+      (sectionChange)="onSectionChange($event)"
+    ></app-settings-left-nav>
+    <app-settings-content [activeSection]="activeSection"></app-settings-content>
+  </div>
+</app-dialog>

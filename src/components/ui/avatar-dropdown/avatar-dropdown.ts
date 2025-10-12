@@ -7,12 +7,6 @@ import { Router } from '@angular/router';
 import { AvatarComponent } from '../avatar/avatar';
 import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu';
 import { SwitchComponent } from '../switch/switch';
-import { DialogComponent } from '../dialog/dialog';
-import { DialogHeaderComponent } from '../dialog/dialog-header';
-import { DialogTitleComponent } from '../dialog/dialog-title';
-import { DialogDescriptionComponent } from '../dialog/dialog-description';
-import { DialogFooterComponent } from '../dialog/dialog-footer';
-import { ButtonComponent } from '../button/button';
 import { ThemeService } from '../../../services/theme.service';
 import { cn } from '../../../lib/utils';
 
@@ -42,13 +36,7 @@ type ThemeVariant = 'light' | 'dark';
     NgIconComponent,
     AvatarComponent,
     DropdownMenuComponent,
-    SwitchComponent,
-    DialogComponent,
-    DialogHeaderComponent,
-    DialogTitleComponent,
-    DialogDescriptionComponent,
-    DialogFooterComponent,
-    ButtonComponent
+    SwitchComponent
   ],
   templateUrl: './avatar-dropdown.html',
   styleUrls: ['./avatar-dropdown.css']
@@ -64,12 +52,20 @@ export class AvatarDropdownComponent implements OnInit {
 
   @Output() logout = new EventEmitter<void>();
   @Output() themeChange = new EventEmitter<ThemeVariant>();
+  @Output() profileClick = new EventEmitter<void>();
 
   @ViewChild(DropdownMenuComponent) dropdownMenu?: DropdownMenuComponent;
 
   isDarkMode = true;
   menuOpen = false;
-  settingsOpen = false;
+  
+  get dropdownAlign(): 'start' | 'center' | 'end' {
+    return this.variant === 'sidebar' ? 'center' : 'end';
+  }
+  
+  get dropdownSide(): 'top' | 'right' | 'bottom' | 'left' {
+    return this.variant === 'sidebar' ? 'top' : 'bottom';
+  }
 
   @HostBinding('attr.data-slot') dataSlot = 'avatar';
   @HostBinding('attr.data-variant') get dataVariant(): string {
@@ -105,7 +101,7 @@ export class AvatarDropdownComponent implements OnInit {
 
   openProfile(): void {
     this.closeMenu();
-    this.settingsOpen = true;
+    this.profileClick.emit();
   }
 
   handleThemeToggle(checked: boolean): void {
@@ -133,10 +129,6 @@ export class AvatarDropdownComponent implements OnInit {
     await this.router.navigate(['/']);
   }
 
-  closeSettings(): void {
-    this.settingsOpen = false;
-  }
-
   private closeMenu(): void {
     this.dropdownMenu?.close();
   }
@@ -150,18 +142,21 @@ export class AvatarDropdownComponent implements OnInit {
 
     if (this.variant === 'sidebar') {
       return cn(
-        'flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-center',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6] focus-visible:ring-offset-2',
+        'flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-all justify-start w-full max-w-[220px]',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
         isDark
-          ? 'text-[#a9b1bb] hover:bg-white/5 focus-visible:ring-offset-[#0b0f14]'
-          : 'text-zinc-700 hover:bg-zinc-950/5 focus-visible:ring-offset-white',
+          ? 'text-zinc-300 hover:bg-white/5 hover:text-white focus-visible:ring-offset-zinc-950'
+          : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-offset-white',
         this.triggerClassName
       );
     }
 
     return cn(
-      'inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-[#111827] transition-all',
-      'hover:shadow-[0_0_0_3px_rgba(59,130,246,0.1)] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2 focus:ring-offset-[#0b0f14]',
+      'inline-flex h-9 w-9 items-center justify-center rounded-full border transition-all',
+      'hover:shadow-[0_0_0_3px_rgba(59,130,246,0.1)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+      isDark
+        ? 'border-white/10 bg-zinc-800 focus:ring-offset-zinc-950'
+        : 'border-zinc-200 bg-white focus:ring-offset-white',
       this.triggerClassName
     );
   }
@@ -179,12 +174,25 @@ export class AvatarDropdownComponent implements OnInit {
     return 'h-full w-full';
   }
 
+  get userInfoClasses(): string {
+    return 'flex flex-col items-start flex-1 min-w-0';
+  }
+
   get nameClasses(): string {
     const isDark = this.themeService.isDarkMode();
 
     return cn(
-      'truncate text-sm font-medium text-center',
-      isDark ? 'text-[#e5e7eb]' : 'text-zinc-900'
+      'truncate text-sm font-medium w-full text-left',
+      isDark ? 'text-zinc-100' : 'text-zinc-900'
+    );
+  }
+
+  get emailClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+
+    return cn(
+      'truncate text-xs w-full text-left',
+      isDark ? 'text-zinc-400' : 'text-zinc-600'
     );
   }
 
@@ -192,5 +200,108 @@ export class AvatarDropdownComponent implements OnInit {
     return this.variant === 'sidebar'
       ? `Account menu for ${this.user?.name ?? 'user'}`
       : 'Account menu';
+  }
+
+  get dropdownClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'w-[280px] rounded-xl p-2 shadow-2xl',
+      isDark
+        ? 'border border-zinc-800 bg-zinc-900'
+        : 'border border-zinc-200 bg-white'
+    );
+  }
+
+  get contentClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'text-xs',
+      isDark ? 'text-zinc-100' : 'text-zinc-900'
+    );
+  }
+
+  get headerCardClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'mb-2 rounded-lg p-3',
+      isDark ? 'bg-zinc-950/50' : 'bg-zinc-50'
+    );
+  }
+
+  get headerAvatarClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'border',
+      isDark ? 'border-zinc-700' : 'border-zinc-200'
+    );
+  }
+
+  get nameTextClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'truncate text-sm font-semibold',
+      isDark ? 'text-zinc-100' : 'text-zinc-900'
+    );
+  }
+
+  get emailTextClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'truncate text-xs',
+      isDark ? 'text-zinc-400' : 'text-zinc-600'
+    );
+  }
+
+  get badgeClasses(): string {
+    return 'inline-flex items-center rounded-full bg-blue-500/15 px-2.5 py-0.5 text-[11px] font-medium text-blue-500';
+  }
+
+  get dividerClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'my-1.5 h-px',
+      isDark ? 'bg-zinc-800' : 'bg-zinc-200'
+    );
+  }
+
+  get menuItemClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors focus:outline-none',
+      isDark
+        ? 'text-zinc-100 hover:bg-zinc-800 focus:bg-zinc-800'
+        : 'text-zinc-900 hover:bg-zinc-100 focus:bg-zinc-100'
+    );
+  }
+
+  get themeToggleClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'mt-1 flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium',
+      isDark ? 'text-zinc-100' : 'text-zinc-900'
+    );
+  }
+
+  get signOutButtonClasses(): string {
+    return 'mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-red-500 transition-colors hover:bg-red-500/10 focus:bg-red-500/10 focus:outline-none';
+  }
+
+  get chevronClasses(): string {
+    const isDark = this.themeService.isDarkMode();
+    
+    return cn(
+      'h-4 w-4 transition-transform flex-shrink-0',
+      this.menuOpen && 'rotate-180',
+      isDark ? 'text-zinc-400' : 'text-zinc-500'
+    );
   }
 }

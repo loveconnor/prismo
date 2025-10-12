@@ -1,0 +1,32 @@
+.settings-left-nav {
+  width: 260px;
+  flex: 0 0 260px;
+  padding: 1.25rem;
+  border-right: 1px solid var(--border, rgba(55, 65, 81, 0.6));
+  overflow-y: auto;
+  background-color: transparent;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+:host-context(.theme-light) .settings-left-nav {
+  border-right-color: rgba(209, 213, 219, 1);
+}
+
+.settings-left-nav__group {
+  margin-bottom: 0.65rem;
+  padding-left: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground, rgba(156, 163, 175, 1));
+}
+
+.settings-left-nav__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}

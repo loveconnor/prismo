@@ -1,1 +1,19 @@
 /* Select component styles */
+
+/* Ensure proper text color in light mode */
+:host-context(.theme-light) button[role="option"] {
+  color: #111827 !important;
+}
+
+:host-context(.theme-light) button[role="option"] span {
+  color: #111827 !important;
+}
+
+/* Ensure proper text color in dark mode */
+:host-context(.dark) button[role="option"] {
+  color: #e5e7eb !important;
+}
+
+:host-context(.dark) button[role="option"] span {
+  color: #e5e7eb !important;
+}

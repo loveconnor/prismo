@@ -3,6 +3,18 @@
 }
 
 :host([data-variant='sidebar']) {
-  display: block;
+  display: flex;
   width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ensure smooth transitions for theme changes */
+:host button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Light mode specific overrides */
+:host-context(.theme-light) button {
+  color: inherit;
 }
