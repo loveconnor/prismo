@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OverlayModule } from '@angular/cdk/overlay';
+import { OverlayModule, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import { cn } from '../../../lib/utils';
 
 @Component({
@@ -10,7 +10,7 @@ import { cn } from '../../../lib/utils';
   templateUrl: './dropdown-menu.html',
   styleUrl: './dropdown-menu.css'
 })
-export class DropdownMenuComponent implements AfterViewInit, OnDestroy {
+export class DropdownMenuComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() className = '';
   @Input() align: 'start' | 'center' | 'end' = 'start';
   @Input() side: 'top' | 'right' | 'bottom' | 'left' = 'bottom';
@@ -20,9 +20,12 @@ export class DropdownMenuComponent implements AfterViewInit, OnDestroy {
 
   @Output() openChange = new EventEmitter<boolean>();
 
-  @ViewChild('contentRef', { static: false }) contentRef!: ElementRef;
+  @ViewChild('contentRef', { static: false }) contentRef?: ElementRef<HTMLElement>;
+  @ViewChild('triggerElement', { read: ElementRef }) triggerElement?: ElementRef<HTMLElement>;
+  @ViewChild(CdkOverlayOrigin, { static: false }) overlayOrigin?: CdkOverlayOrigin;
 
   isOpen = false;
+  private positions: ConnectedPosition[] = [];
 
   ngAfterViewInit(): void {
     // Initialize dropdown functionality
@@ -32,9 +35,32 @@ export class DropdownMenuComponent implements AfterViewInit, OnDestroy {
     // Cleanup if needed
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['align'] || changes['side'] || changes['alignOffset'] || changes['sideOffset']) {
+      this.positions = this.computePositions();
+    }
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
-    if (this.isOpen && !this.contentRef?.nativeElement?.contains(event.target)) {
+    if (!this.isOpen) {
+      return;
+    }
+
+    const target = event.target as HTMLElement | null;
+    const content = this.contentRef?.nativeElement;
+    const trigger = this.triggerElement?.nativeElement ?? this.overlayOrigin?.elementRef.nativeElement;
+
+    if (target && (content?.contains(target) || trigger?.contains(target))) {
+      return;
+    }
+
+    this.close();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (this.isOpen) {
       this.close();
     }
   }
@@ -85,48 +111,142 @@ export class DropdownMenuComponent implements AfterViewInit, OnDestroy {
 
   get contentClasses(): string {
     return cn(
-      'absolute top-full z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md',
-      this.getAlignmentClass(),
-      'data-[state=open]:animate-in data-[state=closed]:animate-out',
-      'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-      'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-      this.getSlideInClass(),
+      'z-[60] isolate w-max max-h-[calc(100vh-4rem)] overflow-y-auto rounded-2xl bg-popover text-popover-foreground shadow-[0_18px_45px_-20px_rgba(15,23,42,0.2)] backdrop-blur-sm',
+      'border border-border',
+      'transition data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
       this.className
     );
   }
 
-  private getAlignmentClass(): string {
+  get overlayPositions(): ConnectedPosition[] {
+    if (!this.positions.length) {
+      this.positions = this.computePositions();
+    }
+    return this.positions;
+  }
+
+  get overlayOffsetX(): number {
+    if (this.side === 'left') {
+      return -this.sideOffset;
+    }
+    if (this.side === 'right') {
+      return this.sideOffset;
+    }
+
     switch (this.align) {
       case 'start':
-        return 'left-0';
-      case 'center':
-        return 'left-1/2 -translate-x-1/2';
+        return -this.alignOffset;
       case 'end':
-        return 'right-0';
+        return this.alignOffset;
       default:
-        return 'left-0';
+        return 0;
     }
   }
 
-  private getSlideInClass(): string {
-    switch (this.side) {
+  get overlayOffsetY(): number {
+    if (this.side === 'top') {
+      return -this.sideOffset;
+    }
+    if (this.side === 'bottom') {
+      return this.sideOffset;
+    }
+
+    switch (this.align) {
+      case 'start':
+        return -this.alignOffset;
+      case 'end':
+        return this.alignOffset;
+      default:
+        return 0;
+    }
+  }
+
+  private computePositions(): ConnectedPosition[] {
+    const positions: ConnectedPosition[] = [];
+    const primary = this.resolvePosition(this.side, this.align);
+    positions.push(primary);
+
+    const fallbacks: Array<{ side: 'top' | 'right' | 'bottom' | 'left'; align: 'start' | 'center' | 'end' }> = [
+      { side: 'bottom', align: this.align },
+      { side: 'top', align: this.align },
+      { side: 'right', align: 'start' },
+      { side: 'left', align: 'start' },
+      { side: 'right', align: 'end' },
+      { side: 'left', align: 'end' }
+    ];
+
+    for (const fallback of fallbacks) {
+      const position = this.resolvePosition(fallback.side, fallback.align);
+      if (!this.positionExists(positions, position)) {
+        positions.push(position);
+      }
+    }
+
+    return positions;
+  }
+
+  private positionExists(list: ConnectedPosition[], candidate: ConnectedPosition): boolean {
+    return list.some(
+      (pos) =>
+        pos.originX === candidate.originX &&
+        pos.originY === candidate.originY &&
+        pos.overlayX === candidate.overlayX &&
+        pos.overlayY === candidate.overlayY
+    );
+  }
+
+  private resolvePosition(side: 'top' | 'right' | 'bottom' | 'left', align: 'start' | 'center' | 'end'): ConnectedPosition {
+    switch (side) {
       case 'top':
-        return 'data-[side=top]:slide-in-from-bottom-2';
+        return {
+          originX: this.mapAlignToX(align),
+          originY: 'top',
+          overlayX: this.mapAlignToX(align),
+          overlayY: 'bottom'
+        };
       case 'right':
-        return 'data-[side=right]:slide-in-from-left-2';
+        return {
+          originX: 'end',
+          originY: this.mapAlignToY(align),
+          overlayX: 'start',
+          overlayY: this.mapAlignToY(align)
+        };
       case 'left':
-        return 'data-[side=left]:slide-in-from-right-2';
+        return {
+          originX: 'start',
+          originY: this.mapAlignToY(align),
+          overlayX: 'end',
+          overlayY: this.mapAlignToY(align)
+        };
       case 'bottom':
       default:
-        return 'data-[side=bottom]:slide-in-from-top-2';
+        return {
+          originX: this.mapAlignToX(align),
+          originY: 'bottom',
+          overlayX: this.mapAlignToX(align),
+          overlayY: 'top'
+        };
+    }
+  }
+
+  private mapAlignToX(align: 'start' | 'center' | 'end'): 'start' | 'center' | 'end' {
+    return align;
+  }
+
+  private mapAlignToY(align: 'start' | 'center' | 'end'): 'top' | 'center' | 'bottom' {
+    switch (align) {
+      case 'start':
+        return 'top';
+      case 'end':
+        return 'bottom';
+      default:
+        return 'center';
     }
   }
 
   onTriggerClick(event: Event): void {
-    // Prevent event bubbling to avoid immediate close
-    event.preventDefault();
     event.stopPropagation();
-    
+
     this.toggle();
   }
 
@@ -137,6 +257,7 @@ export class DropdownMenuComponent implements AfterViewInit, OnDestroy {
 
   open(): void {
     if (this.disabled) return;
+    this.positions = this.computePositions();
     this.isOpen = true;
     this.openChange.emit(true);
   }
@@ -147,6 +268,22 @@ export class DropdownMenuComponent implements AfterViewInit, OnDestroy {
   }
 
   onItemClick(): void {
+    this.close();
+  }
+
+  onMenuClick(event: Event): void {
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    const menuItem = target.closest('[role="menuitem"]');
+    const dismissFalse = target.closest('[data-dropdown-dismiss="false"]');
+
+    if (!menuItem || dismissFalse) {
+      return;
+    }
+
     this.close();
   }
 }

@@ -1,15 +1,36 @@
-<div class="relative" (click)="onTriggerClick($event)">
-  <!-- Trigger Content -->
+<div
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  #triggerElement
+  class="relative inline-flex"
+  (click)="onTriggerClick($event)"
+>
   <ng-content select="[slot=trigger]"></ng-content>
-
-  <!-- Dropdown Content -->
-  @if (isOpen) {
-    <div
-      #contentRef
-      [class]="contentClasses"
-      role="menu"
-    >
-      <ng-content select="[slot=content]"></ng-content>
-    </div>
-  }
 </div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOpen]="isOpen"
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayPositions]="overlayPositions"
+  [cdkConnectedOverlayOffsetX]="overlayOffsetX"
+  [cdkConnectedOverlayOffsetY]="overlayOffsetY"
+  [cdkConnectedOverlayPush]="true"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+  (overlayOutsideClick)="close()"
+  (detach)="close()"
+>
+  <div
+    #contentRef
+    [class]="contentClasses"
+    role="menu"
+    [attr.data-side]="side"
+    [attr.data-align]="align"
+    [attr.data-state]="isOpen ? 'open' : 'closed'"
+    tabindex="-1"
+    (click)="onMenuClick($event)"
+  >
+    <ng-content select="[slot=content]"></ng-content>
+  </div>
+</ng-template>

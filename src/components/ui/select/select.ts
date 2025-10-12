@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, forwardRef, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { OverlayModule } from '@angular/cdk/overlay';
+import { OverlayModule, ConnectedPosition } from '@angular/cdk/overlay';
 import { cn } from '../../../lib/utils';
 
 export interface SelectOption {
@@ -29,12 +29,14 @@ export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnD
   @Input() placeholder = 'Select an option';
   @Input() disabled = false;
   @Input() className = '';
+  @Input() contentClassName = '';
+  @Input() optionClassName = '';
   @Input() size: 'sm' | 'default' = 'default';
 
   @Output() selectionChange = new EventEmitter<string>();
 
-  @ViewChild('triggerRef', { static: false }) triggerRef!: ElementRef;
-  @ViewChild('contentRef', { static: false }) contentRef!: ElementRef;
+  @ViewChild('triggerRef', { static: false }) triggerRef!: ElementRef<HTMLButtonElement>;
+  @ViewChild('contentRef', { static: false }) contentRef?: ElementRef<HTMLElement>;
 
   // Form control implementation
   private _value: string = '';
@@ -43,6 +45,7 @@ export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnD
 
   isOpen = false;
   selectedOption: SelectOption | null = null;
+  triggerWidth = 0;
 
   get selectedValue(): string {
     return this._value;
@@ -54,7 +57,7 @@ export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnD
 
   get triggerClasses(): string {
     return cn(
-      'border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*="text-"])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+      'border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*="text-"])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
       this.size === 'default' ? 'h-9' : 'h-8',
       this.className
     );
@@ -62,30 +65,26 @@ export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnD
 
   get contentClasses(): string {
     return cn(
-      'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] origin-[var(--radix-select-content-transform-origin)] overflow-x-hidden overflow-y-auto rounded-md border shadow-md p-1',
-      this.className
+      'z-[70] max-h-[calc(100vh-4rem)] min-w-[12rem] overflow-y-auto rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg outline outline-transparent focus:outline-hidden',
+      'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+      this.contentClassName
     );
   }
 
   get optionClasses(): string {
     return cn(
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'
+      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      this.optionClassName
     );
   }
 
   ngAfterViewInit(): void {
     this.updateSelectedOption();
+    this.triggerWidth = this.triggerRef?.nativeElement?.offsetWidth ?? 0;
   }
 
   ngOnDestroy(): void {
     // Cleanup if needed
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    if (this.isOpen && !this.triggerRef?.nativeElement.contains(event.target) && !this.contentRef?.nativeElement.contains(event.target)) {
-      this.close();
-    }
   }
 
   @HostListener('keydown', ['$event'])
@@ -176,6 +175,7 @@ export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnD
 
   open(): void {
     if (this.disabled) return;
+    this.triggerWidth = this.triggerRef?.nativeElement?.offsetWidth ?? 0;
     this.isOpen = true;
     this.onTouched();
   }
@@ -201,5 +201,26 @@ export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnD
 
   onSelectionChange(value: string): void {
     this.selectOption(value);
+  }
+
+  get overlayPositions(): ConnectedPosition[] {
+    return [
+      {
+        originX: 'start',
+        originY: 'bottom',
+        overlayX: 'start',
+        overlayY: 'top'
+      },
+      {
+        originX: 'start',
+        originY: 'top',
+        overlayX: 'start',
+        overlayY: 'bottom'
+      }
+    ];
+  }
+
+  get overlayOffsetY(): number {
+    return 4;
   }
 }

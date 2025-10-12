@@ -1,0 +1,69 @@
+<app-dialog [open]="open" (openChange)="onOpenChange($event)">
+  <app-dialog-header>
+    <app-dialog-title>Add to collection</app-dialog-title>
+    <app-dialog-description>
+      Organize your lab by adding it to a collection. You can create a new collection or choose an existing one.
+    </app-dialog-description>
+  </app-dialog-header>
+
+  <div class="px-6 pb-6 space-y-8">
+    <section class="space-y-4">
+      <h3 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Collections</h3>
+      <div class="grid gap-2">
+        <button
+          type="button"
+          *ngFor="let collection of collections(); trackBy: trackByCollection"
+          (click)="onSelectCollection(collection)"
+          [attr.aria-pressed]="selectedCollection() === collection"
+          class="flex w-full items-center justify-between rounded-lg border border-border bg-card px-4 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:bg-accent/40 hover:border-primary/40"
+          [ngClass]="{ 'border-primary/60 bg-accent/30 text-primary': selectedCollection() === collection }"
+        >
+          <span class="truncate text-foreground">{{ collection }}</span>
+          <span
+            *ngIf="selectedCollection() === collection"
+            class="text-xs font-medium text-primary"
+          >
+            Selected
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <section class="space-y-4 rounded-xl border border-dashed border-border bg-muted/40 p-5">
+      <div class="flex items-start justify-between">
+        <h4 class="text-sm font-semibold text-foreground">Create new collection</h4>
+        <span class="text-xs text-muted-foreground">Quickly group labs with a custom name</span>
+      </div>
+      <div class="space-y-3">
+        <app-input
+          [(ngModel)]="newCollectionName"
+          placeholder="e.g. Advanced Algorithms"
+          [className]="'h-10 border-border bg-background focus:ring-2 focus:ring-primary/40'"
+        ></app-input>
+        <app-button
+          type="button"
+          size="sm"
+          [disabled]="!newCollectionName.trim()"
+          (click)="createCollection()"
+          class="inline-flex items-center gap-2 px-3 py-2"
+        >
+          <ng-icon name="lucide-plus" class="h-4 w-4"></ng-icon>
+          Add collection
+        </app-button>
+      </div>
+    </section>
+  </div>
+
+  <app-dialog-footer>
+    <div class="flex w-full justify-end gap-2 px-6 pb-4">
+      <app-button variant="ghost" (click)="onOpenChange(false)">Cancel</app-button>
+      <app-button
+        color="blue"
+        [disabled]="!selectedCollection()"
+        (click)="confirmSelection()"
+      >
+        Add to collection
+      </app-button>
+    </div>
+  </app-dialog-footer>
+</app-dialog>

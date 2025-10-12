@@ -1,0 +1,159 @@
+<app-dropdown-menu
+  #dropdownMenu
+  [align]="'end'"
+  [sideOffset]="5"
+  [className]="'w-[240px] p-2 lab-card-dropdown-panel'"
+  (openChange)="onOpenChange($event)"
+>
+  <button
+    slot="trigger"
+    type="button"
+    class="rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+    aria-label="Lab options"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="isOpen"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="12" cy="12" r="2"></circle>
+      <circle cx="12" cy="5" r="2"></circle>
+      <circle cx="12" cy="19" r="2"></circle>
+    </svg>
+  </button>
+
+  <div slot="content" class="flex flex-col gap-1 text-sm">
+    <button
+      *ngIf="lab.status === 'in-progress'"
+      type="button"
+      role="menuitem"
+      class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-inherit transition-colors hover:bg-accent/30 focus:bg-accent/30 hover:text-accent-foreground focus:text-accent-foreground focus:outline-none dark:hover:bg-white/5 dark:focus:bg-white/5"
+      (click)="resumeLab()"
+    >
+      <ng-icon name="lucide-play" class="h-4 w-4"></ng-icon>
+      <span>Resume Lab</span>
+    </button>
+
+    <button
+      type="button"
+      role="menuitem"
+      class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-inherit transition-colors hover:bg-accent/30 focus:bg-accent/30 hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:opacity-50 dark:hover:bg-white/5 dark:focus:bg-white/5"
+      [disabled]="isRestartLoading"
+      (click)="queueRestart()"
+    >
+      <ng-icon
+        [name]="isRestartLoading ? 'lucide-loader' : 'lucide-rotate-ccw'"
+        class="h-4 w-4"
+        [class.animate-spin]="isRestartLoading"
+      ></ng-icon>
+      <span>Restart from beginning</span>
+    </button>
+
+    <button
+      type="button"
+      role="menuitem"
+      class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-inherit transition-colors hover:bg-accent/30 focus:bg-accent/30 hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:opacity-50 dark:hover:bg-white/5 dark:focus:bg-white/5"
+      [disabled]="isDuplicateLoading"
+      (click)="duplicateLab()"
+    >
+      <ng-icon
+        [name]="isDuplicateLoading ? 'lucide-loader' : 'lucide-copy'"
+        class="h-4 w-4"
+        [class.animate-spin]="isDuplicateLoading"
+      ></ng-icon>
+      <span>Duplicate Lab</span>
+    </button>
+
+    <button
+      type="button"
+      role="menuitem"
+      class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-inherit transition-colors hover:bg-accent/30 focus:bg-accent/30 hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:opacity-50 dark:hover:bg-white/5 dark:focus:bg-white/5"
+      [disabled]="isShareLoading"
+      (click)="shareLab()"
+    >
+      <ng-icon
+        [name]="isShareLoading ? 'lucide-loader' : 'lucide-share-2'"
+        class="h-4 w-4"
+        [class.animate-spin]="isShareLoading"
+      ></ng-icon>
+      <span>Share Read-Only Link</span>
+    </button>
+
+    <div class="my-1 h-px bg-border/60 dark:bg-[#1f2937]"></div>
+
+    <button
+      type="button"
+      role="menuitem"
+      class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-inherit transition-colors hover:bg-muted focus:bg-muted hover:text-foreground focus:text-foreground focus:outline-none disabled:opacity-50 dark:hover:bg-white/5 dark:focus:bg-white/5"
+      (click)="openAddToCollection()"
+    >
+      <ng-icon name="lucide-folder-plus" class="h-4 w-4"></ng-icon>
+      <span>Add to Collection</span>
+    </button>
+
+    <button
+      type="button"
+      role="menuitem"
+      class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-foreground hover:bg-muted/60 focus:bg-muted/60 focus:outline-none disabled:opacity-50"
+      [disabled]="isBookmarkLoading"
+      (click)="toggleBookmark()"
+    >
+      <ng-icon
+        [name]="isBookmarkLoading ? 'lucide-loader' : 'lucide-bookmark'"
+        class="h-4 w-4"
+        [class.animate-spin]="isBookmarkLoading"
+        [class.fill-[#f59e0b]]="!isBookmarkLoading && bookmarked"
+        [class.text-[#f59e0b]]="!isBookmarkLoading && bookmarked"
+      ></ng-icon>
+      <span>{{ bookmarked ? 'Remove Bookmark' : 'Bookmark Lab' }}</span>
+    </button>
+
+    <div class="my-1 h-px bg-border/60 dark:bg-[#1f2937]"></div>
+
+    <button
+      type="button"
+      role="menuitem"
+      class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[#ef4444] hover:bg-[#ef4444]/10 focus:bg-[#ef4444]/10 focus:outline-none disabled:opacity-50"
+      [disabled]="isDeleteLoading"
+      (click)="queueDelete()"
+    >
+      <ng-icon
+        [name]="isDeleteLoading ? 'lucide-loader' : 'lucide-trash-2'"
+        class="h-4 w-4"
+        [class.animate-spin]="isDeleteLoading"
+      ></ng-icon>
+      <span>Delete Lab</span>
+    </button>
+  </div>
+</app-dropdown-menu>
+
+<app-confirm-dialog
+  [open]="restartDialogOpen"
+  (openChange)="restartDialogOpen = $event"
+  title="Restart Lab?"
+  [description]="'Are you sure you want to restart “' + lab.title + '”? This will clear your current progress.'"
+  confirmLabel="Restart"
+  cancelLabel="Cancel"
+  variant="default"
+  [loading]="isRestartLoading"
+  (confirm)="confirmRestart()"
+  (cancel)="closeRestartDialog()"
+></app-confirm-dialog>
+
+<app-confirm-dialog
+  [open]="deleteDialogOpen"
+  (openChange)="deleteDialogOpen = $event"
+  title="Delete Lab?"
+  [description]="'Are you sure you want to delete “' + lab.title + '”? This action cannot be undone.'"
+  confirmLabel="Delete"
+  cancelLabel="Cancel"
+  variant="danger"
+  [loading]="isDeleteLoading"
+  (confirm)="confirmDelete()"
+  (cancel)="closeDeleteDialog()"
+></app-confirm-dialog>
+
+<app-add-to-collection-modal
+  [open]="addModalOpen"
+  [labId]="lab.id"
+  (openChange)="onCollectionOpenChange($event)"
+  (added)="onCollectionAdded($event)"
+></app-add-to-collection-modal>

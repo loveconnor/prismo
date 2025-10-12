@@ -1,20 +1,24 @@
-<div class="labs-stats-grid">
-  <div *ngFor="let stat of stats; trackBy: trackByLabel" class="stat-card">
-    <div class="stat-icon" *ngIf="stat.icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path [attr.d]="stat.icon"></path>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <div class="stat-value">{{ stat.value }}</div>
-      <div class="stat-label">{{ stat.label }}</div>
-      <div class="stat-trend" *ngIf="stat.trend" [class]="'trend-' + stat.trend">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path *ngIf="stat.trend === 'up'" d="M7 17L17 7M17 7H7M17 7V17"></path>
-          <path *ngIf="stat.trend === 'down'" d="M17 7L7 17M7 17H17M7 17V7"></path>
-          <path *ngIf="stat.trend === 'neutral'" d="M8 12H16"></path>
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <div
+    *ngFor="let stat of statsToRender; trackBy: trackByLabel"
+    class="flex flex-col gap-2 rounded-[12px] border bg-card p-4 transition-none"
+  >
+    <span class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{{ stat.label }}</span>
+    <span class="text-2xl font-bold text-foreground">{{ stat.value }}</span>
+    <span class="flex items-center gap-1 text-xs text-[#22c55e]">
+      <ng-container [ngSwitch]="stat.iconType">
+        <svg *ngSwitchCase="'arrow'" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
-      </div>
-    </div>
+        <svg *ngSwitchCase="'progress'" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <svg *ngSwitchCase="'check'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </ng-container>
+      {{ stat.trend }}
+    </span>
   </div>
 </div>

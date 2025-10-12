@@ -1,0 +1,104 @@
+<form (submit)="submit($event)">
+  <app-dialog
+    [open]="open"
+    (openChange)="openChange.emit($event)"
+    size="xl"
+    [className]="'create-lab-dialog-panel'"
+  >
+    <app-dialog-header>
+      <div class="modal-header">
+        <div class="icon-pill">
+          <ng-icon name="lucide-sparkles" class="h-5 w-5"></ng-icon>
+        </div>
+        <div>
+          <app-dialog-title class="text-xl font-semibold text-foreground">Generate a New Lab</app-dialog-title>
+          <app-dialog-description class="text-sm text-muted-foreground">
+            Customize your learning experience by selecting a subject, difficulty, and focus areas.
+          </app-dialog-description>
+        </div>
+      </div>
+    </app-dialog-header>
+
+    <div class="modal-body">
+      <div class="field-group">
+        <app-label for="subject" [className]="'text-sm font-medium text-[#e5e7eb]'">
+          Choose a subject <span class="required">*</span>
+        </app-label>
+        <app-select
+          id="subject"
+          [options]="subjects"
+          [className]="'w-full bg-white dark:bg-[#151a20] border border-[#d1d5db] dark:border-[#1f2937] text-slate-900 dark:text-[#e5e7eb] focus:border-[#2563eb] dark:focus:border-[#60a5fa] focus:ring-[rgba(37,99,235,0.35)] dark:focus:ring-[rgba(96,165,250,0.35)]'"
+          [contentClassName]="'bg-white dark:bg-[#151a20] border border-[#d1d5db] dark:border-[#1f2937] text-slate-900 dark:text-[#e5e7eb] min-w-full'"
+          [optionClassName]="'text-slate-900 dark:text-[#e5e7eb] hover:bg-[rgba(37,99,235,0.12)] dark:hover:bg-[rgba(96,165,250,0.12)] focus:bg-[rgba(37,99,235,0.12)] dark:focus:bg-[rgba(96,165,250,0.12)] focus:text-slate-900 dark:focus:text-[#e5e7eb]'"
+          [placeholder]="'Select subject…'"
+          [(ngModel)]="subject"
+        ></app-select>
+      </div>
+
+      <div class="field-group">
+        <app-label for="difficulty" [className]="'text-sm font-medium text-[#e5e7eb]'">
+          Select difficulty <span class="required">*</span>
+        </app-label>
+        <app-select
+          id="difficulty"
+          [options]="difficulties"
+          [className]="'w-full bg-white dark:bg-[#151a20] border border-[#d1d5db] dark:border-[#1f2937] text-slate-900 dark:text-[#e5e7eb] focus:border-[#2563eb] dark:focus:border-[#60a5fa] focus:ring-[rgba(37,99,235,0.35)] dark:focus:ring-[rgba(96,165,250,0.35)]'"
+          [contentClassName]="'bg-white dark:bg-[#151a20] border border-[#d1d5db] dark:border-[#1f2937] text-slate-900 dark:text-[#e5e7eb] min-w-full'"
+          [optionClassName]="'text-slate-900 dark:text-[#e5e7eb] hover:bg-[rgba(37,99,235,0.12)] dark:hover:bg-[rgba(96,165,250,0.12)] focus:bg-[rgba(37,99,235,0.12)] dark:focus:bg-[rgba(96,165,250,0.12)] focus:text-slate-900 dark:focus:text-[#e5e7eb]'"
+          [placeholder]="'Choose difficulty…'"
+          [(ngModel)]="difficulty"
+        ></app-select>
+      </div>
+
+      <div class="field-group">
+        <app-label for="skills" [className]="'text-sm font-medium text-[#e5e7eb]'">
+          What skills do you want to practice?
+        </app-label>
+        <app-input
+          id="skills"
+          [ngModel]="skillInput"
+          (ngModelChange)="onSkillInputChange($event)"
+          (keydown)="handleSkillKeydown($event)"
+          placeholder="Add skills (e.g., loops, debugging, recursion)"
+          [className]="'w-full bg-white dark:bg-[#151a20] border border-[#d1d5db] dark:border-[#1f2937] text-slate-900 dark:text-[#e5e7eb] placeholder:text-[#6b7280] focus:border-[#2563eb] dark:focus:border-[#60a5fa] focus:ring-[rgba(37,99,235,0.35)] dark:focus:ring-[rgba(96,165,250,0.35)]'"
+        ></app-input>
+
+        @if (skills.length > 0) {
+          <div class="skills-list">
+            @for (skill of skills; track i; let i = $index) {
+              <span class="skill-pill">
+                {{ skill }}
+                <button type="button" (click)="removeSkill(i)">
+                  <ng-icon name="lucide-x" class="h-3 w-3"></ng-icon>
+                </button>
+              </span>
+            }
+          </div>
+        }
+
+        <p class="helper-text">Optional — helps the AI personalize your lab</p>
+      </div>
+
+      <div class="field-group">
+        <app-label for="goal" [className]="'text-sm font-medium text-[#e5e7eb]'">
+          Describe your focus area (optional)
+        </app-label>
+        <app-textarea
+          id="goal"
+          [ngModel]="goal"
+          (ngModelChange)="onGoalChange($event)"
+          placeholder="e.g., I want to get better at debugging for-loops"
+          [rows]="3"
+          [className]="'w-full bg-white dark:bg-[#151a20] border border-[#d1d5db] dark:border-[#1f2937] text-slate-900 dark:text-[#e5e7eb] placeholder:text-[#6b7280] focus:border-[#2563eb] dark:focus:border-[#60a5fa] focus:ring-[rgba(37,99,235,0.35)] dark:focus:ring-[rgba(96,165,250,0.35)] resize-none'"
+        ></app-textarea>
+      </div>
+    </div>
+
+    <app-dialog-footer class="footer">
+      <app-button type="submit" [disabled]="!canSubmit" [className]="'w-full h-10 bg-[#3b82f6] hover:bg-[#2563eb] text-white disabled:opacity-50 flex items-center justify-center gap-2'">
+        <ng-icon name="lucide-sparkles" class="h-4 w-4"></ng-icon>
+        Generate Lab
+      </app-button>
+    </app-dialog-footer>
+  </app-dialog>
+</form>

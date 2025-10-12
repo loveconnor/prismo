@@ -16,6 +16,7 @@ export class ProgressComponent implements AfterViewInit {
   @Input() className = '';
   @Input() showValue = false;
   @Input() animated = true;
+  @Input() barClassName = '';
 
   @ViewChild('progressBar', { static: false }) progressBar!: ElementRef;
 
@@ -28,7 +29,8 @@ export class ProgressComponent implements AfterViewInit {
 
   get barClasses(): string {
     return cn(
-      'h-full w-full flex-1 bg-primary transition-all'
+      'h-full w-full flex-1 bg-primary transition-all',
+      this.barClassName
     );
   }
 
