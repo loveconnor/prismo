@@ -157,7 +157,7 @@ interface ValidationError {
       
       <div class="mt-4 pt-3 border-t" *ngIf="showFooter">
         <div class="flex items-center gap-4 text-xs text-muted-foreground">
-          <span>{{ equation.length }} characters</span>
+          <span *ngIf="showCharacterCount">{{ equation.length }} characters</span>
           <span *ngIf="validationCount > 0">
             Validations: {{ validationCount }}
           </span>
@@ -178,6 +178,7 @@ export class EquationInputComponent extends WidgetBaseComponent {
   @Input() showPreview: boolean = true;
   @Input() showMeta: boolean = true;
   @Input() showFooter: boolean = true;
+  @Input() showCharacterCount: boolean = false;
   @Input() autoValidate: boolean = false;
   
   @Output() latexChange = new EventEmitter<string>();

@@ -247,8 +247,8 @@ interface TestCase {
       
       <div class="mt-4 pt-3 border-t" *ngIf="showFooter">
         <div class="flex items-center gap-4 text-xs text-muted-foreground">
-          <span>Runs: {{ runsCount }}</span>
-          <span>{{ code.length }} characters</span>
+          <span *ngIf="showRunsCount">Runs: {{ runsCount }}</span>
+          <span *ngIf="showCharacterCount">{{ code.length }} characters</span>
           <span *ngIf="lastExecutionTime">
             Last run: {{ lastExecutionTime }}ms
           </span>
@@ -282,6 +282,8 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   @Input() enableMinimap: boolean = false;
   @Input() allowUserSettings: boolean = false;
   @Input() showSettingsPanel: boolean = false;
+  @Input() showCharacterCount: boolean = false;
+  @Input() showRunsCount: boolean = false;
   
   @ViewChild('editorContainer') editorContainer!: ElementRef<HTMLDivElement>;
 

@@ -76,7 +76,7 @@ interface WritingMetrics {
             <ng-icon name="lucidePenTool" class="w-4 h-4"></ng-icon>
             {{ wordCount }} words
           </span>
-          <span>{{ characterCount }} characters</span>
+          <span *ngIf="showCharacterCount">{{ characterCount }} characters</span>
         </div>
       </app-card-header>
       
@@ -192,7 +192,7 @@ interface WritingMetrics {
           <span *ngIf="lastSavedAt">
             Last saved: {{ lastSavedAt | date:'short' }}
           </span>
-          <span *ngIf="autoSaveEnabled">
+          <span *ngIf="showAutoSaveStatus && autoSaveEnabled">
             Auto-save: {{ autoSaveStatus }}
           </span>
         </div>
@@ -214,6 +214,8 @@ export class TextEditorComponent extends WidgetBaseComponent {
   @Input() showMeta: boolean = true;
   @Input() showActions: boolean = true;
   @Input() showFooter: boolean = true;
+  @Input() showCharacterCount: boolean = false;
+  @Input() showAutoSaveStatus: boolean = false;
   @Input() autoSaveEnabled: boolean = true;
   @Input() autoSaveInterval: number = 30000; // 30 seconds
 
