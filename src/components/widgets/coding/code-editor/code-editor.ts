@@ -12,11 +12,7 @@ import {
   lucideRotateCcw, 
   lucideCheck, 
   lucideX, 
-  lucideClock,
-  lucideSun,
-  lucideMoon,
-  lucideCode,
-  lucideTerminal
+  lucideClock
 } from '@ng-icons/lucide';
 import { EditorView, basicSetup } from 'codemirror';
 import { javascript } from '@codemirror/lang-javascript';
@@ -55,11 +51,7 @@ interface TestCase {
       lucideRotateCcw,
       lucideCheck,
       lucideX,
-      lucideClock,
-      lucideSun,
-      lucideMoon,
-      lucideCode,
-      lucideTerminal
+      lucideClock
     })
   ],
   template: `
@@ -105,24 +97,10 @@ interface TestCase {
               <span class="text-xs text-muted-foreground">{{ lineCount }} lines</span>
             </div>
             
-            <div class="relative">
-              <div 
-                #editorContainer
-                class="w-full min-h-[200px] border border-border rounded-lg overflow-hidden"
-              ></div>
-              
-              <!-- Theme Toggle Button -->
-              <button
-                (click)="toggleTheme()"
-                class="absolute top-2 right-2 p-2 rounded-md bg-background/80 hover:bg-background border border-border transition-colors"
-                title="Toggle theme"
-              >
-                <ng-icon 
-                  [name]="editorDarkMode ? 'lucideSun' : 'lucideMoon'" 
-                  class="w-4 h-4"
-                ></ng-icon>
-              </button>
-            </div>
+             <div 
+               #editorContainer
+               class="w-full h-[120px] overflow-hidden"
+             ></div>
           </div>
           
           <div class="space-y-2" *ngIf="showOutput">
@@ -216,8 +194,6 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   @Input() showOutput: boolean = true;
   @Input() showFooter: boolean = true;
   @Input() autoRun: boolean = false;
-  @Input() theme: 'light' | 'dark' = 'light';
-
   @ViewChild('editorContainer') editorContainer!: ElementRef<HTMLDivElement>;
 
   public code: string = '';
@@ -227,7 +203,6 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   public runsCount = 0;
   public lastExecutionTime?: number;
   public hasRunCode = false;
-  public editorDarkMode: boolean = false;
   
   private editorView?: EditorView;
 
@@ -253,17 +228,10 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
 
   override ngAfterViewInit(): void {
     this.initializeEditor();
-    this.detectTheme();
   }
 
   override ngOnDestroy(): void {
     this.editorView?.destroy();
-  }
-
-  private detectTheme(): void {
-    // Check if dark mode is enabled
-    this.editorDarkMode = document.documentElement.classList.contains('dark') || 
-                         window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 
   private initializeEditor(): void {
@@ -271,6 +239,10 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
 
     // Get language support
     const languageSupport = this.getLanguageSupport();
+    
+    // Check if dark mode is enabled
+    const isDarkMode = document.documentElement.classList.contains('dark') || 
+                      window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     // Create editor with theme support
     this.editorView = new EditorView({
@@ -286,7 +258,23 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
             this.onCodeChange();
           }
         }),
-        this.editorDarkMode ? oneDark : []
+        isDarkMode ? oneDark : [],
+        EditorView.theme({
+          "&": {
+            fontSize: "14px",
+            height: "100%"
+          },
+          ".cm-content": {
+            padding: "8px",
+            minHeight: "100px"
+          },
+          ".cm-editor": {
+            height: "100%"
+          },
+          ".cm-scroller": {
+            fontFamily: "'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace"
+          }
+        })
       ],
       parent: this.editorContainer.nativeElement
     });
@@ -311,17 +299,6 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     }
   }
 
-  toggleTheme(): void {
-    this.editorDarkMode = !this.editorDarkMode;
-    this.reinitializeEditor();
-  }
-
-  private reinitializeEditor(): void {
-    if (this.editorView) {
-      this.editorView.destroy();
-    }
-    this.initializeEditor();
-  }
 
   trackByTestId(index: number, test: TestCase): string {
     return test.id;
