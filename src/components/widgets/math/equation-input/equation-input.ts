@@ -101,8 +101,11 @@ interface ValidationError {
               </span>
             </div>
             
-            <div class="p-3 bg-muted rounded-lg">
-              <div class="text-sm text-foreground" [innerHTML]="formattedPreview"></div>
+            <div class="p-4 bg-muted rounded-lg">
+              <div class="text-base text-foreground katex-preview" 
+                   [innerHTML]="formattedPreview"
+                   style="font-family: 'KaTeX_Main', 'Times New Roman', serif; font-size: 1.2em;">
+              </div>
             </div>
           </div>
           
@@ -190,15 +193,78 @@ export class EquationInputComponent extends WidgetBaseComponent {
   get formattedPreview(): string {
     if (!this.equation) return '';
     
-    // Simple LaTeX to HTML conversion for preview
-    return this.equation
-      .replace(/\^(\d+)/g, '<sup>$1</sup>')
-      .replace(/\^(\w+)/g, '<sup>$1</sup>')
-      .replace(/_(\d+)/g, '<sub>$1</sub>')
-      .replace(/_(\w+)/g, '<sub>$1</sub>')
-      .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '<span class="fraction"><span class="numerator">$1</span><span class="denominator">$2</span></span>')
-      .replace(/\*/g, '×')
-      .replace(/\//g, '÷');
+    try {
+      // Enhanced LaTeX to HTML conversion for better math rendering
+      let result = this.equation;
+      
+      // Handle simple fractions (a/b) - must be done before other replacements
+      result = result.replace(/([a-zA-Z0-9\(\)]+)\/([a-zA-Z0-9\(\)]+)/g, 
+        '<div class="math-fraction"><div class="math-numerator">$1</div><div class="math-denominator">$2</div></div>');
+      
+      // Handle LaTeX fractions
+      result = result.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, 
+        '<div class="math-fraction"><div class="math-numerator">$1</div><div class="math-denominator">$2</div></div>');
+      
+      // Handle multiplication symbols (* becomes ×)
+      result = result.replace(/\*/g, '×');
+      result = result.replace(/\\times/g, '×');
+      
+      // Handle division symbols
+      result = result.replace(/\\div/g, '÷');
+      
+      // Handle superscripts
+      result = result.replace(/\^(\d+)/g, '<sup>$1</sup>');
+      result = result.replace(/\^(\w+)/g, '<sup>$1</sup>');
+      result = result.replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>');
+      
+      // Handle subscripts
+      result = result.replace(/_(\d+)/g, '<sub>$1</sub>');
+      result = result.replace(/_(\w+)/g, '<sub>$1</sub>');
+      result = result.replace(/_\{(.+?)\}/g, '<sub>$1</sub>');
+      
+      // Handle square roots
+      result = result.replace(/\\sqrt\{([^}]+)\}/g, '<span class="math-sqrt">√<span class="math-radicand">$1</span></span>');
+      
+      // Handle Greek letters
+      result = result.replace(/\\alpha/g, 'α');
+      result = result.replace(/\\beta/g, 'β');
+      result = result.replace(/\\gamma/g, 'γ');
+      result = result.replace(/\\delta/g, 'δ');
+      result = result.replace(/\\epsilon/g, 'ε');
+      result = result.replace(/\\theta/g, 'θ');
+      result = result.replace(/\\lambda/g, 'λ');
+      result = result.replace(/\\mu/g, 'μ');
+      result = result.replace(/\\pi/g, 'π');
+      result = result.replace(/\\sigma/g, 'σ');
+      result = result.replace(/\\tau/g, 'τ');
+      result = result.replace(/\\phi/g, 'φ');
+      result = result.replace(/\\omega/g, 'ω');
+      
+      // Handle other mathematical symbols
+      result = result.replace(/\\pm/g, '±');
+      result = result.replace(/\\mp/g, '∓');
+      result = result.replace(/\\leq/g, '≤');
+      result = result.replace(/\\geq/g, '≥');
+      result = result.replace(/\\neq/g, '≠');
+      result = result.replace(/\\approx/g, '≈');
+      result = result.replace(/\\infty/g, '∞');
+      result = result.replace(/\\sum/g, '∑');
+      result = result.replace(/\\int/g, '∫');
+      result = result.replace(/\\partial/g, '∂');
+      
+      // Handle parentheses and brackets
+      result = result.replace(/\\left\(/g, '(');
+      result = result.replace(/\\right\)/g, ')');
+      result = result.replace(/\\left\[/g, '[');
+      result = result.replace(/\\right\]/g, ']');
+      result = result.replace(/\\left\{/g, '{');
+      result = result.replace(/\\right\}/g, '}');
+      
+      return result;
+    } catch (error) {
+      console.error('Math rendering error:', error);
+      return this.equation;
+    }
   }
 
   onEquationChange(): void {

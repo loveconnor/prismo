@@ -26,7 +26,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
   selector: 'app-widget-lab',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     ModuleContainerComponent,
     StepPromptComponent,
     HintPanelComponent,
@@ -57,18 +57,18 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
         <div class="text-center space-y-4">
           <h1 class="text-4xl font-bold text-foreground">Widget System Demo Lab</h1>
           <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
-            This demo showcases the Prismo widget system with reusable, 
+            This demo showcases the Prismo widget system with reusable,
             atomic learning interactions that can be composed into modules and labs.
           </p>
         </div>
       </div>
-      
+
       <!-- Module Selection -->
       <div class="max-w-4xl mx-auto" *ngIf="!selectedModule">
         <h2 class="text-2xl font-semibold text-foreground mb-6 text-center">Choose a Module to Explore</h2>
         <div class="grid gap-6 md:grid-cols-2">
           <!-- JavaScript Functions Module -->
-          <app-card 
+          <app-card
             className="group cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
             (click)="loadModule('example-coding-module')"
           >
@@ -100,7 +100,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
           </app-card>
 
           <!-- Individual Widgets Module -->
-          <app-card 
+          <app-card
             className="group cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
             (click)="loadModule('individual-widgets')"
           >
@@ -132,7 +132,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
           </app-card>
         </div>
       </div>
-        
+
       <!-- Module Container -->
       <div class="max-w-6xl mx-auto" *ngIf="selectedModule && moduleDefinition">
         <div class="mb-6">
@@ -141,11 +141,11 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
             Back to Modules
           </app-button>
         </div>
-        <app-module-container 
+        <app-module-container
           [moduleDefinition]="moduleDefinition"
         ></app-module-container>
       </div>
-      
+
       <!-- Individual Widgets Demo -->
       <div class="max-w-6xl mx-auto" *ngIf="selectedModule === 'individual-widgets'">
         <div class="mb-6">
@@ -155,11 +155,11 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
           </app-button>
           <h2 class="text-3xl font-bold text-foreground mb-4">Individual Widgets Demo</h2>
           <p class="text-lg text-muted-foreground mb-8">
-            Here you can test individual widgets in isolation. Each widget 
+            Here you can test individual widgets in isolation. Each widget
             manages its own state and reports back to the parent system.
           </p>
         </div>
-        
+
         <div class="grid gap-8 lg:grid-cols-2">
           <!-- Core Widgets -->
           <div class="space-y-6">
@@ -172,7 +172,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
                 [estimatedTime]="stepPromptConfig.estimatedTime"
               ></app-step-prompt>
             </div>
-            
+
             <div>
               <h3 class="text-lg font-semibold text-foreground mb-3">Hint Panel</h3>
               <app-hint-panel
@@ -180,7 +180,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
                 [config]="hintPanelConfig"
               ></app-hint-panel>
             </div>
-            
+
             <div>
               <h3 class="text-lg font-semibold text-foreground mb-3">Feedback Box</h3>
               <app-feedback-box
@@ -193,7 +193,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
                 [showContinueButton]="feedbackBoxConfig.showContinueButton"
               ></app-feedback-box>
             </div>
-            
+
             <div>
               <h3 class="text-lg font-semibold text-foreground mb-3">Confidence Meter</h3>
               <app-confidence-meter
@@ -202,7 +202,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
               ></app-confidence-meter>
             </div>
           </div>
-            
+
           <!-- Category Widgets -->
           <div class="space-y-6">
             <div>
@@ -212,7 +212,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
                 [config]="codeEditorConfig"
               ></app-code-editor>
             </div>
-            
+
             <div>
               <h3 class="text-lg font-semibold text-foreground mb-3">Equation Input</h3>
               <app-equation-input
@@ -220,7 +220,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
                 [config]="equationInputConfig"
               ></app-equation-input>
             </div>
-            
+
             <div>
               <h3 class="text-lg font-semibold text-foreground mb-3">Text Editor</h3>
               <app-text-editor
@@ -384,9 +384,9 @@ export class WidgetLabComponent implements OnInit, OnDestroy {
 
   public equationInputConfig = {
     title: 'Mathematical Expression',
-    inputLabel: 'Enter a simple equation:',
-    placeholder: 'e.g., x^2 + 2x + 1',
-    formatHint: 'Use LaTeX notation'
+    inputLabel: 'Enter a mathematical expression:',
+    placeholder: 'e.g., x^2 + 2*x + 1 or a/b + c/d',
+    formatHint: 'Use * for multiplication, / for fractions, ^ for powers'
   };
 
   public textEditorMetadata = {
@@ -425,12 +425,12 @@ export class WidgetLabComponent implements OnInit, OnDestroy {
 
   async loadModule(moduleId: string): Promise<void> {
     this.selectedModule = moduleId;
-    
+
     if (moduleId === 'individual-widgets') {
       // Individual widgets mode - no module definition needed
       return;
     }
-    
+
     try {
       const moduleData = await this.http.get<ModuleDefinition>(`/assets/modules/${moduleId}.json`).toPromise();
       this.moduleDefinition = moduleData || null;

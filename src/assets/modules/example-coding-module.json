@@ -64,7 +64,7 @@
             "description": "Function should greet Alice"
           },
           {
-            "id": "test-2", 
+            "id": "test-2",
             "input": "greet(\"Bob\")",
             "expectedOutput": "Hello, Bob!",
             "description": "Function should greet Bob"
@@ -141,7 +141,7 @@
       "props": {
         "title": "Mathematical Function Practice",
         "inputLabel": "Write the mathematical function f(x) = x² + 2x + 1 in LaTeX format:",
-        "placeholder": "e.g., f(x) = x^2 + 2x + 1",
+        "placeholder": "e.g., x^2 + 2*x + 1 or a/b + c/d",
         "formatHint": "Use LaTeX notation: x^2 for x², \\frac{a}{b} for fractions",
         "expectedFormat": "x^2"
       },

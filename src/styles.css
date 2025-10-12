@@ -1,5 +1,66 @@
 @import "tailwindcss";
 
+/* Custom math rendering styles */
+.math-fraction {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  margin: 0 0.3em;
+  font-size: 1.1em;
+  line-height: 1.2;
+}
+
+.math-numerator {
+  display: block;
+  border-bottom: 1.5px solid currentColor;
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+.math-denominator {
+  display: block;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.math-sqrt {
+  position: relative;
+  display: inline-block;
+}
+
+.math-sqrt::before {
+  content: '√';
+  font-size: 1.2em;
+  vertical-align: middle;
+}
+
+.math-radicand {
+  border-top: 1px solid currentColor;
+  padding-left: 0.1em;
+}
+
+/* Math preview styling */
+.katex-preview {
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Times New Roman', serif;
+  font-size: 1.2em;
+  line-height: 1.4;
+}
+
+.katex-preview sup {
+  font-size: 0.8em;
+  vertical-align: super;
+}
+
+.katex-preview sub {
+  font-size: 0.8em;
+  vertical-align: sub;
+}
+
 @theme {
   /* Shadcn color system - these will create utility classes */
   --color-background: var(--background);
