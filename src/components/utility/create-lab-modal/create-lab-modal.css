@@ -1,30 +1,31 @@
 .modal-header {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
 
 .icon-pill {
   display: flex;
   height: 2.5rem;
   width: 2.5rem;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 0.75rem;
-  background: rgba(59, 130, 246, 0.15);
+  border-radius: 0.5rem;
+  background: rgba(59, 130, 246, 0.12);
   color: #3b82f6;
 }
 
-:host-context(body:not(.dark)) .icon-pill {
-  background: rgba(37, 99, 235, 0.12);
+:host-context(.theme-light) .icon-pill {
+  background: rgba(59, 130, 246, 0.12);
   color: #2563eb;
 }
 
 .modal-body {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem 1.5rem 0;
+  gap: 1rem;
+  padding: 1.5rem 0 0;
 }
 
 .field-group {
@@ -48,16 +49,17 @@
   align-items: center;
   gap: 0.25rem;
   border-radius: 9999px;
-  background: rgba(96, 165, 250, 0.15);
+  background: rgba(59, 130, 246, 0.12);
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
+  line-height: 1rem;
   font-weight: 500;
-  color: #bbd7ff;
+  color: #60a5fa;
 }
 
-:host-context(body:not(.dark)) .skill-pill {
-  background: rgba(37, 99, 235, 0.12);
-  color: #1d4ed8;
+:host-context(.theme-light) .skill-pill {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
 }
 
 .skill-pill button {
@@ -65,49 +67,36 @@
   background: none;
   color: inherit;
   cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.skill-pill button:hover {
+  color: #a5b4fc;
+}
+
+:host-context(.theme-light) .skill-pill button:hover {
+  color: #1e3a8a;
 }
 
 .helper-text {
   font-size: 0.75rem;
-  color: #9ca3af;
+  line-height: 1rem;
+  color: #71717a;
+  margin-top: 0.25rem;
 }
 
-:host-context(body:not(.dark)) .helper-text {
-  color: #64748b;
+:host-context(.theme-light) .helper-text {
+  color: #71717a;
 }
 
 .footer {
-  padding: 1.5rem 1rem 2rem;
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-direction: column;
-}
-
-.create-lab-dialog-panel {
-  border-radius: 1.25rem;
-  max-width: 620px;
-  background: #12161b;
-  color: #e5e7eb;
-  border: 1px solid rgba(96, 165, 250, 0.15);
-  box-shadow: 0 32px 80px -32px rgba(8, 47, 73, 0.55);
-}
-
-.create-lab-dialog-panel app-dialog-title,
-.create-lab-dialog-panel app-dialog-description {
-  color: inherit;
-}
-
-.create-lab-dialog-panel app-dialog-description {
-  color: #9ca3af;
-}
-
-:host-context(body:not(.dark)) .create-lab-dialog-panel {
-  background: #ffffff;
-  color: #0f172a;
-  border: 1px solid rgba(37, 99, 235, 0.12);
-  box-shadow: 0 32px 80px -32px rgba(15, 23, 42, 0.35);
-}
-
-:host-context(body:not(.dark)) .create-lab-dialog-panel app-dialog-description {
-  color: #475569;
+  margin-top: 1rem;
+  align-items: stretch;
 }

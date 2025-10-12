@@ -8,11 +8,7 @@ import { CardContentComponent } from '../../components/ui/card/card-content';
 import { CardFooterComponent } from '../../components/ui/card/card-footer';
 import { CardDescriptionComponent } from '../../components/ui/card/card-description';
 import { ProgressComponent } from '../../components/ui/progress/progress';
-import { DialogComponent } from '../../components/ui/dialog/dialog';
-import { DialogHeaderComponent } from '../../components/ui/dialog/dialog-header';
-import { DialogTitleComponent } from '../../components/ui/dialog/dialog-title';
-import { DialogDescriptionComponent } from '../../components/ui/dialog/dialog-description';
-import { DialogFooterComponent } from '../../components/ui/dialog/dialog-footer';
+import { CreateLabModalComponent } from '../../components/utility/create-lab-modal/create-lab-modal';
 
 @Component({
   selector: 'app-hero-cards',
@@ -27,11 +23,7 @@ import { DialogFooterComponent } from '../../components/ui/dialog/dialog-footer'
     CardFooterComponent,
     CardDescriptionComponent,
     ProgressComponent,
-    DialogComponent,
-    DialogHeaderComponent,
-    DialogTitleComponent,
-    DialogDescriptionComponent,
-    DialogFooterComponent
+    CreateLabModalComponent
   ],
   template: `
     <div class="grid gap-4 md:grid-cols-2 items-stretch">
@@ -107,21 +99,7 @@ import { DialogFooterComponent } from '../../components/ui/dialog/dialog-footer'
     </div>
 
     <!-- Create Lab Modal -->
-    <app-dialog [(open)]="isModalOpen" size="lg">
-      <app-dialog-header>
-        <app-dialog-title>Start a New Lab</app-dialog-title>
-        <app-dialog-description>
-          Pick a subject to generate a customized lab. This is a placeholder modal using the built-in dialog component.
-        </app-dialog-description>
-      </app-dialog-header>
-      <div class="mt-4 space-y-3">
-        <div class="rounded-md border border-border p-4 text-sm text-muted-foreground">Form fields go here.</div>
-      </div>
-      <app-dialog-footer className="mt-6 flex justify-end gap-2">
-        <app-button variant="outline" (click)="isModalOpen = false">Cancel</app-button>
-        <app-button (click)="isModalOpen = false">Create</app-button>
-      </app-dialog-footer>
-    </app-dialog>
+    <app-create-lab-modal [open]="isModalOpen" (openChange)="isModalOpen = $event"></app-create-lab-modal>
   `
 })
 export class HeroCardsComponent {
