@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
@@ -7,7 +7,26 @@ import { CardComponent } from '../../../ui/card/card';
 import { CardContentComponent } from '../../../ui/card/card-content';
 import { CardHeaderComponent } from '../../../ui/card/card-header';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucidePlay, lucideRotateCcw, lucideCheck, lucideX, lucideClock } from '@ng-icons/lucide';
+import { 
+  lucidePlay, 
+  lucideRotateCcw, 
+  lucideCheck, 
+  lucideX, 
+  lucideClock,
+  lucideSun,
+  lucideMoon,
+  lucideCode,
+  lucideTerminal
+} from '@ng-icons/lucide';
+import { EditorView, basicSetup } from 'codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
+import { html } from '@codemirror/lang-html';
+import { css } from '@codemirror/lang-css';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { autocompletion } from '@codemirror/autocomplete';
+import { keymap } from '@codemirror/view';
+import { searchKeymap } from '@codemirror/search';
 
 interface TestCase {
   id: string;
@@ -36,7 +55,11 @@ interface TestCase {
       lucideRotateCcw,
       lucideCheck,
       lucideX,
-      lucideClock
+      lucideClock,
+      lucideSun,
+      lucideMoon,
+      lucideCode,
+      lucideTerminal
     })
   ],
   template: `
@@ -82,16 +105,24 @@ interface TestCase {
               <span class="text-xs text-muted-foreground">{{ lineCount }} lines</span>
             </div>
             
-            <textarea
-              #codeTextarea
-              class="w-full min-h-[200px] p-3 border border-border rounded-lg bg-background text-foreground font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-              [(ngModel)]="code"
-              [ngModelOptions]="{standalone: true}"
-              (input)="onCodeChange()"
-              [placeholder]="placeholder"
-              [disabled]="isRunning"
-              spellcheck="false"
-            ></textarea>
+            <div class="relative">
+              <div 
+                #editorContainer
+                class="w-full min-h-[200px] border border-border rounded-lg overflow-hidden"
+              ></div>
+              
+              <!-- Theme Toggle Button -->
+              <button
+                (click)="toggleTheme()"
+                class="absolute top-2 right-2 p-2 rounded-md bg-background/80 hover:bg-background border border-border transition-colors"
+                title="Toggle theme"
+              >
+                <ng-icon 
+                  [name]="editorDarkMode ? 'lucideSun' : 'lucideMoon'" 
+                  class="w-4 h-4"
+                ></ng-icon>
+              </button>
+            </div>
           </div>
           
           <div class="space-y-2" *ngIf="showOutput">
@@ -176,7 +207,7 @@ interface TestCase {
     </app-card>
   `,
 })
-export class CodeEditorComponent extends WidgetBaseComponent {
+export class CodeEditorComponent extends WidgetBaseComponent implements AfterViewInit, OnDestroy {
   @Input() title: string = 'Code Editor';
   @Input() language: string = 'javascript';
   @Input() placeholder: string = 'Enter your code here...';
@@ -185,8 +216,9 @@ export class CodeEditorComponent extends WidgetBaseComponent {
   @Input() showOutput: boolean = true;
   @Input() showFooter: boolean = true;
   @Input() autoRun: boolean = false;
+  @Input() theme: 'light' | 'dark' = 'light';
 
-  @ViewChild('codeTextarea') codeTextarea!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('editorContainer') editorContainer!: ElementRef<HTMLDivElement>;
 
   public code: string = '';
   public output: string = '';
@@ -195,6 +227,9 @@ export class CodeEditorComponent extends WidgetBaseComponent {
   public runsCount = 0;
   public lastExecutionTime?: number;
   public hasRunCode = false;
+  public editorDarkMode: boolean = false;
+  
+  private editorView?: EditorView;
 
   get hasCode(): boolean {
     return this.code.trim().length > 0;
@@ -206,6 +241,86 @@ export class CodeEditorComponent extends WidgetBaseComponent {
 
   get passedTests(): number {
     return this.testCases.filter(t => t.passed === true).length;
+  }
+
+  get totalTests(): number {
+    return this.testCases.length;
+  }
+
+  get allTestsPass(): boolean {
+    return this.totalTests > 0 && this.passedTests === this.totalTests;
+  }
+
+  override ngAfterViewInit(): void {
+    this.initializeEditor();
+    this.detectTheme();
+  }
+
+  override ngOnDestroy(): void {
+    this.editorView?.destroy();
+  }
+
+  private detectTheme(): void {
+    // Check if dark mode is enabled
+    this.editorDarkMode = document.documentElement.classList.contains('dark') || 
+                         window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  private initializeEditor(): void {
+    if (!this.editorContainer) return;
+
+    // Get language support
+    const languageSupport = this.getLanguageSupport();
+    
+    // Create editor with theme support
+    this.editorView = new EditorView({
+      doc: this.starterCode || this.code,
+      extensions: [
+        basicSetup,
+        languageSupport,
+        autocompletion(),
+        keymap.of(searchKeymap),
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged) {
+            this.code = update.state.doc.toString();
+            this.onCodeChange();
+          }
+        }),
+        this.editorDarkMode ? oneDark : []
+      ],
+      parent: this.editorContainer.nativeElement
+    });
+
+    this.code = this.starterCode || this.code;
+  }
+
+  private getLanguageSupport() {
+    switch (this.language.toLowerCase()) {
+      case 'javascript':
+      case 'js':
+        return javascript();
+      case 'python':
+      case 'py':
+        return python();
+      case 'html':
+        return html();
+      case 'css':
+        return css();
+      default:
+        return javascript();
+    }
+  }
+
+  toggleTheme(): void {
+    this.editorDarkMode = !this.editorDarkMode;
+    this.reinitializeEditor();
+  }
+
+  private reinitializeEditor(): void {
+    if (this.editorView) {
+      this.editorView.destroy();
+    }
+    this.initializeEditor();
   }
 
   trackByTestId(index: number, test: TestCase): string {
@@ -248,7 +363,7 @@ export class CodeEditorComponent extends WidgetBaseComponent {
     this.isRunning = false;
     
     // Check if all tests pass
-    if (this.testCases.length > 0 && this.allTestsPass()) {
+    if (this.testCases.length > 0 && this.allTestsPass) {
       this.completeWidget();
     }
   }
@@ -311,9 +426,6 @@ export class CodeEditorComponent extends WidgetBaseComponent {
     return `Test output for input: ${test.input}`;
   }
 
-  private allTestsPass(): boolean {
-    return this.testCases.length > 0 && this.testCases.every(test => test.passed === true);
-  }
 
   getStatusLabel(): string {
     switch (this.outputStatus) {
@@ -341,6 +453,6 @@ export class CodeEditorComponent extends WidgetBaseComponent {
     this.setDataValue('final_code', this.code);
     this.setDataValue('total_runs', this.runsCount);
     this.setDataValue('tests_passed', this.passedTests);
-    this.setDataValue('all_tests_passed', this.allTestsPass());
+    this.setDataValue('all_tests_passed', this.allTestsPass);
   }
 }
