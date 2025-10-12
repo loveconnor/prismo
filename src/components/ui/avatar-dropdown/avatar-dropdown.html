@@ -1,0 +1,131 @@
+<app-dropdown-menu
+  [align]="'end'"
+  [side]="'top'"
+  [sideOffset]="8"
+  [className]="'w-[220px] rounded-[10px] border border-[#1f2937] bg-[#0b0f14] p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.3)] avatar-dropdown-panel'"
+  (openChange)="onOpenChange($event)"
+>
+  <button
+    slot="trigger"
+    type="button"
+    [class]="triggerClasses"
+    [attr.aria-label]="triggerAriaLabel"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="menuOpen"
+  >
+    <app-avatar
+      [src]="triggerAvatarSrc || '/placeholder.svg'"
+      [alt]="user.name"
+      [fallback]="initials"
+      [className]="avatarClasses"
+      size="sm"
+      data-slot="avatar"
+    ></app-avatar>
+    @if (variant === 'sidebar') {
+      <span [class]="nameClasses">{{ user.name }}</span>
+    }
+  </button>
+
+  <div slot="content" class="text-xs text-[#e5e7eb]">
+    <div class="mb-1.5 rounded-lg bg-[#0a0d11] p-3">
+      <div class="flex items-center gap-3">
+        <app-avatar
+          [src]="user.avatarUrl || '/placeholder.svg'"
+          [alt]="user.name"
+          [fallback]="initials"
+          className="border border-white/10"
+          size="md"
+        ></app-avatar>
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-semibold text-[#e5e7eb]">{{ user.name }}</p>
+          <p class="truncate text-xs text-[#9ca3af]">{{ user.email }}</p>
+        </div>
+      </div>
+      <div class="mt-2">
+        <span class="inline-flex items-center rounded-full bg-[#3b82f6]/15 px-2 py-0.5 text-[11px] font-medium text-[#3b82f6]">
+          {{ user.role }}
+        </span>
+      </div>
+    </div>
+
+    <div class="h-px bg-[#1f2937]"></div>
+
+    <button
+      type="button"
+      role="menuitem"
+      class="mt-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-[#e5e7eb] transition-colors hover:bg-[#1f2937] focus:bg-[#1f2937] focus:outline-none"
+      (click)="openProfile()"
+    >
+      <ng-icon name="lucide-user" class="h-4 w-4"></ng-icon>
+      <span>Profile</span>
+    </button>
+
+    <div class="h-px bg-[#1f2937]"></div>
+
+    <div
+      class="mt-1 flex items-center justify-between rounded-md px-2 py-1.5 text-sm text-[#e5e7eb]"
+      data-dropdown-dismiss="false"
+    >
+      <div class="flex items-center gap-2">
+        <ng-icon [name]="isDarkMode ? 'lucide-moon' : 'lucide-sun'" class="h-4 w-4"></ng-icon>
+        <span>Dark mode</span>
+      </div>
+      <app-switch
+        [(ngModel)]="isDarkMode"
+        (ngModelChange)="handleThemeToggle($event)"
+        className="data-[state=checked]:bg-[#3b82f6]"
+      ></app-switch>
+    </div>
+
+    <div class="h-px bg-[#1f2937]"></div>
+
+    <button
+      type="button"
+      role="menuitem"
+      class="mt-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-[#ef4444] transition-colors hover:bg-[#ef4444]/10 focus:bg-[#ef4444]/10 focus:outline-none"
+      (click)="handleLogout()"
+    >
+      <ng-icon name="lucide-log-out" class="h-4 w-4"></ng-icon>
+      <span>Sign Out</span>
+    </button>
+  </div>
+</app-dropdown-menu>
+
+<app-dialog
+  [open]="settingsOpen"
+  (openChange)="settingsOpen = $event"
+  size="md"
+  position="middle"
+  [className]="'avatar-settings-dialog'"
+>
+  <app-dialog-header>
+    <app-dialog-title class="text-lg font-semibold text-foreground">Profile</app-dialog-title>
+    <app-dialog-description class="text-sm text-muted-foreground">
+      Manage profile details and account preferences.
+    </app-dialog-description>
+  </app-dialog-header>
+
+  <div class="mt-4 space-y-3 text-sm text-foreground">
+    <div class="flex items-center gap-3">
+      <app-avatar
+        [src]="user.avatarUrl || '/placeholder.svg'"
+        [alt]="user.name"
+        [fallback]="initials"
+        size="md"
+      ></app-avatar>
+      <div>
+        <p class="font-semibold">{{ user.name }}</p>
+        <p class="text-muted-foreground">{{ user.email }}</p>
+      </div>
+    </div>
+    <div class="rounded-lg border border-border/60 bg-muted/20 p-3">
+      <p class="text-sm text-muted-foreground">
+        Profile customization is coming soon. You're viewing a placeholder for the upcoming settings experience.
+      </p>
+    </div>
+  </div>
+
+  <app-dialog-footer class="mt-6 flex justify-end">
+    <app-button type="button" variant="secondary" (click)="closeSettings()">Close</app-button>
+  </app-dialog-footer>
+</app-dialog>

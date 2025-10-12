@@ -1,0 +1,8 @@
+:host {
+  display: inline-flex;
+}
+
+:host([data-variant='sidebar']) {
+  display: block;
+  width: 100%;
+}

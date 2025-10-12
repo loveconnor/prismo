@@ -49,11 +49,17 @@
       </app-sidebar-body>
 
       <app-sidebar-footer>
-        <app-sidebar-section>
-          <app-sidebar-item>
-            <app-avatar src="https://github.com/monster0506.png" alt="User" size="sm" data-slot="avatar" />
-            <app-sidebar-label>John Doe</app-sidebar-label>
-          </app-sidebar-item>
+        <app-sidebar-section className="px-3 pb-3 items-center">
+          <app-avatar-dropdown
+            [user]="{
+              name: 'John Doe',
+              email: 'john.doe@example.com',
+              role: 'Student',
+              avatarUrl: 'https://github.com/monster0506.png'
+            }"
+            variant="sidebar"
+            [triggerClassName]="'w-full max-w-[220px] mx-auto'"
+          ></app-avatar-dropdown>
         </app-sidebar-section>
       </app-sidebar-footer>
     </app-sidebar>

@@ -246,6 +246,9 @@ export class DropdownMenuComponent implements AfterViewInit, OnDestroy, OnChange
 
   onTriggerClick(event: Event): void {
     event.stopPropagation();
+    if (event.cancelable) {
+      event.preventDefault();
+    }
 
     this.toggle();
   }

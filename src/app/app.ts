@@ -19,7 +19,7 @@ import { SidebarItemComponent } from '../components/ui/sidebar/sidebar-item/side
 import { SidebarDividerComponent } from '../components/ui/sidebar/sidebar-divider/sidebar-divider';
 import { SidebarHeadingComponent } from '../components/ui/sidebar/sidebar-heading/sidebar-heading';
 import { SidebarLabelComponent } from '../components/ui/sidebar/sidebar-label/sidebar-label';
-import { AvatarComponent } from '../components/ui/avatar/avatar';
+import { AvatarDropdownComponent } from '../components/ui/avatar-dropdown/avatar-dropdown';
 import { ThemeService } from '../services/theme.service';
 
 @Component({
@@ -48,7 +48,7 @@ import { ThemeService } from '../services/theme.service';
     SidebarDividerComponent,
     SidebarHeadingComponent,
     SidebarLabelComponent,
-    AvatarComponent
+    AvatarDropdownComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
