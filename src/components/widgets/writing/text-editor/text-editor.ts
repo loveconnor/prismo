@@ -313,9 +313,8 @@ export class TextEditorComponent extends WidgetBaseComponent {
     this.setDataValue('saved_word_count', this.wordCount);
     
     this.autoSaveStatus = 'Saved';
-    setTimeout(() => {
-      this.autoSaveStatus = 'Enabled';
-    }, 2000);
+    // Reset status immediately
+    this.autoSaveStatus = 'Enabled';
   }
 
   clearText(): void {

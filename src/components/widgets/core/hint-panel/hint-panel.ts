@@ -132,22 +132,20 @@ export class HintPanelComponent extends WidgetBaseComponent {
     this.isRevealing = true;
     this.incrementAttempts();
 
-    // Simulate reveal delay
-    setTimeout(() => {
-      const hint = this.hints.find(h => h.id === hintId);
-      if (hint) {
-        hint.revealed = true;
-        this.setDataValue('hints_revealed', this.hints.filter(h => h.revealed).map(h => h.id));
-        this.setDataValue('total_hints_used', this.hintsUsed);
-        this.setDataValue('last_hint_revealed', new Date());
-        
-        // Check if all hints are revealed
-        if (this.hintsUsed === this.totalHints) {
-          this.completeWidget();
-        }
+    // Reveal hint immediately
+    const hint = this.hints.find(h => h.id === hintId);
+    if (hint) {
+      hint.revealed = true;
+      this.setDataValue('hints_revealed', this.hints.filter(h => h.revealed).map(h => h.id));
+      this.setDataValue('total_hints_used', this.hintsUsed);
+      this.setDataValue('last_hint_revealed', new Date());
+      
+      // Check if all hints are revealed
+      if (this.hintsUsed === this.totalHints) {
+        this.completeWidget();
       }
-      this.isRevealing = false;
-    }, 500);
+    }
+    this.isRevealing = false;
   }
 
   protected initializeWidgetData(): void {

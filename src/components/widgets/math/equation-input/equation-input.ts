@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
@@ -179,6 +179,8 @@ export class EquationInputComponent extends WidgetBaseComponent {
   @Input() showMeta: boolean = true;
   @Input() showFooter: boolean = true;
   @Input() autoValidate: boolean = false;
+  
+  @Output() latexChange = new EventEmitter<string>();
 
   public equation: string = '';
   public isValid: boolean = false;
@@ -268,13 +270,45 @@ export class EquationInputComponent extends WidgetBaseComponent {
   }
 
   onEquationChange(): void {
-    this.setDataValue('equation', this.equation);
+    // Convert simple syntax to proper LaTeX for symbolic parsing
+    const latexValue = this.convertToLaTeX(this.equation);
+    
+    this.setDataValue('equation', latexValue);
     this.setDataValue('equation_length', this.equation.length);
     this.setDataValue('last_modified', new Date());
+    
+    // Emit the LaTeX value for external symbolic parsing
+    this.latexChange.emit(latexValue);
     
     if (this.autoValidate && this.equation.trim()) {
       this.validateEquation();
     }
+  }
+
+  /**
+   * Get the current equation as proper LaTeX for symbolic parsing
+   */
+  get latexValue(): string {
+    return this.convertToLaTeX(this.equation);
+  }
+
+  /**
+   * Convert simple math syntax to proper LaTeX for symbolic parsing
+   */
+  private convertToLaTeX(input: string): string {
+    if (!input) return '';
+    
+    let result = input;
+    
+    // Convert simple fractions (a/b) to LaTeX fractions
+    result = result.replace(/([a-zA-Z0-9\(\)]+)\/([a-zA-Z0-9\(\)]+)/g, '\\frac{$1}{$2}');
+    
+    // Convert * to \times for multiplication
+    result = result.replace(/\*/g, '\\times');
+    
+    // Keep other LaTeX syntax as-is (^, _, \alpha, etc.)
+    
+    return result;
   }
 
   validateEquation(): void {
@@ -289,36 +323,34 @@ export class EquationInputComponent extends WidgetBaseComponent {
     this.setDataValue('validation_count', this.validationCount);
     this.setDataValue('last_validated', new Date());
 
-    // Simulate validation delay
-    setTimeout(() => {
-      try {
-        this.performValidation();
-        this.isValid = this.validationErrors.length === 0;
-        this.hasValidationError = !this.isValid;
-        this.previewStatus = this.isValid ? 'valid' : 'invalid';
-        this.lastValidatedAt = new Date();
-        
-        if (this.isValid) {
-          this.setDataValue('validated_at', this.lastValidatedAt);
-          this.setDataValue('is_valid', true);
-          
-          // Auto-complete if valid
-          if (this.autoValidate) {
-            this.completeWidget();
-          }
-        }
-      } catch (error) {
-        this.validationErrors.push({
-          type: 'other',
-          message: `Validation error: ${error}`
-        });
-        this.isValid = false;
-        this.hasValidationError = true;
-        this.previewStatus = 'invalid';
-      }
+    // Perform validation immediately
+    try {
+      this.performValidation();
+      this.isValid = this.validationErrors.length === 0;
+      this.hasValidationError = !this.isValid;
+      this.previewStatus = this.isValid ? 'valid' : 'invalid';
+      this.lastValidatedAt = new Date();
       
-      this.isValidating = false;
-    }, 1000);
+      if (this.isValid) {
+        this.setDataValue('validated_at', this.lastValidatedAt);
+        this.setDataValue('is_valid', true);
+        
+        // Auto-complete if valid
+        if (this.autoValidate) {
+          this.completeWidget();
+        }
+      }
+    } catch (error) {
+      this.validationErrors.push({
+        type: 'other',
+        message: `Validation error: ${error}`
+      });
+      this.isValid = false;
+      this.hasValidationError = true;
+      this.previewStatus = 'invalid';
+    }
+    
+    this.isValidating = false;
   }
 
   clearEquation(): void {

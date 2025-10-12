@@ -186,9 +186,7 @@ export class FeedbackBoxComponent extends WidgetBaseComponent implements AfterVi
     
     // Auto-complete for success feedback
     if (this.type === 'success' && this.autoComplete) {
-      setTimeout(() => {
-        this.completeWidget();
-      }, 2000);
+      this.completeWidget();
     }
   }
 

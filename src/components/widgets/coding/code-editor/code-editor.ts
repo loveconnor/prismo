@@ -231,28 +231,26 @@ export class CodeEditorComponent extends WidgetBaseComponent {
     this.setDataValue('runs_count', this.runsCount);
     this.setDataValue('last_run_at', new Date());
 
-    // Simulate code execution
-    setTimeout(() => {
-      try {
-        // Simple code execution simulation
-        this.executeCode();
-        this.outputStatus = 'success';
-        this.lastExecutionTime = Date.now() - startTime;
-        this.setDataValue('last_execution_time', this.lastExecutionTime);
-        this.setDataValue('execution_success', true);
-      } catch (error) {
-        this.output = `Error: ${error}`;
-        this.outputStatus = 'error';
-        this.setDataValue('execution_error', error);
-      }
-      
-      this.isRunning = false;
-      
-      // Check if all tests pass
-      if (this.testCases.length > 0 && this.allTestsPass()) {
-        this.completeWidget();
-      }
-    }, 1000);
+    // Execute code immediately
+    try {
+      // Simple code execution simulation
+      this.executeCode();
+      this.outputStatus = 'success';
+      this.lastExecutionTime = Date.now() - startTime;
+      this.setDataValue('last_execution_time', this.lastExecutionTime);
+      this.setDataValue('execution_success', true);
+    } catch (error) {
+      this.output = `Error: ${error}`;
+      this.outputStatus = 'error';
+      this.setDataValue('execution_error', error);
+    }
+    
+    this.isRunning = false;
+    
+    // Check if all tests pass
+    if (this.testCases.length > 0 && this.allTestsPass()) {
+      this.completeWidget();
+    }
   }
 
   resetCode(): void {
