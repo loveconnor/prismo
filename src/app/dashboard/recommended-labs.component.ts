@@ -26,8 +26,6 @@ type Lab = {
     CardHeaderComponent,
     CardContentComponent,
     CardFooterComponent,
-    SafeHtmlPipe,
-    BrowserInnerHtmlDirective
   ],
   template: `
     <section>
@@ -41,13 +39,7 @@ type Lab = {
           >
             <app-card-header className="pb-0">
               <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#60a5fa]">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="h-6 w-6"
-                  [appBrowserInnerHtml]="lab.icon | safeHtml"
-                  aria-hidden="true"
-                ></svg>
+                <span class="text-lg" aria-hidden="true">{{ lab.icon }}</span>
               </div>
             </app-card-header>
             <app-card-content className="flex-1 flex flex-col gap-3 pt-4">

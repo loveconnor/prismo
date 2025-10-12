@@ -15,7 +15,7 @@ type RecentLab = {
 @Component({
   selector: 'app-recent-labs',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, ProgressComponent, SafeHtmlPipe],
+  imports: [CommonModule, ButtonComponent, ProgressComponent],
   template: `
     <section>
       <div class="mb-4 flex items-center justify-between">
@@ -29,7 +29,7 @@ type RecentLab = {
             <!-- Title with icon -->
             <div class="flex min-w-0 flex-1 items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#60a5fa]" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" [innerHTML]="lab.icon | safeHtml"></svg>
+                <span class="text-lg">{{ lab.icon }}</span>
               </div>
               <h3 class="truncate text-base font-medium text-foreground">{{ lab.title }}</h3>
             </div>

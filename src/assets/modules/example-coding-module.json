@@ -1,0 +1,221 @@
+{
+  "id": "example-coding-module",
+  "title": "Introduction to JavaScript Functions",
+  "description": "Learn the basics of JavaScript functions through interactive coding exercises and mathematical problem solving.",
+  "skills": ["programming", "javascript", "functions", "problem-solving", "mathematics"],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Step Prompt",
+        "description": "Displays task or question text with optional formatting",
+        "skills": ["comprehension", "reading"],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to JavaScript Functions!",
+        "prompt": "In this module, you'll learn how to create and use JavaScript functions. Functions are reusable blocks of code that perform specific tasks. Let's start with the basics!",
+        "estimatedTime": 30
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": ["programming", "debugging", "syntax"],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": ["step-prompt"]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Create Your First Function",
+        "language": "javascript",
+        "starterCode": "// Create a function called 'greet' that takes a name parameter\n// and returns a greeting message\n\nfunction greet(name) {\n  // Your code here\n  return \"Hello, \" + name + \"!\";\n}\n\n// Test your function\nconsole.log(greet(\"World\"));",
+        "placeholder": "Write your function here...",
+        "testCases": [
+          {
+            "id": "test-1",
+            "input": "greet(\"Alice\")",
+            "expectedOutput": "Hello, Alice!",
+            "description": "Function should greet Alice"
+          },
+          {
+            "id": "test-2", 
+            "input": "greet(\"Bob\")",
+            "expectedOutput": "Hello, Bob!",
+            "description": "Function should greet Bob"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Hint Panel",
+        "description": "Progressive hint disclosure with multiple tiers",
+        "skills": ["problem-solving", "guidance"],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "Remember that a function declaration starts with the 'function' keyword followed by the function name and parameters in parentheses.",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "Use the 'return' statement to send a value back from your function. You can concatenate strings using the '+' operator.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "Your function should return a string that combines 'Hello, ' + name + '!'. Make sure to include the spaces and exclamation mark.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "equation-input",
+      "metadata": {
+        "id": "equation-input",
+        "title": "Equation Input",
+        "description": "LaTeX input with mathematical expression validation",
+        "skills": ["algebra", "mathematics", "symbolic-reasoning"],
+        "difficulty": 3,
+        "estimated_time": 120,
+        "input_type": "equation",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "math"
+      },
+      "props": {
+        "title": "Mathematical Function Practice",
+        "inputLabel": "Write the mathematical function f(x) = x² + 2x + 1 in LaTeX format:",
+        "placeholder": "e.g., f(x) = x^2 + 2x + 1",
+        "formatHint": "Use LaTeX notation: x^2 for x², \\frac{a}{b} for fractions",
+        "expectedFormat": "x^2"
+      },
+      "position": 4,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": ["reflection", "learning"],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You've successfully completed the JavaScript functions module!",
+        "explanation": "You've learned how to create functions, use parameters, and return values. These are fundamental concepts in programming that you'll use throughout your coding journey.",
+        "nextSteps": [
+          "Try creating functions with multiple parameters",
+          "Explore function expressions and arrow functions",
+          "Practice with more complex mathematical functions"
+        ],
+        "showContinueButton": true,
+        "autoComplete": true
+      },
+      "position": 5,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": ["self-assessment", "metacognition"],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Rate Your Confidence",
+        "description": "How confident do you feel about JavaScript functions now?",
+        "scaleLabels": ["Not confident", "Slightly confident", "Moderately confident", "Very confident", "Extremely confident"],
+        "autoSubmit": true
+      },
+      "position": 6,
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": ["step-prompt", "code-editor", "feedback-box"],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0"
+}

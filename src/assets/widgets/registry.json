@@ -1,0 +1,120 @@
+[
+  {
+    "id": "step-prompt",
+    "title": "Step Prompt",
+    "description": "Displays task or question text with optional formatting",
+    "skills": ["comprehension", "reading"],
+    "difficulty": 2,
+    "estimated_time": 30,
+    "input_type": "text",
+    "output_type": "scaffold",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": false
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "hint-panel",
+    "title": "Hint Panel",
+    "description": "Progressive hint disclosure with multiple tiers",
+    "skills": ["problem-solving", "guidance"],
+    "difficulty": 2,
+    "estimated_time": 60,
+    "input_type": "checkbox",
+    "output_type": "scaffold",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "hint_progression": true,
+      "time_extension": true
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "feedback-box",
+    "title": "Feedback Box",
+    "description": "Shows correctness, explanation, and next steps",
+    "skills": ["reflection", "learning"],
+    "difficulty": 2,
+    "estimated_time": 45,
+    "input_type": "text",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "confidence-meter",
+    "title": "Confidence Meter",
+    "description": "Self-rating slider for confidence assessment",
+    "skills": ["self-assessment", "metacognition"],
+    "difficulty": 2,
+    "estimated_time": 20,
+    "input_type": "slider",
+    "output_type": "progress",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "code-editor",
+    "title": "Code Editor",
+    "description": "Interactive code editor with run and reset functionality",
+    "skills": ["programming", "debugging", "syntax"],
+    "difficulty": 3,
+    "estimated_time": 300,
+    "input_type": "code",
+    "output_type": "visualization",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "alternative_widgets": ["step-prompt"]
+    },
+    "version": "1.0.0",
+    "category": "coding"
+  },
+  {
+    "id": "equation-input",
+    "title": "Equation Input",
+    "description": "LaTeX input with mathematical expression validation",
+    "skills": ["algebra", "mathematics", "symbolic-reasoning"],
+    "difficulty": 3,
+    "estimated_time": 120,
+    "input_type": "equation",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true
+    },
+    "version": "1.0.0",
+    "category": "math"
+  },
+  {
+    "id": "text-editor",
+    "title": "Text Editor",
+    "description": "Rich text input with word count and structure awareness",
+    "skills": ["writing", "composition", "communication"],
+    "difficulty": 3,
+    "estimated_time": 180,
+    "input_type": "rich-text",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "time_extension": true
+    },
+    "version": "1.0.0",
+    "category": "writing"
+  }
+]
