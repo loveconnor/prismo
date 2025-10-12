@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Inject, Input, OnInit, Output, ViewChild, PLATFORM_ID } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Inject, Input, OnInit, AfterViewInit, Output, ViewChild, PLATFORM_ID, ChangeDetectorRef, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
 import { lucideUser, lucideMoon, lucideSun, lucideLogOut } from '@ng-icons/lucide';
@@ -41,7 +41,7 @@ type ThemeVariant = 'light' | 'dark';
   templateUrl: './avatar-dropdown.html',
   styleUrls: ['./avatar-dropdown.css']
 })
-export class AvatarDropdownComponent implements OnInit {
+export class AvatarDropdownComponent implements OnInit, AfterViewInit {
   @Input() user: AvatarDropdownUser = {
     name: 'Student L.',
     email: 'love.563@buckeyemail.osu.edu',
@@ -75,11 +75,29 @@ export class AvatarDropdownComponent implements OnInit {
   constructor(
     private router: Router,
     private themeService: ThemeService,
+    private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) {
+    // React to theme changes and trigger change detection
+    effect(() => {
+      // Access the signal to create a dependency
+      this.themeService.isDarkMode();
+      // Update local state
+      this.isDarkMode = this.themeService.isDarkMode();
+      // Trigger change detection to update getters
+      this.cdr.detectChanges();
+    });
+  }
 
   ngOnInit(): void {
     this.isDarkMode = this.themeService.isDarkMode();
+  }
+
+  ngAfterViewInit(): void {
+    // Trigger change detection after view initialization to ensure styles are applied
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   get initials(): string {
@@ -113,6 +131,9 @@ export class AvatarDropdownComponent implements OnInit {
     }
 
     this.themeChange.emit(desiredTheme);
+    
+    // Ensure change detection runs after theme change
+    this.cdr.markForCheck();
   }
 
   async handleLogout(): Promise<void> {

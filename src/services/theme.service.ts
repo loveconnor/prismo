@@ -6,7 +6,7 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 })
 export class ThemeService {
   private renderer: Renderer2;
-  public isDarkMode = signal(false);
+  public isDarkMode = signal(this.getInitialTheme());
 
   constructor(
     private rendererFactory: RendererFactory2,
@@ -17,15 +17,33 @@ export class ThemeService {
     this.initializeTheme();
   }
 
+  private getInitialTheme(): boolean {
+    // Only check theme in browser environment
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return savedTheme === 'dark' || (!savedTheme && prefersDark);
+    }
+    // Default to dark mode for SSR
+    return true;
+  }
+
   private initializeTheme(): void {
     // Only initialize theme in browser environment
     if (isPlatformBrowser(this.platformId)) {
-      // Check for saved theme preference or default to system preference
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-      this.setTheme(shouldUseDark);
+      // Apply the theme to the DOM
+      const shouldUseDark = this.isDarkMode();
+      this.applyTheme(shouldUseDark);
+    }
+  }
+
+  private applyTheme(isDark: boolean): void {
+    if (isDark) {
+      this.renderer.addClass(this.document.documentElement, 'dark');
+      this.renderer.removeClass(this.document.documentElement, 'theme-light');
+    } else {
+      this.renderer.removeClass(this.document.documentElement, 'dark');
+      this.renderer.addClass(this.document.documentElement, 'theme-light');
     }
   }
 
@@ -37,17 +55,8 @@ export class ThemeService {
     this.isDarkMode.set(isDark);
 
     if (isPlatformBrowser(this.platformId)) {
-      if (isDark) {
-        this.renderer.addClass(this.document.documentElement, 'dark');
-        // Ensure any light-forcing class is removed
-        this.renderer.removeClass(this.document.documentElement, 'theme-light');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        this.renderer.removeClass(this.document.documentElement, 'dark');
-        // Add a helper class to activate light-mode overrides
-        this.renderer.addClass(this.document.documentElement, 'theme-light');
-        localStorage.setItem('theme', 'light');
-      }
+      this.applyTheme(isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
   }
 }

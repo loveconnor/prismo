@@ -15,7 +15,7 @@ export class LabelComponent {
 
   get labelClasses(): string {
     return cn(
-      'text-sm font-medium leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+      'text-sm font-medium leading-none text-zinc-950 dark:text-white peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer',
       this.className
     );
   }

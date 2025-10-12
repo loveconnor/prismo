@@ -1,5 +1,6 @@
 <div class="min-h-screen bg-background flex">
   <!-- Sidebar -->
+  @if (!isAuthPage()) {
   <aside class="w-64 border-r border-border bg-background/50 backdrop-blur-sm sticky top-0 h-screen overflow-hidden">
     <app-sidebar>
       <app-sidebar-header>
@@ -64,9 +65,10 @@
       </app-sidebar-footer>
     </app-sidebar>
   </aside>
+  }
 
   <!-- Main Content -->
-  <main class="flex-1 overflow-y-auto">
+  <main [class]="isAuthPage() ? 'flex-1' : 'flex-1 overflow-y-auto'">
 <router-outlet />
   </main>
 

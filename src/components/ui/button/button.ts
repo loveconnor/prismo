@@ -26,6 +26,7 @@ export type ButtonColor = 'dark/zinc' | 'light' | 'dark/white' | 'dark' | 'white
 export class ButtonComponent implements ControlValueAccessor {
   @Input() variant: ButtonVariant = 'default';
   @Input() size: ButtonSize = 'default';
+  @Input() color?: ButtonColor;
   @Input() disabled = false;
   @Input() href?: string;
   @Input() routerLink?: string | string[];
@@ -100,6 +101,11 @@ export class ButtonComponent implements ControlValueAccessor {
   }
 
   private getStyleClasses(): string[] {
+    // If color is specified, use color-based classes
+    if (this.color) {
+      return this.getColorClasses();
+    }
+
     // Use the new Tailwind v4 theme system with CSS variables
     switch (this.variant) {
       case 'outline':
@@ -142,6 +148,45 @@ export class ButtonComponent implements ControlValueAccessor {
     }
   }
 
+  private getColorClasses(): string[] {
+    if (!this.color) return [];
+
+    // Color-based classes similar to Catalyst UI
+    const colorMap: Record<string, string[]> = {
+      'blue': [
+        'bg-blue-600 text-white',
+        'hover:bg-blue-500',
+        'focus-visible:ring-blue-500/50'
+      ],
+      'indigo': [
+        'bg-indigo-600 text-white',
+        'hover:bg-indigo-500',
+        'focus-visible:ring-indigo-500/50'
+      ],
+      'cyan': [
+        'bg-cyan-600 text-white',
+        'hover:bg-cyan-500',
+        'focus-visible:ring-cyan-500/50'
+      ],
+      'red': [
+        'bg-red-600 text-white',
+        'hover:bg-red-500',
+        'focus-visible:ring-red-500/50'
+      ],
+      'green': [
+        'bg-green-600 text-white',
+        'hover:bg-green-500',
+        'focus-visible:ring-green-500/50'
+      ],
+      'zinc': [
+        'bg-zinc-900 text-white dark:bg-zinc-700',
+        'hover:bg-zinc-800 dark:hover:bg-zinc-600',
+        'focus-visible:ring-zinc-500/50'
+      ]
+    };
+
+    return colorMap[this.color] || colorMap['blue'];
+  }
 
   // Form control methods
   writeValue(value: any): void {

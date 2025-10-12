@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, Router } from '@angular/router';
+import { Component, signal } from '@angular/core';
+import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
 import {
   lucideHouse,
@@ -57,11 +58,28 @@ import { ThemeService } from '../services/theme.service';
 })
 export class App {
   settingsOpen = false;
+  currentUrl = signal('');
 
-  constructor(public themeService: ThemeService, private router: Router) {}
+  constructor(public themeService: ThemeService, private router: Router) {
+    // Update currentUrl signal on navigation
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.currentUrl.set(event.url);
+      });
+    
+    // Set initial URL
+    this.currentUrl.set(this.router.url);
+  }
 
   isActive(route: string): boolean {
     return this.router.url === route;
+  }
+
+  isAuthPage(): boolean {
+    const authRoutes = ['/login', '/register', '/forgot-password'];
+    const url = this.currentUrl();
+    return authRoutes.some(route => url.startsWith(route));
   }
 
   toggleTheme() {
