@@ -1,8 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
+import { CardComponent } from '../../../ui/card/card';
+import { CardContentComponent } from '../../../ui/card/card-content';
 import { ButtonComponent } from '../../../ui/button/button';
+import { ProgressComponent } from '../../../ui/progress/progress';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideLightbulb, lucideInfo, lucideTriangle, lucideEye, lucideEyeOff } from '@ng-icons/lucide';
+import { gsap } from 'gsap';
 
 interface Hint {
   id: string;
@@ -14,62 +20,84 @@ interface Hint {
 @Component({
   selector: 'app-hint-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    CardComponent,
+    CardContentComponent,
+    ButtonComponent,
+    ProgressComponent,
+    NgIconComponent
+  ],
+  providers: [
+    provideIcons({
+      lucideLightbulb,
+      lucideInfo,
+      lucideTriangle,
+      lucideEye,
+      lucideEyeOff
+    })
+  ],
   template: `
-    <div class="w-full space-y-4">
-      <div class="flex items-center justify-between border-b border-gray-200 pb-2">
-        <h3 class="text-lg font-semibold text-gray-900">Hints</h3>
-        <div class="text-sm text-gray-500">
-          <span class="font-medium">{{ hintsUsed }}/{{ totalHints }}</span>
-        </div>
-      </div>
-      
-      <div class="space-y-3">
-        <div 
-          *ngFor="let hint of hints; trackBy: trackByHintId" 
-          class="border border-gray-200 rounded-lg p-4 transition-all duration-200"
-          [class.bg-gray-50]="hint.revealed"
-          [class.border-blue-500]="hint.revealed"
-          [class.border-l-4]="true"
-          [class.border-l-green-500]="hint.tier === 1"
-          [class.border-l-yellow-500]="hint.tier === 2"
-          [class.border-l-red-500]="hint.tier === 3"
-        >
-          <div class="inline-block px-2 py-1 text-xs font-medium rounded-full mb-2"
-               [class]="hint.tier === 1 ? 'bg-green-100 text-green-800' : 
-                        hint.tier === 2 ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'">
-            Tier {{ hint.tier }}
+    <app-card>
+      <app-card-content>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-foreground flex items-center gap-2">
+              <ng-icon name="lucideLightbulb" class="w-5 h-5 text-yellow-500"></ng-icon>
+              Hints
+            </h3>
+            <div class="text-sm text-muted-foreground">
+              <span class="font-medium">{{ hintsUsed }}/{{ totalHints }}</span>
+            </div>
           </div>
           
-          <div class="text-sm text-gray-900 leading-relaxed" *ngIf="hint.revealed">
-            {{ hint.text }}
-          </div>
-          
-          <button 
-            *ngIf="!hint.revealed && canRevealHint(hint.tier)"
-            class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            (click)="revealHint(hint.id)"
-            [disabled]="isRevealing"
-          >
-            <span *ngIf="!isRevealing">Reveal Hint</span>
-            <span *ngIf="isRevealing">Revealing...</span>
-          </button>
-        </div>
-      </div>
-      
-      <div class="border-t border-gray-200 pt-3" *ngIf="showProgress">
-        <div class="space-y-2">
-          <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="space-y-3">
             <div 
-              class="h-full bg-blue-600 transition-all duration-300" 
-              [style.width.%]="hintProgress"
-            ></div>
+              *ngFor="let hint of hints; trackBy: trackByHintId" 
+              class="border rounded-lg p-4 transition-all duration-200"
+              [class.bg-muted/50]="hint.revealed"
+              [class.border-primary]="hint.revealed"
+              [class.border-l-4]="true"
+              [class.border-l-green-500]="hint.tier === 1"
+              [class.border-l-yellow-500]="hint.tier === 2"
+              [class.border-l-red-500]="hint.tier === 3"
+            >
+              <div class="inline-block px-2 py-1 text-xs font-medium rounded-full mb-2"
+                   [class]="hint.tier === 1 ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 
+                            hint.tier === 2 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' : 
+                            'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'">
+                Tier {{ hint.tier }}
+              </div>
+              
+              <div class="text-sm text-foreground leading-relaxed" *ngIf="hint.revealed">
+                {{ hint.text }}
+              </div>
+              
+              <app-button 
+                *ngIf="!hint.revealed && canRevealHint(hint.tier)"
+                variant="outline"
+                size="sm"
+                (click)="revealHint(hint.id)"
+                [disabled]="isRevealing"
+                className="w-full"
+              >
+                <ng-icon name="lucideEye" class="w-4 h-4 mr-2"></ng-icon>
+                <span *ngIf="!isRevealing">Reveal Hint</span>
+                <span *ngIf="isRevealing">Revealing...</span>
+              </app-button>
+            </div>
           </div>
-          <span class="text-xs text-gray-500 text-center block">{{ hintProgress }}% revealed</span>
+          
+          <div class="border-t pt-3" *ngIf="showProgress">
+            <div class="space-y-2">
+              <app-progress [value]="hintProgress" className="h-2"></app-progress>
+              <span class="text-xs text-muted-foreground text-center block">{{ hintProgress }}% revealed</span>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </app-card-content>
+    </app-card>
   `
 })
 export class HintPanelComponent extends WidgetBaseComponent {

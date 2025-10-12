@@ -5,6 +5,13 @@ import { takeUntil } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { ModuleContainerComponent } from '../../components/modules/module-container/module-container';
 import { ModuleDefinition } from '../../types/widget.types';
+import { CardComponent } from '../../components/ui/card/card';
+import { CardHeaderComponent } from '../../components/ui/card/card-header';
+import { CardContentComponent } from '../../components/ui/card/card-content';
+import { CardFooterComponent } from '../../components/ui/card/card-footer';
+import { ButtonComponent } from '../../components/ui/button/button';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideLaptop, lucideStar, lucideArrowLeft, lucidePlay } from '@ng-icons/lucide';
 
 // Import individual widgets for demo
 import { StepPromptComponent } from '../../components/widgets/core/step-prompt/step-prompt';
@@ -27,139 +34,201 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
     ConfidenceMeterComponent,
     CodeEditorComponent,
     EquationInputComponent,
-    TextEditorComponent
+    TextEditorComponent,
+    CardComponent,
+    CardHeaderComponent,
+    CardContentComponent,
+    CardFooterComponent,
+    ButtonComponent,
+    NgIconComponent
+  ],
+  providers: [
+    provideIcons({
+      lucideLaptop,
+      lucideStar,
+      lucideArrowLeft,
+      lucidePlay
+    })
   ],
   template: `
-    <div class="widget-lab">
-      <div class="lab-header">
-        <h1>Widget System Demo Lab</h1>
-        <p class="lab-description">
-          This demo showcases the Prismo widget system with reusable, 
-          atomic learning interactions that can be composed into modules and labs.
-        </p>
+    <div class="min-h-screen bg-background p-6">
+      <!-- Header -->
+      <div class="max-w-4xl mx-auto mb-8">
+        <div class="text-center space-y-4">
+          <h1 class="text-4xl font-bold text-foreground">Widget System Demo Lab</h1>
+          <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+            This demo showcases the Prismo widget system with reusable, 
+            atomic learning interactions that can be composed into modules and labs.
+          </p>
+        </div>
       </div>
       
-      <div class="lab-content">
-        <!-- Module Selection -->
-        <div class="module-selection" *ngIf="!selectedModule">
-          <h2>Choose a Module to Explore</h2>
-          <div class="module-options">
-            <div 
-              class="module-option"
-              (click)="loadModule('example-coding-module')"
-            >
-              <div class="module-card">
-                <div class="module-icon">💻</div>
-                <h3>JavaScript Functions</h3>
-                <p>Learn JavaScript functions through interactive coding exercises</p>
-                <div class="module-meta">
-                  <span class="module-duration">~30 min</span>
-                  <span class="module-difficulty">Medium</span>
+      <!-- Module Selection -->
+      <div class="max-w-4xl mx-auto" *ngIf="!selectedModule">
+        <h2 class="text-2xl font-semibold text-foreground mb-6 text-center">Choose a Module to Explore</h2>
+        <div class="grid gap-6 md:grid-cols-2">
+          <!-- JavaScript Functions Module -->
+          <app-card 
+            className="group cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
+            (click)="loadModule('example-coding-module')"
+          >
+            <app-card-header>
+              <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                  <ng-icon name="lucideLaptop" class="h-6 w-6"></ng-icon>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold text-foreground">JavaScript Functions</h3>
+                  <p class="text-sm text-muted-foreground">Interactive coding exercises</p>
                 </div>
               </div>
-            </div>
-            
-            <div 
-              class="module-option"
-              (click)="loadModule('individual-widgets')"
-            >
-              <div class="module-card">
-                <div class="module-icon">🧩</div>
-                <h3>Individual Widgets</h3>
-                <p>Explore individual widgets in isolation</p>
-                <div class="module-meta">
-                  <span class="module-duration">~15 min</span>
-                  <span class="module-difficulty">Easy</span>
+            </app-card-header>
+            <app-card-content>
+              <p class="text-muted-foreground leading-relaxed">
+                Learn JavaScript functions through interactive coding exercises with real-time feedback and progressive difficulty.
+              </p>
+            </app-card-content>
+            <app-card-footer>
+              <div class="flex items-center justify-between w-full">
+                <span class="text-sm text-muted-foreground">~30 min • Medium</span>
+                <app-button variant="default" size="sm">
+                  <ng-icon name="lucidePlay" class="w-4 h-4 mr-2"></ng-icon>
+                  Start Module
+                </app-button>
+              </div>
+            </app-card-footer>
+          </app-card>
+
+          <!-- Individual Widgets Module -->
+          <app-card 
+            className="group cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
+            (click)="loadModule('individual-widgets')"
+          >
+            <app-card-header>
+              <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400">
+                  <ng-icon name="lucideStar" class="h-6 w-6"></ng-icon>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold text-foreground">Individual Widgets</h3>
+                  <p class="text-sm text-muted-foreground">Widget showcase</p>
                 </div>
               </div>
-            </div>
-          </div>
+            </app-card-header>
+            <app-card-content>
+              <p class="text-muted-foreground leading-relaxed">
+                Explore individual widgets in isolation to understand their capabilities and use cases.
+              </p>
+            </app-card-content>
+            <app-card-footer>
+              <div class="flex items-center justify-between w-full">
+                <span class="text-sm text-muted-foreground">~15 min • Easy</span>
+                <app-button variant="default" size="sm">
+                  <ng-icon name="lucidePlay" class="w-4 h-4 mr-2"></ng-icon>
+                  Explore Widgets
+                </app-button>
+              </div>
+            </app-card-footer>
+          </app-card>
         </div>
+      </div>
         
-        <!-- Module Container -->
-        <div class="module-container" *ngIf="selectedModule && moduleDefinition">
-          <app-module-container 
-            [moduleDefinition]="moduleDefinition"
-          ></app-module-container>
+      <!-- Module Container -->
+      <div class="max-w-6xl mx-auto" *ngIf="selectedModule && moduleDefinition">
+        <div class="mb-6">
+          <app-button variant="outline" size="sm" (click)="goBack()" class="mb-4">
+            <ng-icon name="lucideArrowLeft" class="w-4 h-4 mr-2"></ng-icon>
+            Back to Modules
+          </app-button>
         </div>
-        
-        <!-- Individual Widgets Demo -->
-        <div class="individual-widgets" *ngIf="selectedModule === 'individual-widgets'">
-          <h2>Individual Widgets Demo</h2>
-          <p class="demo-description">
+        <app-module-container 
+          [moduleDefinition]="moduleDefinition"
+        ></app-module-container>
+      </div>
+      
+      <!-- Individual Widgets Demo -->
+      <div class="max-w-6xl mx-auto" *ngIf="selectedModule === 'individual-widgets'">
+        <div class="mb-6">
+          <app-button variant="outline" size="sm" (click)="goBack()" class="mb-4">
+            <ng-icon name="lucideArrowLeft" class="w-4 h-4 mr-2"></ng-icon>
+            Back to Modules
+          </app-button>
+          <h2 class="text-3xl font-bold text-foreground mb-4">Individual Widgets Demo</h2>
+          <p class="text-lg text-muted-foreground mb-8">
             Here you can test individual widgets in isolation. Each widget 
             manages its own state and reports back to the parent system.
           </p>
-          
-          <div class="widgets-grid">
-            <!-- Core Widgets -->
-            <div class="widget-demo">
-              <h3>Step Prompt</h3>
+        </div>
+        
+        <div class="grid gap-8 lg:grid-cols-2">
+          <!-- Core Widgets -->
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Step Prompt</h3>
               <app-step-prompt
                 [metadata]="stepPromptMetadata"
-                [config]="stepPromptConfig"
+                [title]="stepPromptConfig.title"
+                [prompt]="stepPromptConfig.prompt"
+                [estimatedTime]="stepPromptConfig.estimatedTime"
               ></app-step-prompt>
             </div>
             
-            <div class="widget-demo">
-              <h3>Hint Panel</h3>
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Hint Panel</h3>
               <app-hint-panel
                 [metadata]="hintPanelMetadata"
                 [config]="hintPanelConfig"
               ></app-hint-panel>
             </div>
             
-            <div class="widget-demo">
-              <h3>Feedback Box</h3>
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Feedback Box</h3>
               <app-feedback-box
                 [metadata]="feedbackBoxMetadata"
-                [config]="feedbackBoxConfig"
+                [type]="feedbackBoxConfig.type"
+                [title]="feedbackBoxConfig.title"
+                [message]="feedbackBoxConfig.message"
+                [explanation]="feedbackBoxConfig.explanation"
+                [nextSteps]="feedbackBoxConfig.nextSteps"
+                [showContinueButton]="feedbackBoxConfig.showContinueButton"
               ></app-feedback-box>
             </div>
             
-            <div class="widget-demo">
-              <h3>Confidence Meter</h3>
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Confidence Meter</h3>
               <app-confidence-meter
                 [metadata]="confidenceMeterMetadata"
                 [config]="confidenceMeterConfig"
               ></app-confidence-meter>
             </div>
+          </div>
             
-            <!-- Category Widgets -->
-            <div class="widget-demo">
-              <h3>Code Editor</h3>
+          <!-- Category Widgets -->
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Code Editor</h3>
               <app-code-editor
                 [metadata]="codeEditorMetadata"
                 [config]="codeEditorConfig"
               ></app-code-editor>
             </div>
             
-            <div class="widget-demo">
-              <h3>Equation Input</h3>
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Equation Input</h3>
               <app-equation-input
                 [metadata]="equationInputMetadata"
                 [config]="equationInputConfig"
               ></app-equation-input>
             </div>
             
-            <div class="widget-demo">
-              <h3>Text Editor</h3>
+            <div>
+              <h3 class="text-lg font-semibold text-foreground mb-3">Text Editor</h3>
               <app-text-editor
                 [metadata]="textEditorMetadata"
                 [config]="textEditorConfig"
               ></app-text-editor>
             </div>
           </div>
-        </div>
-        
-        <!-- Back Button -->
-        <div class="lab-actions" *ngIf="selectedModule">
-          <button 
-            class="back-button"
-            (click)="goBack()"
-          >
-            ← Back to Module Selection
-          </button>
         </div>
       </div>
     </div>
@@ -247,7 +316,7 @@ export class WidgetLabComponent implements OnInit, OnDestroy {
   };
 
   public feedbackBoxConfig = {
-    type: 'success',
+    type: 'success' as 'success' | 'error' | 'warning' | 'info',
     title: 'Widget System Working!',
     message: 'The widget system is functioning correctly.',
     explanation: 'This feedback box demonstrates how widgets can provide immediate feedback to learners.',

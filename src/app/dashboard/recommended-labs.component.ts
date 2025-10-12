@@ -5,8 +5,8 @@ import { CardComponent } from '../../components/ui/card/card';
 import { CardHeaderComponent } from '../../components/ui/card/card-header';
 import { CardContentComponent } from '../../components/ui/card/card-content';
 import { CardFooterComponent } from '../../components/ui/card/card-footer';
-import { SafeHtmlPipe } from '../lib/safe-html.pipe';
-import { BrowserInnerHtmlDirective } from '../directives/browser-inner-html.directive';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideCode, lucideAtom, lucideDatabase, lucideShield, lucideBookOpen } from '@ng-icons/lucide';
 
 type Lab = {
   title: string;
@@ -26,6 +26,16 @@ type Lab = {
     CardHeaderComponent,
     CardContentComponent,
     CardFooterComponent,
+    NgIconComponent
+  ],
+  providers: [
+    provideIcons({
+      lucideCode,
+      lucideAtom,
+      lucideDatabase,
+      lucideShield,
+      lucideBookOpen
+    })
   ],
   template: `
     <section>
@@ -39,7 +49,7 @@ type Lab = {
           >
             <app-card-header className="pb-0">
               <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#60a5fa]">
-                <span class="text-lg" aria-hidden="true">{{ lab.icon }}</span>
+                <ng-icon [name]="getLabIcon(lab.title)" class="h-6 w-6" aria-hidden="true"></ng-icon>
               </div>
             </app-card-header>
             <app-card-content className="flex-1 flex flex-col gap-3 pt-4">
@@ -69,6 +79,14 @@ type Lab = {
   `
 })
 export class RecommendedLabsComponent {
+  getLabIcon(title: string): string {
+    if (title.includes('Python') || title.includes('Data Structures')) return 'lucideCode';
+    if (title.includes('React') || title.includes('Hooks')) return 'lucideAtom';
+    if (title.includes('SQL') || title.includes('Query')) return 'lucideDatabase';
+    if (title.includes('Security') || title.includes('Authentication')) return 'lucideShield';
+    return 'lucideBookOpen';
+  }
+
   labs: Lab[] = [
     {
       title: 'Python Data Structures Deep Dive',

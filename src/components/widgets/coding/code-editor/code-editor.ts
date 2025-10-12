@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
 import { ButtonComponent } from '../../../ui/button/button';
+import { CardComponent } from '../../../ui/card/card';
+import { CardContentComponent } from '../../../ui/card/card-content';
+import { CardHeaderComponent } from '../../../ui/card/card-header';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucidePlay, lucideRotateCcw, lucideCheck, lucideX, lucideClock } from '@ng-icons/lucide';
 
 interface TestCase {
   id: string;
@@ -16,44 +21,70 @@ interface TestCase {
 @Component({
   selector: 'app-code-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    CardComponent,
+    CardContentComponent,
+    CardHeaderComponent,
+    ButtonComponent,
+    NgIconComponent
+  ],
+  providers: [
+    provideIcons({
+      lucidePlay,
+      lucideRotateCcw,
+      lucideCheck,
+      lucideX,
+      lucideClock
+    })
+  ],
   template: `
-    <div class="code-editor">
-      <div class="editor-header">
-        <div class="editor-title">
-          <h3>{{ title }}</h3>
-          <span class="language-badge">{{ language }}</span>
-        </div>
-        <div class="editor-actions">
-          <button 
-            class="run-button"
-            (click)="runCode()"
-            [disabled]="isRunning || !hasCode"
-          >
-            <span *ngIf="!isRunning">▶️ Run</span>
-            <span *ngIf="isRunning">⏳ Running...</span>
-          </button>
-          
-          <button 
-            class="reset-button"
-            (click)="resetCode()"
-            [disabled]="isRunning"
-          >
-            🔄 Reset
-          </button>
-        </div>
-      </div>
-      
-      <div class="editor-content">
-        <div class="code-section">
-          <div class="code-header">
-            <span class="code-label">Your Code:</span>
-            <span class="line-count">{{ lineCount }} lines</span>
+    <app-card>
+      <app-card-header>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <h3 class="text-lg font-semibold text-foreground">{{ title }}</h3>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+              {{ language }}
+            </span>
           </div>
-          
+          <div class="flex gap-2">
+            <app-button 
+              variant="default"
+              size="sm"
+              (click)="runCode()"
+              [disabled]="isRunning || !hasCode"
+            >
+              <ng-icon name="lucidePlay" class="w-4 h-4 mr-2"></ng-icon>
+              <span *ngIf="!isRunning">Run</span>
+              <span *ngIf="isRunning">Running...</span>
+            </app-button>
+            
+            <app-button 
+              variant="outline"
+              size="sm"
+              (click)="resetCode()"
+              [disabled]="isRunning"
+            >
+              <ng-icon name="lucideRotateCcw" class="w-4 h-4 mr-2"></ng-icon>
+              Reset
+            </app-button>
+          </div>
+        </div>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-foreground">Your Code:</span>
+              <span class="text-xs text-muted-foreground">{{ lineCount }} lines</span>
+            </div>
+            
             <textarea
               #codeTextarea
-              class="code-textarea"
+              class="w-full min-h-[200px] p-3 border border-border rounded-lg bg-background text-foreground font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
               [(ngModel)]="code"
               [ngModelOptions]="{standalone: true}"
               (input)="onCodeChange()"
@@ -61,54 +92,71 @@ interface TestCase {
               [disabled]="isRunning"
               spellcheck="false"
             ></textarea>
-        </div>
-        
-        <div class="output-section" *ngIf="showOutput">
-          <div class="output-header">
-            <span class="output-label">Output:</span>
-            <span class="output-status" [class]="'status-' + outputStatus">
-              {{ getStatusLabel() }}
-            </span>
           </div>
           
-          <div class="output-content">
-            <pre class="output-text" *ngIf="output">{{ output }}</pre>
-            <div class="output-empty" *ngIf="!output">
-              Click "Run" to see output
+          <div class="space-y-2" *ngIf="showOutput">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-foreground">Output:</span>
+              <span class="text-xs px-2 py-1 rounded-full" 
+                    [class]="outputStatus === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                             outputStatus === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
+                             'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'">
+                {{ getStatusLabel() }}
+              </span>
+            </div>
+            
+            <div class="p-3 bg-muted rounded-lg min-h-[60px]">
+              <pre class="text-sm text-foreground whitespace-pre-wrap" *ngIf="output">{{ output }}</pre>
+              <div class="text-sm text-muted-foreground" *ngIf="!output">
+                Click "Run" to see output
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </app-card-content>
       
-      <div class="test-results" *ngIf="testCases.length > 0 && hasRunCode">
-        <div class="test-header">
-          <h4>Test Results</h4>
-          <span class="test-summary">
+      <div class="mt-4" *ngIf="testCases.length > 0 && hasRunCode">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-semibold text-foreground">Test Results</h4>
+          <span class="text-xs text-muted-foreground">
             {{ passedTests }}/{{ testCases.length }} tests passed
           </span>
         </div>
         
-        <div class="test-list">
+        <div class="space-y-2">
           <div 
             *ngFor="let test of testCases; trackBy: trackByTestId" 
-            class="test-item"
-            [class.passed]="test.passed"
-            [class.failed]="test.passed === false"
+            class="p-3 border rounded-lg transition-colors"
+            [class.bg-green-50]="test.passed === true"
+            [class.border-green-200]="test.passed === true"
+            [class.bg-red-50]="test.passed === false"
+            [class.border-red-200]="test.passed === false"
+            [class.bg-muted]="test.passed === undefined"
           >
-            <div class="test-info">
-              <span class="test-icon">
-                <span *ngIf="test.passed === true">✅</span>
-                <span *ngIf="test.passed === false">❌</span>
-                <span *ngIf="test.passed === undefined">⏳</span>
-              </span>
-              <span class="test-description">{{ test.description || 'Test Case' }}</span>
+            <div class="flex items-center gap-2">
+              <ng-icon 
+                *ngIf="test.passed === true" 
+                name="lucideCheck" 
+                class="w-4 h-4 text-green-600"
+              ></ng-icon>
+              <ng-icon 
+                *ngIf="test.passed === false" 
+                name="lucideX" 
+                class="w-4 h-4 text-red-600"
+              ></ng-icon>
+              <ng-icon 
+                *ngIf="test.passed === undefined" 
+                name="lucideClock" 
+                class="w-4 h-4 text-muted-foreground"
+              ></ng-icon>
+              <span class="text-sm font-medium text-foreground">{{ test.description || 'Test Case' }}</span>
             </div>
             
-            <div class="test-details" *ngIf="test.passed === false">
-              <div class="test-expected">
+            <div class="mt-2 space-y-1" *ngIf="test.passed === false">
+              <div class="text-xs text-muted-foreground">
                 <strong>Expected:</strong> {{ test.expectedOutput }}
               </div>
-              <div class="test-actual">
+              <div class="text-xs text-muted-foreground">
                 <strong>Got:</strong> {{ test.actualOutput || 'No output' }}
               </div>
             </div>
@@ -116,16 +164,16 @@ interface TestCase {
         </div>
       </div>
       
-      <div class="editor-footer" *ngIf="showFooter">
-        <div class="editor-stats">
-          <span class="runs-count">Runs: {{ runsCount }}</span>
-          <span class="code-length">{{ code.length }} characters</span>
-          <span class="execution-time" *ngIf="lastExecutionTime">
+      <div class="mt-4 pt-3 border-t" *ngIf="showFooter">
+        <div class="flex items-center gap-4 text-xs text-muted-foreground">
+          <span>Runs: {{ runsCount }}</span>
+          <span>{{ code.length }} characters</span>
+          <span *ngIf="lastExecutionTime">
             Last run: {{ lastExecutionTime }}ms
           </span>
         </div>
       </div>
-    </div>
+    </app-card>
   `,
 })
 export class CodeEditorComponent extends WidgetBaseComponent {

@@ -1,63 +1,79 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ThemeService } from '../../../services/theme.service';
 import { WidgetMetadata, WidgetState, WidgetEvent } from '../../../types/widget.types';
+import { CardComponent } from '../../ui/card/card';
+import { CardContentComponent } from '../../ui/card/card-content';
+import { ButtonComponent } from '../../ui/button/button';
+import { ProgressComponent } from '../../ui/progress/progress';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideTriangle, lucideLoader, lucideRefreshCw } from '@ng-icons/lucide';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-widget-base',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    CardComponent,
+    CardContentComponent,
+    ButtonComponent,
+    NgIconComponent
+  ],
+  providers: [
+    provideIcons({
+      lucideTriangle,
+      lucideLoader,
+      lucideRefreshCw
+    })
+  ],
   template: `
-    <div 
-      class="w-full min-h-[200px] border border-gray-200 rounded-lg bg-white p-4 transition-all duration-200"
-      [class.dark:bg-gray-800]="isDarkMode()"
-      [class.dark:border-gray-700]="isDarkMode()"
+    <app-card 
+      [className]="'min-h-[200px] transition-all duration-200'"
       [class.opacity-75]="isLoading"
       [class.pointer-events-none]="isLoading"
-      [class.border-red-500]="hasError"
-      [class.bg-red-50]="hasError"
+      [class.border-destructive]="hasError"
       [attr.aria-label]="metadata.title"
       role="region"
       [attr.aria-live]="isLoading ? 'polite' : 'off'"
+      #widgetCard
     >
       <!-- Loading State -->
-      <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-8 text-center" aria-label="Loading widget">
-        <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-sm text-gray-500">Loading...</p>
-      </div>
+      <app-card-content *ngIf="isLoading" class="flex flex-col items-center justify-center py-8 text-center" aria-label="Loading widget">
+        <ng-icon name="lucideLoader" class="w-8 h-8 text-primary animate-spin mb-4"></ng-icon>
+        <p class="text-sm text-muted-foreground">Loading...</p>
+      </app-card-content>
 
       <!-- Error State -->
-      <div *ngIf="hasError && !isLoading" class="flex flex-col items-center justify-center py-8 text-center" role="alert">
-        <div class="text-4xl mb-4">⚠️</div>
-        <h3 class="text-lg font-semibold text-red-600 mb-2">Something went wrong</h3>
-        <p class="text-sm text-gray-600 mb-4 max-w-md">{{ errorMessage || 'This widget encountered an error.' }}</p>
-        <button 
-          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" 
+      <app-card-content *ngIf="hasError && !isLoading" class="flex flex-col items-center justify-center py-8 text-center" role="alert">
+        <ng-icon name="lucideTriangle" class="w-12 h-12 text-destructive mb-4"></ng-icon>
+        <h3 class="text-lg font-semibold text-destructive mb-2">Something went wrong</h3>
+        <p class="text-sm text-muted-foreground mb-4 max-w-md">{{ errorMessage || 'This widget encountered an error.' }}</p>
+        <app-button 
+          variant="outline"
+          size="sm"
           (click)="retry()"
           [attr.aria-label]="'Retry ' + metadata.title"
         >
+          <ng-icon name="lucideRefreshCw" class="w-4 h-4 mr-2"></ng-icon>
           Try Again
-        </button>
-      </div>
+        </app-button>
+      </app-card-content>
 
       <!-- Widget Content -->
-      <div 
-        *ngIf="!isLoading && !hasError" 
-        class="w-full flex flex-col gap-4"
-      >
-        <ng-content></ng-content>
-      </div>
-    </div>
+      <ng-content *ngIf="!isLoading && !hasError"></ng-content>
+    </app-card>
   `
 })
-export abstract class WidgetBaseComponent implements OnInit, OnDestroy {
+export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() metadata!: WidgetMetadata;
   @Input() config: Record<string, any> = {};
   @Input() initialData: Record<string, any> = {};
   
   @Output() stateChange = new EventEmitter<WidgetEvent>();
+  @ViewChild('widgetCard') widgetCard!: ElementRef;
   @Output() completion = new EventEmitter<WidgetEvent>();
   @Output() error = new EventEmitter<WidgetEvent>();
 
@@ -95,6 +111,18 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy {
     this.initializeWidget();
     this.setupThemeSubscription();
     this.setupAccessibility();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.widgetCard && isPlatformBrowser(this.platformId)) {
+      // Animate widget in
+      gsap.from(this.widgetCard.nativeElement, {
+        opacity: 0,
+        y: 20,
+        duration: 0.4,
+        ease: "power2.out"
+      });
+    }
   }
 
   ngOnDestroy(): void {

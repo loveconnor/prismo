@@ -3,6 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
 import { ButtonComponent } from '../../../ui/button/button';
+import { CardComponent } from '../../../ui/card/card';
+import { CardContentComponent } from '../../../ui/card/card-content';
+import { CardHeaderComponent } from '../../../ui/card/card-header';
+import { TextareaComponent } from '../../../ui/textarea/textarea';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideSave, lucideTrash2, lucideFileText, lucideClock, lucidePenTool } from '@ng-icons/lucide';
 
 interface WritingMetrics {
   wordCount: number;
@@ -16,146 +22,182 @@ interface WritingMetrics {
 @Component({
   selector: 'app-text-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    CardComponent,
+    CardContentComponent,
+    CardHeaderComponent,
+    TextareaComponent,
+    ButtonComponent,
+    NgIconComponent
+  ],
+  providers: [
+    provideIcons({
+      lucideSave,
+      lucideTrash2,
+      lucideFileText,
+      lucideClock,
+      lucidePenTool
+    })
+  ],
   template: `
-    <div class="text-editor">
-      <div class="editor-header">
-        <div class="editor-title">
-          <h3>{{ title }}</h3>
-          <div class="editor-meta" *ngIf="showMeta">
-            <span class="word-count">{{ wordCount }} words</span>
-            <span class="character-count">{{ characterCount }} characters</span>
+    <app-card>
+      <app-card-header>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <ng-icon name="lucideFileText" class="w-5 h-5 text-blue-500"></ng-icon>
+            <h3 class="text-lg font-semibold text-foreground">{{ title }}</h3>
           </div>
-        </div>
-        
-        <div class="editor-actions" *ngIf="showActions">
-          <button 
-            class="save-button"
-            (click)="saveText()"
-            [disabled]="!hasText"
-          >
-            💾 Save
-          </button>
-          
-          <button 
-            class="clear-button"
-            (click)="clearText()"
-            [disabled]="!hasText"
-          >
-            🗑️ Clear
-          </button>
-        </div>
-      </div>
-      
-      <div class="editor-content">
-        <div class="input-section">
-          <label class="input-label" for="text-editor">
-            {{ inputLabel }}
-          </label>
-          
-          <div class="text-container">
-            <textarea
-              id="text-editor"
-              class="text-textarea"
-              [(ngModel)]="text"
-              [ngModelOptions]="{standalone: true}"
-              (input)="onTextChange()"
-              [placeholder]="placeholder"
-              [rows]="textareaRows"
-              [maxlength]="maxLength"
-            ></textarea>
-            
-            <div class="text-counter" *ngIf="showCounter">
-              <span class="character-counter" [class.warning]="isNearLimit">
-                {{ characterCount }}/{{ maxLength }}
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="metrics-section" *ngIf="showMetrics && hasText">
-          <div class="metrics-header">
-            <h4>Writing Metrics</h4>
-          </div>
-          
-          <div class="metrics-grid">
-            <div class="metric-item">
-              <span class="metric-label">Words:</span>
-              <span class="metric-value">{{ wordCount }}</span>
-            </div>
-            
-            <div class="metric-item">
-              <span class="metric-label">Characters:</span>
-              <span class="metric-value">{{ characterCount }}</span>
-            </div>
-            
-            <div class="metric-item">
-              <span class="metric-label">Sentences:</span>
-              <span class="metric-value">{{ sentenceCount }}</span>
-            </div>
-            
-            <div class="metric-item">
-              <span class="metric-label">Paragraphs:</span>
-              <span class="metric-value">{{ paragraphCount }}</span>
-            </div>
-            
-            <div class="metric-item" *ngIf="averageWordsPerSentence > 0">
-              <span class="metric-label">Avg words/sentence:</span>
-              <span class="metric-value">{{ averageWordsPerSentence | number:'1.1-1' }}</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="requirements-section" *ngIf="hasRequirements">
-          <div class="requirements-header">
-            <h4>Requirements</h4>
-          </div>
-          
-          <div class="requirements-list">
-            <div 
-              *ngFor="let requirement of requirements; trackBy: trackByRequirement" 
-              class="requirement-item"
-              [class.fulfilled]="requirement.fulfilled"
+          <div class="flex gap-2" *ngIf="showActions">
+            <app-button 
+              variant="default"
+              size="sm"
+              (click)="saveText()"
+              [disabled]="!hasText"
             >
-              <div class="requirement-icon">
-                <span *ngIf="requirement.fulfilled">✅</span>
-                <span *ngIf="!requirement.fulfilled">⏳</span>
+              <ng-icon name="lucideSave" class="w-4 h-4 mr-2"></ng-icon>
+              Save
+            </app-button>
+            
+            <app-button 
+              variant="outline"
+              size="sm"
+              (click)="clearText()"
+              [disabled]="!hasText"
+            >
+              <ng-icon name="lucideTrash2" class="w-4 h-4 mr-2"></ng-icon>
+              Clear
+            </app-button>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 text-sm text-muted-foreground" *ngIf="showMeta">
+          <span class="flex items-center gap-1">
+            <ng-icon name="lucidePenTool" class="w-4 h-4"></ng-icon>
+            {{ wordCount }} words
+          </span>
+          <span>{{ characterCount }} characters</span>
+        </div>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-foreground" for="text-editor">
+              {{ inputLabel }}
+            </label>
+            
+            <div class="space-y-2">
+              <app-textarea
+                id="text-editor"
+                className="min-h-[200px]"
+                [(ngModel)]="text"
+                [ngModelOptions]="{standalone: true}"
+                (input)="onTextChange()"
+                [placeholder]="placeholder"
+                [rows]="textareaRows"
+                [maxlength]="maxLength"
+              ></app-textarea>
+              
+              <div class="flex items-center justify-between text-xs text-muted-foreground" *ngIf="showCounter">
+                <span class="flex items-center gap-1">
+                  <ng-icon name="lucidePenTool" class="w-3 h-3"></ng-icon>
+                  {{ wordCount }} words
+                </span>
+                <span [class.text-orange-500]="isNearLimit" [class.text-red-500]="isAtLimit">
+                  {{ characterCount }}/{{ maxLength }}
+                </span>
               </div>
-              <div class="requirement-content">
-                <div class="requirement-text">{{ requirement.text }}</div>
-                <div class="requirement-status" *ngIf="requirement.status">
-                  {{ requirement.status }}
+            </div>
+          </div>
+          
+          <div class="space-y-3" *ngIf="showMetrics && hasText">
+            <h4 class="text-sm font-semibold text-foreground">Writing Metrics</h4>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 bg-muted rounded-lg">
+                <div class="text-xs text-muted-foreground">Words</div>
+                <div class="text-lg font-semibold text-foreground">{{ wordCount }}</div>
+              </div>
+              
+              <div class="p-3 bg-muted rounded-lg">
+                <div class="text-xs text-muted-foreground">Characters</div>
+                <div class="text-lg font-semibold text-foreground">{{ characterCount }}</div>
+              </div>
+              
+              <div class="p-3 bg-muted rounded-lg">
+                <div class="text-xs text-muted-foreground">Sentences</div>
+                <div class="text-lg font-semibold text-foreground">{{ sentenceCount }}</div>
+              </div>
+              
+              <div class="p-3 bg-muted rounded-lg">
+                <div class="text-xs text-muted-foreground">Paragraphs</div>
+                <div class="text-lg font-semibold text-foreground">{{ paragraphCount }}</div>
+              </div>
+              
+              <div class="p-3 bg-muted rounded-lg" *ngIf="averageWordsPerSentence > 0">
+                <div class="text-xs text-muted-foreground">Avg words/sentence</div>
+                <div class="text-lg font-semibold text-foreground">{{ averageWordsPerSentence | number:'1.1-1' }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="space-y-3" *ngIf="hasRequirements">
+            <h4 class="text-sm font-semibold text-foreground">Requirements</h4>
+            
+            <div class="space-y-2">
+              <div 
+                *ngFor="let requirement of requirements; trackBy: trackByRequirement" 
+                class="flex items-start gap-3 p-3 border rounded-lg"
+                [class.bg-green-50]="requirement.fulfilled"
+                [class.border-green-200]="requirement.fulfilled"
+                [class.bg-muted]="!requirement.fulfilled"
+              >
+                <ng-icon 
+                  *ngIf="requirement.fulfilled" 
+                  name="lucideCheck" 
+                  class="w-4 h-4 text-green-600 mt-0.5"
+                ></ng-icon>
+                <ng-icon 
+                  *ngIf="!requirement.fulfilled" 
+                  name="lucideClock" 
+                  class="w-4 h-4 text-muted-foreground mt-0.5"
+                ></ng-icon>
+                <div class="flex-1">
+                  <div class="text-sm text-foreground">{{ requirement.text }}</div>
+                  <div class="text-xs text-muted-foreground" *ngIf="requirement.status">
+                    {{ requirement.status }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div class="preview-section" *ngIf="showPreview && hasText">
-          <div class="preview-header">
-            <h4>Preview</h4>
-          </div>
           
-          <div class="preview-content">
-            <div class="preview-text" [innerHTML]="formattedPreview"></div>
+          <div class="space-y-2" *ngIf="showPreview && hasText">
+            <h4 class="text-sm font-semibold text-foreground">Preview</h4>
+            
+            <div class="p-3 bg-muted rounded-lg">
+              <div class="text-sm text-foreground prose max-w-none" [innerHTML]="formattedPreview"></div>
+            </div>
           </div>
         </div>
-      </div>
+      </app-card-content>
       
-      <div class="editor-footer" *ngIf="showFooter">
-        <div class="editor-stats">
-          <span class="edit-time" *ngIf="editTime > 0">
+      <div class="mt-4 pt-3 border-t" *ngIf="showFooter">
+        <div class="flex items-center gap-4 text-xs text-muted-foreground">
+          <span *ngIf="editTime > 0" class="flex items-center gap-1">
+            <ng-icon name="lucideClock" class="w-3 h-3"></ng-icon>
             Edit time: {{ formatEditTime(editTime) }}
           </span>
-          <span class="last-saved" *ngIf="lastSavedAt">
+          <span *ngIf="lastSavedAt">
             Last saved: {{ lastSavedAt | date:'short' }}
           </span>
-          <span class="auto-save" *ngIf="autoSaveEnabled">
+          <span *ngIf="autoSaveEnabled">
             Auto-save: {{ autoSaveStatus }}
           </span>
         </div>
       </div>
-    </div>
+    </app-card>
   `,
 })
 export class TextEditorComponent extends WidgetBaseComponent {
@@ -208,6 +250,10 @@ export class TextEditorComponent extends WidgetBaseComponent {
 
   get isNearLimit(): boolean {
     return this.characterCount > this.maxLength * 0.9;
+  }
+
+  get isAtLimit(): boolean {
+    return this.characterCount >= this.maxLength;
   }
 
   get hasRequirements(): boolean {

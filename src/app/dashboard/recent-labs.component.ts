@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { ProgressComponent } from '../../components/ui/progress/progress';
-import { SafeHtmlPipe } from '../lib/safe-html.pipe';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideTreePine, lucideZap, lucidePalette, lucideNetwork, lucideBookOpen } from '@ng-icons/lucide';
 
 type RecentLab = {
   title: string;
@@ -15,7 +16,16 @@ type RecentLab = {
 @Component({
   selector: 'app-recent-labs',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, ProgressComponent],
+  imports: [CommonModule, ButtonComponent, ProgressComponent, NgIconComponent],
+  providers: [
+    provideIcons({
+      lucideTreePine,
+      lucideZap,
+      lucidePalette,
+      lucideNetwork,
+      lucideBookOpen
+    })
+  ],
   template: `
     <section>
       <div class="mb-4 flex items-center justify-between">
@@ -29,7 +39,7 @@ type RecentLab = {
             <!-- Title with icon -->
             <div class="flex min-w-0 flex-1 items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#60a5fa]" aria-hidden="true">
-                <span class="text-lg">{{ lab.icon }}</span>
+                <ng-icon [name]="getLabIcon(lab.title)" class="h-5 w-5"></ng-icon>
               </div>
               <h3 class="truncate text-base font-medium text-foreground">{{ lab.title }}</h3>
             </div>
@@ -59,6 +69,14 @@ type RecentLab = {
   `
 })
 export class RecentLabsComponent {
+  getLabIcon(title: string): string {
+    if (title.includes('Binary Search') || title.includes('Tree')) return 'lucideTreePine';
+    if (title.includes('Async') || title.includes('JavaScript')) return 'lucideZap';
+    if (title.includes('CSS') || title.includes('Grid') || title.includes('Flexbox')) return 'lucidePalette';
+    if (title.includes('Graph') || title.includes('Algorithm')) return 'lucideNetwork';
+    return 'lucideBookOpen';
+  }
+
   recentLabs: RecentLab[] = [
     {
       title: 'Binary Search Tree Implementation',

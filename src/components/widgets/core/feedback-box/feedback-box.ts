@@ -1,49 +1,51 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
+import { AlertComponent } from '../../../ui/alert/alert';
 import { ButtonComponent } from '../../../ui/button/button';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideCheck, lucideX, lucideTriangle, lucideInfo } from '@ng-icons/lucide';
+import { gsap } from 'gsap';
 
 export type FeedbackType = 'success' | 'error' | 'warning' | 'info';
 
 @Component({
   selector: 'app-feedback-box',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    AlertComponent,
+    ButtonComponent,
+    NgIconComponent
+  ],
+  providers: [
+    provideIcons({
+      lucideCheck,
+      lucideX,
+      lucideTriangle,
+      lucideInfo
+    })
+  ],
   template: `
-    <div class="w-full border rounded-lg p-4 space-y-4"
-         [class]="type === 'success' ? 'border-green-200 bg-green-50' : 
-                  type === 'error' ? 'border-red-200 bg-red-50' : 
-                  type === 'warning' ? 'border-yellow-200 bg-yellow-50' : 
-                  'border-blue-200 bg-blue-50'">
-      <div class="flex items-start gap-3">
-        <div class="text-2xl flex-shrink-0">
-          <span *ngIf="type === 'success'">✅</span>
-          <span *ngIf="type === 'error'">❌</span>
-          <span *ngIf="type === 'warning'">⚠️</span>
-          <span *ngIf="type === 'info'">ℹ️</span>
-        </div>
-        <h3 class="text-lg font-semibold"
-            [class]="type === 'success' ? 'text-green-800' : 
-                     type === 'error' ? 'text-red-800' : 
-                     type === 'warning' ? 'text-yellow-800' : 
-                     'text-blue-800'">{{ title }}</h3>
-      </div>
-      
-      <div class="space-y-4">
-        <div class="text-base leading-relaxed"
-             [class]="type === 'success' ? 'text-green-700' : 
-                      type === 'error' ? 'text-red-700' : 
-                      type === 'warning' ? 'text-yellow-700' : 
-                      'text-blue-700'" 
-             [innerHTML]="formattedMessage"></div>
+    <app-alert 
+      [variant]="getAlertVariant()" 
+      [className]="'w-full'"
+      #feedbackAlert
+    >
+      <ng-icon [name]="getFeedbackIcon()" class="w-5 h-5"></ng-icon>
+      <div class="space-y-3">
+        <h3 class="text-lg font-semibold">{{ title }}</h3>
         
-        <div class="bg-white/50 rounded-md p-3" *ngIf="explanation">
+        <div class="text-base leading-relaxed" [innerHTML]="formattedMessage"></div>
+        
+        <div *ngIf="explanation" class="bg-background/50 rounded-lg p-3">
           <h4 class="text-sm font-semibold mb-2">Explanation:</h4>
           <div class="text-sm leading-relaxed" [innerHTML]="formattedExplanation"></div>
         </div>
         
-        <div class="bg-white/50 rounded-md p-3" *ngIf="nextSteps && nextSteps.length > 0">
+        <div *ngIf="nextSteps && nextSteps.length > 0" class="bg-background/50 rounded-lg p-3">
           <h4 class="text-sm font-semibold mb-2">Next Steps:</h4>
           <ul class="space-y-1">
             <li *ngFor="let step of nextSteps" class="text-sm leading-relaxed">
@@ -51,36 +53,37 @@ export type FeedbackType = 'success' | 'error' | 'warning' | 'info';
             </li>
           </ul>
         </div>
-      </div>
-      
-      <div class="border-t pt-3" *ngIf="showActions">
-        <div class="flex gap-2 mb-3">
-          <button 
+        
+        <div class="flex gap-2 pt-2" *ngIf="showActions">
+          <app-button 
             *ngIf="showRetryButton"
-            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            variant="destructive"
+            size="sm"
             (click)="onRetry()"
           >
             Try Again
-          </button>
+          </app-button>
           
-          <button 
+          <app-button 
             *ngIf="showContinueButton"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            variant="default"
+            size="sm"
             (click)="onContinue()"
           >
             Continue
-          </button>
+          </app-button>
           
-          <button 
+          <app-button 
             *ngIf="showAcknowledgeButton"
-            class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+            variant="outline"
+            size="sm"
             (click)="onAcknowledge()"
           >
             Got it
-          </button>
+          </app-button>
         </div>
         
-        <div class="flex items-center justify-between text-xs text-gray-500" *ngIf="showMeta">
+        <div class="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t" *ngIf="showMeta">
           <span class="font-mono">
             {{ timestamp | date:'short' }}
           </span>
@@ -89,13 +92,14 @@ export type FeedbackType = 'success' | 'error' | 'warning' | 'info';
           </span>
         </div>
       </div>
-    </div>
+    </app-alert>
   `
 })
-export class FeedbackBoxComponent extends WidgetBaseComponent {
+export class FeedbackBoxComponent extends WidgetBaseComponent implements AfterViewInit {
   @Input() type: FeedbackType = 'info';
   @Input() title!: string;
   @Input() message!: string;
+  @ViewChild('feedbackAlert') feedbackAlert?: ElementRef;
   @Input() explanation?: string;
   @Input() nextSteps?: string[];
   @Input() showActions: boolean = true;
@@ -131,6 +135,38 @@ export class FeedbackBoxComponent extends WidgetBaseComponent {
 
   onAcknowledge(): void {
     this.acknowledgeAndComplete();
+  }
+
+  getAlertVariant(): 'default' | 'destructive' | 'warning' | 'success' {
+    const variants = {
+      'success': 'success' as const,
+      'error': 'destructive' as const,
+      'warning': 'warning' as const,
+      'info': 'default' as const
+    };
+    return variants[this.type];
+  }
+
+  getFeedbackIcon(): string {
+    const icons = {
+      'success': 'lucideCheck',
+      'error': 'lucideX',
+      'warning': 'lucideTriangle',
+      'info': 'lucideInfo'
+    };
+    return icons[this.type];
+  }
+
+  override ngAfterViewInit(): void {
+    if (this.feedbackAlert) {
+      // Bounce animation on show
+      gsap.from(this.feedbackAlert.nativeElement, {
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.3,
+        ease: "back.out(1.7)"
+      });
+    }
   }
 
   private acknowledgeAndComplete(): void {

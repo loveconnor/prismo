@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
 import { ButtonComponent } from '../../../ui/button/button';
+import { CardComponent } from '../../../ui/card/card';
+import { CardContentComponent } from '../../../ui/card/card-content';
+import { CardHeaderComponent } from '../../../ui/card/card-header';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideCheck, lucideX, lucideTriangle, lucideCalculator } from '@ng-icons/lucide';
 
 interface ValidationError {
   type: 'syntax' | 'format' | 'domain' | 'other';
@@ -13,121 +18,152 @@ interface ValidationError {
 @Component({
   selector: 'app-equation-input',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    CardComponent,
+    CardContentComponent,
+    CardHeaderComponent,
+    ButtonComponent,
+    NgIconComponent
+  ],
+  providers: [
+    provideIcons({
+      lucideCheck,
+      lucideX,
+      lucideTriangle,
+      lucideCalculator
+    })
+  ],
   template: `
-    <div class="equation-input">
-      <div class="equation-header">
-        <h3 class="equation-title">{{ title }}</h3>
-        <div class="equation-meta" *ngIf="showMeta">
-          <span class="format-hint">{{ formatHint }}</span>
+    <app-card>
+      <app-card-header>
+        <div class="flex items-center gap-3">
+          <ng-icon name="lucideCalculator" class="w-5 h-5 text-blue-500"></ng-icon>
+          <h3 class="text-lg font-semibold text-foreground">{{ title }}</h3>
         </div>
-      </div>
+        <div class="text-sm text-muted-foreground" *ngIf="showMeta">
+          {{ formatHint }}
+        </div>
+      </app-card-header>
       
-      <div class="equation-content">
-        <div class="input-section">
-          <label class="input-label" for="equation-input">
-            {{ inputLabel }}
-          </label>
-          
-          <div class="input-container">
-            <input
-              id="equation-input"
-              type="text"
-              class="equation-input-field"
-              [(ngModel)]="equation"
-              [ngModelOptions]="{standalone: true}"
-              (input)="onEquationChange()"
-              [placeholder]="placeholder"
-              [class.error]="hasValidationError"
-              [disabled]="isValidating"
-            />
+      <app-card-content>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-foreground" for="equation-input">
+              {{ inputLabel }}
+            </label>
             
-            <div class="input-actions">
-              <button 
-                class="validate-button"
+            <div class="flex gap-2">
+              <input
+                id="equation-input"
+                type="text"
+                class="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                [(ngModel)]="equation"
+                [ngModelOptions]="{standalone: true}"
+                (input)="onEquationChange()"
+                [placeholder]="placeholder"
+                [class.border-destructive]="hasValidationError"
+                [disabled]="isValidating"
+              />
+              
+              <app-button 
+                variant="outline"
+                size="sm"
                 (click)="validateEquation()"
                 [disabled]="!equation.trim() || isValidating"
               >
-                <span *ngIf="!isValidating">✓ Validate</span>
-                <span *ngIf="isValidating">⏳ Validating...</span>
-              </button>
+                <ng-icon name="lucideCheck" class="w-4 h-4 mr-2"></ng-icon>
+                <span *ngIf="!isValidating">Validate</span>
+                <span *ngIf="isValidating">Validating...</span>
+              </app-button>
               
-              <button 
-                class="clear-button"
+              <app-button 
+                variant="outline"
+                size="sm"
                 (click)="clearEquation()"
                 [disabled]="!equation.trim()"
               >
-                🗑️ Clear
-              </button>
+                <ng-icon name="lucideX" class="w-4 h-4 mr-2"></ng-icon>
+                Clear
+              </app-button>
             </div>
           </div>
-        </div>
-        
-        <div class="preview-section" *ngIf="showPreview && equation">
-          <div class="preview-header">
-            <span class="preview-label">Preview:</span>
-            <span class="preview-status" [class]="'status-' + previewStatus">
-              {{ getPreviewStatusLabel() }}
-            </span>
+          
+          <div class="space-y-2" *ngIf="showPreview && equation">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-foreground">Preview:</span>
+              <span class="text-xs px-2 py-1 rounded-full" 
+                    [class]="previewStatus === 'valid' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                             previewStatus === 'invalid' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
+                             'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'">
+                {{ getPreviewStatusLabel() }}
+              </span>
+            </div>
+            
+            <div class="p-3 bg-muted rounded-lg">
+              <div class="text-sm text-foreground" [innerHTML]="formattedPreview"></div>
+            </div>
           </div>
           
-          <div class="preview-content">
-            <div class="equation-preview" [innerHTML]="formattedPreview"></div>
-          </div>
-        </div>
-        
-        <div class="validation-section" *ngIf="validationErrors.length > 0">
-          <div class="validation-header">
-            <span class="validation-label">Validation Errors:</span>
-          </div>
-          
-          <div class="validation-errors">
-            <div 
-              *ngFor="let error of validationErrors; trackBy: trackByErrorType" 
-              class="validation-error"
-              [class]="'error-' + error.type"
-            >
-              <div class="error-icon">
-                <span *ngIf="error.type === 'syntax'">⚠️</span>
-                <span *ngIf="error.type === 'format'">📝</span>
-                <span *ngIf="error.type === 'domain'">🔢</span>
-                <span *ngIf="error.type === 'other'">❌</span>
+          <div class="space-y-2" *ngIf="validationErrors.length > 0">
+            <span class="text-sm font-medium text-foreground">Validation Errors:</span>
+            
+            <div class="space-y-2">
+              <div 
+                *ngFor="let error of validationErrors; trackBy: trackByErrorType" 
+                class="p-3 border rounded-lg"
+                [class.border-yellow-200]="error.type === 'syntax'"
+                [class.border-blue-200]="error.type === 'format'"
+                [class.border-red-200]="error.type === 'domain'"
+                [class.border-red-200]="error.type === 'other'"
+              >
+                <div class="flex items-start gap-2">
+                  <ng-icon 
+                    name="lucideTriangle" 
+                    class="w-4 h-4 mt-0.5"
+                    [class.text-yellow-600]="error.type === 'syntax'"
+                    [class.text-blue-600]="error.type === 'format'"
+                    [class.text-red-600]="error.type === 'domain'"
+                    [class.text-red-600]="error.type === 'other'"
+                  ></ng-icon>
+                  <div class="flex-1">
+                    <div class="text-sm text-foreground">{{ error.message }}</div>
+                    <div class="text-xs text-muted-foreground" *ngIf="error.position !== undefined">
+                      Position: {{ error.position }}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="error-content">
-                <div class="error-message">{{ error.message }}</div>
-                <div class="error-position" *ngIf="error.position !== undefined">
-                  Position: {{ error.position }}
+            </div>
+          </div>
+          
+          <div class="p-3 bg-green-50 border border-green-200 rounded-lg" *ngIf="isValid && !hasValidationError">
+            <div class="flex items-center gap-2">
+              <ng-icon name="lucideCheck" class="w-4 h-4 text-green-600"></ng-icon>
+              <div>
+                <div class="font-medium text-green-800">Valid Equation!</div>
+                <div class="text-sm text-green-700" *ngIf="equationDetails">
+                  {{ equationDetails }}
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
-        <div class="success-section" *ngIf="isValid && !hasValidationError">
-          <div class="success-content">
-            <div class="success-icon">✅</div>
-            <div class="success-message">
-              <div class="success-title">Valid Equation!</div>
-              <div class="success-details" *ngIf="equationDetails">
-                {{ equationDetails }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </app-card-content>
       
-      <div class="equation-footer" *ngIf="showFooter">
-        <div class="equation-stats">
-          <span class="equation-length">{{ equation.length }} characters</span>
-          <span class="validation-count" *ngIf="validationCount > 0">
+      <div class="mt-4 pt-3 border-t" *ngIf="showFooter">
+        <div class="flex items-center gap-4 text-xs text-muted-foreground">
+          <span>{{ equation.length }} characters</span>
+          <span *ngIf="validationCount > 0">
             Validations: {{ validationCount }}
           </span>
-          <span class="last-validated" *ngIf="lastValidatedAt">
+          <span *ngIf="lastValidatedAt">
             Last validated: {{ lastValidatedAt | date:'short' }}
           </span>
         </div>
       </div>
-    </div>
+    </app-card>
   `,
 })
 export class EquationInputComponent extends WidgetBaseComponent {
