@@ -9,6 +9,7 @@ import { SwitchComponent } from '../../ui/switch/switch';
 import { ButtonComponent } from '../../ui/button/button';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog';
 import { ThemeService } from '../../../services/theme.service';
+import { FontService, FontFamily, FontSize } from '../../../services/font.service';
 
 @Component({
   selector: 'app-settings-content',
@@ -33,7 +34,8 @@ export class SettingsContentComponent {
   displayName = 'Student';
   timeZone = 'America/New_York';
   themeMode = 'System';
-  fontSize = 'Medium';
+  fontFamily: FontFamily = 'system';
+  fontSize: FontSize = 'medium';
 
   emailProgress = true;
   reminderHints = false;
@@ -42,7 +44,17 @@ export class SettingsContentComponent {
 
   showDeleteDialog = false;
 
-  constructor(private themeService: ThemeService) {}
+  constructor(
+    private themeService: ThemeService,
+    private fontService: FontService
+  ) {
+    // Initialize font settings from service
+    this.fontFamily = this.fontService.getFontFamily();
+    this.fontSize = this.fontService.getFontSize();
+    
+    // Initialize font options based on available fonts
+    this.initializeFontOptions();
+  }
 
   readonly timeZoneOptions: SelectOption[] = [
     { value: 'America/New_York', label: 'America/New_York' },
@@ -56,10 +68,13 @@ export class SettingsContentComponent {
     { value: 'Dark', label: 'Dark' }
   ];
 
+  fontFamilyOptions: SelectOption[] = [];
+  fontLoadingStatus = { isLoading: false, availableCount: 0, totalCount: 5 };
+
   readonly fontSizeOptions: SelectOption[] = [
-    { value: 'Small', label: 'Small' },
-    { value: 'Medium', label: 'Medium' },
-    { value: 'Large', label: 'Large' }
+    { value: 'small', label: 'Small' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'large', label: 'Large' }
   ];
 
   onThemeChange(value: string): void {
@@ -105,8 +120,30 @@ export class SettingsContentComponent {
     this.timeZone = value;
   }
 
+  private initializeFontOptions(): void {
+    // Get available font options from the service
+    const availableFonts = this.fontService.getAvailableFontOptions();
+    this.fontFamilyOptions = availableFonts.map(font => ({
+      value: font.value,
+      label: font.available ? font.label : `${font.label} (Not Available)`,
+      disabled: !font.available
+    }));
+
+    // Update loading status
+    this.fontLoadingStatus = this.fontService.getFontLoadingStatus();
+  }
+
+  onFontFamilyChange(value: string): void {
+    const requestedFont = value as FontFamily;
+    // Use the best available font (with fallback)
+    const bestFont = this.fontService.getBestAvailableFont(requestedFont);
+    this.fontFamily = bestFont;
+    this.fontService.setFontFamily(bestFont);
+  }
+
   onFontSizeChange(value: string): void {
-    this.fontSize = value;
+    this.fontSize = value as FontSize;
+    this.fontService.setFontSize(this.fontSize);
   }
 
   get isDark(): boolean {

@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ThemeService } from '../../../services/theme.service';
+import { FontService } from '../../../services/font.service';
 import { WidgetMetadata, WidgetState, WidgetEvent } from '../../../types/widget.types';
 import { CardComponent } from '../../ui/card/card';
 import { CardContentComponent } from '../../ui/card/card-content';
@@ -110,6 +111,7 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
 
   constructor(
     protected themeService: ThemeService,
+    protected fontService: FontService,
     @Inject(PLATFORM_ID) protected platformId: Object
   ) {}
 

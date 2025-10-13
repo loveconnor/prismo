@@ -23,6 +23,7 @@ import { SidebarLabelComponent } from '../components/ui/sidebar/sidebar-label/si
 import { AvatarDropdownComponent } from '../components/ui/avatar-dropdown/avatar-dropdown';
 import { SettingsModalComponent } from '../components/settings/settings-modal/settings-modal';
 import { ThemeService } from '../services/theme.service';
+import { FontService } from '../services/font.service';
 
 @Component({
   selector: 'app-root',
@@ -60,7 +61,11 @@ export class App {
   settingsOpen = false;
   currentUrl = signal('');
 
-  constructor(public themeService: ThemeService, private router: Router) {
+  constructor(
+    public themeService: ThemeService,
+    public fontService: FontService,
+    private router: Router
+  ) {
     // Update currentUrl signal on navigation
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))

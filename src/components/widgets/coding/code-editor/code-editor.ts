@@ -1,7 +1,9 @@
-import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
+import { FontService } from '../../../../services/font.service';
+import { ThemeService } from '../../../../services/theme.service';
 import { ButtonComponent } from '../../../ui/button/button';
 import { CardComponent } from '../../../ui/card/card';
 import { CardContentComponent } from '../../../ui/card/card-content';
@@ -308,6 +310,14 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   
   private editorView?: EditorView;
 
+  constructor(
+    protected override fontService: FontService,
+    themeService: ThemeService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    super(themeService, fontService, platformId);
+  }
+
   get hasCode(): boolean {
     return this.code.trim().length > 0;
   }
@@ -398,7 +408,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       // Custom theme with settings
       EditorView.theme({
         "&": {
-          fontSize: "14px",
+          fontSize: this.fontService.getFontSizeCSS(),
           height: "100%"
         },
         ".cm-content": {
@@ -409,7 +419,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
           height: "100%"
         },
         ".cm-scroller": {
-          fontFamily: "'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace"
+          fontFamily: this.fontService.getFontFamilyCSS()
         },
         // Hide line numbers if disabled
         ...(this.enableLineNumbers && this.userSettings.lineNumbers ? {} : {

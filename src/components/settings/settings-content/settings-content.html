@@ -46,6 +46,23 @@
         </app-settings-row>
 
         <app-settings-row
+          label="Font family"
+          [description]="fontLoadingStatus.isLoading ? 
+            'Detecting available fonts... (' + fontLoadingStatus.availableCount + '/' + fontLoadingStatus.totalCount + ' found)' : 
+            'Choose your preferred typeface for reading and coding.'"
+        >
+          <app-select
+            [(ngModel)]="fontFamily"
+            [options]="fontFamilyOptions"
+            [className]="selectTriggerClasses"
+            [contentClassName]="selectContentClasses"
+            [optionClassName]="selectOptionClasses"
+            [disabled]="fontLoadingStatus.isLoading"
+            (selectionChange)="onFontFamilyChange($event)"
+          ></app-select>
+        </app-settings-row>
+
+        <app-settings-row
           label="Interface text size"
           description="Adjust type scale for comfort during longer sessions."
         >
