@@ -26,8 +26,6 @@ import { MultipleChoiceComponent } from '../../components/widgets/core/multiple-
 import { MULTIPLE_CHOICE_METADATA } from '../../components/widgets/core/multiple-choice/multiple-choice.metadata';
 import { ShortAnswerComponent } from '../../components/widgets/core/short-answer/short-answer';
 import { SHORT_ANSWER_METADATA } from '../../components/widgets/core/short-answer/short-answer.metadata';
-import { FillInBlanksComponent } from '../../components/widgets/core/fill-in-blanks/fill-in-blanks';
-import { FILL_IN_BLANKS_METADATA } from '../../components/widgets/core/fill-in-blanks/fill-in-blanks.metadata';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -50,7 +48,6 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     LabIntroComponent,
     MultipleChoiceComponent,
     ShortAnswerComponent,
-    FillInBlanksComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
@@ -247,17 +244,6 @@ Try entering your answer below and click submit. You can also:
   handleShortAnswerChange(event: any) {
     this.logEvent('Short Answer Changed', event);
     console.log('Short answer changed:', event);
-  }
-
-  // Fill-in-the-Blanks event handlers
-  handleFillInBlanksSubmit(event: any) {
-    this.logEvent('Fill-in-Blanks Submitted', event);
-    console.log('Fill-in-blanks submitted:', event);
-  }
-
-  handleFillInBlanksChange(event: any) {
-    this.logEvent('Fill-in-Blanks Changed', event);
-    console.log('Fill-in-blanks changed:', event);
   }
 }
 

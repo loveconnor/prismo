@@ -150,25 +150,6 @@
     "category": "core"
   },
   {
-    "id": "fill-in-blanks",
-    "title": "Fill in the Blanks",
-    "description": "An interactive template-based widget for fill-in-the-blank exercises with multiple blank types, hints, validation, and comprehensive feedback",
-    "skills": ["comprehension", "recall", "vocabulary", "grammar", "attention-to-detail"],
-    "difficulty": 2,
-    "estimated_time": 120,
-    "input_type": "text",
-    "output_type": "feedback",
-    "dependencies": [],
-    "adaptive_hooks": {
-      "difficulty_adjustment": true,
-      "hint_progression": true,
-      "time_extension": false,
-      "alternative_widgets": ["short-answer", "multiple-choice", "matching"]
-    },
-    "version": "1.0.0",
-    "category": "core"
-  },
-  {
     "id": "hint-panel",
     "title": "Hint Panel",
     "description": "Progressive hint disclosure with multiple tiers",

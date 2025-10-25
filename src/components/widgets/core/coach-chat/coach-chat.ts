@@ -188,6 +188,13 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
   // Rate limit timer
   private rateLimitResetTimer?: any;
 
+  // Auto-scroll effect
+  private autoScrollEffect = effect(() => {
+    // React to messages changes
+    this.messages();
+    setTimeout(() => this.scrollToBottom(), 100);
+  });
+
   // ==================== COMPUTED ====================
   get allowDirectAnswers() { return this.policy.allowDirectAnswers ?? false; }
   get allowCodeSnippets() { return this.policy.allowCodeSnippets ?? true; }
@@ -242,13 +249,6 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
     this.rateLimitResetTimer = setInterval(() => {
       this.messagesSentThisMinute.set(0);
     }, 60000);
-
-    // Auto-scroll effect
-    effect(() => {
-      // React to messages changes
-      this.messages();
-      setTimeout(() => this.scrollToBottom(), 100);
-    });
   }
 
   override ngOnDestroy(): void {
