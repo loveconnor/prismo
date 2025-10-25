@@ -8,7 +8,9 @@ import {
   OnInit,
   OnDestroy,
   signal,
-  effect
+  effect,
+  Inject,
+  PLATFORM_ID
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -28,6 +30,8 @@ import {
   lucideTrendingUp
 } from '@ng-icons/lucide';
 import { cn } from '../../../../lib/utils';
+import { ThemeService } from '../../../../services/theme.service';
+import { FontService } from '../../../../services/font.service';
 
 // ==================== TYPES ====================
 
@@ -145,6 +149,26 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
 
   private autosaveTimer?: any;
 
+  // ==================== CONSTRUCTOR ====================
+  
+  constructor(
+    themeService: ThemeService,
+    fontService: FontService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    super(themeService, fontService, platformId);
+    
+    // Setup autosave effect - must be in constructor (injection context)
+    effect(() => {
+      const currentText = this.text();
+      const state = this.reflectionState();
+      
+      if (currentText.length > 0 && state === 'dirty') {
+        this.scheduleAutosave();
+      }
+    });
+  }
+
   // ==================== COMPUTED ====================
   get variant() { return this.ui.variant ?? 'inline'; }
   get defaultCollapsed() { return this.ui.defaultCollapsed ?? false; }
@@ -180,16 +204,6 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
 
     // Restore from localStorage
     this.loadFromLocalStorage();
-
-    // Setup autosave effect
-    effect(() => {
-      const currentText = this.text();
-      const state = this.reflectionState();
-      
-      if (currentText.length > 0 && state === 'dirty') {
-        this.scheduleAutosave();
-      }
-    });
   }
 
   override ngOnDestroy(): void {
@@ -202,6 +216,8 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   // ==================== LOCAL STORAGE ====================
 
   private loadFromLocalStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+    
     const saved = localStorage.getItem(`reflection-${this.reflectionId}`);
     if (saved) {
       try {
@@ -216,6 +232,8 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   }
 
   private saveToLocalStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+    
     localStorage.setItem(`reflection-${this.reflectionId}`, JSON.stringify({
       text: this.text(),
       feelings: this.selectedFeelings(),
@@ -224,6 +242,8 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   }
 
   private clearLocalStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+    
     localStorage.removeItem(`reflection-${this.reflectionId}`);
   }
 

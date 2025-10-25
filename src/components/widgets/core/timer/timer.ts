@@ -7,9 +7,11 @@ import {
   OnDestroy,
   signal,
   computed,
-  effect
+  effect,
+  Inject,
+  PLATFORM_ID
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { WidgetBaseComponent } from '../../base/widget-base';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { 
@@ -24,6 +26,8 @@ import {
   lucideInfo
 } from '@ng-icons/lucide';
 import { cn } from '../../../../lib/utils';
+import { ThemeService } from '../../../../services/theme.service';
+import { FontService } from '../../../../services/font.service';
 
 // ==================== TYPES ====================
 
@@ -245,6 +249,16 @@ export class TimerComponent extends WidgetBaseComponent implements OnInit, OnDes
   // Integration getters
   get hostActions() { return this.integrations.hostActions ?? true; }
 
+  // ==================== CONSTRUCTOR ====================
+  
+  constructor(
+    themeService: ThemeService,
+    fontService: FontService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    super(themeService, fontService, platformId);
+  }
+
   // ==================== LIFECYCLE ====================
 
   override ngOnInit(): void {
@@ -301,6 +315,9 @@ export class TimerComponent extends WidgetBaseComponent implements OnInit, OnDes
   }
 
   private setupKeyboardListeners(): void {
+    // Only setup keyboard listeners in the browser
+    if (!isPlatformBrowser(this.platformId)) return;
+    
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       
@@ -565,6 +582,8 @@ export class TimerComponent extends WidgetBaseComponent implements OnInit, OnDes
   }
 
   private announceToScreenReader(message: string): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    
     const announcement = document.createElement('div');
     announcement.setAttribute('role', 'status');
     announcement.setAttribute('aria-live', 'polite');

@@ -6,7 +6,9 @@ import {
   OnInit,
   OnDestroy,
   signal,
-  effect
+  effect,
+  Inject,
+  PLATFORM_ID
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WidgetBaseComponent } from '../../base/widget-base';
@@ -17,6 +19,8 @@ import {
   lucideCircleHelp
 } from '@ng-icons/lucide';
 import { cn } from '../../../../lib/utils';
+import { ThemeService } from '../../../../services/theme.service';
+import { FontService } from '../../../../services/font.service';
 
 // ==================== TYPES ====================
 
@@ -125,6 +129,34 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
 
   isValid = signal<boolean>(true);
 
+  // ==================== CONSTRUCTOR ====================
+
+  constructor(
+    themeService: ThemeService,
+    fontService: FontService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    super(themeService, fontService, platformId);
+
+    // Watch for external value changes
+    effect(() => {
+      if (this.value !== undefined) {
+        this.selectedValues.set(this.value);
+      }
+    });
+    
+    // Watch for options changes
+    effect(() => {
+      if (this.options && this.options.length > 0) {
+        if (this.shuffleOptions) {
+          this.shuffledOptions.set([...this.options].sort(() => Math.random() - 0.5));
+        } else {
+          this.shuffledOptions.set([...this.options]);
+        }
+      }
+    });
+  }
+
   // ==================== LIFECYCLE ====================
 
   override ngOnInit() {
@@ -143,24 +175,6 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
     
     // Update validity
     this.updateValidity();
-    
-    // Watch for external value changes
-    effect(() => {
-      if (this.value !== undefined) {
-        this.selectedValues.set(this.value);
-      }
-    });
-    
-    // Watch for options changes
-    effect(() => {
-      if (this.options && this.options.length > 0) {
-        if (this.shuffleOptions) {
-          this.shuffledOptions.set([...this.options].sort(() => Math.random() - 0.5));
-        } else {
-          this.shuffledOptions.set([...this.options]);
-        }
-      }
-    });
   }
 
   override ngOnDestroy() {
