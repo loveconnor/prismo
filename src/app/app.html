@@ -54,16 +54,21 @@
 
       <app-sidebar-footer>
         <app-sidebar-section className="px-0 pb-3 flex items-center justify-center">
-          <app-avatar-dropdown
-            [user]="{
-              name: 'John Doe',
-              email: 'john.doe@example.com',
-              role: 'Student',
-              avatarUrl: 'https://github.com/monster0506.png'
-            }"
-            variant="sidebar"
-            (profileClick)="openSettings()"
-          ></app-avatar-dropdown>
+          @if (authService.currentUser(); as user) {
+            <app-avatar-dropdown
+              [user]="{
+                name: user.name,
+                email: user.email,
+                role: 'User',
+                avatarUrl: user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face'
+              }"
+              variant="sidebar"
+              (profileClick)="openSettings()"
+              (logoutClick)="onLogout()"
+            ></app-avatar-dropdown>
+          } @else {
+            <div class="text-sm text-muted-foreground">Not logged in</div>
+          }
         </app-sidebar-section>
       </app-sidebar-footer>
     </app-sidebar>
@@ -76,4 +81,7 @@
   </main>
 
   <app-settings-modal [open]="settingsOpen" (openChange)="settingsOpen = $event"></app-settings-modal>
+  
+  <!-- Toast notifications -->
+  <app-toast-container></app-toast-container>
 </div>
