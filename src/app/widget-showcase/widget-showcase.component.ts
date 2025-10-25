@@ -34,6 +34,9 @@ import { MatchItem, CorrectMatch } from '../../components/widgets/core/matching-
 import { OrderingComponent } from '../../components/widgets/core/ordering/ordering';
 import { ORDERING_METADATA } from '../../components/widgets/core/ordering/ordering.metadata';
 import { OrderItem } from '../../components/widgets/core/ordering/ordering';
+import { NumericInputComponent } from '../../components/widgets/core/numeric-input/numeric-input';
+import { NUMERIC_INPUT_METADATA } from '../../components/widgets/core/numeric-input/numeric-input.metadata';
+import { NumericConstraint } from '../../components/widgets/core/numeric-input/numeric-input';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -59,6 +62,7 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     FillInBlanksComponent,
     MatchingPairsComponent,
     OrderingComponent,
+    NumericInputComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
@@ -422,5 +426,14 @@ Try entering your answer below and click submit. You can also:
     { id: '4', content: 'Update counter', correctPosition: 4, explanation: 'Modify the loop control variable.' },
     { id: '5', content: 'Repeat from step 2', correctPosition: 5, explanation: 'Go back and check the condition again.' }
   ];
+
+  // Numeric Input event handlers
+  handleNumericInputChange(event: any) {
+    this.logEvent('Numeric Input Changed', event);
+  }
+
+  handleNumericInputSubmit(event: any) {
+    this.logEvent('Numeric Input Submitted', event);
+  }
 }
 

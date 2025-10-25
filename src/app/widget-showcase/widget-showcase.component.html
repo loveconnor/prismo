@@ -1010,6 +1010,139 @@
     </app-card>
   </div>
 
+  <!-- Numeric Input Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Numeric Input Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Numeric input with multiple validation modes
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Exact Match -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Exact Match Validation</h3>
+            <app-numeric-input
+              id="showcase-num-1"
+              question="What is 7 × 8?"
+              placeholder="Enter your answer"
+              [correctAnswer]="56"
+              [showFeedback]="true"
+              correctFeedback="Perfect! 7 × 8 = 56"
+              incorrectFeedback="Not quite. Try again."
+              hint="Multiply 7 by 8"
+              [ui]="{ variant: 'default', showCalculator: true, emphasizeCorrect: true }"
+              [onChange]="handleNumericInputChange.bind(this)"
+              [onSubmit]="handleNumericInputSubmit.bind(this)"
+              (valueChange)="handleNumericInputChange($event)"
+              (submit)="handleNumericInputSubmit($event)"
+            ></app-numeric-input>
+          </div>
+
+          <!-- Range Validation -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Range Validation</h3>
+            <app-numeric-input
+              id="showcase-num-2"
+              question="Estimate the number of students in a typical high school class."
+              placeholder="Enter a number"
+              [constraints]="{
+                type: 'range',
+                min: 20,
+                max: 35
+              }"
+              [showFeedback]="true"
+              correctFeedback="Good estimate! That's a typical class size."
+              hint="Think about your own class size"
+              [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
+              [onChange]="handleNumericInputChange.bind(this)"
+              [onSubmit]="handleNumericInputSubmit.bind(this)"
+              (valueChange)="handleNumericInputChange($event)"
+              (submit)="handleNumericInputSubmit($event)"
+            ></app-numeric-input>
+          </div>
+
+          <!-- Tolerance Validation -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Tolerance (±) Validation</h3>
+            <app-numeric-input
+              id="showcase-num-3"
+              question="What is the value of π (pi)?"
+              placeholder="Enter approximate value"
+              [constraints]="{
+                type: 'tolerance',
+                value: 3.14159,
+                tolerance: 0.01
+              }"
+              [allowDecimals]="true"
+              [showFeedback]="true"
+              correctFeedback="Close enough! π ≈ 3.14159"
+              hint="Pi is approximately 3.14"
+              [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
+              [onChange]="handleNumericInputChange.bind(this)"
+              [onSubmit]="handleNumericInputSubmit.bind(this)"
+              (valueChange)="handleNumericInputChange($event)"
+              (submit)="handleNumericInputSubmit($event)"
+            ></app-numeric-input>
+          </div>
+
+          <!-- Multiple Validation -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Multiple Of Validation</h3>
+            <app-numeric-input
+              id="showcase-num-4"
+              question="Enter any even number."
+              placeholder="Enter an even number"
+              [constraints]="{
+                type: 'multiple',
+                value: 2
+              }"
+              [showFeedback]="true"
+              correctFeedback="Correct! That's an even number."
+              incorrectFeedback="That's not an even number. Even numbers are divisible by 2."
+              hint="Even numbers: 2, 4, 6, 8, 10..."
+              [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
+              [onChange]="handleNumericInputChange.bind(this)"
+              [onSubmit]="handleNumericInputSubmit.bind(this)"
+              (valueChange)="handleNumericInputChange($event)"
+              (submit)="handleNumericInputSubmit($event)"
+            ></app-numeric-input>
+          </div>
+
+          <!-- With Unit Display -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">With Unit Display</h3>
+            <app-numeric-input
+              id="showcase-num-5"
+              question="Normal human body temperature in Fahrenheit?"
+              placeholder="Enter temperature"
+              [constraints]="{
+                type: 'tolerance',
+                value: 98.6,
+                tolerance: 0.5,
+                unit: '°F'
+              }"
+              [showUnit]="true"
+              unit="°F"
+              [allowDecimals]="true"
+              [showFeedback]="true"
+              correctFeedback="Correct! Normal body temp is about 98.6°F"
+              hint="It's around 98-99°F"
+              [ui]="{ variant: 'compact', showCalculator: false, emphasizeCorrect: true }"
+              [onChange]="handleNumericInputChange.bind(this)"
+              [onSubmit]="handleNumericInputSubmit.bind(this)"
+              (valueChange)="handleNumericInputChange($event)"
+              (submit)="handleNumericInputSubmit($event)"
+            ></app-numeric-input>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
   <!-- Multiple Choice Widget Section -->
   <div class="mb-8">
     <app-card>

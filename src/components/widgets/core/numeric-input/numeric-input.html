@@ -1,0 +1,117 @@
+<div
+  role="group"
+  [attr.aria-label]="a11yLabel || 'Numeric input: ' + question"
+  [ngClass]="getContainerClasses()"
+>
+  <!-- Question -->
+  <div class="mb-4">
+    <h3 class="text-lg font-semibold text-[#e5e7eb]">{{ question }}</h3>
+    <p *ngIf="hint" class="mt-2 text-sm text-[#9ca3af]">{{ hint }}</p>
+  </div>
+
+  <!-- Input -->
+  <div class="mb-4">
+    <div class="relative">
+      <input
+        [id]="id + '-input'"
+        type="text"
+        inputmode="decimal"
+        [value]="value()"
+        (input)="handleInputChange($event)"
+        (keydown)="handleKeyDown($event)"
+        [placeholder]="placeholder"
+        [disabled]="submitted()"
+        [ngClass]="getInputClasses()"
+        [style.padding-left]="showCalculator ? '2.5rem' : null"
+        [style.padding-right]="showUnit && unit ? '3rem' : null"
+      />
+
+      <!-- Unit Display -->
+      <div
+        *ngIf="showUnit && unit"
+        class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#9ca3af]"
+      >
+        {{ unit }}
+      </div>
+
+      <!-- Calculator Icon -->
+      <div
+        *ngIf="showCalculator"
+        class="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b7280]"
+      >
+        <ng-icon name="lucideCalculator" class="h-5 w-5"></ng-icon>
+      </div>
+    </div>
+
+    <!-- Input Validation -->
+    <p *ngIf="!isValidInput() && value() !== ''" class="mt-1 text-sm text-red-400">
+      Please enter a valid number.
+    </p>
+
+    <!-- Constraints Display -->
+    <div *ngIf="constraints" class="mt-2 text-xs text-[#6b7280]">
+      <span *ngIf="getConstraintDisplay()">{{ getConstraintDisplay() }}</span>
+      <span *ngIf="constraints.unit" class="ml-2">Unit: {{ constraints.unit }}</span>
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <div *ngIf="!submitted()" class="flex justify-center">
+    <button
+      (click)="handleSubmit()"
+      [disabled]="!value().trim() || !isValidInput()"
+      [ngClass]="{
+        'bg-[#3b82f6] text-white hover:bg-[#2563eb]': value().trim() && isValidInput(),
+        'cursor-not-allowed bg-[#1f2937] text-[#6b7280]': !value().trim() || !isValidInput()
+      }"
+      class="rounded-lg px-6 py-2 text-sm font-medium transition-colors"
+    >
+      <ng-container *ngIf="state() === 'validating'; else normalButton">
+        <div class="flex items-center">
+          <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2"></div>
+          Checking...
+        </div>
+      </ng-container>
+      <ng-template #normalButton>Submit Answer</ng-template>
+    </button>
+  </div>
+
+  <!-- Feedback -->
+  <div
+    *ngIf="submitted() && feedback() && showFeedback"
+    class="mt-4 rounded-lg border p-4"
+  >
+    <div class="flex items-start gap-3">
+      <ng-icon
+        *ngIf="feedback()!.isCorrect"
+        name="lucideCircleCheck"
+        class="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5"
+      ></ng-icon>
+      <ng-icon
+        *ngIf="!feedback()!.isCorrect"
+        name="lucideCircleX"
+        class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"
+      ></ng-icon>
+      
+      <div>
+        <p
+          [ngClass]="{
+            'text-emerald-500': feedback()!.isCorrect,
+            'text-red-500': !feedback()!.isCorrect
+          }"
+          class="font-medium"
+        >
+          {{ feedback()!.isCorrect ? 'Correct!' : 'Incorrect' }}
+        </p>
+        <p *ngIf="feedback()!.message" class="mt-1 text-sm text-[#a9b1bb]">
+          {{ feedback()!.message }}
+        </p>
+        <div *ngIf="constraints && getExpectedDisplay()" class="mt-2 text-xs text-[#6b7280]">
+          <ng-icon name="lucideTarget" class="inline h-3 w-3 mr-1"></ng-icon>
+          Expected: {{ getExpectedDisplay() }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
