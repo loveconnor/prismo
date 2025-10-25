@@ -286,13 +286,14 @@ export class AuthService {
       email: 'demo@example.com',
       name: 'Demo User',
       username: 'demo',
-      avatar:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face',
+      avatar: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1473',
       is_active: true,
     };
 
-    const demoToken = this.jwtService.createDemoToken(demoUser, false);
-    const refreshToken = this.jwtService.createDemoToken(demoUser, true);
+    // Type assertion since we know demo user has required properties
+    const userForToken = demoUser as Required<Pick<User, 'id' | 'email' | 'name'>> & Pick<User, 'avatar'>;
+    const demoToken = this.jwtService.createDemoToken(userForToken, false);
+    const refreshToken = this.jwtService.createDemoToken(userForToken, true);
 
     const demoResponse: AuthResponse = {
       user: demoUser,
