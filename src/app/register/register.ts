@@ -258,14 +258,37 @@ export class RegisterComponent {
       this.isLoading.set(true);
       this.errorMessage.set('');
 
-      this.toastService.show({
-        title: 'Registration',
-        description: 'Registration is not implemented in the simple auth service. Please use the login page.',
-        type: 'info'
+      const userData = {
+        email: this.registerForm.value.email,
+        name: this.registerForm.value.name,
+        password: this.registerForm.value.password,
+        username: this.registerForm.value.email.split('@')[0] // Use email prefix as username
+      };
+
+      this.authService.register(userData).subscribe({
+        next: (response) => {
+          this.isLoading.set(false);
+          this.toastService.show({
+            title: 'Registration Successful!',
+            description: 'Please check your email for verification instructions.',
+            type: 'success'
+          });
+          // Navigate to verification page with email
+          this.router.navigate(['/verify'], { 
+            queryParams: { email: userData.email } 
+          });
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(error.error?.error || 'Registration failed. Please try again.');
+          
+          this.toastService.show({
+            title: 'Registration Failed',
+            description: error.error?.error || 'Please check your information and try again.',
+            type: 'error'
+          });
+        }
       });
-      
-      this.isLoading.set(false);
-      this.router.navigate(['/login']);
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.registerForm.controls).forEach(key => {
