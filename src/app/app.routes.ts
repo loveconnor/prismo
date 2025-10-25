@@ -19,6 +19,11 @@ export const routes: Routes = [
     canActivate: [guestGuard]
   },
   { 
+    path: 'verify', 
+    loadComponent: () => import('./verify/verify').then(m => m.VerifyComponent),
+    canActivate: [guestGuard]
+  },
+  { 
     path: 'dashboard', 
     loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard]

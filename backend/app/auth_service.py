@@ -48,7 +48,7 @@ class CognitoAuthService:
             # Prepare sign up parameters
             sign_up_params = {
                 "ClientId": self.client_id,
-                "Username": username,  # Use username instead of email
+                "Username": username,  # Use username as the Cognito username
                 "Password": password,
                 "UserAttributes": [
                     {"Name": "email", "Value": email},
@@ -73,6 +73,9 @@ class CognitoAuthService:
                 username=username,
                 profile=profile or {},
             )
+            
+            print(f"DEBUG: Created user in DynamoDB: {user_data}")
+            print(f"DEBUG: User email: {email}, username: {username}")
 
             return {
                 "success": True,
@@ -100,15 +103,29 @@ class CognitoAuthService:
     ) -> Dict[str, Any]:
         """Confirm user registration"""
         try:
+            # First, we need to find the username associated with this email
+            user_data = self.user_model.get_user_by_email(email)
+            print(f"DEBUG: Looking up user by email: {email}")
+            print(f"DEBUG: User data found: {user_data}")
+            
+            if not user_data:
+                return {"success": False, "error": "User not found"}
+            
+            username = user_data.get('username')
+            print(f"DEBUG: Username from user data: {username}")
+            
+            if not username:
+                return {"success": False, "error": "Username not found for this email"}
+            
             # Prepare confirm sign up parameters
             confirm_params = {
                 "ClientId": self.client_id,
-                "Username": email,  # For confirmation, we still use email
+                "Username": username,  # Use username for confirmation
                 "ConfirmationCode": confirmation_code,
             }
             
             # Add SECRET_HASH if client secret is configured
-            secret_hash = self._get_secret_hash(email)
+            secret_hash = self._get_secret_hash(username)
             if secret_hash:
                 confirm_params["SecretHash"] = secret_hash
             
@@ -127,17 +144,69 @@ class CognitoAuthService:
         except Exception as e:
             return {"success": False, "error": f"Unexpected error: {e}"}
 
+    def resend_verification_code(self, email: str) -> Dict[str, Any]:
+        """Resend verification code"""
+        try:
+            # First, we need to find the username associated with this email
+            user_data = self.user_model.get_user_by_email(email)
+            if not user_data:
+                return {"success": False, "error": "User not found"}
+            
+            username = user_data.get('username')
+            if not username:
+                return {"success": False, "error": "Username not found for this email"}
+            
+            # Prepare resend parameters
+            resend_params = {
+                "ClientId": self.client_id,
+                "Username": username
+            }
+            
+            # Add SECRET_HASH if client secret is configured
+            secret_hash = self._get_secret_hash(username)
+            if secret_hash:
+                resend_params["SecretHash"] = secret_hash
+            
+            response = self.cognito.resend_confirmation_code(**resend_params)
+
+            return {
+                "success": True,
+                "message": "Verification code sent",
+                "code_delivery": response.get("CodeDeliveryDetails"),
+            }
+
+        except ClientError as e:
+            error_code = e.response["Error"]["Code"]
+            if error_code == "UserNotFoundException":
+                return {"success": False, "error": "User not found"}
+            elif error_code == "InvalidParameterException":
+                return {"success": False, "error": "User is already confirmed"}
+            else:
+                return {"success": False, "error": f"Resend failed: {e}"}
+        except Exception as e:
+            return {"success": False, "error": f"Unexpected error: {e}"}
+
     def authenticate_user(self, email: str, password: str) -> Dict[str, Any]:
         """Authenticate user and return tokens"""
         try:
+            # First, we need to find the username associated with this email
+            # Since Cognito uses username as the login identifier, we need to look up the user
+            user_data = self.user_model.get_user_by_email(email)
+            if not user_data:
+                return {"success": False, "error": "User not found"}
+            
+            username = user_data.get('username')
+            if not username:
+                return {"success": False, "error": "Username not found for this email"}
+            
             # Prepare auth parameters for password auth
             auth_params = {
-                "USERNAME": email,  # Use email as username
+                "USERNAME": username,  # Use username for authentication
                 "PASSWORD": password
             }
             
             # Add SECRET_HASH if client secret is configured
-            secret_hash = self._get_secret_hash(email)
+            secret_hash = self._get_secret_hash(username)
             if secret_hash:
                 auth_params["SECRET_HASH"] = secret_hash
             
@@ -172,8 +241,8 @@ class CognitoAuthService:
             # Get user info
             user_info = self.cognito.get_user(AccessToken=auth_result["AccessToken"])
 
-            # Get user from DynamoDB
-            user_data = self.user_model.get_user_by_cognito_id(user_info["Username"])
+            # Get user from DynamoDB using email since we're now using email as username
+            user_data = self.user_model.get_user_by_email(email)
 
             return {
                 "success": True,

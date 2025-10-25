@@ -3,5 +3,5 @@ export const environment = {
   apiUrl: 'http://localhost:5000',
   backendUrl: 'http://localhost:5000',
   googleClientId: '174911154905-3d2k5au7monn142921u3f455lkgu5a2v.apps.googleusercontent.com',
-  oauthRedirectUri: 'http://localhost:5000/oauth/callback'
+  oauthRedirectUri: 'http://localhost:5000/oauth/google/callback'
 };

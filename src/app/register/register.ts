@@ -260,7 +260,7 @@ export class RegisterComponent {
 
       const userData: RegisterData = {
         email: this.registerForm.value.email,
-        name: this.registerForm.value.name,
+        username: this.registerForm.value.name, // Map name field to username for backend
         password: this.registerForm.value.password
       };
 
@@ -268,11 +268,14 @@ export class RegisterComponent {
         next: (response: AuthResponse) => {
           this.isLoading.set(false);
           this.toastService.show({
-            title: 'Welcome!',
-            description: `Account created successfully. Welcome, ${response.user.name}!`,
+            title: 'Account Created!',
+            description: 'Please check your email for a verification code.',
             type: 'success'
           });
-          // Navigation is handled by the auth service
+          // Redirect to verification page with email
+          this.router.navigate(['/verify'], { 
+            queryParams: { email: this.registerForm.value.email } 
+          });
         },
         error: (error: AuthError) => {
           this.isLoading.set(false);

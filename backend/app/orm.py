@@ -309,46 +309,58 @@ class DynamoDBORM:
 @dataclass
 class User(BaseModel):
     """User model"""
-    cognito_user_id: str
-    email: str
-    username: str
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    cognito_user_id: str = ""
+    email: str = ""
+    username: str = ""
     profile: Dict[str, Any] = field(default_factory=dict)
     preferences: Dict[str, Any] = field(default_factory=dict)
     is_active: bool = True
+    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
 @dataclass
 class Lab(BaseModel):
     """Lab model"""
-    user_id: str
-    name: str
-    lab_type: str
-    description: str
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str = ""
+    name: str = ""
+    lab_type: str = ""
+    description: str = ""
     content: Dict[str, Any] = field(default_factory=dict)
     is_public: bool = False
     tags: List[str] = field(default_factory=list)
     difficulty: int = 1
     estimated_time: int = 30
+    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
 @dataclass
 class Widget(BaseModel):
     """Widget model"""
-    user_id: str
-    name: str
-    widget_type: str
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str = ""
+    name: str = ""
+    widget_type: str = ""
     config: Dict[str, Any] = field(default_factory=dict)
     is_public: bool = False
     tags: List[str] = field(default_factory=list)
     version: str = "1.0.0"
+    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
 @dataclass
 class Collection(BaseModel):
     """Collection model"""
-    user_id: str
-    name: str
-    description: str
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str = ""
+    name: str = ""
+    description: str = ""
     items: List[Dict[str, Any]] = field(default_factory=list)
     is_public: bool = False
     tags: List[str] = field(default_factory=list)
+    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
 @dataclass
 class Module(BaseModel):

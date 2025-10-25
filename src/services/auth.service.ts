@@ -92,8 +92,8 @@ export class AuthService {
   private readonly ACCESS_TOKEN_COOKIE = 'access_token';
   private readonly REFRESH_TOKEN_COOKIE = 'refresh_token';
 
-  // API base - update to your actual endpoint base
-  private readonly API_URL = '/api/auth';
+  // API base - pointing to Flask backend
+  private readonly API_URL = 'http://localhost:5000/auth';
 
   // Subjects for Rx interop
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -237,6 +237,28 @@ export class AuthService {
           this.logout();
           return this.handleAuthError(err);
         })
+      );
+  }
+
+  // Verify email with confirmation code
+  verifyEmail(email: string, code: string): Observable<any> {
+    this.isLoadingSubject.next(true);
+    return this.http
+      .post(`${this.API_URL}/confirm`, { email, confirmation_code: code })
+      .pipe(
+        tap(() => this.isLoadingSubject.next(false)),
+        catchError((err) => this.handleLoadingError(err))
+      );
+  }
+
+  // Resend verification code
+  resendVerificationCode(email: string): Observable<any> {
+    this.isLoadingSubject.next(true);
+    return this.http
+      .post(`${this.API_URL}/resend`, { email })
+      .pipe(
+        tap(() => this.isLoadingSubject.next(false)),
+        catchError((err) => this.handleLoadingError(err))
       );
   }
 
