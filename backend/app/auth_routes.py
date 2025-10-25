@@ -98,6 +98,26 @@ def confirm_registration():
         return jsonify({"error": f"Confirmation failed: {e}"}), 500
 
 
+@auth_bp.route("/resend", methods=["POST"])
+def resend_verification():
+    """Resend verification code"""
+    try:
+        data = request.get_json()
+
+        if "email" not in data:
+            return jsonify({"error": "Email required"}), 400
+
+        result = auth_service.resend_verification_code(data["email"])
+
+        if result["success"]:
+            return jsonify({"message": result["message"]}), 200
+        else:
+            return jsonify({"error": result["error"]}), 400
+
+    except Exception as e:
+        return jsonify({"error": f"Resend failed: {e}"}), 500
+
+
 @auth_bp.route("/login", methods=["POST"])
 def login():
     """Authenticate user"""

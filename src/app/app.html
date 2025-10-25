@@ -19,10 +19,6 @@
             <ng-icon name="lucide-house" data-slot="icon" class="size-6"></ng-icon>
             <app-sidebar-label>Home</app-sidebar-label>
           </app-sidebar-item>
-          <app-sidebar-item [current]="isActive('/components')" routerLink="/components">
-            <ng-icon name="lucide-book-open" data-slot="icon" class="size-6"></ng-icon>
-            <app-sidebar-label>Components</app-sidebar-label>
-          </app-sidebar-item>
           <app-sidebar-item [current]="isActive('/labs')" routerLink="/labs">
             <ng-icon name="lucide-beaker" data-slot="icon" class="size-6"></ng-icon>
             <app-sidebar-label>Labs</app-sidebar-label>
@@ -54,16 +50,21 @@
 
       <app-sidebar-footer>
         <app-sidebar-section className="px-0 pb-3 flex items-center justify-center">
-          <app-avatar-dropdown
-            [user]="{
-              name: 'John Doe',
-              email: 'john.doe@example.com',
-              role: 'Student',
-              avatarUrl: 'https://github.com/monster0506.png'
-            }"
-            variant="sidebar"
-            (profileClick)="openSettings()"
-          ></app-avatar-dropdown>
+          @if (authService.currentUser(); as user) {
+            <app-avatar-dropdown
+              [user]="{
+                name: user.name || 'User',
+                email: user.email,
+                role: 'User',
+                avatarUrl: user.avatar || 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1473'
+              }"
+              variant="sidebar"
+              (profileClick)="openSettings()"
+              (logoutClick)="onLogout()"
+            ></app-avatar-dropdown>
+          } @else {
+            <div class="text-sm text-muted-foreground">Not logged in</div>
+          }
         </app-sidebar-section>
       </app-sidebar-footer>
     </app-sidebar>
@@ -76,4 +77,7 @@
   </main>
 
   <app-settings-modal [open]="settingsOpen" (openChange)="settingsOpen = $event"></app-settings-modal>
+  
+  <!-- Toast notifications -->
+  <app-toast-container></app-toast-container>
 </div>

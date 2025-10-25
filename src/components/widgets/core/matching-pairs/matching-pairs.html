@@ -1,0 +1,166 @@
+<div
+  role="group"
+  [attr.aria-label]="a11yLabel || 'Matching exercise: ' + (title || 'Match items')"
+  [ngClass]="getContainerClasses()"
+>
+  <!-- Header -->
+  <div class="mb-4">
+    <h3 *ngIf="title" class="text-lg font-semibold text-[#e5e7eb]">{{ title }}</h3>
+    <p class="text-sm text-[#9ca3af]">{{ instructions }}</p>
+  </div>
+
+  <!-- Controls -->
+  <div class="mb-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <button
+        *ngIf="shuffleItems"
+        (click)="handleShuffle()"
+        [disabled]="completed()"
+        class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <ng-icon name="lucideShuffle" class="h-4 w-4"></ng-icon>
+        Shuffle
+      </button>
+      <button
+        (click)="handleReset()"
+        class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors"
+      >
+        <ng-icon name="lucideRotateCcw" class="h-4 w-4"></ng-icon>
+        Reset
+      </button>
+    </div>
+
+    <div *ngIf="completed()" class="text-sm text-[#9ca3af]">
+      {{ currentMatchCount() }} matches • {{ scorePercentage() }}% correct
+    </div>
+  </div>
+
+  <!-- Matching Interface -->
+  <div class="grid gap-6 md:grid-cols-2">
+    <!-- Left Column -->
+    <div>
+      <h4 class="mb-3 text-sm font-medium text-[#e5e7eb]">Match From</h4>
+      <div class="space-y-2">
+        <div
+          *ngFor="let item of shuffledLeft()"
+          [draggable]="mode === 'drag-drop'"
+          (dragstart)="handleDragStart($event, item.id, 'left')"
+          (dragover)="handleDragOver($event)"
+          (drop)="handleDrop($event, item.id, 'left')"
+          (click)="(mode === 'select' || mode === 'connect') && handleSelectLeft(item.id)"
+          [ngClass]="getItemClasses(item.id, 'left')"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-[#e5e7eb]">{{ item.label }}</span>
+            <ng-icon
+              *ngIf="getItemStatus(item.id, 'left') === 'correct'"
+              name="lucideCircleCheck"
+              class="h-4 w-4 text-emerald-500"
+            ></ng-icon>
+            <ng-icon
+              *ngIf="getItemStatus(item.id, 'left') === 'incorrect'"
+              name="lucideCircleX"
+              class="h-4 w-4 text-red-500"
+            ></ng-icon>
+          </div>
+
+          <div *ngIf="showCategories && item.category" class="mt-1 text-xs text-[#6b7280]">
+            {{ item.category }}
+          </div>
+
+          <div
+            *ngIf="isItemMatched(item.id, 'left') && getMatchedPartner(item.id, 'left') as partner"
+            class="mt-2 text-xs text-[#60a5fa]"
+          >
+            → {{ partner.label }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div>
+      <h4 class="mb-3 text-sm font-medium text-[#e5e7eb]">Match To</h4>
+      <div class="space-y-2">
+        <div
+          *ngFor="let item of shuffledRight()"
+          [draggable]="mode === 'drag-drop'"
+          (dragstart)="handleDragStart($event, item.id, 'right')"
+          (dragover)="handleDragOver($event)"
+          (drop)="handleDrop($event, item.id, 'right')"
+          (click)="(mode === 'select' || mode === 'connect') && selectedLeft() && handleSelectRight(item.id)"
+          [ngClass]="getItemClasses(item.id, 'right')"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-[#e5e7eb]">{{ item.label }}</span>
+            <ng-icon
+              *ngIf="getItemStatus(item.id, 'right') === 'correct'"
+              name="lucideCircleCheck"
+              class="h-4 w-4 text-emerald-500"
+            ></ng-icon>
+            <ng-icon
+              *ngIf="getItemStatus(item.id, 'right') === 'incorrect'"
+              name="lucideCircleX"
+              class="h-4 w-4 text-red-500"
+            ></ng-icon>
+          </div>
+
+          <div *ngIf="showCategories && item.category" class="mt-1 text-xs text-[#6b7280]">
+            {{ item.category }}
+          </div>
+
+          <div
+            *ngIf="isItemMatched(item.id, 'right') && getMatchedPartner(item.id, 'right') as partner"
+            class="mt-2 text-xs text-[#60a5fa]"
+          >
+            ← {{ partner.label }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Select Mode Instructions -->
+  <div
+    *ngIf="mode === 'select' && !completed()"
+    class="mt-6 rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4"
+  >
+    <p class="text-sm text-[#a9b1bb]">
+      {{ selectedLeft() ? 'Now click a right item to complete the match.' : 'Click a left item, then click a right item to create a match.' }}
+    </p>
+  </div>
+
+  <!-- Completion Feedback -->
+  <div *ngIf="completed() && showHints" class="mt-6 space-y-2">
+    <h4 class="text-sm font-medium text-[#e5e7eb]">Match Explanations</h4>
+    <div
+      *ngFor="let match of correctMatches; let idx = index"
+      class="flex items-start gap-2 rounded-lg p-3 text-sm"
+      [ngClass]="{
+        'border border-emerald-500/20 bg-emerald-500/10': matches()[match.leftId] === match.rightId,
+        'border border-gray-500/20 bg-gray-500/10': matches()[match.leftId] !== match.rightId
+      }"
+    >
+      <div class="flex-1">
+        <div class="font-medium text-[#e5e7eb]">
+          {{ getItemById(match.leftId, 'left')?.label }} ↔ {{ getItemById(match.rightId, 'right')?.label }}
+        </div>
+        <div *ngIf="match.explanation" class="mt-1 text-[#a9b1bb]">
+          {{ match.explanation }}
+        </div>
+      </div>
+      <ng-icon
+        *ngIf="matches()[match.leftId] === match.rightId"
+        name="lucideCircleCheck"
+        class="h-4 w-4 text-emerald-500 flex-shrink-0"
+      ></ng-icon>
+      <div
+        *ngIf="matches()[match.leftId] !== match.rightId"
+        class="text-xs text-[#6b7280]"
+      >
+        not matched
+      </div>
+    </div>
+  </div>
+</div>
+

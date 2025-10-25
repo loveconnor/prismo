@@ -1,0 +1,176 @@
+<div
+  role="region"
+  [attr.aria-label]="a11yLabel || ('Test feedback: ' + title)"
+  class="mx-auto w-full max-w-4xl rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm"
+  [ngClass]="{
+    'max-w-2xl': variant === 'compact',
+    'max-w-xl': variant === 'minimal'
+  }"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between border-b border-[#1f2937] p-4">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div *ngIf="isRunning; else idleIcon" class="h-4 w-4 animate-spin rounded-full border-2 border-[#60a5fa] border-t-transparent"></div>
+        <ng-template #idleIcon>
+          <ng-icon name="lucideCode" class="h-5 w-5 text-[#60a5fa]"></ng-icon>
+        </ng-template>
+        <h3 class="text-lg font-semibold text-[#e5e7eb]">{{ title }}</h3>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <div class="text-sm text-[#a9b1bb]">
+        {{ getOverallStats().totalTests }} tests • {{ getOverallStats().totalPassed }} passed • {{ getOverallStats().totalFailed }} failed
+      </div>
+
+      <button *ngIf="onRetry" (click)="onRetry?.(); triggerRetry()" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors">
+        Run Tests
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div *ngIf="variant !== 'minimal'" class="grid grid-cols-2 gap-4 p-4 md:grid-cols-4">
+    <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-center">
+      <div class="text-xl font-bold text-[#e5e7eb]">{{ getOverallStats().totalTests }}</div>
+      <div class="text-xs text-[#a9b1bb]">Total Tests</div>
+    </div>
+    <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-center">
+      <div class="text-xl font-bold text-emerald-500">{{ getOverallStats().totalPassed }}</div>
+      <div class="text-xs text-[#a9b1bb]">Passed</div>
+    </div>
+    <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-center">
+      <div class="text-xl font-bold text-red-500">{{ getOverallStats().totalFailed }}</div>
+      <div class="text-xs text-[#a9b1bb]">Failed</div>
+    </div>
+    <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-center">
+      <div class="text-xl font-bold text-[#60a5fa]">{{ (getOverallStats().passRate) | number:'1.0-0' }}%</div>
+      <div class="text-xs text-[#a9b1bb]">Pass Rate</div>
+    </div>
+  </div>
+
+  <!-- Test Results -->
+  <div class="max-h-[600px] overflow-auto">
+    <div *ngIf="testSuites.length === 0" class="p-8 text-center text-[#6b7280]">
+      <ng-icon name="lucideCode" class="h-12 w-12 mx-auto mb-4 opacity-50"></ng-icon>
+      <p>No tests to display. Run your code to see test results.</p>
+    </div>
+
+    <div *ngIf="testSuites.length > 0">
+      <!-- Grouped by suite -->
+      <div *ngIf="groupBySuite; else flatList" class="divide-y divide-[#1f2937]">
+        <div *ngFor="let suite of testSuites" class="p-4">
+          <button (click)="toggleSuite(suite.id)" class="flex w-full items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2" [ngClass]="suite.failedTests > 0 ? 'text-red-500' : 'text-emerald-500'">
+                <ng-icon [name]="suite.failedTests > 0 ? 'lucideXCircle' : 'lucideCheckCircle2'" class="h-4 w-4"></ng-icon>
+                <h4 class="font-medium text-[#e5e7eb]">{{ suite.name }}</h4>
+              </div>
+              <div class="text-sm text-[#a9b1bb]">
+                {{ suite.passedTests }}/{{ suite.totalTests }} passed • {{ suite.executionTime }}ms
+              </div>
+            </div>
+            <ng-icon [name]="expandedSuites.has(suite.id) ? 'lucideChevronDown' : 'lucideChevronRight'" class="h-4 w-4 text-[#a9b1bb]"></ng-icon>
+          </button>
+
+          <div *ngIf="expandedSuites.has(suite.id)" class="mt-3 space-y-2">
+            <div *ngFor="let test of suite.tests | slice:0:maxVisibleTests" class="ml-6">
+              <div class="rounded-lg border p-3" [ngClass]="getStatusBgColor(test.status)">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 mt-0.5" [ngClass]="getStatusColor(test.status)">
+                      <ng-icon [name]="getStatusIconName(test.status)" class="h-4 w-4"></ng-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h5 class="font-medium text-[#e5e7eb]">{{ test.name }}</h5>
+                      <p *ngIf="test.description" class="mt-1 text-sm text-[#a9b1bb]">{{ test.description }}</p>
+                      <p *ngIf="test.executionTime" class="mt-1 text-xs text-[#6b7280]">{{ test.executionTime }}ms</p>
+                    </div>
+                  </div>
+
+                  <button *ngIf="showDetails && (test.expectedOutput || test.actualOutput || test.errorMessage)"
+                          (click)="toggleTest(test.id)"
+                          class="flex-shrink-0 ml-2 p-1 text-[#a9b1bb] hover:text-[#e5e7eb]">
+                    <ng-icon [name]="expandedTests.has(test.id) ? 'lucideEyeOff' : 'lucideEye'" class="h-4 w-4"></ng-icon>
+                  </button>
+                </div>
+
+                <div *ngIf="expandedTests.has(test.id) && showDetails" class="mt-3 space-y-3">
+                  <div *ngIf="test.input">
+                    <div class="mb-1 text-xs font-medium text-[#a9b1bb]">Input:</div>
+                    <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-sm text-[#e5e7eb]"><code>{{ test.input }}</code></pre>
+                  </div>
+                  <div *ngIf="test.expectedOutput">
+                    <div class="mb-1 text-xs font-medium text-[#a9b1bb]">Expected:</div>
+                    <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-sm text-[#e5e7eb]"><code>{{ test.expectedOutput }}</code></pre>
+                  </div>
+                  <div *ngIf="test.actualOutput">
+                    <div class="mb-1 text-xs font-medium text-[#a9b1bb]">Actual:</div>
+                    <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-sm text-[#e5e7eb]"><code>{{ test.actualOutput }}</code></pre>
+                  </div>
+                  <div *ngIf="test.errorMessage">
+                    <div class="mb-1 text-xs font-medium text-red-400">Error:</div>
+                    <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-sm text-red-300"><code>{{ test.errorMessage }}</code></pre>
+                  </div>
+                  <div *ngIf="showStackTraces && test.stackTrace">
+                    <div class="mb-1 text-xs font-medium text-red-400">Stack Trace:</div>
+                    <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-xs text-red-300 font-mono"><code>{{ test.stackTrace }}</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="suite.tests.length > maxVisibleTests" class="ml-6 text-sm text-[#6b7280]">
+              And {{ suite.tests.length - maxVisibleTests }} more tests...
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Flat list -->
+      <ng-template #flatList>
+        <div class="divide-y divide-[#1f2937]">
+          <div *ngFor="let test of flatTests | slice:0:maxVisibleTests" class="p-4" [ngClass]="getStatusBgColor(test.status)">
+            <div class="flex items-start justify-between">
+              <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 mt-0.5" [ngClass]="getStatusColor(test.status)">
+                  <ng-icon [name]="getStatusIconName(test.status)" class="h-4 w-4"></ng-icon>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h5 class="font-medium text-[#e5e7eb]">{{ test.name }}</h5>
+                  <p class="text-sm text-[#a9b1bb]">{{ test.suiteName }}</p>
+                  <p *ngIf="test.description" class="mt-1 text-sm text-[#a9b1bb]">{{ test.description }}</p>
+                </div>
+              </div>
+              <button *ngIf="showDetails && (test.expectedOutput || test.actualOutput || test.errorMessage)" (click)="toggleTest(test.id)" class="flex-shrink-0 ml-2 p-1 text-[#a9b1bb] hover:text-[#e5e7eb]">
+                <ng-icon [name]="expandedTests.has(test.id) ? 'lucideEyeOff' : 'lucideEye'" class="h-4 w-4"></ng-icon>
+              </button>
+            </div>
+            <div *ngIf="expandedTests.has(test.id) && showDetails" class="mt-3 ml-7 space-y-3">
+              <!-- Same detail blocks as above -->
+              <div *ngIf="test.input">
+                <div class="mb-1 text-xs font-medium text-[#a9b1bb]">Input:</div>
+                <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-sm text-[#e5e7eb]"><code>{{ test.input }}</code></pre>
+              </div>
+              <div *ngIf="test.expectedOutput && test.actualOutput && test.status === 'fail'" class="grid gap-3 md:grid-cols-2">
+                <div>
+                  <div class="mb-1 text-xs font-medium text-emerald-400">Expected:</div>
+                  <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-sm text-[#e5e7eb]"><code>{{ test.expectedOutput }}</code></pre>
+                </div>
+                <div>
+                  <div class="mb-1 text-xs font-medium text-red-400">Actual:</div>
+                  <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-sm text-[#e5e7eb]"><code>{{ test.actualOutput }}</code></pre>
+                </div>
+              </div>
+              <div *ngIf="test.errorMessage">
+                <div class="mb-1 text-xs font-medium text-red-400">Error:</div>
+                <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-sm text-red-300"><code>{{ test.errorMessage }}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+

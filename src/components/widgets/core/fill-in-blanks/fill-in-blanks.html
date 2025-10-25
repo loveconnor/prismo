@@ -1,0 +1,124 @@
+<div
+  role="group"
+  [attr.aria-label]="a11yLabel || 'Fill in the blanks exercise'"
+  [ngClass]="getContainerClasses()"
+>
+  <!-- Template with blanks -->
+  <div class="mb-4">
+    <div class="prose prose-sm dark:prose-invert text-[#e5e7eb]">
+      <ng-container *ngFor="let segment of templateSegments()">
+        <!-- Text segment -->
+        <ng-container *ngIf="segment.type === 'text'">
+          {{ segment.content }}
+        </ng-container>
+        
+        <!-- Blank input segment -->
+        <ng-container *ngIf="segment.type === 'blank' && segment.blank">
+          <!-- Select dropdown -->
+          <select
+            *ngIf="segment.blank.type === 'select' && segment.blank.options"
+            [value]="getAnswer(segment.blank.id)"
+            (change)="handleAnswerChange(segment.blank.id, $any($event.target).value)"
+            [disabled]="componentState() === 'completed'"
+            [ngClass]="getInputClasses(segment.blank)"
+          >
+            <option value="">Choose...</option>
+            <option *ngFor="let option of segment.blank.options" [value]="option">
+              {{ option }}
+            </option>
+          </select>
+          
+          <!-- Text or number input -->
+          <input
+            *ngIf="segment.blank.type !== 'select'"
+            [type]="segment.blank.type === 'number' ? 'number' : 'text'"
+            [value]="getAnswer(segment.blank.id)"
+            (input)="handleAnswerChange(segment.blank.id, $any($event.target).value)"
+            [placeholder]="segment.blank.placeholder"
+            [disabled]="componentState() === 'completed'"
+            [ngClass]="getInputClasses(segment.blank)"
+            [style.width]="getInputWidth(segment.blank)"
+          />
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Hints -->
+  <div
+    *ngIf="showHints && blanksWithHints.length > 0"
+    class="mb-4 rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4"
+  >
+    <h4 class="mb-2 text-sm font-semibold text-[#e5e7eb]">Hints</h4>
+    <ul class="space-y-1 text-sm text-[#a9b1bb]">
+      <li *ngFor="let blank of blanksWithHints">
+        <strong>{{ blank.placeholder }}:</strong> {{ blank.hint }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Submit Button -->
+  <div *ngIf="componentState() !== 'completed'" class="flex justify-center">
+    <button
+      (click)="handleSubmit()"
+      [disabled]="!canSubmit"
+      [ngClass]="{
+        'rounded-lg px-6 py-2 text-sm font-medium transition-colors': true,
+        'cursor-not-allowed bg-[#1f2937] text-[#6b7280]': !canSubmit,
+        'bg-[#3b82f6] text-white hover:bg-[#2563eb]': canSubmit
+      }"
+      type="button"
+    >
+      <ng-container *ngIf="componentState() === 'checking'">
+        <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2"></div>
+        Checking...
+      </ng-container>
+      <ng-container *ngIf="componentState() !== 'checking'">
+        Check Answers
+      </ng-container>
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div *ngIf="componentState() === 'completed' && showFeedback" class="mt-4 space-y-2">
+    <div class="flex items-center justify-between">
+      <h4 class="text-sm font-semibold text-[#e5e7eb]">Results</h4>
+      <span class="text-sm text-[#a9b1bb]">
+        Score: {{ getScorePercentage() }}% ({{ getCorrectCount() }}/{{ blanks.length }})
+      </span>
+    </div>
+
+    <div class="grid gap-2 md:grid-cols-2">
+      <div
+        *ngFor="let blank of blanks"
+        [ngClass]="getResultClasses(blank)"
+      >
+        <ng-icon
+          *ngIf="isCorrect(blank.id)"
+          name="lucideCircleCheck"
+          class="h-4 w-4 text-emerald-500 flex-shrink-0"
+        ></ng-icon>
+        <ng-icon
+          *ngIf="!isCorrect(blank.id)"
+          name="lucideCircleX"
+          class="h-4 w-4 text-red-500 flex-shrink-0"
+        ></ng-icon>
+        <div class="flex-1">
+          <div class="font-medium text-[#e5e7eb]">
+            {{ blank.placeholder }}
+          </div>
+          <div class="text-[#a9b1bb]">
+            Your answer: <strong>{{ hasAnswer(blank.id) ? getAnswer(blank.id) : '(no answer)' }}</strong>
+          </div>
+          <div
+            *ngIf="!isCorrect(blank.id) && blank.correctAnswers.length > 0"
+            class="text-[#a9b1bb]"
+          >
+            Correct: <strong>{{ getCorrectAnswersDisplay(blank) }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

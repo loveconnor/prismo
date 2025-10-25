@@ -1,0 +1,240 @@
+<div
+  [attr.role]="variant === 'inline' || variant === 'card' ? 'form' : null"
+  [attr.aria-label]="a11yLabel || 'Reflection'"
+  [class]="variant === 'card' ? 'mx-auto max-w-3xl rounded-2xl border border-[#1f2937] bg-[#0e1318] p-5 shadow-sm' :
+           variant === 'inline' ? 'mx-auto max-w-3xl rounded-2xl border border-[#1f2937] bg-[#0e1318] p-4 shadow-sm md:p-5' :
+           'bg-[#0b0f14]'"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between gap-3 border-b border-[#1f2937] pb-3">
+    <div class="flex items-center gap-2">
+      <ng-icon name="lucideMessageCircle" class="h-5 w-5 text-[#60a5fa]"></ng-icon>
+      <div>
+        <h3 class="text-sm font-semibold text-[#e5e7eb]">
+          {{ a11yLabel || 'Quick Reflection' }}
+        </h3>
+        <p class="text-xs text-[#6b7280]">
+          {{ getScopeLabel() }} • {{ scopeId }}
+        </p>
+      </div>
+    </div>
+
+    <button
+      *ngIf="variant !== 'card'"
+      (click)="handleToggleCollapse()"
+      class="text-[#9ca3af] hover:text-[#e5e7eb] transition-colors"
+      [attr.aria-label]="reflectionState() === 'collapsed' ? 'Expand reflection' : 'Collapse reflection'"
+      type="button"
+    >
+      <ng-icon 
+        *ngIf="reflectionState() === 'collapsed'"
+        name="lucideChevronDown" 
+        class="h-5 w-5"
+      ></ng-icon>
+      <ng-icon 
+        *ngIf="reflectionState() !== 'collapsed'"
+        name="lucideChevronUp" 
+        class="h-5 w-5"
+      ></ng-icon>
+    </button>
+  </div>
+
+  <ng-container *ngIf="reflectionState() !== 'collapsed'">
+    <!-- Submitted State -->
+    <div *ngIf="reflectionState() === 'submitted'" class="py-8 text-center">
+      <ng-icon name="lucideCheck" class="mx-auto mb-3 h-12 w-12 text-emerald-500"></ng-icon>
+      <h4 class="mb-2 text-base font-semibold text-[#e5e7eb]">
+        Thank you for reflecting!
+      </h4>
+      <p class="text-sm text-[#9ca3af]">
+        Your insights help us personalize your learning experience.
+      </p>
+    </div>
+
+    <!-- Active State -->
+    <ng-container *ngIf="reflectionState() !== 'submitted'">
+      <!-- Body -->
+      <div class="space-y-3 py-4">
+        <!-- Prompt Text -->
+        <p 
+          [id]="reflectionId + '-prompt'"
+          class="text-sm text-[#e5e7eb]"
+        >
+          {{ promptText }}
+        </p>
+
+        <!-- Feelings Chips -->
+        <div *ngIf="chips?.feelings && (chips?.feelings?.length ?? 0) > 0">
+          <p class="mb-2 text-xs font-medium text-[#9ca3af]">How did you feel?</p>
+          <div class="flex flex-wrap gap-1.5">
+            <button
+              *ngFor="let feeling of chips?.feelings || []"
+              (click)="toggleFeeling(feeling)"
+              [disabled]="reflectionState() === 'submitting' || reflectionReadOnly"
+              [attr.data-active]="selectedFeelings().includes(feeling)"
+              [class]="getChipClasses(selectedFeelings().includes(feeling), 'feeling')"
+              type="button"
+            >
+              {{ feeling }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Topics Chips -->
+        <div *ngIf="chips?.topics && (chips?.topics?.length ?? 0) > 0">
+          <p class="mb-2 text-xs font-medium text-[#9ca3af]">Which topics?</p>
+          <div class="flex flex-wrap gap-1.5">
+            <button
+              *ngFor="let topic of chips?.topics || []"
+              (click)="toggleTopic(topic)"
+              [disabled]="reflectionState() === 'submitting' || reflectionReadOnly"
+              [attr.data-active]="selectedTopics().includes(topic)"
+              [class]="getChipClasses(selectedTopics().includes(topic), 'topic')"
+              type="button"
+            >
+              {{ topic }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Composer -->
+        <div>
+          <textarea
+            #textarea
+            [value]="text()"
+            (input)="handleTextChange($any($event.target).value)"
+            (keydown)="handleKeyDown($event)"
+            [disabled]="reflectionState() === 'submitting' || reflectionReadOnly"
+            [placeholder]="placeholder || 'Share your thoughts in 1-3 sentences...'"
+            [attr.aria-describedby]="reflectionId + '-prompt'"
+            class="min-h-[80px] w-full resize-y rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] disabled:cursor-not-allowed disabled:opacity-50"
+            rows="4"
+          ></textarea>
+
+          <!-- Word Count Meter -->
+          <div *ngIf="showWordCount" class="mt-1 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span *ngIf="autosaved()" class="flex items-center gap-1 text-emerald-500">
+                <ng-icon name="lucideCheck" class="h-3 w-3"></ng-icon>
+                Saved
+              </span>
+              <span *ngIf="isTooShort && charCount > 0" class="text-amber-500">
+                {{ minChars - charCount }} more characters needed
+              </span>
+            </div>
+            <span [class]="isAtLimit ? 'text-red-500' : 'text-[#6b7280]'">
+              {{ charCount }} / {{ maxChars }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Privacy Notice -->
+        <p class="text-xs text-[#6b7280]">
+          💡 Your response helps us personalize your experience. Not used for grading.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex flex-wrap items-center justify-between gap-2 border-t border-[#1f2937] pt-3">
+        <!-- Secondary Actions -->
+        <div class="flex flex-wrap gap-2">
+          <button
+            (click)="handleSaveDraft()"
+            [disabled]="charCount === 0 || reflectionState() === 'submitting'"
+            class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-1.5 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+          >
+            <ng-icon name="lucideSave" class="h-4 w-4"></ng-icon>
+            Save Draft
+          </button>
+
+          <button
+            *ngIf="!requireBeforeNext"
+            (click)="handleSkip()"
+            [disabled]="reflectionState() === 'submitting'"
+            class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-1.5 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+          >
+            <ng-icon name="lucideSkipForward" class="h-4 w-4"></ng-icon>
+            Skip
+          </button>
+
+          <button
+            *ngIf="requireBeforeNext"
+            (click)="showSkipModal.set(true)"
+            [disabled]="reflectionState() === 'submitting'"
+            class="inline-flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-sm text-amber-500 hover:bg-amber-500/20 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+          >
+            <ng-icon name="lucideCircleAlert" class="h-4 w-4"></ng-icon>
+            Skip (Required)
+          </button>
+        </div>
+
+        <!-- Primary Action -->
+        <button
+          (click)="handleSubmit()"
+          [disabled]="isTooShort || reflectionState() === 'submitting' || reflectionReadOnly"
+          [class]="'inline-flex items-center gap-2 rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ' +
+                   (isTooShort || reflectionState() === 'submitting' || reflectionReadOnly
+                     ? 'cursor-not-allowed bg-[#1f2937] text-[#6b7280]'
+                     : 'bg-[#3b82f6] text-white hover:bg-[#2563eb]')"
+          type="button"
+        >
+          <ng-container *ngIf="reflectionState() === 'submitting'">
+            <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+            Submitting...
+          </ng-container>
+          <ng-container *ngIf="reflectionState() !== 'submitting'">
+            Submit
+            <ng-icon name="lucideSend" class="h-4 w-4"></ng-icon>
+            <kbd class="hidden rounded border border-white/20 px-1 py-0.5 text-xs sm:inline">⌘↵</kbd>
+          </ng-container>
+        </button>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <!-- Skip Justification Modal -->
+  <div
+    *ngIf="showSkipModal()"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    (click)="handleSkipModalCancel()"
+  >
+    <div
+      class="w-full max-w-md rounded-2xl bg-[#0b0f14] p-6 shadow-xl"
+      (click)="$event.stopPropagation()"
+    >
+      <h4 class="mb-3 text-base font-semibold text-[#e5e7eb]">
+        Why skip this reflection?
+      </h4>
+      <p class="mb-4 text-sm text-[#9ca3af]">
+        Brief reflections help us personalize your experience. If you need to skip, please let us know why.
+      </p>
+      <textarea
+        [value]="skipReason()"
+        (input)="skipReason.set($any($event.target).value)"
+        placeholder="Optional: What's your reason?"
+        class="mb-4 w-full resize-none rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280]"
+        rows="3"
+      ></textarea>
+      <div class="flex justify-end gap-2">
+        <button
+          (click)="handleSkipModalCancel()"
+          class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-4 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318]"
+          type="button"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="handleSkipModalConfirm()"
+          class="rounded-lg bg-[#3b82f6] px-4 py-2 text-sm text-white hover:bg-[#2563eb]"
+          type="button"
+        >
+          Continue to Skip
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

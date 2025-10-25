@@ -8,6 +8,7 @@ import { AvatarComponent } from '../avatar/avatar';
 import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu';
 import { SwitchComponent } from '../switch/switch';
 import { ThemeService } from '../../../services/theme.service';
+import { AuthService } from '../../../services/auth.service';
 import { cn } from '../../../lib/utils';
 
 export interface AvatarDropdownUser {
@@ -75,6 +76,7 @@ export class AvatarDropdownComponent implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private themeService: ThemeService,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -139,15 +141,19 @@ export class AvatarDropdownComponent implements OnInit, AfterViewInit {
   async handleLogout(): Promise<void> {
     this.closeMenu();
 
-    if (this.isBrowser() && typeof window !== 'undefined' && typeof window.confirm === 'function') {
-      const confirmed = window.confirm('Are you sure you want to sign out?');
-      if (!confirmed) {
-        return;
-      }
-    }
+    // if (this.isBrowser() && typeof window !== 'undefined' && typeof window.confirm === 'function') {
+    //   const confirmed = window.confirm('Are you sure you want to sign out?');
+    //   if (!confirmed) {
+    //     return;
+    //   }
+    // }
 
+    // Use the auth service to handle logout
+    // This will clear cookies, clear user state, and redirect to login
+    this.authService.logout();
+    
+    // Emit the logout event for any parent components that need to know
     this.logout.emit();
-    await this.router.navigate(['/']);
   }
 
   private closeMenu(): void {
