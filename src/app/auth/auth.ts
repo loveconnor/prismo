@@ -11,7 +11,7 @@ import { InputComponent } from '../../components/ui/input/input';
 import { LabelComponent } from '../../components/ui/label/label';
 import { PasswordInputComponent } from '../../components/ui/password-input/password-input';
 import { TextComponent, TextLinkComponent, StrongComponent } from '../../components/ui/text/text';
-import { AuthService, LoginCredentials } from '../../services/auth.service';
+import { AuthService, LoginCredentials, AuthResponse, AuthError } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -275,7 +275,7 @@ export class AuthComponent {
     
     // For demo purposes, we'll use the demo login
     this.authService.demoLogin().subscribe({
-      next: (response) => {
+      next: (response: AuthResponse) => {
         this.isLoading.set(false);
         this.toastService.show({
           title: 'Success!',
@@ -283,7 +283,7 @@ export class AuthComponent {
           type: 'success'
         });
       },
-      error: (error) => {
+      error: (error: AuthError) => {
         this.isLoading.set(false);
         this.errorMessage.set('Google login failed. Please try again.');
         this.toastService.show({

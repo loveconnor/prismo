@@ -25,6 +25,22 @@ export interface RegisterData {
   password: string;
 }
 
+export interface ConfirmRegistrationData {
+  email: string;
+  confirmationCode: string;
+}
+
+export interface ConfirmForgotPasswordData {
+  email: string;
+  confirmationCode: string;
+  newPassword: string;
+}
+
+export interface ProfileUpdateData {
+  name?: string;
+  avatar?: string;
+}
+
 export interface AuthResponse {
   user: User;
   token: string;
@@ -71,24 +87,7 @@ export class AuthService {
   }
 
   /**
-   * Login with email and password
-   */
-  login(credentials: LoginCredentials): Observable<AuthResponse> {
-    this.isLoadingSubject.next(true);
-    
-    return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
-      tap(response => {
-        this.handleAuthSuccess(response, credentials.remember);
-      }),
-      catchError(error => {
-        this.isLoadingSubject.next(false);
-        return this.handleAuthError(error);
-      })
-    );
-  }
-
-  /**
-   * Register new user
+   * POST /auth/register - Register new user
    */
   register(userData: RegisterData): Observable<AuthResponse> {
     this.isLoadingSubject.next(true);
@@ -105,7 +104,63 @@ export class AuthService {
   }
 
   /**
-   * Request password reset
+   * POST /auth/confirm - Confirm user registration
+   */
+  confirmRegistration(confirmData: ConfirmRegistrationData): Observable<AuthResponse> {
+    this.isLoadingSubject.next(true);
+    
+    return this.http.post<AuthResponse>(`${this.API_URL}/confirm`, confirmData).pipe(
+      tap(response => {
+        this.handleAuthSuccess(response);
+      }),
+      catchError(error => {
+        this.isLoadingSubject.next(false);
+        return this.handleAuthError(error);
+      })
+    );
+  }
+
+  /**
+   * POST /auth/login - User login
+   */
+  login(credentials: LoginCredentials): Observable<AuthResponse> {
+    this.isLoadingSubject.next(true);
+    
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
+      tap(response => {
+        this.handleAuthSuccess(response, credentials.remember);
+      }),
+      catchError(error => {
+        this.isLoadingSubject.next(false);
+        return this.handleAuthError(error);
+      })
+    );
+  }
+
+  /**
+   * POST /auth/refresh - Refresh access token
+   */
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = this.getRefreshToken();
+    
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.http.post<AuthResponse>(`${this.API_URL}/refresh`, { refreshToken }).pipe(
+      tap(response => {
+        this.handleAuthSuccess(response);
+      }),
+      catchError(error => {
+        this.logout();
+        return this.handleAuthError(error);
+      })
+    );
+  }
+
+  /**
+   * POST /auth/forgot-password - Initiate password reset
    */
   forgotPassword(email: string): Observable<{ message: string }> {
     this.isLoadingSubject.next(true);
@@ -116,6 +171,84 @@ export class AuthService {
       }),
       catchError(error => {
         this.isLoadingSubject.next(false);
+        return this.handleAuthError(error);
+      })
+    );
+  }
+
+  /**
+   * POST /auth/confirm-forgot-password - Confirm password reset
+   */
+  confirmForgotPassword(confirmData: ConfirmForgotPasswordData): Observable<{ message: string }> {
+    this.isLoadingSubject.next(true);
+    
+    return this.http.post<{ message: string }>(`${this.API_URL}/confirm-forgot-password`, confirmData).pipe(
+      tap(() => {
+        this.isLoadingSubject.next(false);
+      }),
+      catchError(error => {
+        this.isLoadingSubject.next(false);
+        return this.handleAuthError(error);
+      })
+    );
+  }
+
+  /**
+   * GET /auth/profile - Get user profile (requires auth)
+   */
+  getProfile(): Observable<User> {
+    return this.http.get<User>(`${this.API_URL}/profile`).pipe(
+      tap(user => {
+        this.currentUserSubject.next(user);
+        this.currentUser.set(user);
+      }),
+      catchError(error => {
+        return this.handleAuthError(error);
+      })
+    );
+  }
+
+  /**
+   * PUT /auth/profile - Update user profile (requires auth)
+   */
+  updateProfile(profileData: ProfileUpdateData): Observable<User> {
+    this.isLoadingSubject.next(true);
+    
+    return this.http.put<User>(`${this.API_URL}/profile`, profileData).pipe(
+      tap(user => {
+        this.currentUserSubject.next(user);
+        this.currentUser.set(user);
+        this.isLoadingSubject.next(false);
+      }),
+      catchError(error => {
+        this.isLoadingSubject.next(false);
+        return this.handleAuthError(error);
+      })
+    );
+  }
+
+  /**
+   * POST /auth/verify - Verify access token
+   */
+  verifyToken(): Observable<{ valid: boolean; user?: User }> {
+    const token = this.getAccessToken();
+    
+    if (!token) {
+      return of({ valid: false });
+    }
+
+    return this.http.post<{ valid: boolean; user?: User }>(`${this.API_URL}/verify`, { token }).pipe(
+      tap(response => {
+        if (response.valid && response.user) {
+          this.currentUserSubject.next(response.user);
+          this.currentUser.set(response.user);
+          this.isAuthenticated.set(true);
+        } else {
+          this.logout();
+        }
+      }),
+      catchError(error => {
+        this.logout();
         return this.handleAuthError(error);
       })
     );
@@ -143,15 +276,6 @@ export class AuthService {
   }
 
   /**
-   * Get current authentication status
-   */
-  isLoggedIn(): boolean {
-    // Check if we have a valid access token
-    const token = this.getAccessToken();
-    return token ? this.jwtService.isTokenValid(token) : false;
-  }
-
-  /**
    * Get access token from cookie
    */
   getAccessToken(): string | null {
@@ -173,25 +297,12 @@ export class AuthService {
   }
 
   /**
-   * Refresh authentication token
+   * Get current authentication status
    */
-  refreshToken(): Observable<AuthResponse> {
-    const refreshToken = this.getRefreshToken();
-    
-    if (!refreshToken) {
-      this.logout();
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    return this.http.post<AuthResponse>(`${this.API_URL}/refresh`, { refreshToken }).pipe(
-      tap(response => {
-        this.handleAuthSuccess(response);
-      }),
-      catchError(error => {
-        this.logout();
-        return this.handleAuthError(error);
-      })
-    );
+  isLoggedIn(): boolean {
+    // Check if we have a valid access token
+    const token = this.getAccessToken();
+    return token ? this.jwtService.isTokenValid(token) : false;
   }
 
   /**
@@ -296,47 +407,35 @@ export class AuthService {
   private checkExistingSession(): void {
     const token = this.getAccessToken();
     
-    if (token && this.jwtService.isTokenValid(token)) {
-      // Extract user info from valid JWT token
-      const user = this.jwtService.getUserFromToken(token);
-      
-      if (user) {
-        this.currentUserSubject.next(user);
-        this.currentUser.set(user);
-        this.isAuthenticated.set(true);
-      } else {
-        // Invalid token data, clear it
-        this.logout();
-      }
-    } else if (token && this.jwtService.isTokenExpired(token)) {
-      // Token expired, try to refresh
-      const refreshToken = this.getRefreshToken();
-      if (refreshToken && this.jwtService.isTokenValid(refreshToken)) {
-        this.refreshToken().subscribe({
-          next: () => {
-            console.log('Token refreshed successfully');
-          },
-          error: () => {
-            // Refresh failed, logout user
+    if (token) {
+      // Use the verify endpoint to check token validity
+      this.verifyToken().subscribe({
+        next: (response) => {
+          if (response.valid && response.user) {
+            console.log('Token verified successfully');
+          } else {
             this.logout();
           }
-        });
-      } else {
-        // No valid refresh token, logout
-        this.logout();
-      }
-    }
-  }
-
-  private validateToken(token: string): Observable<User> {
-    // In production, this would validate the token with the server
-    // For demo purposes, we'll decode the JWT and return the user info
-    const user = this.jwtService.getUserFromToken(token);
-    
-    if (user && this.jwtService.isTokenValid(token)) {
-      return of(user);
-    } else {
-      return throwError(() => new Error('Invalid token'));
+        },
+        error: () => {
+          // Token verification failed, try to refresh
+          const refreshToken = this.getRefreshToken();
+          if (refreshToken) {
+            this.refreshToken().subscribe({
+              next: () => {
+                console.log('Token refreshed successfully');
+              },
+              error: () => {
+                // Refresh failed, logout user
+                this.logout();
+              }
+            });
+          } else {
+            // No refresh token, logout
+            this.logout();
+          }
+        }
+      });
     }
   }
 }

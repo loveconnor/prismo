@@ -10,7 +10,7 @@ import { InputComponent } from '../../components/ui/input/input';
 import { LabelComponent } from '../../components/ui/label/label';
 import { PasswordInputComponent } from '../../components/ui/password-input/password-input';
 import { TextComponent, TextLinkComponent, StrongComponent } from '../../components/ui/text/text';
-import { AuthService, RegisterData } from '../../services/auth.service';
+import { AuthService, RegisterData, AuthResponse, AuthError } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -265,7 +265,7 @@ export class RegisterComponent {
       };
 
       this.authService.register(userData).subscribe({
-        next: (response) => {
+        next: (response: AuthResponse) => {
           this.isLoading.set(false);
           this.toastService.show({
             title: 'Welcome!',
@@ -274,7 +274,7 @@ export class RegisterComponent {
           });
           // Navigation is handled by the auth service
         },
-        error: (error) => {
+        error: (error: AuthError) => {
           this.isLoading.set(false);
           this.errorMessage.set(error.message || 'Registration failed. Please try again.');
           
@@ -312,7 +312,7 @@ export class RegisterComponent {
     
     // For demo purposes, we'll use the demo login
     this.authService.demoLogin().subscribe({
-      next: (response) => {
+      next: (response: AuthResponse) => {
         this.isLoading.set(false);
         this.toastService.show({
           title: 'Welcome!',
@@ -320,7 +320,7 @@ export class RegisterComponent {
           type: 'success'
         });
       },
-      error: (error) => {
+      error: (error: AuthError) => {
         this.isLoading.set(false);
         this.errorMessage.set('Google signup failed. Please try again.');
         this.toastService.show({
