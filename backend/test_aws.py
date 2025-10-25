@@ -37,7 +37,7 @@ def test_aws_config():
         )
         print(f"User Pool found: {response['UserPool']['Name']}")
         print(f"   Pool ID: {response['UserPool']['Id']}")
-        if 'Status' in response['UserPool']:
+        if "Status" in response["UserPool"]:
             print(f"   Status: {response['UserPool']['Status']}")
         else:
             print(f"   Status: Available")
