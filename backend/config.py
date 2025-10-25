@@ -18,6 +18,7 @@ class Config:
     AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
     COGNITO_USER_POOL_ID = os.getenv("COGNITO_USER_POOL_ID", "us-east-1_JEflDBGQ0")
     COGNITO_CLIENT_ID = os.getenv("COGNITO_CLIENT_ID", "63rmk63l7a9iis438elt3lofpr")
+    COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
     DYNAMODB_TABLE_PREFIX = os.getenv("DYNAMODB_TABLE_PREFIX", "prismo")
 
 

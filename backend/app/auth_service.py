@@ -1,4 +1,7 @@
 import os
+import hashlib
+import hmac
+import base64
 from typing import Any, Dict, Optional
 
 import boto3
@@ -14,23 +17,54 @@ class CognitoAuthService:
         self.cognito = aws_config.cognito
         self.user_pool_id = aws_config.cognito_user_pool_id
         self.client_id = aws_config.cognito_client_id
+        self.client_secret = aws_config.cognito_client_secret
         self.user_model = User()
+    
+    def _get_secret_hash(self, username: str) -> str:
+        """Generate SECRET_HASH for Cognito operations"""
+        if not self.client_secret:
+            print("Warning: No client secret configured, but Cognito may require it")
+            return None
+        
+        # Use the correct SECRET_HASH calculation from AWS docs
+        message = username + self.client_id
+        secret_hash = base64.b64encode(
+            hmac.new(
+                bytes(self.client_secret, 'utf-8'), 
+                bytes(message, 'utf-8'), 
+                digestmod=hashlib.sha256
+            ).digest()
+        ).decode()
+        
+        return secret_hash
 
     def register_user(
         self, email: str, password: str, username: str, profile: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Register a new user with Cognito"""
+        if profile is None:
+            profile = {}
         try:
-            # Register user with Cognito
-            response = self.cognito.sign_up(
-                ClientId=self.client_id,
-                Username=email,
-                Password=password,
-                UserAttributes=[
+            # Prepare sign up parameters
+            sign_up_params = {
+                "ClientId": self.client_id,
+                "Username": username,  # Use username instead of email
+                "Password": password,
+                "UserAttributes": [
                     {"Name": "email", "Value": email},
                     {"Name": "preferred_username", "Value": username},
+                    {"Name": "nickname", "Value": username},  # Required attribute
+                    {"Name": "name", "Value": profile.get("first_name", username) + " " + profile.get("last_name", "User")},  # Required attribute
                 ],
-            )
+            }
+            
+            # Add SECRET_HASH if client secret is configured
+            secret_hash = self._get_secret_hash(username)  # Use username for secret hash
+            if secret_hash:
+                sign_up_params["SecretHash"] = secret_hash
+            
+            # Register user with Cognito
+            response = self.cognito.sign_up(**sign_up_params)
 
             # Create user record in DynamoDB
             user_data = self.user_model.create_user(
@@ -66,11 +100,19 @@ class CognitoAuthService:
     ) -> Dict[str, Any]:
         """Confirm user registration"""
         try:
-            response = self.cognito.confirm_sign_up(
-                ClientId=self.client_id,
-                Username=email,
-                ConfirmationCode=confirmation_code,
-            )
+            # Prepare confirm sign up parameters
+            confirm_params = {
+                "ClientId": self.client_id,
+                "Username": email,  # For confirmation, we still use email
+                "ConfirmationCode": confirmation_code,
+            }
+            
+            # Add SECRET_HASH if client secret is configured
+            secret_hash = self._get_secret_hash(email)
+            if secret_hash:
+                confirm_params["SecretHash"] = secret_hash
+            
+            response = self.cognito.confirm_sign_up(**confirm_params)
 
             return {"success": True, "message": "Registration confirmed successfully"}
 
@@ -88,13 +130,44 @@ class CognitoAuthService:
     def authenticate_user(self, email: str, password: str) -> Dict[str, Any]:
         """Authenticate user and return tokens"""
         try:
-            response = self.cognito.initiate_auth(
-                ClientId=self.client_id,
-                AuthFlow="USER_PASSWORD_AUTH",
-                AuthParameters={"USERNAME": email, "PASSWORD": password},
-            )
+            # Prepare auth parameters for password auth
+            auth_params = {
+                "USERNAME": email,  # Use email as username
+                "PASSWORD": password
+            }
+            
+            # Add SECRET_HASH if client secret is configured
+            secret_hash = self._get_secret_hash(email)
+            if secret_hash:
+                auth_params["SECRET_HASH"] = secret_hash
+            
+            # Try USER_PASSWORD_AUTH first (requires client configuration)
+            try:
+                response = self.cognito.initiate_auth(
+                    ClientId=self.client_id,
+                    AuthFlow="USER_PASSWORD_AUTH",  # Use password auth
+                    AuthParameters=auth_params,
+                )
+            except Exception as e:
+                if "USER_PASSWORD_AUTH flow not enabled" in str(e):
+                    # Fallback to USER_AUTH (choice-based authentication)
+                    print("USER_PASSWORD_AUTH not enabled, trying USER_AUTH...")
+                    response = self.cognito.initiate_auth(
+                        ClientId=self.client_id,
+                        AuthFlow="USER_AUTH",  # Use choice-based auth
+                        AuthParameters=auth_params,
+                    )
+                else:
+                    raise e
 
-            auth_result = response["AuthenticationResult"]
+            # Handle different response structures
+            if "AuthenticationResult" in response:
+                auth_result = response["AuthenticationResult"]
+            elif "ChallengeName" in response:
+                # This is a challenge-based response, not a direct authentication
+                return {"success": False, "error": "Authentication requires additional challenges"}
+            else:
+                return {"success": False, "error": f"Unexpected response structure: {response}"}
 
             # Get user info
             user_info = self.cognito.get_user(AccessToken=auth_result["AccessToken"])
@@ -124,10 +197,20 @@ class CognitoAuthService:
     def refresh_token(self, refresh_token: str) -> Dict[str, Any]:
         """Refresh access token"""
         try:
+            # Prepare auth parameters
+            auth_params = {"REFRESH_TOKEN": refresh_token}
+            
+            # Add SECRET_HASH if client secret is configured
+            # For refresh token, we need to get the username from the token
+            # For now, we'll try without it and add it if needed
+            secret_hash = self._get_secret_hash("")  # Empty username for refresh
+            if secret_hash:
+                auth_params["SECRET_HASH"] = secret_hash
+            
             response = self.cognito.initiate_auth(
                 ClientId=self.client_id,
                 AuthFlow="REFRESH_TOKEN_AUTH",
-                AuthParameters={"REFRESH_TOKEN": refresh_token},
+                AuthParameters=auth_params,
             )
 
             auth_result = response["AuthenticationResult"]
@@ -146,9 +229,18 @@ class CognitoAuthService:
     def forgot_password(self, email: str) -> Dict[str, Any]:
         """Initiate forgot password flow"""
         try:
-            response = self.cognito.forgot_password(
-                ClientId=self.client_id, Username=email
-            )
+            # Prepare forgot password parameters
+            forgot_params = {
+                "ClientId": self.client_id,
+                "Username": email
+            }
+            
+            # Add SECRET_HASH if client secret is configured
+            secret_hash = self._get_secret_hash(email)
+            if secret_hash:
+                forgot_params["SecretHash"] = secret_hash
+            
+            response = self.cognito.forgot_password(**forgot_params)
 
             return {
                 "success": True,
@@ -170,12 +262,20 @@ class CognitoAuthService:
     ) -> Dict[str, Any]:
         """Confirm password reset"""
         try:
-            response = self.cognito.confirm_forgot_password(
-                ClientId=self.client_id,
-                Username=email,
-                ConfirmationCode=confirmation_code,
-                Password=new_password,
-            )
+            # Prepare confirm forgot password parameters
+            confirm_params = {
+                "ClientId": self.client_id,
+                "Username": email,
+                "ConfirmationCode": confirmation_code,
+                "Password": new_password,
+            }
+            
+            # Add SECRET_HASH if client secret is configured
+            secret_hash = self._get_secret_hash(email)
+            if secret_hash:
+                confirm_params["SecretHash"] = secret_hash
+            
+            response = self.cognito.confirm_forgot_password(**confirm_params)
 
             return {"success": True, "message": "Password reset successfully"}
 

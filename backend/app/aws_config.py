@@ -13,6 +13,7 @@ class AWSConfig:
         print(self.region)
         self.cognito_user_pool_id = os.getenv("COGNITO_USER_POOL_ID")
         self.cognito_client_id = os.getenv("COGNITO_CLIENT_ID")
+        self.cognito_client_secret = os.getenv("COGNITO_CLIENT_SECRET")
         self.dynamodb_table_prefix = os.getenv("DYNAMODB_TABLE_PREFIX", "prismo")
 
         # Initialize AWS clients
