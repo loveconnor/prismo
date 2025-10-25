@@ -196,6 +196,8 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   // ==================== LOCAL STORAGE ====================
 
   private loadFromLocalStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+    
     const saved = localStorage.getItem(`reflection-${this.reflectionId}`);
     if (saved) {
       try {
@@ -218,6 +220,8 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   }
 
   private clearLocalStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+    
     localStorage.removeItem(`reflection-${this.reflectionId}`);
   }
 
