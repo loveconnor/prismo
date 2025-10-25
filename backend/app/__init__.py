@@ -4,7 +4,10 @@ from flask_cors import CORS
 
 
 def create_app(config_name="default"):
-    app = Flask(__name__)
+    import os
+    app = Flask(__name__, 
+                template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
+                static_folder=os.path.join(os.path.dirname(__file__), '..', 'static'))
 
     # Load configuration
     app.config.from_object(config[config_name])
@@ -23,7 +26,10 @@ def create_app(config_name="default"):
     from app.gamification_routes import gamification_bp
     from app.advanced_routes import advanced_bp
     from app.oauth_routes import oauth_bp
+    from app.frontend_routes import frontend_bp
 
+    # Register frontend routes first (for SPA routing)
+    app.register_blueprint(frontend_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
     app.register_blueprint(auth_bp)
