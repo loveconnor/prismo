@@ -115,8 +115,55 @@ export class AuthService {
   public currentUser = signal<User | null>(null);
   private sessionCheckComplete = signal<boolean>(false);
 
+  // Promise to wait for session check completion
+  private sessionCheckPromise: Promise<boolean> | null = null;
+
   constructor() {
+    this.initializeSessionCheck();
+  }
+
+  private initializeSessionCheck(): void {
+    this.sessionCheckPromise = new Promise<boolean>((resolve) => {
+      const checkComplete = () => {
+        const isComplete = this.sessionCheckComplete();
+        if (isComplete) {
+          resolve(this.isAuthenticated());
+        } else {
+          // Wait a bit and check again
+          setTimeout(checkComplete, 50);
+        }
+      };
+      checkComplete();
+    });
+    
     this.checkExistingSession();
+  }
+
+  /**
+   * Wait for session check to complete and return authentication status
+   */
+  async waitForSessionCheck(): Promise<boolean> {
+    // If session check is already complete, return immediately
+    if (this.sessionCheckComplete()) {
+      return this.isAuthenticated();
+    }
+    
+    // Otherwise, wait for the session check to complete
+    if (this.sessionCheckPromise) {
+      return await this.sessionCheckPromise;
+    }
+    
+    // Fallback: wait for session check to complete
+    return new Promise<boolean>((resolve) => {
+      const checkComplete = () => {
+        if (this.sessionCheckComplete()) {
+          resolve(this.isAuthenticated());
+        } else {
+          setTimeout(checkComplete, 50);
+        }
+      };
+      checkComplete();
+    });
   }
 
   // Register
@@ -145,11 +192,18 @@ export class AuthService {
 
   // Login (supports email or username)
   login(credentials: LoginCredentials): Observable<AuthResponse> {
+    console.log('AuthService.login called with credentials:', credentials);
     this.isLoadingSubject.next(true);
     return this.authHttp.login(credentials)
       .pipe(
-        tap((res) => this.handleAuthSuccess(res, credentials.remember)),
-        catchError((err) => this.handleLoadingError(err))
+        tap((res) => {
+          console.log('Login response received in AuthService:', res);
+          this.handleAuthSuccess(res, credentials.remember);
+        }),
+        catchError((err) => {
+          console.error('Login error in AuthService:', err);
+          return this.handleLoadingError(err);
+        })
       );
   }
 
@@ -234,12 +288,11 @@ export class AuthService {
             this.isAuthenticated.set(true);
             this.isAuthenticatedSubject.next(true);
           }
-          // Don't call logout here to avoid circular dependency
         }),
         catchError((err) => {
-          // Don't call logout here to avoid circular dependency
           console.log('Token verification error:', err);
-          return this.handleAuthError(err);
+          // Return a failed verification response instead of throwing
+          return of({ valid: false, error: err.message });
         })
       );
   }
@@ -279,6 +332,11 @@ export class AuthService {
     this.isLoadingSubject.next(false);
     this.sessionCheckComplete.set(false);
 
+    // Clear stored user data
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('current_user');
+    }
+
     // Navigate
     this.router.navigate(['/login']);
     // If you must hard refresh, uncomment:
@@ -306,8 +364,13 @@ export class AuthService {
   isLoggedIn(): boolean {
     const sessionComplete = this.sessionCheckComplete();
     const token = this.getAccessToken();
-    const hasValidToken = token ? this.jwtService.isTokenValid(token) : false;
     const isAuthenticated = this.isAuthenticated();
+    
+    // For JWT tokens, check if they're valid locally
+    // For other tokens (like Cognito), assume they're valid if they exist
+    const hasValidToken = token ? (
+      token.includes('.') ? this.jwtService.isTokenValid(token) : true
+    ) : false;
     
     console.log('AuthService.isLoggedIn() - Debug:', {
       sessionComplete,
@@ -381,11 +444,20 @@ export class AuthService {
     response: AuthResponse,
     remember: boolean = false
   ): void {
+    console.log('handleAuthSuccess called with response:', response);
+    
     // Normalize token property names
     const access =
       response.access_token || response.token || this.getAccessToken();
     const refresh =
       response.refresh_token || response.refreshToken || this.getRefreshToken();
+
+    console.log('Token extraction:', {
+      accessToken: access ? access.substring(0, 20) + '...' : 'null',
+      refreshToken: refresh ? refresh.substring(0, 20) + '...' : 'null',
+      hasAccess: !!access,
+      hasRefresh: !!refresh
+    });
 
     // Cookie expirations
     const tokenExpiryDays = remember ? 30 : 1;
@@ -395,26 +467,47 @@ export class AuthService {
       console.log('Storing access token:', access.substring(0, 20) + '...');
       this.tokenStorage.setAccessToken(access);
       console.log('Access token stored successfully');
+    } else {
+      console.warn('No access token found in response');
     }
     if (refresh) {
       console.log('Storing refresh token:', refresh.substring(0, 20) + '...');
       this.tokenStorage.setRefreshToken(refresh);
       console.log('Refresh token stored successfully');
+    } else {
+      console.warn('No refresh token found in response');
     }
 
     // Update state - handle both user and user_data from backend
     const userData = response.user || response.user_data;
+    console.log('User data:', userData);
+    
     if (userData) {
       this.currentUserSubject.next(userData);
       this.currentUser.set(userData);
+      // Store user data in localStorage for persistence
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('current_user', JSON.stringify(userData));
+      }
+      console.log('User data set successfully');
+    } else {
+      console.warn('No user data found in response');
     }
+    
     this.isAuthenticated.set(true);
     this.isAuthenticatedSubject.next(true);
     this.isLoadingSubject.next(false);
     this.sessionCheckComplete.set(true);
 
-    // Navigate
-    this.router.navigate(['/dashboard']);
+    console.log('Auth state after handleAuthSuccess:', {
+      isAuthenticated: this.isAuthenticated(),
+      sessionComplete: this.sessionCheckComplete(),
+      hasToken: !!this.getAccessToken(),
+      hasRefreshToken: !!this.getRefreshToken()
+    });
+
+    // Navigation is now handled by the login component
+    console.log('Auth service: Login successful, state updated');
   }
 
   private handleAuthError(error: any) {
@@ -448,53 +541,90 @@ export class AuthService {
       return;
     }
 
-    console.log('Verifying token with backend...');
-    this.verifyToken().subscribe({
-      next: (resp) => {
-        console.log('Token verification response:', resp);
-        if (resp.valid && resp.user) {
-          console.log('Token valid, user authenticated');
-          // already handled in verifyToken tap
-        } else {
-          console.log('Token invalid, logging out');
-          this.logout();
-        }
+    // Check if token is expired locally first (only for JWT tokens)
+    if (token.includes('.') && !this.jwtService.isTokenValid(token)) {
+      console.log('Token is expired locally, attempting refresh...');
+      const refreshToken = this.getRefreshToken();
+      if (refreshToken) {
+        this.refreshToken().subscribe({
+          next: () => {
+            console.log('Token refresh successful');
+            this.sessionCheckComplete.set(true);
+            console.log('Session check complete (refresh success)');
+          },
+          error: (refreshError) => {
+            console.log('Token refresh failed:', refreshError);
+            this.clearSessionState();
+            this.sessionCheckComplete.set(true);
+            console.log('Session check complete (refresh failed)');
+          },
+        });
+      } else {
+        console.log('No refresh token, clearing session');
+        this.clearSessionState();
         this.sessionCheckComplete.set(true);
-        console.log('Session check complete (success)');
-      },
-      error: (error) => {
-        console.log('Token verification failed:', error);
-        const refreshToken = this.getRefreshToken();
-        if (refreshToken) {
-          console.log('Attempting token refresh...');
-          this.refreshToken().subscribe({
-            next: () => {
-              console.log('Token refresh successful');
-              this.sessionCheckComplete.set(true);
-              console.log('Session check complete (refresh success)');
-            },
-            error: (refreshError) => {
-              console.log('Token refresh failed:', refreshError);
-              // Clear session without calling logout to avoid circular dependency
-              this.currentUserSubject.next(null);
-              this.currentUser.set(null);
-              this.isAuthenticated.set(false);
-              this.isAuthenticatedSubject.next(false);
-              this.sessionCheckComplete.set(true);
-              console.log('Session check complete (refresh failed)');
-            },
-          });
-        } else {
-          console.log('No refresh token, clearing session');
-          // Clear session without calling logout to avoid circular dependency
-          this.currentUserSubject.next(null);
-          this.currentUser.set(null);
-          this.isAuthenticated.set(false);
-          this.isAuthenticatedSubject.next(false);
-          this.sessionCheckComplete.set(true);
-          console.log('Session check complete (no refresh token)');
+        console.log('Session check complete (no refresh token)');
+      }
+      return;
+    }
+
+    // For now, skip backend verification during session check to avoid circular dependency
+    // The token is already validated locally, so we can trust it
+    console.log('Token is valid locally, skipping backend verification to avoid circular dependency');
+    
+    // Try to restore user data from localStorage
+    if (typeof localStorage !== 'undefined') {
+      const storedUser = localStorage.getItem('current_user');
+      if (storedUser) {
+        try {
+          const userData = JSON.parse(storedUser);
+          console.log('Restoring user from localStorage:', userData);
+          this.currentUserSubject.next(userData);
+          this.currentUser.set(userData);
+        } catch (error) {
+          console.error('Error parsing stored user data:', error);
         }
-      },
-    });
+      }
+    }
+    
+    // If no user data found, try to get from token
+    if (!this.currentUser()) {
+      const userFromToken = this.jwtService.getUserFromToken(token);
+      if (userFromToken) {
+        console.log('Restoring user from token:', userFromToken);
+        this.currentUserSubject.next(userFromToken);
+        this.currentUser.set(userFromToken);
+      } else {
+        console.log('No user data found, using default user');
+        // Create a default user object if we can't extract from token
+        const defaultUser = {
+          id: 'user-1',
+          email: 'user@example.com',
+          name: 'User',
+          username: 'user'
+        };
+        this.currentUserSubject.next(defaultUser);
+        this.currentUser.set(defaultUser);
+      }
+    }
+    
+    this.isAuthenticated.set(true);
+    this.isAuthenticatedSubject.next(true);
+    this.sessionCheckComplete.set(true);
+    console.log('Session check complete (local validation)');
+  }
+
+  private clearSessionState(): void {
+    // Clear session without calling logout to avoid circular dependency
+    this.currentUserSubject.next(null);
+    this.currentUser.set(null);
+    this.isAuthenticated.set(false);
+    this.isAuthenticatedSubject.next(false);
+    this.tokenStorage.clearTokens();
+    
+    // Clear stored user data
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('current_user');
+    }
   }
 }

@@ -217,6 +217,16 @@ export class AuthComponent {
 
       this.authService.login(credentials).subscribe({
         next: (response) => {
+          console.log('Login successful, response:', response);
+          console.log('Login response details:', {
+            hasAccessToken: !!(response.access_token || response.token),
+            hasRefreshToken: !!(response.refresh_token || response.refreshToken),
+            hasUser: !!(response.user || response.user_data),
+            accessToken: response.access_token || response.token,
+            refreshToken: response.refresh_token || response.refreshToken,
+            user: response.user || response.user_data
+          });
+          
           this.isLoading.set(false);
           const userData = response.user || response.user_data;
           const userName = userData?.name || userData?.username || 'User';
@@ -225,9 +235,37 @@ export class AuthComponent {
             description: `Welcome back, ${userName}!`,
             type: 'success'
           });
-          // Navigation is handled by the auth service
+          
+          // Check authentication state after login
+          setTimeout(() => {
+            console.log('Auth state after login:', {
+              isLoggedIn: this.authService.isLoggedIn(),
+              hasToken: !!this.authService.getAccessToken(),
+              isAuthenticated: this.authService['isAuthenticated']?.(),
+              sessionComplete: this.authService['sessionCheckComplete']?.()
+            });
+          }, 100);
+          
+          // Handle navigation directly in the component
+          console.log('Login component: Navigating to dashboard');
+          this.router.navigate(['/dashboard']).then(success => {
+            console.log('Navigation result:', success);
+            if (!success) {
+              console.error('Failed to navigate to dashboard');
+            }
+          }).catch(error => {
+            console.error('Navigation error:', error);
+          });
         },
         error: (error) => {
+          console.error('Login error:', error);
+          console.error('Login error details:', {
+            message: error.message,
+            status: error.status,
+            error: error.error,
+            fullError: error
+          });
+          
           this.isLoading.set(false);
           this.errorMessage.set(error.message || 'Login failed. Please try again.');
           

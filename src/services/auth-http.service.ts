@@ -13,20 +13,26 @@ export class AuthHttpService {
    * Verify token with backend (bypasses interceptor)
    */
   verifyToken(token: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/verify`, { token });
+    return this.http.post(`${this.API_URL}/verify`, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
   }
 
   /**
    * Refresh token (bypasses interceptor)
    */
   refreshToken(refreshToken: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/refresh`, { refreshToken });
+    return this.http.post(`${this.API_URL}/refresh`, { refresh_token: refreshToken });
   }
 
   /**
    * Login (bypasses interceptor)
    */
   login(credentials: any): Observable<any> {
+    console.log('AuthHttpService.login called with:', credentials);
+    console.log('Making request to:', `${this.API_URL}/login`);
     return this.http.post(`${this.API_URL}/login`, credentials);
   }
 

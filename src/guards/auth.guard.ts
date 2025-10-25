@@ -10,18 +10,25 @@ export const authGuard = () => {
   const router = inject(Router);
 
   console.log('AuthGuard: Checking authentication...');
-  const isLoggedIn = authService.isLoggedIn();
-  console.log('AuthGuard: isLoggedIn =', isLoggedIn);
+  
+  // Wait for session check to complete
+  return authService.waitForSessionCheck().then(isLoggedIn => {
+    console.log('AuthGuard: waitForSessionCheck result =', isLoggedIn);
+    console.log('AuthGuard: Current auth state:', {
+      hasToken: !!authService.getAccessToken(),
+      isLoggedInDirect: authService.isLoggedIn()
+    });
 
-  if (isLoggedIn) {
-    console.log('AuthGuard: User is authenticated, allowing access');
-    return true;
-  } else {
-    console.log('AuthGuard: User not authenticated, redirecting to login');
-    // Redirect to login page
-    router.navigate(['/login']);
-    return false;
-  }
+    if (isLoggedIn) {
+      console.log('AuthGuard: User is authenticated, allowing access');
+      return true;
+    } else {
+      console.log('AuthGuard: User not authenticated, redirecting to login');
+      // Redirect to login page
+      router.navigate(['/login']);
+      return false;
+    }
+  });
 };
 
 /**
@@ -31,11 +38,14 @@ export const guestGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (!authService.isLoggedIn()) {
-    return true;
-  } else {
-    // Redirect to dashboard if already logged in
-    router.navigate(['/dashboard']);
-    return false;
-  }
+  // Wait for session check to complete
+  return authService.waitForSessionCheck().then(isLoggedIn => {
+    if (!isLoggedIn) {
+      return true;
+    } else {
+      // Redirect to dashboard if already logged in
+      router.navigate(['/dashboard']);
+      return false;
+    }
+  });
 };
