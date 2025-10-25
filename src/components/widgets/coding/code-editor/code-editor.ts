@@ -371,7 +371,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
               const state = this.editorView.state;
               const from = state.selection.main.from;
               const to = state.selection.main.to;
-              const indentText = '    '; // 2 spaces for indentation
+              const indentText = '    '; // 4 spaces for indentation
               
               const transaction = state.update({
                 changes: { from, to, insert: indentText },

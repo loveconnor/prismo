@@ -64,6 +64,8 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     FillInBlanksComponent,
     MatchingPairsComponent,
     OrderingComponent,
+    NumericInputComponent,
+    CodeEditorComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,

@@ -1078,8 +1078,6 @@
               incorrectFeedback="Not quite. Try again."
               hint="Multiply 7 by 8"
               [ui]="{ variant: 'default', showCalculator: true, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
@@ -1101,8 +1099,6 @@
               correctFeedback="Good estimate! That's a typical class size."
               hint="Think about your own class size"
               [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
@@ -1125,8 +1121,6 @@
               correctFeedback="Close enough! π ≈ 3.14159"
               hint="Pi is approximately 3.14"
               [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
@@ -1148,8 +1142,6 @@
               incorrectFeedback="That's not an even number. Even numbers are divisible by 2."
               hint="Even numbers: 2, 4, 6, 8, 10..."
               [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
@@ -1175,8 +1167,6 @@
               correctFeedback="Correct! Normal body temp is about 98.6°F"
               hint="It's around 98-99°F"
               [ui]="{ variant: 'compact', showCalculator: false, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
