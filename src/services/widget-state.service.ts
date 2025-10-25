@@ -79,10 +79,6 @@ export class WidgetStateService {
     // Update widget state
     const updatedWidget = { ...widget, ...updates, last_updated: new Date() };
 
-    if(updates.is_completed && !widget.is_completed) {
-
-    }
-
     module.widgets.set(widgetId, updatedWidget);
 
     // Update module progress
@@ -336,6 +332,7 @@ export class WidgetStateService {
         .reduce((sum, widget) => sum + widget.attempts, 0);
         
       this.analytics.onFeedbackGenerated({
+        userId: "PLEASE IMPLEMENT",
         moduleId: module.moduleId,
         widgetId: 'module_completion',
         feedbackText: `Module "${module.moduleDefinition.title}" completed successfully!`,
