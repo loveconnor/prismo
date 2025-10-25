@@ -135,8 +135,11 @@ export class AuthService {
     this.isAuthenticated.set(false);
     this.isLoadingSubject.next(false);
     
-    // Redirect to login
-    this.router.navigate(['/login']);
+    // Navigate to login and refresh the page
+    this.router.navigate(['/login']).then(() => {
+      // Force a page refresh to clear any remaining state
+      window.location.reload();
+    });
   }
 
   /**
