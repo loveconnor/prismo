@@ -1,77 +1,70 @@
-from datetime import datetime
+"""
+Prismo Backend Models - Updated to use ORM
+
+This module provides backward compatibility with the existing models
+while leveraging the new ORM system for improved functionality.
+"""
+
 from typing import Dict, List, Optional, Any
-import uuid
-from app.aws_config import aws_config
+from app.orm import orm, User, Lab, Widget, Collection, Module, Attempt, Mastery, Feedback
 
 class BaseModel:
-    """Base model class for DynamoDB operations"""
+    """Base model class for backward compatibility"""
     
     def __init__(self, table_name: str):
-        self.table_name = aws_config.get_table_name(table_name)
-        self.table = aws_config.dynamodb_resource.Table(self.table_name)
+        self.table_name = table_name
+        # Map table names to ORM instances
+        self.orm_map = {
+            'users': orm.users,
+            'labs': orm.labs,
+            'widgets': orm.widgets,
+            'collections': orm.collections,
+            'modules': orm.modules,
+            'attempts': orm.attempts,
+            'mastery': orm.mastery,
+            'feedback': orm.feedback
+        }
+        self.orm = self.orm_map.get(table_name)
     
     def create_item(self, item: Dict[str, Any]) -> Dict[str, Any]:
-        """Create a new item in DynamoDB"""
-        try:
-            # Add metadata
-            item['id'] = str(uuid.uuid4())
-            item['created_at'] = datetime.utcnow().isoformat()
-            item['updated_at'] = datetime.utcnow().isoformat()
-            
-            self.table.put_item(Item=item)
-            return item
-        except Exception as e:
-            raise Exception(f"Error creating item: {e}")
+        """Create a new item using ORM"""
+        if self.orm:
+            model = self.orm.create(item)
+            return model.to_dict()
+        raise Exception(f"ORM not found for table: {self.table_name}")
     
     def get_item(self, key: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Get an item by key"""
-        try:
-            response = self.table.get_item(Key=key)
-            return response.get('Item')
-        except Exception as e:
-            raise Exception(f"Error getting item: {e}")
+        """Get an item by key using ORM"""
+        if self.orm:
+            model = self.orm.get_by_key(key)
+            return model.to_dict() if model else None
+        raise Exception(f"ORM not found for table: {self.table_name}")
     
     def update_item(self, key: Dict[str, Any], updates: Dict[str, Any]) -> Dict[str, Any]:
-        """Update an item"""
-        try:
-            updates['updated_at'] = datetime.utcnow().isoformat()
-            
-            # Build update expression
-            update_expression = "SET " + ", ".join([f"{k} = :{k}" for k in updates.keys()])
-            expression_values = {f":{k}": v for k, v in updates.items()}
-            
-            response = self.table.update_item(
-                Key=key,
-                UpdateExpression=update_expression,
-                ExpressionAttributeValues=expression_values,
-                ReturnValues="ALL_NEW"
-            )
-            return response['Attributes']
-        except Exception as e:
-            raise Exception(f"Error updating item: {e}")
+        """Update an item using ORM"""
+        if self.orm:
+            model = self.orm.update(key['id'], updates)
+            return model.to_dict() if model else {}
+        raise Exception(f"ORM not found for table: {self.table_name}")
     
     def delete_item(self, key: Dict[str, Any]) -> bool:
-        """Delete an item"""
-        try:
-            self.table.delete_item(Key=key)
-            return True
-        except Exception as e:
-            raise Exception(f"Error deleting item: {e}")
+        """Delete an item using ORM"""
+        if self.orm:
+            return self.orm.delete_by_key(key)
+        raise Exception(f"ORM not found for table: {self.table_name}")
     
     def scan_items(self, filter_expression=None, limit: int = 100) -> List[Dict[str, Any]]:
-        """Scan items with optional filter"""
-        try:
-            scan_kwargs = {'Limit': limit}
-            if filter_expression:
-                scan_kwargs['FilterExpression'] = filter_expression
-            
-            response = self.table.scan(**scan_kwargs)
-            return response.get('Items', [])
-        except Exception as e:
-            raise Exception(f"Error scanning items: {e}")
+        """Scan items with optional filter using ORM"""
+        if self.orm:
+            result = self.orm.scan(
+                filter_expression=filter_expression,
+                limit=limit
+            )
+            return [item.to_dict() for item in result.items]
+        raise Exception(f"ORM not found for table: {self.table_name}")
 
 class User(BaseModel):
-    """User model for DynamoDB"""
+    """User model for DynamoDB - Enhanced with ORM"""
     
     def __init__(self):
         super().__init__('users')
@@ -94,15 +87,14 @@ class User(BaseModel):
     
     def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
         """Get user by email"""
-        response = self.table.scan(
-            FilterExpression='email = :email',
-            ExpressionAttributeValues={':email': email}
+        result = self.orm.scan(
+            filter_expression='email = :email',
+            expression_values={':email': email}
         )
-        items = response.get('Items', [])
-        return items[0] if items else None
+        return result.items[0].to_dict() if result.items else None
 
 class Lab(BaseModel):
-    """Lab model for DynamoDB"""
+    """Lab model for DynamoDB - Enhanced with ORM"""
     
     def __init__(self):
         super().__init__('labs')
@@ -125,20 +117,22 @@ class Lab(BaseModel):
     
     def get_labs_by_user(self, user_id: str) -> List[Dict[str, Any]]:
         """Get all labs for a user"""
-        return self.scan_items(
-            filter_expression='user_id = :user_id',
-            limit=1000
+        result = self.orm.query(
+            index_name="user-id-index",
+            key_condition={"user_id": user_id}
         )
+        return [item.to_dict() for item in result.items]
     
     def get_public_labs(self) -> List[Dict[str, Any]]:
         """Get all public labs"""
-        return self.scan_items(
+        result = self.orm.scan(
             filter_expression='is_public = :is_public',
-            limit=1000
+            expression_values={':is_public': True}
         )
+        return [item.to_dict() for item in result.items]
 
 class Widget(BaseModel):
-    """Widget model for DynamoDB"""
+    """Widget model for DynamoDB - Enhanced with ORM"""
     
     def __init__(self):
         super().__init__('widgets')
@@ -159,20 +153,22 @@ class Widget(BaseModel):
     
     def get_widgets_by_user(self, user_id: str) -> List[Dict[str, Any]]:
         """Get all widgets for a user"""
-        return self.scan_items(
-            filter_expression='user_id = :user_id',
-            limit=1000
+        result = self.orm.query(
+            index_name="user-id-index",
+            key_condition={"user_id": user_id}
         )
+        return [item.to_dict() for item in result.items]
     
     def get_public_widgets(self) -> List[Dict[str, Any]]:
         """Get all public widgets"""
-        return self.scan_items(
+        result = self.orm.scan(
             filter_expression='is_public = :is_public',
-            limit=1000
+            expression_values={':is_public': True}
         )
+        return [item.to_dict() for item in result.items]
 
 class Collection(BaseModel):
-    """Collection model for DynamoDB"""
+    """Collection model for DynamoDB - Enhanced with ORM"""
     
     def __init__(self):
         super().__init__('collections')
@@ -192,7 +188,8 @@ class Collection(BaseModel):
     
     def get_collections_by_user(self, user_id: str) -> List[Dict[str, Any]]:
         """Get all collections for a user"""
-        return self.scan_items(
-            filter_expression='user_id = :user_id',
-            limit=1000
+        result = self.orm.query(
+            index_name="user-id-index",
+            key_condition={"user_id": user_id}
         )
+        return [item.to_dict() for item in result.items]
