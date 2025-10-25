@@ -10,9 +10,7 @@ import {
   Inject,
   PLATFORM_ID,
   signal,
-  effect,
-  Inject,
-  PLATFORM_ID
+  effect
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
