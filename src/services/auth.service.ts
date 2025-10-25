@@ -113,7 +113,7 @@ export class AuthService {
   // Signals for modern Angular
   public isAuthenticated = signal<boolean>(false);
   public currentUser = signal<User | null>(null);
-  private sessionCheckComplete = signal<boolean>(false);
+  public sessionCheckComplete = signal<boolean>(false);
 
   constructor() {
     this.checkExistingSession();

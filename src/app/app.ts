@@ -87,7 +87,7 @@ export class App {
   }
 
   isAuthPage(): boolean {
-    const authRoutes = ['/login', '/register', '/forgot-password'];
+    const authRoutes = ['/login', '/register', '/forgot-password', '/verify'];
     const url = this.currentUrl();
     return authRoutes.some(route => url.startsWith(route));
   }
