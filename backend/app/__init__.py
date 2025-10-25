@@ -22,6 +22,7 @@ def create_app(config_name="default"):
     from app.learning_routes import learning_bp
     from app.gamification_routes import gamification_bp
     from app.advanced_routes import advanced_bp
+    from app.oauth_routes import oauth_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
@@ -33,5 +34,6 @@ def create_app(config_name="default"):
     app.register_blueprint(learning_bp)
     app.register_blueprint(gamification_bp)
     app.register_blueprint(advanced_bp)
+    app.register_blueprint(oauth_bp)
 
     return app
