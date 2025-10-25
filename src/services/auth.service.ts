@@ -113,7 +113,7 @@ export class AuthService {
   // Signals for modern Angular
   public isAuthenticated = signal<boolean>(false);
   public currentUser = signal<User | null>(null);
-  private sessionCheckComplete = signal<boolean>(false);
+  public sessionCheckComplete = signal<boolean>(false);
 
   // Promise to wait for session check completion
   private sessionCheckPromise: Promise<boolean> | null = null;
