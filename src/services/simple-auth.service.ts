@@ -27,9 +27,6 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class SimpleAuthService {
-  private http = new HttpClient();
-  private router = new Router();
-  
   // Simple state management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
@@ -42,7 +39,10 @@ export class SimpleAuthService {
   // API URL
   private readonly API_URL = 'http://localhost:5000/auth';
   
-  constructor() {
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
     this.initializeAuth();
   }
   
