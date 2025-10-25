@@ -44,6 +44,26 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   { 
+    path: 'labs/:id', 
+    loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'labs/pt01', 
+    loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'labs/javascript-array-methods', 
+    loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'module-lab', 
+    loadComponent: () => import('./labs/module-lab/module-lab').then(m => m.ModuleLabComponent),
+    canActivate: [authGuard]
+  },
+  { 
     path: 'widget-lab', 
     loadComponent: () => import('./widget-lab/widget-lab').then(m => m.WidgetLabComponent),
     canActivate: [authGuard]
