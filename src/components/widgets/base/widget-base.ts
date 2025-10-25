@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ThemeService } from '../../../services/theme.service';
 import { FontService } from '../../../services/font.service';
+import { Analytics } from '../../../services/analytics.service';
 import { WidgetMetadata, WidgetState, WidgetEvent } from '../../../types/widget.types';
 import { CardComponent } from '../../ui/card/card';
 import { CardContentComponent } from '../../ui/card/card-content';
@@ -75,6 +76,7 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
   @Input() metadata!: WidgetMetadata;
   @Input() config: Record<string, any> = {};
   @Input() initialData: Record<string, any> = {};
+  @Input() moduleId: string = ''; 
   @Input() width: string = '100%';
   @Input() height: string = '300px';
   @Input() minHeight: string = '200px';
@@ -112,7 +114,8 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
   constructor(
     protected themeService: ThemeService,
     protected fontService: FontService,
-    @Inject(PLATFORM_ID) protected platformId: Object
+    @Inject(PLATFORM_ID) protected platformId: Object,
+    protected analytics?: Analytics 
   ) {}
 
   ngOnInit(): void {
@@ -240,12 +243,53 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
   }
 
   protected emitStateChange(eventType: string, data: any): void {
+    // Emit the standard widget event
     this.stateChange.emit({
       widget_id: this._state.id,
       event_type: eventType as any,
       data,
       timestamp: new Date()
     });
+
+    // ANALYTICS INTEGRATION: Track widget selections/interactions
+    if (this.analytics && this.moduleId && this.shouldTrackAnalytics(eventType, data)) {
+      const selectedOption = this.extractSelectedOption(eventType, data);
+      if (selectedOption) {
+        this.analytics.onWidgetSelection({
+          userId: "PLEASE IMPLEMENT",
+          moduleId: this.moduleId,
+          widgetId: this._state.id,
+          selectedOption: selectedOption
+        }).subscribe({
+          error: (error) => console.warn('Analytics tracking failed:', error)
+        });
+      }
+    }
+  }
+
+  // 🎯 Helper method to determine if we should track this state change
+  private shouldTrackAnalytics(eventType: string, data: any): boolean {
+    // Track meaningful user interactions, not just system events
+    return eventType === 'state_change' && 
+           data && 
+           (data.selectedOption || data.userInput || data.choice || data.answer);
+  }
+
+  // 🎯 Helper method to extract meaningful selection data
+  private extractSelectedOption(eventType: string, data: any): string | null {
+    // Extract the actual user selection/choice from the data
+    if (data.selectedOption) return String(data.selectedOption);
+    if (data.choice) return String(data.choice);
+    if (data.answer) return String(data.answer);
+    if (data.userInput) return String(data.userInput);
+    if (data.value) return String(data.value);
+    
+    // For complex objects, stringify them
+    if (typeof data === 'object' && data !== null) {
+      return JSON.stringify(data);
+    }
+    
+    return null;
   }
 
   public retry(): void {
