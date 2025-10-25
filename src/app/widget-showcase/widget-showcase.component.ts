@@ -45,6 +45,10 @@ import { GoalSetterComponent } from '../../components/widgets/core/goal-setter/g
 import { GoalType, LearningGoal } from '../../components/widgets/core/goal-setter/goal-setter';
 import { CodeEditorComponent } from '../../components/widgets/coding/code-editor/code-editor';
 import { ReviewLoopComponent } from '../../components/widgets/core/review-loop/review-loop';
+import { StepPromptComponent } from '../../components/widgets/core/step-prompt/step-prompt';
+import { HintPanelComponent } from '../../components/widgets/core/hint-panel/hint-panel';
+import { FeedbackBoxComponent } from '../../components/widgets/core/feedback-box/feedback-box';
+import { ConfidenceMeterComponent } from '../../components/widgets/core/confidence-meter/confidence-meter';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -78,6 +82,10 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     GoalSetterComponent,
     CodeEditorComponent,
     ReviewLoopComponent,
+    StepPromptComponent,
+    HintPanelComponent,
+    FeedbackBoxComponent,
+    ConfidenceMeterComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,

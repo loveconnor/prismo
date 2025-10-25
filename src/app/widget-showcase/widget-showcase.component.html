@@ -64,69 +64,82 @@
 
       <!-- Center - Widget Preview -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- Code Editor Widget Demo -->
+        <!-- Step Prompt Widget Demo -->
         <app-card>
           <app-card-header>
-            <h3 class="text-lg font-semibold text-foreground">Code Editor Demo</h3>
-            <p class="text-sm text-muted-foreground mt-1">
-              Interactive JavaScript editor with run and reset actions
-            </p>
+            <h3 class="text-lg font-semibold text-foreground">Step Prompt</h3>
+            <p class="text-sm text-muted-foreground mt-1">Displays the current task or question</p>
           </app-card-header>
-          
           <app-card-content>
-            <app-code-editor
-              [metadata]="{
-                id: 'code-editor-demo',
-                title: 'JavaScript Code Editor',
-                description: 'Write and run JavaScript code with test cases',
-                category: 'coding',
-                skills: ['javascript', 'coding', 'problem-solving'],
-                difficulty: 2,
-                estimated_time: 300,
-                input_type: WidgetInputType.CODE,
-                output_type: WidgetOutputType.FEEDBACK,
-                dependencies: [],
-                adaptive_hooks: {},
-                version: '1.0.0'
-              }"
-              title="JavaScript Code Editor"
-              language="javascript"
-              [starterCode]="jsStarterCode"
-              [testCases]="jsTestCases"
-              [showOutput]="true"
+            <app-step-prompt
+              [metadata]="{ id: 'step-prompt', title: 'Step Prompt', description: 'Task prompt', skills: [], difficulty: 2, estimated_time: 30, input_type: WidgetInputType.TEXT, output_type: WidgetOutputType.SCAFFOLD, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              title="Implement Binary Search"
+              [prompt]="'Write a function that performs binary search on a sorted array.\nReturn the index if found, otherwise -1.'"
+              [estimatedTime]="45"
               [showFooter]="true"
-              [enableSyntaxHighlighting]="true"
-              [enableAutoCompletion]="true"
-              [enableLineNumbers]="true"
-              [allowUserSettings]="true"
-              width="100%"
-              height="500px"
-            ></app-code-editor>
+            ></app-step-prompt>
           </app-card-content>
         </app-card>
 
-        <!-- Review Loop Widget Demo -->
+        <!-- Hint Panel (Inline Card) -->
         <app-card>
           <app-card-header>
-            <h3 class="text-lg font-semibold text-foreground">Review Loop Demo</h3>
-            <p class="text-sm text-muted-foreground mt-1">
-              Adaptive practice on weak skills with timer and results
-            </p>
+            <h3 class="text-lg font-semibold text-foreground">Hint Panel</h3>
+            <p class="text-sm text-muted-foreground mt-1">Reveals tiered hints progressively</p>
           </app-card-header>
-
           <app-card-content>
-            <app-review-loop
-              id="showcase-review-loop"
-              [weakSkills]="weakSkillsDemo"
-              [reviewMode]="'adaptive'"
-              [questionsPerSkill]="2"
-              [timeLimit]="5"
-              [targetAccuracy]="0.8"
-              [questionPool]="reviewQuestionPool"
-              [ui]="{ variant: 'default', showProgress: true, showTimer: true, showExplanations: true }"
-            ></app-review-loop>
+            <app-hint-panel
+              [hints]="[
+                { id: 'h1', tier: 1, text: 'Start by checking the middle element.', revealed: false, viewCount: 0 },
+                { id: 'h2', tier: 2, text: 'Adjust left/right bounds based on comparison.', revealed: false, viewCount: 0 },
+                { id: 'h3', tier: 3, text: 'Stop when left exceeds right.', revealed: false, viewCount: 0 }
+              ]"
+              [showProgress]="true"
+              [maxHintsPerTier]="1"
+            ></app-hint-panel>
           </app-card-content>
         </app-card>
+
+        <!-- Feedback Box (Inline Card) -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Feedback Box</h3>
+            <p class="text-sm text-muted-foreground mt-1">Provides correctness and explanation</p>
+          </app-card-header>
+          <app-card-content>
+            <app-feedback-box
+              type="info"
+              title="Check your approach"
+              message="Binary search should halve the search space each iteration."
+              [explanation]="'Make sure to update left/right pointers correctly and avoid infinite loops.'"
+              [nextSteps]="['Test with even/odd length arrays', 'Handle not-found case explicitly']"
+              [showActions]="true"
+              [showMeta]="true"
+              [autoComplete]="false"
+            ></app-feedback-box>
+          </app-card-content>
+        </app-card>
+
+        <!-- Confidence Meter (Inline Card) -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Confidence Meter</h3>
+            <p class="text-sm text-muted-foreground mt-1">Quick self-rating slider</p>
+          </app-card-header>
+          <app-card-content>
+            <app-confidence-meter
+              title="How confident are you implementing binary search?"
+              [minValue]="1"
+              [maxValue]="5"
+              [step]="1"
+              [scaleLabels]="['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
+              [showActions]="true"
+              [showFooter]="true"
+            ></app-confidence-meter>
+          </app-card-content>
+        </app-card>
+
+        
 
         <!-- Coach Chat Widget Demo -->
         <app-card>
@@ -403,6 +416,70 @@
         </app-card>
       </div>
     </div>
+  </div>
+
+  <!-- Hint Panel Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Hint Panel</h2>
+        <p class="text-sm text-muted-foreground">Reveals tiered hints progressively</p>
+      </app-card-header>
+      <app-card-content>
+        <app-hint-panel
+          [hints]="[
+            { id: 'h1', tier: 1, text: 'Start by outlining your approach.', revealed: false, viewCount: 0 },
+            { id: 'h2', tier: 2, text: 'Try a smaller example by hand.', revealed: false, viewCount: 0 },
+            { id: 'h3', tier: 3, text: 'Consider off-by-one issues in loops.', revealed: false, viewCount: 0 }
+          ]"
+          [showProgress]="true"
+          [maxHintsPerTier]="1"
+        ></app-hint-panel>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Feedback Box Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Feedback Box</h2>
+        <p class="text-sm text-muted-foreground">Provides correctness and explanation</p>
+      </app-card-header>
+      <app-card-content>
+        <app-feedback-box
+          type="success"
+          title="Well done!"
+          message="Your answer is correct."
+          [explanation]="'Binary search halves the search space each step.'"
+          [nextSteps]="['Try a harder variant', 'Explain why O(log n) holds']"
+          [showActions]="true"
+          [showMeta]="true"
+          [autoComplete]="false"
+        ></app-feedback-box>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Confidence Meter Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Confidence Meter</h2>
+        <p class="text-sm text-muted-foreground">Quick self-rating slider</p>
+      </app-card-header>
+      <app-card-content>
+        <app-confidence-meter
+          title="How confident do you feel about this topic?"
+          [minValue]="1"
+          [maxValue]="5"
+          [step]="1"
+          [scaleLabels]="['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
+          [showActions]="true"
+          [showFooter]="true"
+        ></app-confidence-meter>
+      </app-card-content>
+    </app-card>
   </div>
 
   <!-- Lab Intro Widget Section -->
@@ -1198,6 +1275,70 @@
       </app-card-content>
     </app-card>
   </div>
+
+  <!-- Review Loop Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Review Loop</h2>
+        <p class="text-sm text-muted-foreground">Replays 2-3 adaptive practice questions on weak skills</p>
+      </app-card-header>
+      <app-card-content>
+        <app-review-loop
+          id="showcase-review-loop"
+          [weakSkills]="weakSkillsDemo"
+          [reviewMode]="'adaptive'"
+          [questionsPerSkill]="2"
+          [timeLimit]="5"
+          [targetAccuracy]="0.8"
+          [questionPool]="reviewQuestionPool"
+          [ui]="{ variant: 'default', showProgress: true, showTimer: true, showExplanations: true }"
+        ></app-review-loop>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Code Editor Widget Section (last) -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold text-foreground">Code Editor</h2>
+        <p class="text-sm text-muted-foreground">Interactive JavaScript editor with run and reset actions</p>
+      </app-card-header>
+      <app-card-content>
+        <app-code-editor
+          [metadata]="{
+            id: 'code-editor-demo',
+            title: 'JavaScript Code Editor',
+            description: 'Write and run JavaScript code with test cases',
+            category: 'coding',
+            skills: ['javascript', 'coding', 'problem-solving'],
+            difficulty: 2,
+            estimated_time: 300,
+            input_type: WidgetInputType.CODE,
+            output_type: WidgetOutputType.FEEDBACK,
+            dependencies: [],
+            adaptive_hooks: {},
+            version: '1.0.0'
+          }"
+          title="JavaScript Code Editor"
+          language="javascript"
+          [starterCode]="jsStarterCode"
+          [testCases]="jsTestCases"
+          [showOutput]="true"
+          [showFooter]="true"
+          [enableSyntaxHighlighting]="true"
+          [enableAutoCompletion]="true"
+          [enableLineNumbers]="true"
+          [allowUserSettings]="true"
+          width="100%"
+          height="500px"
+        ></app-code-editor>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  
 
   <!-- Error Explain Widget Section -->
   <div class="mb-8">

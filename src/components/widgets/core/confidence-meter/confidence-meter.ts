@@ -245,35 +245,17 @@ export class ConfidenceMeterComponent extends WidgetBaseComponent implements Aft
   }
 
   override ngAfterViewInit(): void {
-    if (this.cardContent) {
-      // Enhanced animations
-      gsap.from(this.cardContent.nativeElement, {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        delay: 0.2,
-        ease: "power3.out"
-      });
-      
-      // Animate confidence level display
-      gsap.from(".confidence-display", {
-        scale: 0.8,
-        opacity: 0,
-        duration: 0.4,
-        delay: 0.4,
-        ease: "back.out(1.7)"
-      });
-      
-      // Stagger animate confidence indicators
-      gsap.from(".confidence-indicator", {
-        y: 20,
-        opacity: 0,
-        duration: 0.3,
-        stagger: 0.1,
-        delay: 0.6,
-        ease: "power2.out"
-      });
-    }
+    // Guard for SSR and ensure element exists
+    if (typeof window === 'undefined') return;
+    if (!this.cardContent) return;
+
+    gsap.from(this.cardContent.nativeElement, {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      delay: 0.2,
+      ease: "power3.out"
+    });
   }
 
   protected initializeWidgetData(): void {
