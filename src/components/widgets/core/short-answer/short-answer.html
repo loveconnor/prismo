@@ -36,18 +36,18 @@
   </div>
 
   <!-- Submit Button -->
-  <div *ngIf="state() !== 'submitted'" class="flex justify-center">
+  <div *ngIf="componentState() !== 'submitted'" class="flex justify-center">
     <button
       (click)="handleSubmit()"
       [disabled]="isButtonDisabled()"
       [ngClass]="getButtonClasses()"
       type="button"
     >
-      <ng-container *ngIf="state() === 'submitting'">
+      <ng-container *ngIf="componentState() === 'submitting'">
         <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
         Checking...
       </ng-container>
-      <ng-container *ngIf="state() !== 'submitting'">
+      <ng-container *ngIf="componentState() !== 'submitting'">
         Submit Answer
         <ng-icon name="lucideSend" class="h-4 w-4"></ng-icon>
       </ng-container>
@@ -56,7 +56,7 @@
 
   <!-- Feedback -->
   <div
-    *ngIf="state() === 'submitted' && feedback() && showFeedback"
+    *ngIf="componentState() === 'submitted' && feedback() && showFeedback"
     class="mt-4 rounded-lg border p-4"
     [class.border-emerald-500/20]="feedback()?.isCorrect"
     [class.border-red-500/20]="!feedback()?.isCorrect"

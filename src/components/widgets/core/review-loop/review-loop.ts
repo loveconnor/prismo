@@ -118,7 +118,7 @@ export class ReviewLoopComponent extends WidgetBaseComponent implements OnInit, 
   userAnswers: Record<string, string | string[]> = {};
   showResults = false;
   timeRemaining: number | null = null; // seconds
-  startTime: Date | null = null;
+  sessionStartTime: Date | null = null;
 
   private timerHandle: any = null;
 
@@ -137,7 +137,7 @@ export class ReviewLoopComponent extends WidgetBaseComponent implements OnInit, 
   constructor(
     themeService: ThemeService,
     fontService: FontService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object
   ) {
     super(themeService, fontService, platformId);
   }
@@ -225,7 +225,7 @@ export class ReviewLoopComponent extends WidgetBaseComponent implements OnInit, 
     this.currentQuestionIndex = 0;
     this.userAnswers = {};
     this.showResults = false;
-    this.startTime = new Date();
+    this.sessionStartTime = new Date();
 
     if (this.timeLimit) {
       this.timeRemaining = this.timeLimit * 60; // minutes to seconds
@@ -265,7 +265,7 @@ export class ReviewLoopComponent extends WidgetBaseComponent implements OnInit, 
   }
 
   handleSessionComplete(): void {
-    if (!this.currentSession || !this.startTime) return;
+    if (!this.currentSession || !this.sessionStartTime) return;
 
     const completedSession: ReviewSession = {
       ...this.currentSession,
@@ -312,7 +312,7 @@ export class ReviewLoopComponent extends WidgetBaseComponent implements OnInit, 
     this.userAnswers = {};
     this.showResults = false;
     this.timeRemaining = null;
-    this.startTime = null;
+    this.sessionStartTime = null;
     this.clearTimer();
   }
 
@@ -366,7 +366,7 @@ export class ReviewLoopComponent extends WidgetBaseComponent implements OnInit, 
         questionId: question.id,
         skillTag: question.skillTag,
         isCorrect,
-        timeSpent: this.startTime ? (new Date().getTime() - this.startTime.getTime()) / 1000 : 0
+        timeSpent: this.sessionStartTime ? (new Date().getTime() - this.sessionStartTime.getTime()) / 1000 : 0
       };
     });
 
@@ -397,7 +397,7 @@ export class ReviewLoopComponent extends WidgetBaseComponent implements OnInit, 
       correctCount,
       totalQuestions: this.currentSession.questions.length,
       skillResults,
-      timeSpent: this.startTime ? (new Date().getTime() - this.startTime.getTime()) / 1000 : 0
+      timeSpent: this.sessionStartTime ? (new Date().getTime() - this.sessionStartTime.getTime()) / 1000 : 0
     };
   }
 

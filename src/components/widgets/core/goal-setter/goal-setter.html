@@ -124,7 +124,7 @@
             <div class="flex items-start justify-between mb-2">
               <h4 class="font-medium text-[#e5e7eb]" [ngClass]="{ 'line-through text-[#6b7280]': goal.status === 'completed' }">{{ goal.title }}</h4>
               <div class="flex items-center gap-2 flex-shrink-0">
-                <span *ngIf="showPriority" class="rounded border px-2 py-0.5 text-xs" [ngClass]="getPriorityChip(goal.priority)">{{ goal.priority }}</span>
+                <span *ngIf="showPriorityUI" class="rounded border px-2 py-0.5 text-xs" [ngClass]="getPriorityChip(goal.priority)">{{ goal.priority }}</span>
                 <div *ngIf="allowEditing && goal.status === 'active'" class="flex gap-1">
                   <button (click)="editingGoal = goal.id" class="p-1 text-[#6b7280] hover:text-[#a9b1bb] transition-colors" title="Edit goal">
                     <ng-icon name="lucidePencil" class="h-4 w-4"></ng-icon>

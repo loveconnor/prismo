@@ -41,8 +41,8 @@ import {
     // Core
     id: string;
     errorSignature: string;
-    errorMessage?: string;
-  
+    errorDetails?: string;
+
     // Content
     explanation: string;
     fixSteps: string[];
@@ -82,7 +82,7 @@ import {
     /** ==================== MODERN WIDGET INPUTS ==================== */
     @Input() id!: string;
     @Input() errorSignature!: string;
-    @Input() errorMessage?: string;
+    @Input() errorDetails?: string;
     @Input() explanation: string = '';
     @Input() fixSteps: string[] = [];
     @Input() relatedConcepts: string[] = [];

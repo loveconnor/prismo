@@ -79,7 +79,8 @@ export class AdaptiveSummaryComponent extends WidgetBaseComponent {
   @Input() adaptations: Adaptation[] = [];
 
   // -------- Progress metrics (widgets) --------
-  @Input() timeSpent?: number;
+  // Use sessionTimeSpent input to avoid conflict with base class timeSpent getter
+  @Input() sessionTimeSpent?: number;
   @Input() attempts?: number;
   @Input() hintsUsed?: number;
   @Input() successRate?: number; // 0..1
@@ -129,9 +130,9 @@ export class AdaptiveSummaryComponent extends WidgetBaseComponent {
   }
 
   // ==================== WidgetBase hooks ====================
-  protected initializeWidgetData(): void {}
-  protected validateInput(): boolean { return true; }
-  protected processCompletion(): void {}
+  protected override initializeWidgetData(): void {}
+  protected override validateInput(): boolean { return true; }
+  protected override processCompletion(): void {}
 
   // ==================== UI getters ====================
   get variant(): 'default' | 'compact' | 'detailed' {
@@ -143,6 +144,25 @@ export class AdaptiveSummaryComponent extends WidgetBaseComponent {
   }
   get showRecommendations(): boolean {
     return this.ui?.showRecommendations ?? true;
+  }
+
+  // Sections expanded state used by template
+  expandedSections: Set<string> = new Set<string>(['overview']);
+
+  toggleSection(section: 'overview' | 'skills' | 'adaptations' | 'preview'): void {
+    const next = new Set(this.expandedSections);
+    if (next.has(section)) next.delete(section); else next.add(section);
+    this.expandedSections = next;
+  }
+
+  getDifficultyColor(difficulty?: 'easy' | 'medium' | 'hard' | 'challenge'): string {
+    switch (difficulty) {
+      case 'easy': return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20';
+      case 'medium': return 'text-amber-500 bg-amber-500/10 border-amber-500/20';
+      case 'hard': return 'text-red-500 bg-red-500/10 border-red-500/20';
+      case 'challenge': return 'text-purple-500 bg-purple-500/10 border-purple-500/20';
+      default: return 'text-gray-500 bg-gray-500/10 border-gray-500/20';
+    }
   }
 
   // ==================== Difficulty mapping helpers ====================

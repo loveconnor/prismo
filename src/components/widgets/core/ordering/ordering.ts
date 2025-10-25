@@ -104,7 +104,7 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
   /** ==================== STATE ==================== */
   orderedItems = signal<OrderItem[]>([]);
   draggedIndex = signal<number | null>(null);
-  state = signal<OrderingState>('idle');
+  componentState = signal<OrderingState>('idle');
   completed = signal<boolean>(false);
   correctCount = signal<number>(0);
 
@@ -149,7 +149,7 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
       if (perfect) {
         this.finish(items, correctPositions);
       } else {
-        this.state.set('ordering');
+        this.componentState.set('ordering');
       }
     });
   }
@@ -162,7 +162,7 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
       : [...this.items]);
 
     this.orderedItems.set(initialItems);
-    this.state.set('ordering');
+    this.componentState.set('ordering');
   }
 
   /** Returns number of correct positions and score (0..1). Respects legacy `correctOrder` if provided. */
@@ -197,7 +197,7 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
 
   private finish(items: OrderItem[], correctPositions: number) {
     this.completed.set(true);
-    this.state.set('completed');
+    this.componentState.set('completed');
 
     const { score } = this.evaluateOrder(items);
 
@@ -222,7 +222,7 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
 
     // If not perfect but allowPartial, still show feedback (completed state)
     if (score === 1 || this.allowPartial) {
-      this.state.set('completed');
+      this.componentState.set('completed');
     }
 
     // Completion only when perfect
@@ -323,7 +323,7 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
 
     this.orderedItems.set(resetItems);
     this.completed.set(false);
-    this.state.set('ordering');
+    this.componentState.set('ordering');
     this.correctCount.set(0);
 
     this.onReorder?.(resetItems);
@@ -338,7 +338,7 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
   }
 
   getItemClasses(item: OrderItem, index: number): string {
-    const currentState = this.state();
+    const currentState = this.componentState();
     const desiredIndex = this.correctOrder?.length
       ? this.correctOrder.indexOf(item.id) // 0-based
       : (item.correctPosition - 1);
@@ -361,7 +361,7 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
   }
 
   getPositionClasses(item: OrderItem, index: number): string {
-    const currentState = this.state();
+    const currentState = this.componentState();
     const desiredIndex = this.correctOrder?.length
       ? this.correctOrder.indexOf(item.id)
       : (item.correctPosition - 1);
@@ -385,14 +385,14 @@ export class OrderingComponent extends WidgetBaseComponent implements OnInit {
     const desiredIndex = this.correctOrder?.length
       ? this.correctOrder.indexOf(item.id)
       : (item.correctPosition - 1);
-    return this.state() === 'completed' && desiredIndex === index;
+    return this.componentState() === 'completed' && desiredIndex === index;
   }
 
   isItemIncorrect(item: OrderItem, index: number): boolean {
     const desiredIndex = this.correctOrder?.length
       ? this.correctOrder.indexOf(item.id)
       : (item.correctPosition - 1);
-    return this.state() === 'completed' && desiredIndex !== index;
+    return this.componentState() === 'completed' && desiredIndex !== index;
   }
 
   getSortedItemsByCorrectPosition(): OrderItem[] {

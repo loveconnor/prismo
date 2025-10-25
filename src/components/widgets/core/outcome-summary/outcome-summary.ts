@@ -88,7 +88,7 @@ export class OutcomeSummaryComponent extends WidgetBaseComponent {
   // Results
   @Input() outcomeType: OutcomeType = 'completion';
   @Input() completionPercent: number = 100;
-  @Input() timeSpent?: number; // minutes
+  @Input() labTimeSpent?: number; // minutes
   @Input() attempts?: number;
   /** 0..1 normalized; if not provided, we’ll derive from legacy overallScore (0..100) */
   @Input() score?: number;
@@ -264,7 +264,7 @@ export class OutcomeSummaryComponent extends WidgetBaseComponent {
       labTitle: this.labTitle,
       outcomeType: this.outcomeType,
       completionPercent: this.completionPercent,
-      timeSpent: this.timeSpent,
+      timeSpent: this.labTimeSpent,
       attempts: this.attempts,
       score: this.score,
       outcomes: this.outcomes,

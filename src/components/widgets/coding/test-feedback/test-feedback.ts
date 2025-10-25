@@ -119,8 +119,7 @@ export class TestFeedbackComponent extends WidgetBaseComponent implements OnChan
   // Accessibility
   @Input() a11yLabel?: string;
 
-  // Modern outputs
-  @Output() retry = new EventEmitter<void>();
+  // Modern outputs (use triggerRetry() method instead of conflicting retry name)
 
   // Legacy outputs (HEAD)
   @Output() testSelected = new EventEmitter<string>();
@@ -208,7 +207,7 @@ export class TestFeedbackComponent extends WidgetBaseComponent implements OnChan
   triggerRetry(): void {
     if (!this.allowRetry) return;
     this.onRetry?.();
-    this.retry.emit();
+    this.retryRequested.emit();
     this.retryRequested.emit(); // legacy
   }
 

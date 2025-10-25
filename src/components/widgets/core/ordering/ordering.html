@@ -15,7 +15,7 @@
       <button
         *ngIf="shuffleItems"
         (click)="handleShuffle()"
-        [disabled]="state() === 'completed'"
+        [disabled]="componentState() === 'completed'"
         class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
       >
         <ng-icon name="lucideShuffle" class="h-4 w-4"></ng-icon>
@@ -30,14 +30,14 @@
     </div>
 
     <button
-      *ngIf="!autoCheck && state() !== 'completed'"
+      *ngIf="!autoCheck && componentState() !== 'completed'"
       (click)="handleCheckOrder()"
       class="inline-flex items-center gap-2 rounded-lg border border-[#60a5fa] bg-[#60a5fa]/10 px-4 py-2 text-sm text-[#60a5fa] hover:bg-[#60a5fa]/20 transition-colors"
     >
       Check Order
     </button>
 
-    <div *ngIf="state() === 'completed'" class="text-sm text-[#9ca3af]">
+    <div *ngIf="componentState() === 'completed'" class="text-sm text-[#9ca3af]">
       {{ correctCount() }} / {{ items.length }} correct
     </div>
   </div>
@@ -46,7 +46,7 @@
   <div class="space-y-3">
     <div
       *ngFor="let item of orderedItems(); let index = index"
-      [draggable]="mode === 'drag-drop' && state() !== 'completed'"
+      [draggable]="mode === 'drag-drop' && componentState() !== 'completed'"
       (dragstart)="handleDragStart($event, index)"
       (dragover)="handleDragOver($event)"
       (drop)="handleDrop($event, index)"
@@ -54,7 +54,7 @@
     >
       <!-- Drag Handle -->
       <div
-        *ngIf="mode === 'drag-drop' && state() !== 'completed'"
+        *ngIf="mode === 'drag-drop' && componentState() !== 'completed'"
         class="cursor-move text-[#6b7280] hover:text-[#e5e7eb]"
       >
         <ng-icon name="lucideGripVertical" class="h-5 w-5"></ng-icon>
@@ -74,7 +74,7 @@
       </div>
 
       <!-- Status Icons -->
-      <div *ngIf="state() === 'completed'" class="flex items-center gap-1">
+      <div *ngIf="componentState() === 'completed'" class="flex items-center gap-1">
         <ng-icon
           *ngIf="isItemCorrect(item, index)"
           name="lucideCircleCheck"
@@ -88,7 +88,7 @@
       </div>
 
       <!-- Move Buttons -->
-      <div *ngIf="mode === 'buttons' && state() !== 'completed'" class="flex flex-col gap-1">
+      <div *ngIf="mode === 'buttons' && componentState() !== 'completed'" class="flex flex-col gap-1">
         <button
           (click)="handleMoveUp(index)"
           [disabled]="index === 0"
@@ -110,7 +110,7 @@
   </div>
 
   <!-- Completion Feedback -->
-  <div *ngIf="state() === 'completed' && showHints" class="mt-6 space-y-3">
+  <div *ngIf="componentState() === 'completed' && showHints" class="mt-6 space-y-3">
     <h4 class="text-sm font-medium text-[#e5e7eb]">Correct Order Explanation</h4>
     <div
       *ngFor="let item of getSortedItemsByCorrectPosition()"

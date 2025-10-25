@@ -7,7 +7,7 @@
 
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ShortAnswerComponent, ShortAnswerProps } from './short-answer';
+import { ShortAnswerComponent } from './short-answer';
 import { SHORT_ANSWER_METADATA } from './short-answer.metadata';
 
 @Component({

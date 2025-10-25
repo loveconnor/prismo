@@ -15,7 +15,7 @@
   <fieldset class="space-y-3">
     <legend class="sr-only">Answer options</legend>
     <button
-      *ngFor="let option of shuffledOptions(); let i = index"
+      *ngFor="let option of shuffled(); let i = index"
       (click)="handleOptionSelect(option.value)"
       [disabled]="submitted()"
       [class]="getOptionClasses(getOptionStatus(option), isSelected(option.value))"

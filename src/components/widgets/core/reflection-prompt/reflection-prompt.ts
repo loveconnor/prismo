@@ -170,7 +170,7 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   skipReason = signal<string>('');
   private autosaveTimer?: any;
   private legacyAutosaveTicker?: any;
-  private startTime = 0;
+  override startTime = 0;
 
   // ==================== COMPUTED ====================
   get variant() { return this.ui.variant ?? 'inline'; }
@@ -194,7 +194,7 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   constructor(
     themeService: ThemeService,
     fontService: FontService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object
   ) {
     super(themeService, fontService, platformId);
   }

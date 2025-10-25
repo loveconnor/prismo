@@ -19,7 +19,7 @@
             *ngIf="segment.blank.type === 'select' && segment.blank.options"
             [value]="getAnswer(segment.blank.id)"
             (change)="handleAnswerChange(segment.blank.id, $any($event.target).value)"
-            [disabled]="state() === 'completed'"
+            [disabled]="componentState() === 'completed'"
             [ngClass]="getInputClasses(segment.blank)"
           >
             <option value="">Choose...</option>
@@ -35,7 +35,7 @@
             [value]="getAnswer(segment.blank.id)"
             (input)="handleAnswerChange(segment.blank.id, $any($event.target).value)"
             [placeholder]="segment.blank.placeholder"
-            [disabled]="state() === 'completed'"
+            [disabled]="componentState() === 'completed'"
             [ngClass]="getInputClasses(segment.blank)"
             [style.width]="getInputWidth(segment.blank)"
           />
@@ -58,7 +58,7 @@
   </div>
 
   <!-- Submit Button -->
-  <div *ngIf="state() !== 'completed'" class="flex justify-center">
+  <div *ngIf="componentState() !== 'completed'" class="flex justify-center">
     <button
       (click)="handleSubmit()"
       [disabled]="!canSubmit"
@@ -69,18 +69,18 @@
       }"
       type="button"
     >
-      <ng-container *ngIf="state() === 'checking'">
+      <ng-container *ngIf="componentState() === 'checking'">
         <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2"></div>
         Checking...
       </ng-container>
-      <ng-container *ngIf="state() !== 'checking'">
+      <ng-container *ngIf="componentState() !== 'checking'">
         Check Answers
       </ng-container>
     </button>
   </div>
 
   <!-- Results -->
-  <div *ngIf="state() === 'completed' && showFeedback" class="mt-4 space-y-2">
+  <div *ngIf="componentState() === 'completed' && showFeedback" class="mt-4 space-y-2">
     <div class="flex items-center justify-between">
       <h4 class="text-sm font-semibold text-[#e5e7eb]">Results</h4>
       <span class="text-sm text-[#a9b1bb]">

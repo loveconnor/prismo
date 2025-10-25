@@ -149,7 +149,7 @@ export class MatchingPairsComponent extends WidgetBaseComponent implements OnIni
   selectedLeft = signal<string | null>(null);
   shuffledLeft = signal<MatchItem[]>([]);
   shuffledRight = signal<MatchItem[]>([]);
-  state = signal<MatchingPairsState>('idle');
+  componentState = signal<MatchingPairsState>('idle');
   completed = signal<boolean>(false);
 
   // ==================== COMPUTED ====================
@@ -252,7 +252,7 @@ export class MatchingPairsComponent extends WidgetBaseComponent implements OnIni
     const totalPossible = this.totalPossibleMatches();
 
     if (currentMatches >= totalPossible) {
-      this.state.set('completed');
+      this.componentState.set('completed');
       this.completed.set(true);
 
       const correctCount = this.correctMatchCount();
@@ -271,10 +271,10 @@ export class MatchingPairsComponent extends WidgetBaseComponent implements OnIni
 
       // If not allowing multiple attempts, lock
       if (!this.allowMultipleAttempts) {
-        this.state.set('readOnly');
+        this.componentState.set('readOnly');
       }
     } else {
-      this.state.set('matching');
+      this.componentState.set('matching');
     }
   }
 
@@ -313,7 +313,7 @@ export class MatchingPairsComponent extends WidgetBaseComponent implements OnIni
   }
 
   handleSelectLeft(leftId: string): void {
-    if ((this.completed() && !this.allowMultipleAttempts) || this.state() === 'readOnly') return;
+    if ((this.completed() && !this.allowMultipleAttempts) || this.componentState() === 'readOnly') return;
 
     if (this.mode === 'select') {
       const current = this.selectedLeft();
@@ -327,7 +327,7 @@ export class MatchingPairsComponent extends WidgetBaseComponent implements OnIni
   }
 
   handleSelectRight(rightId: string): void {
-    if ((this.completed() && !this.allowMultipleAttempts) || this.state() === 'readOnly') return;
+    if ((this.completed() && !this.allowMultipleAttempts) || this.componentState() === 'readOnly') return;
 
     if (this.mode === 'select') {
       const leftId = this.selectedLeft();
@@ -376,7 +376,7 @@ export class MatchingPairsComponent extends WidgetBaseComponent implements OnIni
     this.matches.set({});
     this.selectedLeft.set(null);
     this.completed.set(false);
-    this.state.set('idle');
+    this.componentState.set('idle');
     this.initializeItems();
   }
 

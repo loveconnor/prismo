@@ -121,7 +121,7 @@
     </ng-container>
 
     <!-- Hint -->
-    <div *ngIf="showHints" class="mt-4">
+    <div *ngIf="uiShowHints" class="mt-4">
       <button type="button" (click)="handleHintToggle()" class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] transition-colors">
         <ng-icon name="lucideLightbulb" class="h-4 w-4"></ng-icon>
         {{ showHint() ? 'Hide Hint' : 'Show Refactoring Tips' }}

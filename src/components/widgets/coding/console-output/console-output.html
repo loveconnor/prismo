@@ -59,10 +59,10 @@
     class="overflow-auto p-4 font-mono text-sm"
     [ngClass]="theme === 'dark' ? 'bg-[#0a0e12]' : 'bg-white'"
     [ngClass]="{
-      'max-h-[200px]': height === 'sm',
-      'max-h-[400px]': height === 'md',
-      'max-h-[600px]': height === 'lg',
-      'max-h-none': height === 'auto',
+      'max-h-[200px]': consoleHeight === 'sm',
+      'max-h-[400px]': consoleHeight === 'md',
+      'max-h-[600px]': consoleHeight === 'lg',
+      'max-h-none': consoleHeight === 'auto',
       'whitespace-pre-wrap break-words': wordWrap,
       'whitespace-pre': !wordWrap
     }"

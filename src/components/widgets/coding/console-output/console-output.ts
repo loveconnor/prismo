@@ -95,7 +95,8 @@ export class ConsoleOutputComponent
   /** UI config */
   @Input() ui?: ConsoleOutputUI;
   get variant(): 'default' | 'compact' | 'embedded' { return this.ui?.variant ?? 'default'; }
-  get height(): 'sm' | 'md' | 'lg' | 'auto' { return this.ui?.height ?? 'md'; }
+  // Avoid clashing with WidgetBaseComponent `height` input
+  get consoleHeight(): 'sm' | 'md' | 'lg' | 'auto' { return this.ui?.height ?? 'md'; }
   get theme(): 'dark' | 'light' { return this.ui?.theme ?? 'dark'; }
 
   /** Features */
@@ -136,7 +137,7 @@ export class ConsoleOutputComponent
   }
 
   // ==================== LIFECYCLE ====================
-  ngAfterViewInit(): void {
+  override ngAfterViewInit(): void {
     this.mergeLegacyOutput();
     this.maybeAutoScroll();
   }
@@ -158,7 +159,7 @@ export class ConsoleOutputComponent
     }
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
     // no-op for now
   }
 

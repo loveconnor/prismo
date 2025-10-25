@@ -24,7 +24,7 @@
         {{ getOverallStats().totalTests }} tests • {{ getOverallStats().totalPassed }} passed • {{ getOverallStats().totalFailed }} failed
       </div>
 
-      <button *ngIf="onRetry" (click)="onRetry?.()" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors">
+      <button *ngIf="onRetry" (click)="onRetry?.(); triggerRetry()" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors">
         Run Tests
       </button>
     </div>

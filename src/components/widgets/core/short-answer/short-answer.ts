@@ -106,7 +106,7 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
 
   /* ========== State ========== */
   answer = signal<string>('');
-  state = signal<ShortAnswerState>('idle');
+  componentState = signal<ShortAnswerState>('idle');
   feedback = signal<ShortAnswerFeedback | null>(null);
   isValid = signal<boolean>(false);
 
@@ -270,8 +270,8 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
     const newValue = textarea.value.slice(0, this.maxLength);
     this.answer.set(newValue);
 
-    if (this.state() === 'submitted') {
-      this.state.set('idle');
+    if (this.componentState() === 'submitted') {
+      this.componentState.set('idle');
       this.feedback.set(null);
     }
 
@@ -291,9 +291,9 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
   }
 
   async handleSubmit(): Promise<void> {
-    if (this.state() === 'submitting' || this.isTooShort) return;
+    if (this.componentState() === 'submitting' || this.isTooShort) return;
 
-    this.state.set('submitting');
+    this.componentState.set('submitting');
 
     // Validate
     const validationResult = this.onValidate
@@ -306,7 +306,7 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
     });
 
     this.isValid.set(validationResult.isCorrect);
-    this.state.set('submitted');
+    this.componentState.set('submitted');
 
     // Modern emits
     this.onSubmit?.(this.answer(), validationResult.isCorrect, validationResult.feedback);
@@ -341,9 +341,9 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
 
     if (this.autoResize) stateClasses.push('min-h-[60px]');
 
-    if (this.state() === 'submitted' && this.feedback()?.isCorrect) {
+    if (this.componentState() === 'submitted' && this.feedback()?.isCorrect) {
       stateClasses.push('border-emerald-500');
-    } else if (this.state() === 'submitted' && !this.feedback()?.isCorrect) {
+    } else if (this.componentState() === 'submitted' && !this.feedback()?.isCorrect) {
       stateClasses.push('border-red-500');
     }
 
@@ -354,17 +354,17 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
 
   getButtonClasses(): string {
     const base = 'inline-flex items-center gap-2 rounded-lg px-6 py-2 text-sm font-medium transition-colors';
-    if (this.isTooShort || this.state() === 'submitting') {
+    if (this.isTooShort || this.componentState() === 'submitting') {
       return `${base} cursor-not-allowed bg-[#1f2937] text-[#6b7280]`;
     }
     return `${base} bg-[#3b82f6] text-white hover:bg-[#2563eb]`;
   }
 
   isButtonDisabled(): boolean {
-    return this.isTooShort || this.state() === 'submitting';
+    return this.isTooShort || this.componentState() === 'submitting';
   }
 
   isTextareaDisabled(): boolean {
-    return this.state() === 'submitting' || this.state() === 'readOnly';
+    return this.componentState() === 'submitting' || this.componentState() === 'readOnly';
   }
 }

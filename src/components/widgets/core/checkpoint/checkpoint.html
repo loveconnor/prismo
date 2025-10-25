@@ -10,7 +10,7 @@
   <ng-container *ngIf="variant === 'inline'; else blockVariant">
     <div class="flex items-center gap-2" [ngClass]="getStatusColor()">
       <!-- Icon -->
-      <ng-container [ngSwitch]="state()">
+      <ng-container [ngSwitch]="checkpointState()">
         <div *ngSwitchCase="'saving'" class="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
         <ng-icon *ngSwitchCase="'saved'" name="lucideCircleCheck" class="h-4 w-4"></ng-icon>
         <ng-icon *ngSwitchCase="'error'" name="lucideCircleAlert" class="h-4 w-4"></ng-icon>
@@ -36,7 +36,7 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-2" [ngClass]="getStatusColor()">
-          <ng-container [ngSwitch]="state()">
+          <ng-container [ngSwitch]="checkpointState()">
             <div *ngSwitchCase="'saving'" class="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
             <ng-icon *ngSwitchCase="'saved'" name="lucideCircleCheck" class="h-4 w-4"></ng-icon>
             <ng-icon *ngSwitchCase="'error'" name="lucideCircleAlert" class="h-4 w-4"></ng-icon>
@@ -52,7 +52,7 @@
         <button
           *ngIf="autoSave"
           (click)="handleSave()"
-          [disabled]="state() === 'saving'"
+          [disabled]="checkpointState() === 'saving'"
           class="inline-flex items-center gap-1 rounded border border-[#1f2937] bg-[#0b0f14] px-2 py-1 text-xs text-[#a9b1bb] hover:bg-[#0e1318] disabled:opacity-50"
           title="Save now"
         >
@@ -79,7 +79,7 @@
     </div>
 
     <!-- Error State -->
-    <div *ngIf="state() === 'error'" class="mt-3 rounded border border-red-500/20 bg-red-500/10 p-2">
+    <div *ngIf="checkpointState() === 'error'" class="mt-3 rounded border border-red-500/20 bg-red-500/10 p-2">
       <div class="flex items-center gap-2">
         <ng-icon name="lucideCircleAlert" class="h-4 w-4 text-red-500"></ng-icon>
         <span class="text-sm text-red-400">Failed to save progress. Check your connection.</span>

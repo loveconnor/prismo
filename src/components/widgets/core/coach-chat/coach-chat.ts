@@ -270,7 +270,7 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
   constructor(
     themeService: ThemeService,
     fontService: FontService,
-    @Inject(PLATFORM_ID) protected platformId: Object
+    @Inject(PLATFORM_ID) protected override platformId: Object
   ) {
     super(themeService, fontService, platformId);
 

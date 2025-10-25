@@ -56,7 +56,7 @@ export interface CheckpointSaveData {
   templateUrl: './checkpoint.html',
   styleUrls: ['./checkpoint.css']
 })
-export class CheckpointComponent extends WidgetBaseComponent implements OnInit, OnDestroy {
+export class CheckpointComponent extends WidgetBaseComponent implements OnInit, OnDestroy { 
   // -------- Modern (widgets) inputs --------
   @Input() id!: string;
   @Input() stepId?: string;
@@ -81,7 +81,7 @@ export class CheckpointComponent extends WidgetBaseComponent implements OnInit, 
   // -------- Modern (widgets) outputs --------
   @Output() save = new EventEmitter<CheckpointSaveData>();
   @Output() restore = new EventEmitter<void>();
-  @Output() error = new EventEmitter<string>();
+  @Output() checkpointError = new EventEmitter<string>();
 
   // ==================== LEGACY HEAD API (back-compat) ====================
   // Inputs
@@ -104,7 +104,7 @@ export class CheckpointComponent extends WidgetBaseComponent implements OnInit, 
   @Output() rollbackRequested = new EventEmitter<string>();
 
   // ==================== STATE ====================
-  state = signal<CheckpointState>('idle');
+  checkpointState = signal<CheckpointState>('idle');
   lastSaveTimeSig = signal<Date | null>(null);
   retryCount = signal<number>(0);
 
@@ -133,14 +133,19 @@ export class CheckpointComponent extends WidgetBaseComponent implements OnInit, 
     }
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
     if (this.intervalId) clearInterval(this.intervalId);
   }
 
+  // ==================== WidgetBase hooks ====================
+  protected override initializeWidgetData(): void {}
+  protected override validateInput(): boolean { return true; }
+  protected override processCompletion(): void {}
+
   // ==================== Handlers ====================
   async handleSave(): Promise<void> {
-    if (this.state() === 'saving') return;
-    this.state.set('saving');
+    if (this.checkpointState() === 'saving') return;
+    this.checkpointState.set('saving');
 
     try {
       // Simulate async work; replace with real persistence as needed
@@ -172,9 +177,9 @@ export class CheckpointComponent extends WidgetBaseComponent implements OnInit, 
       this.checkpointSaved.emit(snapshot);
 
       this.lastSaveTimeSig.set(timestamp);
-      this.state.set('saved');
+      this.checkpointState.set('saved');
       this.retryCount.set(0);
-      setTimeout(() => this.state.set('idle'), 1200);
+      setTimeout(() => this.checkpointState.set('idle'), 1200);
     } catch (_e) {
       const tries = this.retryCount() + 1;
       this.retryCount.set(tries);
@@ -183,18 +188,18 @@ export class CheckpointComponent extends WidgetBaseComponent implements OnInit, 
         setTimeout(() => this.handleSave(), 1500);
       } else {
         const msg = 'Failed to save progress';
-        this.state.set('error');
+        this.checkpointState.set('error');
         this.onError?.(msg);
-        this.error.emit(msg);
+        this.checkpointError.emit(msg);
       }
     }
   }
 
   handleRestore(): void {
-    this.state.set('restoring');
+    this.checkpointState.set('restoring');
     this.onRestore?.();
     this.restore.emit();
-    setTimeout(() => this.state.set('idle'), 800);
+    setTimeout(() => this.checkpointState.set('idle'), 800);
   }
 
   // ==================== Legacy helpers/actions ====================
@@ -233,7 +238,7 @@ export class CheckpointComponent extends WidgetBaseComponent implements OnInit, 
   }
 
   getStatusColor(): string {
-    switch (this.state()) {
+    switch (this.checkpointState()) {
       case 'saving': return 'text-blue-500';
       case 'saved': return 'text-emerald-500';
       case 'error': return 'text-red-500';
@@ -242,7 +247,7 @@ export class CheckpointComponent extends WidgetBaseComponent implements OnInit, 
   }
 
   getStatusText(): string {
-    switch (this.state()) {
+    switch (this.checkpointState()) {
       case 'saving': return 'Saving...';
       case 'saved': return 'Progress saved';
       case 'error': return 'Save failed';

@@ -253,7 +253,7 @@ export class TimerComponent extends WidgetBaseComponent implements OnInit, OnDes
   constructor(
     themeService: ThemeService,
     fontService: FontService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object
   ) {
     super(themeService, fontService, platformId);
   }

@@ -140,7 +140,7 @@ export class NumericInputComponent extends WidgetBaseComponent implements OnInit
 
   /** ==================== STATE ==================== */
   value = signal<string>('');
-  state = signal<NumericInputState>('idle');
+  componentState = signal<NumericInputState>('idle');
   feedback = signal<{ isCorrect: boolean; message: string } | null>(null);
   submitted = signal<boolean>(false);
 
@@ -322,7 +322,7 @@ export class NumericInputComponent extends WidgetBaseComponent implements OnInit
     if (!newValue.split('').every((c, i) => allowedChars(c, i))) return;
 
     this.value.set(newValue);
-    this.state.set('idle');
+    this.componentState.set('idle');
 
     const numericValue = this.parseNumericValue(newValue);
 
@@ -337,7 +337,7 @@ export class NumericInputComponent extends WidgetBaseComponent implements OnInit
   handleSubmit(): void {
     if (this.submitted() || !this.value().trim()) return;
 
-    this.state.set('validating');
+    this.componentState.set('validating');
 
     // Simulate short validation delay
     setTimeout(() => {
@@ -349,7 +349,7 @@ export class NumericInputComponent extends WidgetBaseComponent implements OnInit
         message: validation.feedback || (validation.isCorrect ? this.correctFeedback : this.incorrectFeedback)
       });
       this.submitted.set(true);
-      this.state.set('completed');
+      this.componentState.set('completed');
 
       // Modern callback/event
       this.onSubmit?.(this.value(), numericValue, validation.isCorrect, validation.feedback);

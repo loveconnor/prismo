@@ -111,7 +111,7 @@ export class FillInBlanksComponent extends WidgetBaseComponent implements OnInit
 
   /** ==================== STATE ==================== */
   answers = signal<Record<string, string>>({});
-  state = signal<FillInBlanksState>('idle');
+  componentState = signal<FillInBlanksState>('idle');
   results = signal<Record<string, boolean>>({});
   score = signal<number>(0);
   templateSegments = signal<TemplateSegment[]>([]);
@@ -130,7 +130,7 @@ export class FillInBlanksComponent extends WidgetBaseComponent implements OnInit
   }
 
   get canSubmit(): boolean {
-    if (this.state() === 'checking') return false;
+    if (this.componentState() === 'checking') return false;
     if (this.allowPartialSubmit) return true;
     return this.filledBlanksCount >= this.blanks.length;
   }
@@ -245,14 +245,14 @@ export class FillInBlanksComponent extends WidgetBaseComponent implements OnInit
   handleSubmit(): void {
     if (!this.canSubmit) return;
 
-    this.state.set('checking');
+    this.componentState.set('checking');
 
     // Simulate checking delay
     setTimeout(() => {
       const { results: checkResults, score: checkScore } = this.checkAllAnswers();
       this.results.set(checkResults);
       this.score.set(checkScore);
-      this.state.set('completed');
+      this.componentState.set('completed');
 
       // Modern callback/event
       this.onSubmit?.(this.answers(), checkResults, checkScore);
@@ -296,7 +296,7 @@ export class FillInBlanksComponent extends WidgetBaseComponent implements OnInit
 
   getInputClasses(blank: Blank): string {
     const value = this.answers()[blank.id] || '';
-    const isSubmitted = this.state() === 'completed';
+    const isSubmitted = this.componentState() === 'completed';
     const isCorrect = this.results()[blank.id];
     const hasAnswer = value.trim() !== '';
 

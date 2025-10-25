@@ -47,7 +47,7 @@ export type { ValidationMode } from './core/short-answer/short-answer';
 export type { ShortAnswerState } from './core/short-answer/short-answer';
 export type { ValidationRule } from './core/short-answer/short-answer';
 export type { ShortAnswerUI } from './core/short-answer/short-answer';
-export type { ShortAnswerProps } from './core/short-answer/short-answer';
+// Note: ShortAnswerProps is not exported by the component source
 export type { ShortAnswerFeedback } from './core/short-answer/short-answer';
 export * from './core/short-answer/short-answer.metadata';
 export { FillInBlanksComponent } from './core/fill-in-blanks/fill-in-blanks';
@@ -55,7 +55,7 @@ export type { BlankType } from './core/fill-in-blanks/fill-in-blanks';
 export type { FillInBlanksState } from './core/fill-in-blanks/fill-in-blanks';
 export type { Blank } from './core/fill-in-blanks/fill-in-blanks';
 export type { FillInBlanksUI } from './core/fill-in-blanks/fill-in-blanks';
-export type { FillInBlanksProps } from './core/fill-in-blanks/fill-in-blanks';
+// Note: FillInBlanksProps is not exported by the component source
 export type { TemplateSegment } from './core/fill-in-blanks/fill-in-blanks';
 export * from './core/fill-in-blanks/fill-in-blanks.metadata';
 export { MatchingPairsComponent } from './core/matching-pairs/matching-pairs';
@@ -71,7 +71,7 @@ export type { OrderingMode } from './core/ordering/ordering';
 export type { OrderingState } from './core/ordering/ordering';
 export type { OrderItem } from './core/ordering/ordering';
 export type { OrderingUI } from './core/ordering/ordering';
-export type { OrderingProps } from './core/ordering/ordering';
+// Note: OrderingProps is not exported by the component source
 export * from './core/ordering/ordering.metadata';
 export { NumericInputComponent } from './core/numeric-input/numeric-input';
 export type { NumericValidation } from './core/numeric-input/numeric-input';
