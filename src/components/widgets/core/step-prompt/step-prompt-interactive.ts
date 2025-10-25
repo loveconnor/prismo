@@ -256,6 +256,31 @@ export class StepPromptInteractiveComponent extends WidgetBaseComponent implemen
   handleKeyDown(event: KeyboardEvent): void {
     if (!this.promptConfig) return;
 
+    // Ignore ALL keypresses if user is typing in any editable element
+    if (typeof document !== 'undefined') {
+      const target = event.target as HTMLElement;
+      
+      // Comprehensive check for editable elements
+      const isInEditableElement = 
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable ||
+        target.getAttribute('contenteditable') === 'true' ||
+        // CodeMirror checks (the editor)
+        target.closest('.cm-editor') !== null ||
+        target.closest('.cm-content') !== null ||
+        target.closest('.cm-line') !== null ||
+        target.closest('[data-code-editor]') !== null || // Code editor container
+        target.classList.contains('cm-content') ||
+        target.classList.contains('cm-line') ||
+        target.classList.contains('cm-scroller');
+      
+      if (isInEditableElement) {
+        // Allow the keypress to go through to the editor
+        return;
+      }
+    }
+
     // j / ArrowRight: Next step
     if ((event.key === 'j' || event.key === 'ArrowRight') && !this.navigationLocked()) {
       if ((this.promptConfig.ctaPrimary.action === 'next' || this.promptConfig.ctaPrimary.action === 'start')) {

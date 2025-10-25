@@ -64,6 +64,47 @@
 
       <!-- Center - Widget Preview -->
       <div class="lg:col-span-2 space-y-6">
+        <!-- Code Editor Widget Demo -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Code Editor Demo</h3>
+            <p class="text-sm text-muted-foreground mt-1">
+              Interactive JavaScript editor with run and reset actions
+            </p>
+          </app-card-header>
+          
+          <app-card-content>
+            <app-code-editor
+              [metadata]="{
+                id: 'code-editor-demo',
+                title: 'JavaScript Code Editor',
+                description: 'Write and run JavaScript code with test cases',
+                category: 'coding',
+                skills: ['javascript', 'coding', 'problem-solving'],
+                difficulty: 2,
+                estimated_time: 300,
+                input_type: WidgetInputType.CODE,
+                output_type: WidgetOutputType.FEEDBACK,
+                dependencies: [],
+                adaptive_hooks: {},
+                version: '1.0.0'
+              }"
+              title="JavaScript Code Editor"
+              language="javascript"
+              [starterCode]="jsStarterCode"
+              [testCases]="jsTestCases"
+              [showOutput]="true"
+              [showFooter]="true"
+              [enableSyntaxHighlighting]="true"
+              [enableAutoCompletion]="true"
+              [enableLineNumbers]="true"
+              [allowUserSettings]="true"
+              width="100%"
+              height="500px"
+            ></app-code-editor>
+          </app-card-content>
+        </app-card>
+
         <!-- Coach Chat Widget Demo -->
         <app-card>
           <app-card-header>
@@ -353,6 +394,8 @@
       
       <app-card-content>
         <div class="grid gap-6">
+          
+
           <!-- Hero Variant - New Lab -->
           <div>
             <h3 class="mb-2 text-sm font-medium">Hero Variant - New Lab</h3>
@@ -1035,8 +1078,6 @@
               incorrectFeedback="Not quite. Try again."
               hint="Multiply 7 by 8"
               [ui]="{ variant: 'default', showCalculator: true, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
@@ -1058,8 +1099,6 @@
               correctFeedback="Good estimate! That's a typical class size."
               hint="Think about your own class size"
               [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
@@ -1082,8 +1121,6 @@
               correctFeedback="Close enough! π ≈ 3.14159"
               hint="Pi is approximately 3.14"
               [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
@@ -1105,8 +1142,6 @@
               incorrectFeedback="That's not an even number. Even numbers are divisible by 2."
               hint="Even numbers: 2, 4, 6, 8, 10..."
               [ui]="{ variant: 'default', showCalculator: false, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>
@@ -1132,8 +1167,6 @@
               correctFeedback="Correct! Normal body temp is about 98.6°F"
               hint="It's around 98-99°F"
               [ui]="{ variant: 'compact', showCalculator: false, emphasizeCorrect: true }"
-              [onChange]="handleNumericInputChange.bind(this)"
-              [onSubmit]="handleNumericInputSubmit.bind(this)"
               (valueChange)="handleNumericInputChange($event)"
               (submit)="handleNumericInputSubmit($event)"
             ></app-numeric-input>

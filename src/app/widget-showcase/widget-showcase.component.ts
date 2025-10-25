@@ -37,17 +37,6 @@ import { OrderItem } from '../../components/widgets/core/ordering/ordering';
 import { NumericInputComponent } from '../../components/widgets/core/numeric-input/numeric-input';
 import { NUMERIC_INPUT_METADATA } from '../../components/widgets/core/numeric-input/numeric-input.metadata';
 import { NumericConstraint } from '../../components/widgets/core/numeric-input/numeric-input';
-import { ErrorExplainComponent } from '../../components/widgets/core/error-explain/error-explain';
-import { ERROR_EXPLAIN_METADATA } from '../../components/widgets/core/error-explain/error-explain.metadata';
-import { CheckpointComponent } from '../../components/widgets/core/checkpoint/checkpoint';
-import { CHECKPOINT_METADATA } from '../../components/widgets/core/checkpoint/checkpoint.metadata';
-import { OutcomeSummaryComponent } from '../../components/widgets/core/outcome-summary/outcome-summary';
-import { OUTCOME_SUMMARY_METADATA } from '../../components/widgets/core/outcome-summary/outcome-summary.metadata';
-import { AdaptiveSummaryComponent } from '../../components/widgets/core/adaptive-summary/adaptive-summary';
-import { ADAPTIVE_SUMMARY_METADATA } from '../../components/widgets/core/adaptive-summary/adaptive-summary.metadata';
-import { GoalSetterComponent } from '../../components/widgets/core/goal-setter/goal-setter';
-import { GoalType, LearningGoal } from '../../components/widgets/core/goal-setter/goal-setter';
-import { GOAL_SETTER_METADATA } from '../../components/widgets/core/goal-setter/goal-setter.metadata';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -74,11 +63,6 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     MatchingPairsComponent,
     OrderingComponent,
     NumericInputComponent,
-    ErrorExplainComponent,
-    CheckpointComponent,
-    OutcomeSummaryComponent,
-    AdaptiveSummaryComponent,
-    GoalSetterComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
@@ -98,6 +82,37 @@ export class WidgetShowcaseComponent {
   
   // Current active example
   activeExample = signal<string>('simple');
+
+  // Code Editor example data
+  jsStarterCode = `// Write a function to calculate the factorial of a number
+function factorial(n) {
+  // Your code here
+  
+}
+
+// Test your function
+console.log(factorial(5)); // Should return 120`;
+
+  jsTestCases = [
+    {
+      id: 'test1',
+      input: '5',
+      expectedOutput: '120',
+      description: 'factorial(5) should return 120'
+    },
+    {
+      id: 'test2',
+      input: '0',
+      expectedOutput: '1',
+      description: 'factorial(0) should return 1'
+    },
+    {
+      id: 'test3',
+      input: '3',
+      expectedOutput: '6',
+      description: 'factorial(3) should return 6'
+    }
+  ];
 
   // Widget examples
   examples = {
