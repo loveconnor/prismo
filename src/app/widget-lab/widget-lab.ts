@@ -90,7 +90,7 @@ import { TextEditorComponent } from '../../components/widgets/writing/text-edito
             </app-card-content>
             <app-card-footer>
               <div class="flex items-center justify-between w-full">
-                <span class="text-sm text-muted-foreground">~30 min • Medium</span>
+                <span class="text-sm text-muted-foreground">~30 min • {{ getDifficultyLabel(moduleDefinition?.difficulty) }}</span>
                 <app-button variant="default" size="sm">
                   <ng-icon name="lucidePlay" class="w-4 h-4 mr-2"></ng-icon>
                   Start Module
@@ -535,5 +535,15 @@ export class WidgetLabComponent implements OnInit, OnDestroy {
   goBack(): void {
     this.selectedModule = null;
     this.moduleDefinition = null;
+  }
+
+  getDifficultyLabel(difficulty: number | undefined): number {
+    if (difficulty === undefined) {
+      return 0;
+    }
+
+    // Simple mapping from difficulty level to label
+    const labels = ['Easy', 'Medium', 'Hard', 'Expert'];
+    return ((difficulty) || 0);
   }
 }

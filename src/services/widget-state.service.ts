@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { WidgetState, WidgetEvent, ModuleDefinition } from '../types/widget.types';
+import { Analytics } from './analytics.service';
 
 interface ModuleState {
   moduleId: string;
+  moduleDefinition: ModuleDefinition;
   widgets: Map<string, WidgetState>;
   isCompleted: boolean;
   progress: number;
@@ -22,7 +24,7 @@ export class WidgetStateService {
   public modules$ = this.modulesSubject.asObservable();
   public events$ = this.eventsSubject.asObservable();
 
-  constructor() {}
+  constructor(private analytics: Analytics) {}
 
   /**
    * Initialize a new module with its widgets
@@ -30,14 +32,13 @@ export class WidgetStateService {
   public initializeModule(moduleDefinition: ModuleDefinition): void {
     const moduleState: ModuleState = {
       moduleId: moduleDefinition.id,
+      moduleDefinition: moduleDefinition, 
       widgets: new Map(),
       isCompleted: false,
       progress: 0,
       totalTime: 0,
       lastUpdated: new Date()
-    };
-
-    // Initialize widget states
+    };    // Initialize widget states
     moduleDefinition.widgets.forEach(widgetConfig => {
       const widgetState: WidgetState = {
         id: widgetConfig.id,
@@ -77,6 +78,7 @@ export class WidgetStateService {
 
     // Update widget state
     const updatedWidget = { ...widget, ...updates, last_updated: new Date() };
+
     module.widgets.set(widgetId, updatedWidget);
 
     // Update module progress
@@ -125,6 +127,16 @@ export class WidgetStateService {
   public getModuleState(moduleId: string): Observable<ModuleState | undefined> {
     return this.modules$.pipe(
       map(modules => modules.get(moduleId)),
+      distinctUntilChanged()
+    );
+  }
+
+  /**
+   * Get module definition
+   */
+  public getModuleDefinition(moduleId: string): Observable<ModuleDefinition | undefined> {
+    return this.modules$.pipe(
+      map(modules => modules.get(moduleId)?.moduleDefinition),
       distinctUntilChanged()
     );
   }
@@ -266,6 +278,7 @@ export class WidgetStateService {
 
     return {
       moduleId: module.moduleId,
+      moduleDefinition: module.moduleDefinition, 
       widgets: Array.from(module.widgets.entries()).map(([id, state]) => ({
         id,
         state
@@ -285,6 +298,7 @@ export class WidgetStateService {
     const modules = this.modulesSubject.value;
     const module: ModuleState = {
       moduleId: stateData.moduleId,
+      moduleDefinition: stateData.moduleDefinition, 
       widgets: new Map(stateData.widgets.map((w: any) => [w.id, w.state])),
       isCompleted: stateData.isCompleted,
       progress: stateData.progress,
@@ -301,6 +315,8 @@ export class WidgetStateService {
     const widgets = Array.from(module.widgets.values());
     const totalWidgets = widgets.length;
     const completedWidgets = widgets.filter(w => w.is_completed).length;
+
+    const wasCompleted = module.isCompleted;
     
     module.progress = totalWidgets > 0 ? Math.round((completedWidgets / totalWidgets) * 100) : 0;
     module.totalTime = widgets.reduce((sum, w) => sum + w.time_spent, 0);
@@ -308,6 +324,30 @@ export class WidgetStateService {
     
     // Check if module is completed
     module.isCompleted = completedWidgets === totalWidgets && totalWidgets > 0;
+
+
+    //IF a module is just completed, send analytics event
+    if (module.isCompleted && !wasCompleted) {
+      const totalAttempts = Array.from(module.widgets.values())
+        .reduce((sum, widget) => sum + widget.attempts, 0);
+        
+      this.analytics.onFeedbackGenerated({
+        userId: "PLEASE IMPLEMENT",
+        moduleId: module.moduleId,
+        widgetId: 'module_completion',
+        feedbackText: `Module "${module.moduleDefinition.title}" completed successfully!`,
+        rating: 5,
+        time_spent: module.totalTime,
+        attempts_taken: totalAttempts,
+        moduleTitle: module.moduleDefinition.title,
+        moduleDescription: module.moduleDefinition.description,
+        moduleDifficulty: module.moduleDefinition.difficulty,
+        moduleSkills: module.moduleDefinition.skills,
+        estimatedDuration: module.moduleDefinition.estimated_duration,
+        totalWidgets: totalWidgets,
+        completionPercentage: module.progress
+      }).subscribe();
+    }
   }
 
   private emitEvent(event: WidgetEvent): void {

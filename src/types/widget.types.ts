@@ -72,6 +72,7 @@ export interface ModuleDefinition {
   title: string;
   description: string;
   skills: string[];
+  difficulty: number;
   widgets: WidgetConfig[];
   completion_criteria: CompletionCriteria;
   estimated_duration: number;
