@@ -10,7 +10,9 @@ import {
   Inject,
   PLATFORM_ID,
   signal,
-  effect
+  effect,
+  Inject,
+  PLATFORM_ID
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -30,6 +32,8 @@ import {
   lucideTrendingUp
 } from '@ng-icons/lucide';
 import { cn } from '../../../../lib/utils';
+import { ThemeService } from '../../../../services/theme.service';
+import { FontService } from '../../../../services/font.service';
 
 // ==================== TYPES ====================
 
@@ -147,16 +151,6 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
 
   private autosaveTimer?: any;
 
-  // Setup autosave effect
-  private autosaveEffect = effect(() => {
-    const currentText = this.text();
-    const state = this.reflectionState();
-    
-    if (currentText.length > 0 && state === 'dirty') {
-      this.scheduleAutosave();
-    }
-  });
-
   // ==================== COMPUTED ====================
   get variant() { return this.ui.variant ?? 'inline'; }
   get defaultCollapsed() { return this.ui.defaultCollapsed ?? false; }
@@ -204,9 +198,6 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   // ==================== LOCAL STORAGE ====================
 
   private loadFromLocalStorage(): void {
-    // Only access localStorage in browser context
-    if (!isPlatformBrowser(this.platformId)) return;
-    
     const saved = localStorage.getItem(`reflection-${this.reflectionId}`);
     if (saved) {
       try {
@@ -221,9 +212,6 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   }
 
   private saveToLocalStorage(): void {
-    // Only access localStorage in browser context
-    if (!isPlatformBrowser(this.platformId)) return;
-    
     localStorage.setItem(`reflection-${this.reflectionId}`, JSON.stringify({
       text: this.text(),
       feelings: this.selectedFeelings(),
@@ -232,9 +220,6 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
   }
 
   private clearLocalStorage(): void {
-    // Only access localStorage in browser context
-    if (!isPlatformBrowser(this.platformId)) return;
-    
     localStorage.removeItem(`reflection-${this.reflectionId}`);
   }
 

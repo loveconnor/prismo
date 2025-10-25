@@ -190,12 +190,10 @@ Try entering your answer below and click submit. You can also:
   // Event handlers with logging
   handlePrimaryAction(event: any) {
     this.logEvent('Primary Action', event);
-    console.log('Primary action triggered:', event);
   }
 
   handleSubmit(event: any) {
     this.logEvent('Submit Response', event);
-    console.log('Response submitted:', event);
     
     // Check if answer is correct
     const answer = event.response.trim().toLowerCase();
@@ -208,28 +206,23 @@ Try entering your answer below and click submit. You can also:
 
   handleHintRequest(event: any) {
     this.logEvent('Hint Requested', event);
-    console.log('Hint requested:', event);
     alert('💡 Hint: The city shares its name with the first U.S. President.');
   }
 
   handleHintOpen(event: any) {
     this.logEvent('Hint Opened', event);
-    console.log('Hint opened:', event);
   }
 
   handleViewStart(event: any) {
     this.logEvent('View Start', event);
-    console.log('Step view started:', event);
   }
 
   handleViewComplete(event: any) {
     this.logEvent('View Complete', event);
-    console.log('Step view completed:', event);
   }
 
   handleTimeUp() {
     this.logEvent('Time Up', {});
-    console.log('Timer expired');
     alert('⏰ Time is up!');
   }
 
@@ -249,12 +242,10 @@ Try entering your answer below and click submit. You can also:
   // Short Answer event handlers
   handleShortAnswerSubmit(event: any) {
     this.logEvent('Short Answer Submitted', event);
-    console.log('Short answer submitted:', event);
   }
 
   handleShortAnswerChange(event: any) {
     this.logEvent('Short Answer Changed', event);
-    console.log('Short answer changed:', event);
   }
 
   // Fill-in-blanks event handlers

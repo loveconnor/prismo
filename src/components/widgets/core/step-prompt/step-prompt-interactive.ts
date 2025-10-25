@@ -232,13 +232,15 @@ export class StepPromptInteractiveComponent extends WidgetBaseComponent implemen
   }
 
   override ngOnDestroy(): void {
-    // Emit step view complete
-    const dwellMs = Date.now() - this.viewStartTime;
-    this.stepViewComplete.emit({
-      id: this.metadata.id,
-      dwellMs,
-      scrolledPct: 100 // Simplified; could track actual scroll
-    });
+    // Emit step view complete (only if metadata is defined)
+    if (this.metadata?.id) {
+      const dwellMs = Date.now() - this.viewStartTime;
+      this.stepViewComplete.emit({
+        id: this.metadata.id,
+        dwellMs,
+        scrolledPct: 100 // Simplified; could track actual scroll
+      });
+    }
 
     // Clear timer
     if (this.timerInterval) {
@@ -264,10 +266,12 @@ export class StepPromptInteractiveComponent extends WidgetBaseComponent implemen
 
     // Enter: Submit if input is focused and submission required
     if (event.key === 'Enter' && this.promptConfig.requiresSubmission) {
-      const activeElement = document.activeElement;
-      if (activeElement?.id === `${this.metadata.id}-input` && this.promptConfig.ctaPrimary.action === 'submit') {
-        event.preventDefault();
-        this.handlePrimaryAction();
+      if (typeof document !== 'undefined') {
+        const activeElement = document.activeElement;
+        if (activeElement?.id === `${this.metadata.id}-input` && this.promptConfig.ctaPrimary.action === 'submit') {
+          event.preventDefault();
+          this.handlePrimaryAction();
+        }
       }
     }
 

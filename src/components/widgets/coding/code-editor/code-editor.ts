@@ -356,6 +356,10 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       return;
     }
     
+    // Only initialize in the browser
+    if (typeof document === 'undefined' || typeof window === 'undefined') {
+      return;
+    }
 
     // Get language support (only if syntax highlighting is enabled)
     const languageSupport = this.enableSyntaxHighlighting && this.userSettings.syntaxHighlighting 
@@ -645,17 +649,13 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   }
 
   private saveUserSettings(): void {
-    // Save to localStorage or user preferences (browser only)
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('codeEditorSettings', JSON.stringify(this.userSettings));
-    }
+    // Save to localStorage or user preferences
+    localStorage.setItem('codeEditorSettings', JSON.stringify(this.userSettings));
     this.setDataValue('user_settings', this.userSettings);
   }
 
   private loadUserSettings(): void {
-    // Load from localStorage or user preferences (browser only)
-    if (!isPlatformBrowser(this.platformId)) return;
-    
+    // Load from localStorage or user preferences
     const saved = localStorage.getItem('codeEditorSettings');
     if (saved) {
       this.userSettings = { ...this.userSettings, ...JSON.parse(saved) };

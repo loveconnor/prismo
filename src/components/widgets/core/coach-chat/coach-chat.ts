@@ -8,9 +8,11 @@ import {
   OnInit,
   OnDestroy,
   signal,
-  effect
+  effect,
+  Inject,
+  PLATFORM_ID
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -30,6 +32,8 @@ import {
 } from '@ng-icons/lucide';
 import { SafeHtmlPipe } from '../../../../app/lib/safe-html.pipe';
 import { cn } from '../../../../lib/utils';
+import { ThemeService } from '../../../../services/theme.service';
+import { FontService } from '../../../../services/font.service';
 
 // ==================== TYPES ====================
 
@@ -188,12 +192,22 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
   // Rate limit timer
   private rateLimitResetTimer?: any;
 
-  // Auto-scroll effect
-  private autoScrollEffect = effect(() => {
-    // React to messages changes
-    this.messages();
-    setTimeout(() => this.scrollToBottom(), 100);
-  });
+  // ==================== CONSTRUCTOR ====================
+  
+  constructor(
+    themeService: ThemeService,
+    fontService: FontService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    super(themeService, fontService, platformId);
+
+    // Auto-scroll effect
+    effect(() => {
+      // React to messages changes
+      this.messages();
+      setTimeout(() => this.scrollToBottom(), 100);
+    });
+  }
 
   // ==================== COMPUTED ====================
   get allowDirectAnswers() { return this.policy.allowDirectAnswers ?? false; }
@@ -261,7 +275,10 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
   // ==================== METHODS ====================
 
   private scrollToBottom(): void {
-    if (this.messagesEndRef) {
+    // Only scroll in browser environment
+    if (!isPlatformBrowser(this.platformId)) return;
+    
+    if (this.messagesEndRef?.nativeElement?.scrollIntoView) {
       this.messagesEndRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
