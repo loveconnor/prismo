@@ -1,0 +1,162 @@
+<div
+  role="region"
+  [attr.aria-label]="'Lab completion summary: ' + labTitle"
+  [ngClass]="'mx-auto w-full max-w-4xl rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm'"
+>
+  <!-- Celebration Header -->
+  <div *ngIf="variant === 'celebration'" class="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-[#60a5fa] to-[#3b82f6] p-6 text-center">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative z-10">
+      <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
+        <ng-icon [name]="outcomeIconName()" class="h-8 w-8 text-white"></ng-icon>
+      </div>
+      <h1 class="text-2xl font-bold text-white">Lab Complete!</h1>
+      <p class="mt-2 text-white/90">{{ labTitle }}</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="p-6">
+    <!-- Summary Section -->
+    <div class="mb-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex items-center gap-2" [ngClass]="getOutcomeColor()">
+          <ng-icon [name]="outcomeIconName()" class="h-6 w-6"></ng-icon>
+          <h2 class="text-xl font-semibold text-[#e5e7eb]">Lab Summary</h2>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div *ngIf="completionPercent !== undefined" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
+          <div class="text-2xl font-bold text-[#60a5fa]">{{ completionPercent }}%</div>
+          <div class="text-sm text-[#a9b1bb]">Completion</div>
+        </div>
+
+        <div *ngIf="labTimeSpent" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
+          <div class="flex items-center gap-2">
+            <ng-icon name="lucideClock" class="h-4 w-4 text-[#a9b1bb]"></ng-icon>
+            <span class="text-2xl font-bold text-[#e5e7eb]">{{ labTimeSpent }}</span>
+          </div>
+          <div class="text-sm text-[#a9b1bb]">Minutes</div>
+        </div>
+
+        <div *ngIf="attempts" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
+          <div class="text-2xl font-bold text-[#e5e7eb]">{{ attempts }}</div>
+          <div class="text-sm text-[#a9b1bb]">Attempts</div>
+        </div>
+
+        <div *ngIf="score !== undefined" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
+          <div class="text-2xl font-bold text-emerald-500">{{ (score || 0) * 100 | number: '1.0-0' }}%</div>
+          <div class="text-sm text-[#a9b1bb]">Score</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Improvements -->
+    <div *ngIf="showSkillProgress && skillImprovements.length > 0" class="mb-6">
+      <button (click)="toggleSection('skills')" class="flex w-full items-center justify-between text-left">
+        <h3 class="text-lg font-semibold text-[#e5e7eb]">Skill Improvements</h3>
+        <ng-icon name="lucideChevronRight" class="h-5 w-5 text-[#a9b1bb] transition-transform" [ngClass]="{ 'rotate-90': expandedSections.has('skills') }"></ng-icon>
+      </button>
+
+      <div *ngIf="expandedSections.has('skills')" class="mt-4 space-y-3">
+        <div *ngFor="let outcome of skillImprovements" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-medium text-[#e5e7eb]">{{ outcome.skill }}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-[#a9b1bb]">Level {{ outcome.previousLevel }} → {{ outcome.currentLevel }}</span>
+              <ng-icon *ngIf="outcome.improvement > 0" name="lucideTrendingUp" class="h-4 w-4 text-emerald-500"></ng-icon>
+            </div>
+          </div>
+          <div class="h-2 bg-[#1f2937] rounded-full overflow-hidden">
+            <div class="h-full bg-[#60a5fa] transition-all duration-500" [style.width.%]="(outcome.currentLevel / 5) * 100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Takeaways -->
+    <div *ngIf="keyTakeaways.length > 0" class="mb-6">
+      <button (click)="toggleSection('takeaways')" class="flex w-full items-center justify-between text-left">
+        <h3 class="text-lg font-semibold text-[#e5e7eb]">Key Takeaways</h3>
+        <ng-icon name="lucideChevronRight" class="h-5 w-5 text-[#a9b1bb] transition-transform" [ngClass]="{ 'rotate-90': expandedSections.has('takeaways') }"></ng-icon>
+      </button>
+
+      <div *ngIf="expandedSections.has('takeaways')" class="mt-4 space-y-2">
+        <div *ngFor="let takeaway of keyTakeaways" class="flex items-start gap-3 rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3">
+          <ng-icon name="lucideCircleCheck" class="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5"></ng-icon>
+          <p class="text-[#a9b1bb]">{{ takeaway }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strengths and Improvements -->
+    <div *ngIf="strengths.length > 0 || areasForImprovement.length > 0" class="mb-6 grid gap-6 md:grid-cols-2">
+      <div *ngIf="strengths.length > 0">
+        <h3 class="mb-3 text-lg font-semibold text-emerald-500">Strengths</h3>
+        <div class="space-y-2">
+          <div *ngFor="let strength of strengths" class="flex items-center gap-2 text-[#a9b1bb]">
+            <div class="h-2 w-2 rounded-full bg-emerald-500"></div>
+            {{ strength }}
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="areasForImprovement.length > 0">
+        <h3 class="mb-3 text-lg font-semibold text-amber-500">Areas for Improvement</h3>
+        <div class="space-y-2">
+          <div *ngFor="let area of areasForImprovement" class="flex items-center gap-2 text-[#a9b1bb]">
+            <div class="h-2 w-2 rounded-full bg-amber-500"></div>
+            {{ area }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div *ngIf="showNextSteps && (nextLabSuggestions.length > 0 || recommendedReview.length > 0)">
+      <h3 class="mb-4 text-lg font-semibold text-[#e5e7eb]">Next Steps</h3>
+
+      <div *ngIf="nextLabSuggestions.length > 0" class="mb-6">
+        <h4 class="mb-3 text-sm font-medium text-[#a9b1bb] uppercase tracking-wide">Recommended Next Lab</h4>
+        <div class="space-y-3">
+          <div *ngFor="let suggestion of nextLabSuggestions | slice:0:2" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
+            <div class="flex items-start justify-between mb-2">
+              <h5 class="font-medium text-[#e5e7eb]">{{ suggestion.title }}</h5>
+              <span class="rounded border px-2 py-0.5 text-xs" [ngClass]="getDifficultyColor(suggestion.difficulty)">
+                {{ suggestion.difficulty }}
+              </span>
+            </div>
+            <p class="text-sm text-[#a9b1bb] mb-3">{{ suggestion.reason }}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-[#6b7280]">{{ suggestion.estimatedMinutes }} min</span>
+              <button (click)="handleNextLabSelect(suggestion.id)" class="inline-flex items-center gap-1 rounded-lg bg-[#60a5fa] px-3 py-1.5 text-sm text-white hover:bg-[#3b82f6] transition-colors">
+                Start Lab
+                <ng-icon name="lucideChevronRight" class="h-4 w-4"></ng-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="recommendedReview.length > 0">
+        <h4 class="mb-3 text-sm font-medium text-[#a9b1bb] uppercase tracking-wide">Recommended Review</h4>
+        <div class="flex flex-wrap gap-2">
+          <button *ngFor="let topic of recommendedReview" (click)="handleReviewSelect(topic)" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:border-[#60a5fa] transition-colors">
+            {{ topic }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share -->
+    <div *ngIf="onShare" class="mt-6 flex justify-center">
+      <button (click)="handleShare()" class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-4 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] transition-colors">
+        <ng-icon name="lucideStar" class="h-4 w-4"></ng-icon>
+        Share Achievement
+      </button>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,195 @@
+<!-- Results View -->
+<div *ngIf="showResults && currentSession as session"
+  role="region"
+  [attr.aria-label]="a11yLabel || 'Review session results'"
+  class="mx-auto w-full max-w-4xl rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm">
+  <div class="p-6">
+    <!-- Header -->
+    <div class="mb-6 text-center">
+      <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20">
+        <ng-icon name="lucideCircleCheck" class="h-8 w-8 text-emerald-500"></ng-icon>
+      </div>
+      <h2 class="text-2xl font-bold text-[#e5e7eb]">Review Complete!</h2>
+      <ng-container *ngIf="calculateSessionResults() as results">
+        <p class="mt-2 text-[#a9b1bb]">{{ results.correctCount }} of {{ results.totalQuestions }} questions correct</p>
+
+        <!-- Overall Results -->
+        <div class="mb-6 grid gap-4 md:grid-cols-3 mt-4">
+          <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4 text-center">
+            <div class="text-2xl font-bold text-emerald-500">{{ (results.overallAccuracy * 100) | number:'1.0-0' }}%</div>
+            <div class="text-sm text-[#a9b1bb]">Overall Accuracy</div>
+          </div>
+          <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4 text-center">
+            <div class="text-2xl font-bold text-[#60a5fa]">{{ formatTime(results.timeSpent) }}</div>
+            <div class="text-sm text-[#a9b1bb]">Time Spent</div>
+          </div>
+          <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4 text-center">
+            <div class="text-2xl font-bold text-amber-500">{{ needsRetryCount() }}</div>
+            <div class="text-sm text-[#a9b1bb]">Skills Need Review</div>
+          </div>
+        </div>
+
+        <!-- Skill Breakdown -->
+        <div class="mb-6">
+          <h3 class="mb-4 text-lg font-semibold text-[#e5e7eb]">Skill Breakdown</h3>
+          <div class="space-y-3">
+            <div *ngFor="let skillResult of results.skillResults" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-medium text-[#e5e7eb]">{{ skillResult.skill }}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm text-[#a9b1bb]">{{ skillResult.correct }}/{{ skillResult.total }} correct</span>
+                  <span class="rounded px-2 py-0.5 text-xs"
+                        [ngClass]="skillResult.accuracy >= targetAccuracy ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'">
+                    {{ (skillResult.accuracy * 100) | number:'1.0-0' }}%
+                  </span>
+                </div>
+              </div>
+
+              <div class="h-2 bg-[#1f2937] rounded-full overflow-hidden mb-3">
+                <div class="h-full transition-all duration-500" [ngClass]="skillResult.accuracy >= targetAccuracy ? 'bg-emerald-500' : 'bg-red-500'" [style.width.%]="skillResult.accuracy * 100"></div>
+              </div>
+
+              <button *ngIf="skillResult.needsRetry"
+                      (click)="retrySkill(skillResult.skill)"
+                      class="inline-flex items-center gap-2 rounded-lg bg-[#60a5fa] px-3 py-1.5 text-sm text-white hover:bg-[#3b82f6] transition-colors">
+                <ng-icon name="lucideRotateCcw" class="h-4 w-4"></ng-icon>
+                Review Again
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-center gap-3">
+          <button (click)="startReviewSession()" class="rounded-lg bg-[#60a5fa] px-6 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] transition-colors">
+            Start New Review
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<!-- Pre-Start View -->
+<div *ngIf="!currentSession && !showResults"
+  role="region"
+  [attr.aria-label]="a11yLabel || 'Review loop'"
+  class="mx-auto w-full max-w-2xl rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm">
+  <div class="p-6 text-center">
+    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#60a5fa]/20">
+      <ng-icon name="lucideTarget" class="h-8 w-8 text-[#60a5fa]"></ng-icon>
+    </div>
+
+    <h2 class="mb-2 text-xl font-semibold text-[#e5e7eb]">Skill Review</h2>
+    <p class="mb-6 text-[#a9b1bb]">Practice questions on your weaker skills to strengthen understanding.</p>
+
+    <div *ngIf="weakSkills.length > 0; else noSkills" class="mb-6">
+      <h3 class="mb-3 text-sm font-medium text-[#a9b1bb]">Skills to review:</h3>
+      <div class="flex flex-wrap justify-center gap-2">
+        <span *ngFor="let skill of weakSkills" class="rounded-full border border-[#1f2937] bg-[#0b0f14] px-3 py-1 text-sm text-[#a9b1bb]">{{ skill }}</span>
+      </div>
+    </div>
+    <ng-template #noSkills>
+      <p class="mb-6 text-[#6b7280]">No weak skills identified. Great job!</p>
+    </ng-template>
+
+    <button (click)="startReviewSession()" [disabled]="weakSkills.length === 0" class="rounded-lg bg-[#60a5fa] px-6 py-3 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+      Start Review Session
+    </button>
+  </div>
+</div>
+
+<!-- Active Session View -->
+<div *ngIf="currentSession as session"
+  role="region"
+  [attr.aria-label]="a11yLabel || 'Review question'"
+  class="mx-auto w-full max-w-4xl rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm">
+  <div class="p-6">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <ng-icon name="lucideTarget" class="h-6 w-6 text-[#60a5fa]"></ng-icon>
+          <h2 class="text-xl font-semibold text-[#e5e7eb]">Skill Review</h2>
+        </div>
+
+        <div class="flex items-center gap-4 text-sm text-[#a9b1bb]">
+          <span>Question {{ currentQuestionIndex + 1 }} of {{ session.questions.length }}</span>
+          <div *ngIf="timeRemaining !== null && showTimer" class="flex items-center gap-1">
+            <ng-icon name="lucideClock" class="h-4 w-4"></ng-icon>
+            <span [ngClass]="timeRemaining < 60 ? 'text-red-500' : ''">{{ formatTime(timeRemaining || 0) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div *ngIf="showProgress" class="h-2 bg-[#1f2937] rounded-full overflow-hidden">
+        <div class="h-full bg-[#60a5fa] transition-all duration-300" [style.width.%]="((currentQuestionIndex + 1) / session.questions.length) * 100"></div>
+      </div>
+    </div>
+
+    <!-- Question -->
+    <div class="mb-6" *ngIf="session.questions[currentQuestionIndex] as currentQuestion">
+      <div class="mb-3 flex items-center gap-2">
+        <span class="rounded border border-[#1f2937] bg-[#0b0f14] px-2 py-1 text-xs text-[#a9b1bb]">{{ currentQuestion.skillTag }}</span>
+        <span class="rounded border px-2 py-1 text-xs"
+              [ngClass]="currentQuestion.difficulty === 'easy' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : (currentQuestion.difficulty === 'medium' ? 'border-amber-500/20 bg-amber-500/10 text-amber-500' : 'border-red-500/20 bg-red-500/10 text-red-500')">
+          {{ currentQuestion.difficulty }}
+        </span>
+      </div>
+
+      <h3 class="mb-4 text-lg font-medium text-[#e5e7eb]">{{ currentQuestion.question }}</h3>
+
+      <!-- Multiple Choice -->
+      <div *ngIf="currentQuestion.type === 'multiple-choice' && currentQuestion.options as options" class="space-y-2">
+        <button *ngFor="let option of options; let idx = index"
+                (click)="handleAnswer(currentQuestion.id, option)"
+                class="w-full rounded-lg border p-3 text-left transition-colors"
+                [ngClass]="isSelectedAnswer(currentQuestion.id, option) ? 'border-[#60a5fa] bg-[#60a5fa]/10 text-[#60a5fa]' : 'border-[#1f2937] bg-[#0b0f14] text-[#a9b1bb] hover:bg-[#0e1318]'">
+          {{ option }}
+        </button>
+      </div>
+
+      <!-- True/False -->
+      <div *ngIf="currentQuestion.type === 'true-false'" class="flex gap-3">
+        <button *ngFor="let tf of ['True','False']"
+                (click)="handleAnswer(currentQuestion.id, tf)"
+                class="flex-1 rounded-lg border p-3 text-center transition-colors"
+                [ngClass]="isSelectedTF(currentQuestion.id, tf) ? 'border-[#60a5fa] bg-[#60a5fa]/10 text-[#60a5fa]' : 'border-[#1f2937] bg-[#0b0f14] text-[#a9b1bb] hover:bg-[#0e1318]'">
+          {{ tf }}
+        </button>
+      </div>
+
+      <!-- Short Answer -->
+      <textarea *ngIf="currentQuestion.type === 'short-answer'"
+                [(ngModel)]="userAnswers[currentQuestion.id]"
+                (ngModelChange)="handleAnswer(currentQuestion.id, $event)"
+                placeholder="Type your answer..."
+                rows="3"
+                class="w-full resize-none rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#60a5fa] focus:outline-none"></textarea>
+    </div>
+
+    <!-- Explanation -->
+    <div *ngIf="showExplanations && session.questions[currentQuestionIndex] as q"
+         class="mb-6 rounded-lg border border-blue-500/20 bg-blue-500/10 p-4"
+         [hidden]="!userAnswers[q.id] || !q.explanation">
+      <h4 class="mb-2 font-medium text-blue-400">Explanation</h4>
+      <p class="text-sm text-[#a9b1bb]">{{ q.explanation }}</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-between" *ngIf="session.questions[currentQuestionIndex] as q2">
+      <div class="text-sm text-[#6b7280]">
+        Skill: {{ q2.skillTag }} • Accuracy: {{ (getQuestionAccuracy(q2) * 100) | number:'1.0-0' }}%
+      </div>
+
+      <button (click)="nextQuestion()"
+              [disabled]="!userAnswers[q2.id]"
+              class="rounded-lg bg-[#60a5fa] px-6 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+        {{ currentQuestionIndex < session.questions.length - 1 ? 'Next Question' : 'Complete Review' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+

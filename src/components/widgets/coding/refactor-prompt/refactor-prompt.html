@@ -1,0 +1,171 @@
+<div
+  role="group"
+  [attr.aria-label]="a11yLabel || ('Code refactoring exercise: ' + prompt)"
+  [class]="getRootClasses()"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between border-b border-[#1f2937] p-4">
+    <div class="flex items-center gap-3">
+      <ng-icon name="lucideWrench" class="h-6 w-6 text-[#60a5fa]"></ng-icon>
+      <div>
+        <h3 class="text-lg font-semibold text-[#e5e7eb]">Code Refactoring</h3>
+        <p class="text-sm text-[#a9b1bb]">{{ language }}</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <div class="text-sm text-[#a9b1bb]">
+        {{ selectedSuggestions().size }} of {{ requiredRefactors }} required
+      </div>
+
+      <div class="flex rounded-lg border border-[#1f2937]">
+        <button type="button" (click)="setMode('edit')" [class]="getToggleButtonClass('edit')">Edit</button>
+        <button type="button" (click)="setMode('compare')" [class]="getToggleButtonClass('compare')">Compare</button>
+        <button type="button" (click)="setMode('suggestions')" [class]="getToggleButtonClass('suggestions')">Suggestions</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="p-4">
+    <!-- Prompt -->
+    <div class="mb-6">
+      <h4 class="text-base font-medium text-[#e5e7eb] mb-2">Refactoring Task</h4>
+      <p class="text-[#a9b1bb]">{{ prompt }}</p>
+    </div>
+
+    <ng-container [ngSwitch]="viewMode()">
+      <!-- Edit Mode -->
+      <ng-container *ngSwitchCase="'edit'">
+        <div class="mb-4">
+          <h5 class="text-sm font-medium text-[#e5e7eb] mb-2">Original Code:</h5>
+          <pre class="overflow-x-auto rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-sm text-[#e5e7eb]"><code>{{ originalCode }}</code></pre>
+        </div>
+
+        <div class="mb-4" *ngIf="allowCustomSolution">
+          <h5 class="text-sm font-medium text-[#e5e7eb] mb-2">Your Refactored Code:</h5>
+          <textarea
+            [value]="customCode()"
+            (input)="handleCodeInput($any($event.target).value)"
+            placeholder="Refactor the code above..."
+            class="w-full resize-none rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 font-mono text-sm text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#60a5fa] focus:outline-none"
+            rows="10"
+            style="font-family: 'Fira Code', 'Monaco', 'Consolas', monospace"
+          ></textarea>
+        </div>
+      </ng-container>
+
+      <!-- Compare Mode -->
+      <ng-container *ngSwitchCase="'compare'">
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <h5 class="text-sm font-medium text-[#e5e7eb] mb-2 flex items-center gap-2">
+              <ng-icon name="lucideX" class="h-4 w-4 text-red-500"></ng-icon>
+              Original Code
+            </h5>
+            <pre class="overflow-x-auto rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-sm text-[#e5e7eb]"><code>{{ originalCode }}</code></pre>
+          </div>
+          <div>
+            <h5 class="text-sm font-medium text-[#e5e7eb] mb-2 flex items-center gap-2">
+              <ng-icon name="lucideCircleCheck" class="h-4 w-4 text-emerald-500"></ng-icon>
+              Your Refactored Code
+            </h5>
+            <pre class="overflow-x-auto rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm text-[#e5e7eb]"><code>{{ customCode() || '// No changes made yet...' }}</code></pre>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Suggestions Mode -->
+      <ng-container *ngSwitchCase="'suggestions'">
+        <div class="space-y-4">
+          <h5 class="text-sm font-medium text-[#e5e7eb]">Refactoring Suggestions:</h5>
+          <div *ngFor="let suggestion of suggestions" [class]="getSuggestionContainerClass(suggestion.id)">
+            <div class="flex items-start gap-3">
+              <input
+                type="checkbox"
+                [checked]="isSelected(suggestion.id)"
+                (change)="handleSuggestionToggle(suggestion.id)"
+                class="mt-1 h-4 w-4 rounded border-[#1f2937] bg-[#0a0e12] text-[#60a5fa] focus:ring-[#60a5fa]"
+              />
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="font-medium text-[#e5e7eb]">{{ suggestion.title }}</span>
+                  <div [class]="getDifficultyChipClass(suggestion.difficulty)">{{ suggestion.difficulty }}</div>
+                  <div [class]="getTypeClass(suggestion.type)">
+                    <ng-icon [name]="getTypeIconName(suggestion.type)" class="h-4 w-4"></ng-icon>
+                    {{ suggestion.type }}
+                  </div>
+                </div>
+                <p class="text-sm text-[#a9b1bb] mb-3">{{ suggestion.description }}</p>
+                <div class="grid gap-3 md:grid-cols-2">
+                  <div>
+                    <div class="text-xs text-red-400 mb-1">Before:</div>
+                    <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-xs text-[#e5e7eb]"><code>{{ suggestion.beforeCode }}</code></pre>
+                  </div>
+                  <div>
+                    <div class="text-xs text-emerald-400 mb-1">After:</div>
+                    <pre class="overflow-x-auto rounded bg-[#0a0e12] p-2 text-xs text-[#e5e7eb]"><code>{{ suggestion.afterCode }}</code></pre>
+                  </div>
+                </div>
+                <div *ngIf="showBenefits && suggestion.benefits.length > 0" class="mt-3">
+                  <div class="text-xs text-[#6b7280] mb-1">Benefits:</div>
+                  <div class="flex flex-wrap gap-1">
+                    <span *ngFor="let b of suggestion.benefits; let i = index" class="rounded bg-[#0a0e12] px-2 py-0.5 text-xs text-[#a9b1bb]">{{ b }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- Hint -->
+    <div *ngIf="uiShowHints" class="mt-4">
+      <button type="button" (click)="handleHintToggle()" class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] transition-colors">
+        <ng-icon name="lucideLightbulb" class="h-4 w-4"></ng-icon>
+        {{ showHint() ? 'Hide Hint' : 'Show Refactoring Tips' }}
+      </button>
+      <div *ngIf="showHint()" class="mt-2 rounded-lg border border-blue-500/20 bg-blue-500/10 p-3">
+        <h5 class="text-sm font-medium text-blue-400 mb-2">Refactoring Principles:</h5>
+        <ul class="text-sm text-[#a9b1bb] space-y-1">
+          <li>• <strong>DRY (Don't Repeat Yourself):</strong> Eliminate code duplication</li>
+          <li>• <strong>Single Responsibility:</strong> Each function/method should do one thing</li>
+          <li>• <strong>Readability:</strong> Code should be self-documenting</li>
+          <li>• <strong>Maintainability:</strong> Easy to modify and extend</li>
+          <li>• <strong>Performance:</strong> Optimize without sacrificing clarity</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Common Issues -->
+    <div class="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3">
+      <h5 class="text-sm font-medium text-amber-400 mb-2 flex items-center gap-2">
+        <ng-icon name="lucideTriangle" class="h-4 w-4"></ng-icon>
+        Common Refactoring Mistakes to Avoid:
+      </h5>
+      <ul class="text-sm text-[#a9b1bb] space-y-1">
+        <li>• Over-engineering simple solutions</li>
+        <li>• Changing functionality while refactoring</li>
+        <li>• Making code harder to understand</li>
+        <li>• Not testing after refactoring</li>
+        <li>• Refactoring without understanding the code</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-between border-t border-[#1f2937] p-4">
+    <div class="text-sm text-[#6b7280]">{{ selectedSuggestions().size }} refactorings applied</div>
+    <div class="flex items-center gap-2">
+      <div *ngIf="timeLimit" class="text-sm text-[#6b7280]">
+        Time remaining: {{ Math.floor(timeLimit / 60) }}:{{ (timeLimit % 60) < 10 ? ('0' + (timeLimit % 60)) : (timeLimit % 60) }}
+      </div>
+      <button type="button" (click)="handleSubmit()" [disabled]="selectedSuggestions().size < requiredRefactors && !customCode().trim()" class="rounded-lg bg-[#60a5fa] px-4 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+        Submit Refactoring
+      </button>
+    </div>
+  </div>
+</div>
+
+

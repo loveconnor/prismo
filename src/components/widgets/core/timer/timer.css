@@ -1,0 +1,327 @@
+/* Timer Widget Styles */
+
+/* Tabular nums for monospace numbers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Timer display animations */
+.timer-display {
+  transition: color 0.3s ease, transform 0.1s ease;
+}
+
+.timer-pulse {
+  animation: timerPulse 1s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 0.25s ease-out, background-color 0.3s ease;
+}
+
+/* Button animations */
+button {
+  transition: all 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Spin animation for reset button on click */
+.reset-spin {
+  animation: spin 0.5s ease-out;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Nudge message animation */
+.nudge-message {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Expired state animation */
+.expired-bounce {
+  animation: bounce 0.5s ease-out;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Keyboard shortcut badge */
+kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* Focus visible for accessibility */
+button:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* Timer states visual feedback */
+[data-state="running"] .timer-display {
+  color: #10b981;
+}
+
+[data-state="paused"] .timer-display {
+  color: #f59e0b;
+}
+
+[data-state="expired"] .timer-display {
+  color: #ef4444;
+  animation: timerPulse 1s ease-in-out infinite;
+}
+
+/* Pill variant specific styles */
+.timer-pill {
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Warning state for low time */
+.time-warning {
+  animation: warningPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% {
+    color: #ef4444;
+  }
+  50% {
+    color: #f87171;
+  }
+}
+
+/* Add time button animation */
+.add-time-pop {
+  animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Mute button icon transition */
+.mute-icon {
+  transition: transform 0.2s ease;
+}
+
+.mute-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Progress bar color transitions */
+.progress-bar-green {
+  background-color: #10b981;
+}
+
+.progress-bar-amber {
+  background-color: #f59e0b;
+}
+
+.progress-bar-red {
+  background-color: #ef4444;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  /* Hide keyboard shortcuts on mobile */
+  kbd {
+    display: none !important;
+  }
+  
+  /* Stack controls vertically on small screens */
+  .timer-controls {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .timer-controls button {
+    width: 100%;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  button {
+    border-width: 2px;
+  }
+  
+  .timer-display {
+    font-weight: 600;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Critical alert visual shake */
+.alert-critical {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Timer container hover effect */
+.timer-container:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Disabled state */
+[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Loading state for buttons */
+.button-loading {
+  position: relative;
+  color: transparent;
+}
+
+.button-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  margin-top: -0.5rem;
+  margin-left: -0.5rem;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* State badge animation */
+.state-badge {
+  transition: all 0.2s ease;
+}
+
+/* Countdown urgency indicators */
+.countdown-critical {
+  animation: countdownCritical 1s ease-in-out infinite;
+}
+
+@keyframes countdownCritical {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
+}
+
+/* Milliseconds display */
+.milliseconds {
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+
+/* Alert severity indicators */
+.alert-info {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+}
+
+.alert-warn {
+  border-color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+}
+
+.alert-critical {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+}
+

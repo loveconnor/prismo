@@ -1,0 +1,97 @@
+<div
+  role="status"
+  [attr.aria-label]="'Progress checkpoint'"
+  [ngClass]="{
+    'rounded-lg border border-[#1f2937] bg-[#0e1318] p-4 shadow-sm': variant === 'default',
+    'rounded-lg border border-[#1f2937] bg-[#0e1318] p-3': variant === 'compact',
+    'rounded-lg border border-[#1f2937] bg-[#0e1318] flex items-center gap-3 p-2': variant === 'inline'
+  }"
+>
+  <ng-container *ngIf="variant === 'inline'; else blockVariant">
+    <div class="flex items-center gap-2" [ngClass]="getStatusColor()">
+      <!-- Icon -->
+      <ng-container [ngSwitch]="checkpointState()">
+        <div *ngSwitchCase="'saving'" class="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+        <ng-icon *ngSwitchCase="'saved'" name="lucideCircleCheck" class="h-4 w-4"></ng-icon>
+        <ng-icon *ngSwitchCase="'error'" name="lucideCircleAlert" class="h-4 w-4"></ng-icon>
+        <ng-icon *ngSwitchCase="'restoring'" name="lucideRotateCcw" class="h-4 w-4 animate-spin"></ng-icon>
+        <ng-icon *ngSwitchDefault name="lucideSave" class="h-4 w-4"></ng-icon>
+      </ng-container>
+      <span class="text-sm font-medium">{{ getStatusText() }}</span>
+    </div>
+
+    <div *ngIf="showProgressBar" class="flex-1">
+      <div class="h-2 bg-[#1f2937] rounded-full overflow-hidden">
+        <div class="h-full bg-[#60a5fa] transition-all duration-300" [style.width.%]="progressPercent"></div>
+      </div>
+    </div>
+
+    <span *ngIf="showLastSaved && lastSaveTimeSig()" class="text-xs text-[#6b7280]">
+      {{ formatTimeAgo(lastSaveTimeSig()!) }}
+    </span>
+  </ng-container>
+
+  <ng-template #blockVariant>
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2" [ngClass]="getStatusColor()">
+          <ng-container [ngSwitch]="checkpointState()">
+            <div *ngSwitchCase="'saving'" class="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+            <ng-icon *ngSwitchCase="'saved'" name="lucideCircleCheck" class="h-4 w-4"></ng-icon>
+            <ng-icon *ngSwitchCase="'error'" name="lucideCircleAlert" class="h-4 w-4"></ng-icon>
+            <ng-icon *ngSwitchCase="'restoring'" name="lucideRotateCcw" class="h-4 w-4 animate-spin"></ng-icon>
+            <ng-icon *ngSwitchDefault name="lucideSave" class="h-4 w-4"></ng-icon>
+          </ng-container>
+          <h3 class="text-sm font-semibold text-[#e5e7eb]">Progress Checkpoint</h3>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-[#6b7280]">{{ progressPercent }}% complete</span>
+        <button
+          *ngIf="autoSave"
+          (click)="handleSave()"
+          [disabled]="checkpointState() === 'saving'"
+          class="inline-flex items-center gap-1 rounded border border-[#1f2937] bg-[#0b0f14] px-2 py-1 text-xs text-[#a9b1bb] hover:bg-[#0e1318] disabled:opacity-50"
+          title="Save now"
+        >
+          <ng-icon name="lucideSave" class="h-3 w-3"></ng-icon>
+          Save
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div *ngIf="showProgressBar" class="mt-3">
+      <div class="h-2 bg-[#1f2937] rounded-full overflow-hidden">
+        <div class="h-full bg-[#60a5fa] transition-all duration-300" [style.width.%]="progressPercent"></div>
+      </div>
+    </div>
+
+    <!-- Status and Last Saved -->
+    <div class="mt-3 flex items-center justify-between">
+      <span class="text-sm" [ngClass]="getStatusColor()">{{ getStatusText() }}</span>
+      <div *ngIf="showLastSaved && lastSaveTimeSig()" class="flex items-center gap-1 text-xs text-[#6b7280]">
+        <ng-icon name="lucideClock" class="h-3 w-3"></ng-icon>
+        Saved {{ formatTimeAgo(lastSaveTimeSig()!) }}
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="checkpointState() === 'error'" class="mt-3 rounded border border-red-500/20 bg-red-500/10 p-2">
+      <div class="flex items-center gap-2">
+        <ng-icon name="lucideCircleAlert" class="h-4 w-4 text-red-500"></ng-icon>
+        <span class="text-sm text-red-400">Failed to save progress. Check your connection.</span>
+        <button (click)="handleSave()" class="ml-auto text-xs text-red-400 hover:text-red-300">Retry</button>
+      </div>
+    </div>
+
+    <!-- Restore Option -->
+    <div *ngIf="lastSaveTimeSig()" class="mt-3 flex justify-end">
+      <button (click)="handleRestore()" class="text-xs text-[#60a5fa] hover:text-[#3b82f6]">Restore to last checkpoint</button>
+    </div>
+  </ng-template>
+</div>
+
+

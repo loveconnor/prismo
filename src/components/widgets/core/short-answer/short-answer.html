@@ -1,0 +1,90 @@
+<div
+  role="group"
+  [attr.aria-label]="a11yLabel || 'Short answer question: ' + question"
+  [ngClass]="getContainerClasses()"
+>
+  <!-- Question -->
+  <div class="mb-4">
+    <h3 class="text-lg font-semibold text-[#e5e7eb]">{{ question }}</h3>
+  </div>
+
+  <!-- Input -->
+  <div class="mb-4">
+    <textarea
+      [id]="id + '-input'"
+      [value]="answer()"
+      (input)="handleInputChange($event)"
+      (keydown)="handleKeyDown($event)"
+      [placeholder]="placeholder"
+      [disabled]="isTextareaDisabled()"
+      [ngClass]="getTextareaClasses()"
+      [attr.maxlength]="maxLength"
+      rows="3"
+    ></textarea>
+
+    <!-- Character count -->
+    <div *ngIf="showCharCountUI" class="mt-1 flex justify-between text-xs text-[#6b7280]">
+      <span>
+        <ng-container *ngIf="isTooShort && charCount > 0">
+          Need {{ minLength - charCount }} more characters
+        </ng-container>
+      </span>
+      <span [class.text-red-500]="isAtLimit">
+        {{ charCount }}/{{ maxLength }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <div *ngIf="componentState() !== 'submitted'" class="flex justify-center">
+    <button
+      (click)="handleSubmit()"
+      [disabled]="isButtonDisabled()"
+      [ngClass]="getButtonClasses()"
+      type="button"
+    >
+      <ng-container *ngIf="componentState() === 'submitting'">
+        <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+        Checking...
+      </ng-container>
+      <ng-container *ngIf="componentState() !== 'submitting'">
+        Submit Answer
+        <ng-icon name="lucideSend" class="h-4 w-4"></ng-icon>
+      </ng-container>
+    </button>
+  </div>
+
+  <!-- Feedback -->
+  <div
+    *ngIf="componentState() === 'submitted' && feedback() && showFeedback"
+    class="mt-4 rounded-lg border p-4"
+    [class.border-emerald-500/20]="feedback()?.isCorrect"
+    [class.border-red-500/20]="!feedback()?.isCorrect"
+  >
+    <div class="flex items-start gap-3">
+      <ng-icon
+        *ngIf="feedback()?.isCorrect"
+        name="lucideCircleCheck"
+        class="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5"
+      ></ng-icon>
+      <ng-icon
+        *ngIf="!feedback()?.isCorrect"
+        name="lucideCircleX"
+        class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"
+      ></ng-icon>
+      <div>
+        <p
+          class="font-medium"
+          [class.text-emerald-500]="feedback()?.isCorrect"
+          [class.text-red-500]="!feedback()?.isCorrect"
+        >
+          {{ feedback()?.isCorrect ? 'Correct!' : 'Incorrect' }}
+        </p>
+        <p *ngIf="feedback()?.message" class="mt-1 text-sm text-[#a9b1bb]">
+          {{ feedback()?.message }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+

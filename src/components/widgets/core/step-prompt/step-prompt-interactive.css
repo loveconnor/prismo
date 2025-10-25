@@ -1,0 +1,235 @@
+/* Step Prompt Interactive Styles */
+
+/* Prose styling for markdown content */
+.step-prompt-content {
+  color: #e5e7eb;
+}
+
+.step-prompt-content p {
+  margin-bottom: 0.75rem;
+  line-height: 1.625;
+}
+
+.step-prompt-content ul,
+.step-prompt-content ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.step-prompt-content li {
+  margin-bottom: 0.5rem;
+}
+
+.step-prompt-content code {
+  background-color: #0a0e12;
+  border: 1px solid #1f2937;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.875rem;
+  color: #e5e7eb;
+}
+
+.step-prompt-content pre {
+  background-color: #0a0e12;
+  border: 1px solid #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.step-prompt-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.step-prompt-content strong {
+  font-weight: 600;
+  color: #f3f4f6;
+}
+
+.step-prompt-content em {
+  font-style: italic;
+}
+
+.step-prompt-content a {
+  color: #60a5fa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.step-prompt-content a:hover {
+  color: #93c5fd;
+}
+
+.step-prompt-content h1,
+.step-prompt-content h2,
+.step-prompt-content h3,
+.step-prompt-content h4,
+.step-prompt-content h5,
+.step-prompt-content h6 {
+  font-weight: 600;
+  color: #f3f4f6;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.step-prompt-content h1 {
+  font-size: 1.5rem;
+}
+
+.step-prompt-content h2 {
+  font-size: 1.25rem;
+}
+
+.step-prompt-content h3 {
+  font-size: 1.125rem;
+}
+
+.step-prompt-content blockquote {
+  border-left: 3px solid #374151;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.step-prompt-content hr {
+  border: none;
+  border-top: 1px solid #1f2937;
+  margin: 1.5rem 0;
+}
+
+/* Custom scrollbar for code blocks */
+.step-prompt-content pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.step-prompt-content pre::-webkit-scrollbar-track {
+  background: #0e1318;
+  border-radius: 4px;
+}
+
+.step-prompt-content pre::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+.step-prompt-content pre::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* Animation classes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Focus visible styles for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* Keyboard shortcut badge styling */
+kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .step-prompt-content {
+    font-size: 0.9375rem;
+  }
+  
+  .step-prompt-content h1 {
+    font-size: 1.25rem;
+  }
+  
+  .step-prompt-content h2 {
+    font-size: 1.125rem;
+  }
+  
+  .step-prompt-content h3 {
+    font-size: 1rem;
+  }
+}
+
+/* State-specific styles */
+[data-state="completed"] {
+  opacity: 0.9;
+}
+
+[data-state="completed"] button:not([data-allow-interaction]) {
+  pointer-events: none;
+}
+
+/* Loading state */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Error state */
+.error-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translateX(-1px);
+  }
+  20%, 80% {
+    transform: translateX(2px);
+  }
+  30%, 50%, 70% {
+    transform: translateX(-3px);
+  }
+  40%, 60% {
+    transform: translateX(3px);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .step-prompt-content {
+    color: #ffffff;
+  }
+  
+  button {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

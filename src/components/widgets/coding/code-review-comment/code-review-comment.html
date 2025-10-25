@@ -1,0 +1,91 @@
+<div class="relative">
+  <div class="flex gap-4 items-start" [ngClass]="getPositionClass()">
+    <!-- Code Block -->
+    <div class="flex-1 min-w-0" *ngIf="code">
+      <div class="rounded-lg overflow-hidden border border-border bg-background">
+        <div *ngIf="lineNumber" class="flex items-center gap-2 px-4 py-2 border-b border-border bg-accent">
+          <div class="text-xs text-muted-foreground">Line {{ lineNumber }}</div>
+          <div class="text-xs text-muted-foreground">{{ language }}</div>
+        </div>
+        <div class="relative">
+          <div *ngIf="showLineHighlight" class="absolute inset-0 opacity-20" [ngClass]="getTypeClasses().bg"></div>
+          <pre class="p-4 overflow-x-auto"><code class="text-sm text-foreground">{{ code }}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comment Card -->
+    <div class="flex-1 min-w-0 max-w-md">
+      <div class="rounded-lg border-2 overflow-hidden" [ngClass]="[getTypeClasses().border, getTypeClasses().bg, isResolved ? 'opacity-60' : '']">
+        <!-- Header -->
+        <div class="px-4 py-3 flex items-center justify-between cursor-pointer" [ngClass]="getTypeClasses().header" (click)="toggleExpanded()">
+          <div class="flex items-center gap-2">
+            <ng-icon [name]="getIconName()" class="h-4 w-4" [ngClass]="getTypeClasses().icon"></ng-icon>
+            <h4 *ngIf="title; else typeLabel" class="font-semibold text-sm text-foreground">{{ title }}</h4>
+            <ng-template #typeLabel>
+              <span class="font-medium text-sm capitalize text-foreground">{{ commentType }}</span>
+            </ng-template>
+          </div>
+          <ng-icon name="lucideChevronDown" class="h-4 w-4 text-muted-foreground" [style.transform]="isExpanded() ? 'rotate(180deg)' : 'rotate(0deg)'" [style.transition]="'transform 0.2s ease'" />
+        </div>
+
+        <!-- Content -->
+        <div *ngIf="isExpanded()">
+          <div class="px-4 py-3 space-y-3">
+            <!-- Author & Timestamp -->
+            <div class="flex items-center justify-between text-xs text-muted-foreground">
+              <div class="flex items-center gap-2">
+                <span class="font-medium text-foreground">{{ author }}</span>
+                <span class="text-xs text-muted-foreground">(AI)</span>
+              </div>
+              <span *ngIf="timestamp">{{ timestamp }}</span>
+            </div>
+
+            <!-- Message -->
+            <div class="text-sm leading-relaxed text-foreground">{{ message }}</div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3 pt-2 border-t border-border">
+              <button type="button" (click)="handleLike()" class="flex items-center gap-1 text-xs px-2 py-1 rounded hover:bg-accent transition-colors" [ngClass]="hasLiked() ? 'text-sky-400' : 'text-muted-foreground'">
+                <ng-icon name="lucideThumbsUp" class="h-4 w-4"></ng-icon>
+                <span>{{ likes() > 0 ? likes() : '' }}</span>
+              </button>
+
+              <button type="button" (click)="toggleReply()" class="flex items-center gap-1 text-xs px-2 py-1 rounded text-muted-foreground hover:bg-accent transition-colors">
+                <ng-icon name="lucideReply" class="h-4 w-4"></ng-icon>
+                <span>Reply</span>
+              </button>
+
+              <button *ngIf="onResolve && !isResolved" type="button" (click)="handleResolve()" class="flex items-center gap-1 text-xs px-2 py-1 rounded text-emerald-400 hover:bg-accent transition-colors ml-auto">
+                <ng-icon name="lucideCircleCheck" class="h-4 w-4"></ng-icon>
+                <span>Resolve</span>
+              </button>
+
+              <div *ngIf="isResolved" class="flex items-center gap-1 text-xs text-emerald-400 ml-auto">
+                <ng-icon name="lucideCircleCheck" class="h-4 w-4"></ng-icon>
+                <span>Resolved</span>
+              </div>
+            </div>
+
+            <!-- Reply Input -->
+            <div *ngIf="showReply()" class="pt-2">
+              <textarea [value]="replyText()" (input)="replyText.set($any($event.target).value)" placeholder="Write a reply..." class="w-full px-3 py-2 text-sm border border-border bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none" rows="3"></textarea>
+              <div class="flex gap-2 mt-2">
+                <button type="button" (click)="handleReplySubmit()" [disabled]="!replyText().trim()" class="px-3 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Send</button>
+                <button type="button" (click)="showReply.set(false); replyText.set('');" class="px-3 py-1 text-xs bg-accent text-foreground rounded hover:bg-accent/70 transition-colors">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resolved Badge -->
+      <div *ngIf="isResolved" class="mt-2 text-xs text-emerald-400 flex items-center gap-1">
+        <ng-icon name="lucideCircleCheck" class="h-4 w-4"></ng-icon>
+        <span>This feedback has been addressed</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
