@@ -37,6 +37,17 @@ import { OrderItem } from '../../components/widgets/core/ordering/ordering';
 import { NumericInputComponent } from '../../components/widgets/core/numeric-input/numeric-input';
 import { NUMERIC_INPUT_METADATA } from '../../components/widgets/core/numeric-input/numeric-input.metadata';
 import { NumericConstraint } from '../../components/widgets/core/numeric-input/numeric-input';
+import { ErrorExplainComponent } from '../../components/widgets/core/error-explain/error-explain';
+import { ERROR_EXPLAIN_METADATA } from '../../components/widgets/core/error-explain/error-explain.metadata';
+import { CheckpointComponent } from '../../components/widgets/core/checkpoint/checkpoint';
+import { CHECKPOINT_METADATA } from '../../components/widgets/core/checkpoint/checkpoint.metadata';
+import { OutcomeSummaryComponent } from '../../components/widgets/core/outcome-summary/outcome-summary';
+import { OUTCOME_SUMMARY_METADATA } from '../../components/widgets/core/outcome-summary/outcome-summary.metadata';
+import { AdaptiveSummaryComponent } from '../../components/widgets/core/adaptive-summary/adaptive-summary';
+import { ADAPTIVE_SUMMARY_METADATA } from '../../components/widgets/core/adaptive-summary/adaptive-summary.metadata';
+import { GoalSetterComponent } from '../../components/widgets/core/goal-setter/goal-setter';
+import { GoalType, LearningGoal } from '../../components/widgets/core/goal-setter/goal-setter';
+import { GOAL_SETTER_METADATA } from '../../components/widgets/core/goal-setter/goal-setter.metadata';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -63,6 +74,11 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     MatchingPairsComponent,
     OrderingComponent,
     NumericInputComponent,
+    ErrorExplainComponent,
+    CheckpointComponent,
+    OutcomeSummaryComponent,
+    AdaptiveSummaryComponent,
+    GoalSetterComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
@@ -374,6 +390,13 @@ Try entering your answer below and click submit. You can also:
     { leftId: 'symbol4', rightId: 'name4', explanation: 'O₂ is molecular oxygen, the form we breathe.' }
   ];
 
+  // Goals demo data
+  goalsDemo: LearningGoal[] = [
+    { id: 'g1', type: 'learning' as GoalType, title: 'Master recursion', description: 'Practice recursive thinking daily', targetValue: 10, currentValue: 4, priority: 'high', status: 'active', createdAt: new Date(), tags: ['algorithms'] },
+    { id: 'g2', type: 'time' as GoalType, title: 'Study 5 hours', targetValue: 300, currentValue: 120, priority: 'medium', status: 'active', createdAt: new Date(), deadline: new Date(Date.now() + 86400000) },
+    { id: 'g3', type: 'completion' as GoalType, title: 'Finish two labs', description: 'Complete Labs 3 and 4', priority: 'low', status: 'completed', createdAt: new Date() }
+  ];
+
   // Ordering event handlers
   handleOrderingReorder(event: any) {
     this.logEvent('Items Reordered', event);
@@ -434,6 +457,15 @@ Try entering your answer below and click submit. You can also:
 
   handleNumericInputSubmit(event: any) {
     this.logEvent('Numeric Input Submitted', event);
+  }
+
+  // Error Explain event handlers
+  handleErrorDismiss() {
+    this.logEvent('Error Dismissed', {});
+  }
+
+  handleErrorFixApplied() {
+    this.logEvent('Error Fix Applied', {});
   }
 }
 

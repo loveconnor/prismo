@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.rotate-90 {
+  transform: rotate(90deg);
+}
+
+.transition-transform {
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+

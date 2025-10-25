@@ -1143,6 +1143,304 @@
     </app-card>
   </div>
 
+  <!-- Error Explain Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Error Explain Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Error explanations with fix steps and code examples
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Python TypeError -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Python TypeError</h3>
+            <app-error-explain
+              id="showcase-err-1"
+              errorSignature="TypeError: unsupported operand type(s) for +: 'int' and 'str'"
+              errorMessage="Cannot concatenate an integer and a string"
+              explanation="Python doesn't allow you to add a number and a string together directly. You need to convert one type to match the other."
+              [fixSteps]="[
+                'Convert the integer to a string using str()',
+                'Or convert the string to an integer using int()',
+                'Then perform the operation'
+              ]"
+              [relatedConcepts]="['type conversion', 'string concatenation', 'data types']"
+              codeExample="# Wrong:\nage = 25\nprint('Age: ' + age)\n\n# Correct:\nage = 25\nprint('Age: ' + str(age))"
+              [ui]="{ variant: 'default', showCodeExample: true, emphasizeFix: true }"
+              [onDismiss]="handleErrorDismiss.bind(this)"
+              [onFixApplied]="handleErrorFixApplied.bind(this)"
+              (dismiss)="handleErrorDismiss()"
+              (fixApplied)="handleErrorFixApplied()"
+            ></app-error-explain>
+          </div>
+
+          <!-- JavaScript Undefined -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">JavaScript Undefined Property</h3>
+            <app-error-explain
+              id="showcase-err-2"
+              errorSignature="TypeError: Cannot read property 'name' of undefined"
+              errorMessage="Attempting to access a property on an undefined object"
+              explanation="This error occurs when you try to access a property on a variable that hasn't been initialized or doesn't exist."
+              [fixSteps]="[
+                'Check if the object exists before accessing properties',
+                'Use optional chaining (?.) operator',
+                'Provide a default value with nullish coalescing (??)'
+              ]"
+              [relatedConcepts]="['optional chaining', 'nullish coalescing', 'defensive programming']"
+              codeExample="// Wrong:\nconst name = user.profile.name;\n\n// Correct:\nconst name = user?.profile?.name ?? 'Anonymous';"
+              [ui]="{ variant: 'default', showCodeExample: true, emphasizeFix: true }"
+              [onDismiss]="handleErrorDismiss.bind(this)"
+              [onFixApplied]="handleErrorFixApplied.bind(this)"
+              (dismiss)="handleErrorDismiss()"
+              (fixApplied)="handleErrorFixApplied()"
+            ></app-error-explain>
+          </div>
+
+          <!-- Array Index Out of Bounds -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Array Index Error (Compact)</h3>
+            <app-error-explain
+              id="showcase-err-3"
+              errorSignature="IndexError: list index out of range"
+              errorMessage="Trying to access an array element that doesn't exist"
+              explanation="You're trying to access an index that's beyond the length of the array. Remember, arrays are zero-indexed!"
+              [fixSteps]="[
+                'Check the array length before accessing',
+                'Use array.length - 1 for the last element',
+                'Add bounds checking in your loops'
+              ]"
+              [relatedConcepts]="['array indexing', 'zero-based indexing', 'bounds checking']"
+              codeExample="# Wrong:\narr = [1, 2, 3]\nprint(arr[3])\n\n# Correct:\nprint(arr[2])  # Last element"
+              [ui]="{ variant: 'compact', showCodeExample: true, emphasizeFix: true }"
+              [onDismiss]="handleErrorDismiss.bind(this)"
+              [onFixApplied]="handleErrorFixApplied.bind(this)"
+              (dismiss)="handleErrorDismiss()"
+              (fixApplied)="handleErrorFixApplied()"
+            ></app-error-explain>
+          </div>
+
+          <!-- Null Pointer -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Null Pointer Exception (Inline)</h3>
+            <app-error-explain
+              id="showcase-err-4"
+              errorSignature="NullPointerException"
+              errorMessage="Object reference not set to an instance"
+              explanation="You're trying to use an object that hasn't been created yet. Make sure to initialize objects before using them."
+              [fixSteps]="[
+                'Initialize the object before use',
+                'Check for null before accessing',
+                'Use null-safe operators where available'
+              ]"
+              [relatedConcepts]="['null safety', 'object initialization', 'defensive coding']"
+              [ui]="{ variant: 'inline', showCodeExample: false, emphasizeFix: true }"
+              [onDismiss]="handleErrorDismiss.bind(this)"
+              [onFixApplied]="handleErrorFixApplied.bind(this)"
+              (dismiss)="handleErrorDismiss()"
+              (fixApplied)="handleErrorFixApplied()"
+            ></app-error-explain>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Checkpoint Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Checkpoint Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Progress auto-save with manual save, retry, and restore
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Default Variant -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Default Variant</h3>
+            <app-checkpoint
+              id="showcase-cp-1"
+              [progressPercent]="45"
+              stepId="step-3"
+              labId="lab-xyz"
+              [autoSave]="true"
+              [autoSaveInterval]="15"
+              [ui]="{ variant: 'default', showProgressBar: true, showLastSaved: true }"
+            ></app-checkpoint>
+          </div>
+
+          <!-- Inline Variant -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Inline Variant</h3>
+            <app-checkpoint
+              id="showcase-cp-2"
+              [progressPercent]="70"
+              stepId="step-7"
+              [autoSave]="true"
+              [autoSaveInterval]="10"
+              [ui]="{ variant: 'inline', showProgressBar: true, showLastSaved: true }"
+            ></app-checkpoint>
+          </div>
+
+          <!-- Compact Variant (Manual Save) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Compact Variant (Manual Save)</h3>
+            <app-checkpoint
+              id="showcase-cp-3"
+              [progressPercent]="25"
+              stepId="step-1"
+              [autoSave]="false"
+              [ui]="{ variant: 'compact', showProgressBar: true, showLastSaved: true }"
+            ></app-checkpoint>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Outcome Summary Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Outcome Summary Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Completion stats, skill improvements, and next steps
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Default Variant -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Default Variant</h3>
+            <app-outcome-summary
+              id="showcase-os-1"
+              labId="lab-101"
+              labTitle="Intro to Algorithms"
+              outcomeType="completion"
+              [completionPercent]="100"
+              [timeSpent]="85"
+              [attempts]="1"
+              [score]="0.92"
+              [skillImprovements]="[
+                { skill: 'Recursion', previousLevel: 2, currentLevel: 4, improvement: 2 },
+                { skill: 'Complexity', previousLevel: 3, currentLevel: 4, improvement: 1 }
+              ]"
+              [keyTakeaways]="[
+                'Understand the base and recursive case',
+                'Mastered Big-O for common patterns'
+              ]"
+              [strengths]="['Problem Decomposition', 'Pattern Recognition']"
+              [areasForImprovement]="['Iterative DP', 'Space Complexity analysis']"
+              [nextLabSuggestions]="[
+                { id: 'lab-201', title: 'Dynamic Programming Basics', reason: 'Build on recursion with memoization', difficulty: 'medium', estimatedMinutes: 60 },
+                { id: 'lab-202', title: 'Greedy Algorithms', reason: 'Explore optimal local choices', difficulty: 'easy', estimatedMinutes: 45 }
+              ]"
+              [recommendedReview]="['Divide and Conquer', 'Tail Recursion']"
+            ></app-outcome-summary>
+          </div>
+
+          <!-- Celebration Variant -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Celebration Variant</h3>
+            <app-outcome-summary
+              id="showcase-os-2"
+              labId="lab-102"
+              labTitle="Data Structures Assessment"
+              outcomeType="assessment"
+              [completionPercent]="100"
+              [timeSpent]="55"
+              [attempts]="1"
+              [score]="0.88"
+              [ui]="{ variant: 'celebration', showSkillProgress: true, showNextSteps: true }"
+              [skillImprovements]="[
+                { skill: 'Trees', previousLevel: 3, currentLevel: 4, improvement: 1 },
+                { skill: 'Graphs', previousLevel: 2, currentLevel: 3, improvement: 1 }
+              ]"
+              [nextLabSuggestions]="[
+                { id: 'lab-203', title: 'Advanced Trees', reason: 'AVL, Red-Black Trees', difficulty: 'hard', estimatedMinutes: 90 }
+              ]"
+            ></app-outcome-summary>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Adaptive Summary Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Adaptive Summary Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Performance analysis and adaptive recommendations
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Default</h3>
+            <app-adaptive-summary
+              id="showcase-as-1"
+              sectionId="sec-1"
+              sectionTitle="Functions & Loops"
+              [timeSpent]="40"
+              [attempts]="3"
+              [hintsUsed]="1"
+              [successRate]="0.68"
+              [skillAssessments]="[
+                { skill: 'Functions', currentLevel: 3.2, targetLevel: 3.5, confidence: 0.8, recentPerformance: [0.5, 0.6, 0.8, 0.7, 0.75] },
+                { skill: 'Loops', currentLevel: 2.6, targetLevel: 3.0, confidence: 0.6, recentPerformance: [0.3, 0.4, 0.6, 0.55, 0.6] }
+              ]"
+              [adaptations]="[
+                { type: 'difficulty', direction: 'adjust', reason: 'concept_gaps', description: 'Introduce scaffolded loop exercises', impact: 'medium' },
+                { type: 'hints', direction: 'increase', reason: 'struggling', description: 'Enable contextual hints on incorrect attempts', impact: 'low' }
+              ]"
+              nextDifficulty="medium"
+              [estimatedTime]="30"
+              [recommendedFocus]="['Loop invariants', 'Function composition', 'Off-by-one errors']"
+            ></app-adaptive-summary>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Goal Setter Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Goal Setter Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Create and track learning goals
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Default</h3>
+            <app-goal-setter
+              id="showcase-gs-1"
+              context="general"
+              [goals]="goalsDemo"
+              [maxGoals]="5"
+              [ui]="{ variant: 'default', showProgress: true, showPriority: true, allowEditing: true }"
+            ></app-goal-setter>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
   <!-- Multiple Choice Widget Section -->
   <div class="mb-8">
     <app-card>

@@ -17,6 +17,101 @@
     "category": "core"
   },
   {
+    "id": "review-loop",
+    "title": "Review Loop",
+    "description": "Adaptive practice loop across weak skills with timer, progress, and detailed results.",
+    "skills": ["practice", "recall", "metacognition", "self-assessment"],
+    "difficulty": 3,
+    "estimated_time": 300,
+    "input_type": "multiple-choice",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": true,
+      "alternative_widgets": ["multiple-choice", "short-answer"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "goal-setter",
+    "title": "Goal Setter",
+    "description": "Create, track, and manage learning goals with priorities, deadlines, and progress",
+    "skills": ["planning", "self-regulation", "time-management"],
+    "difficulty": 1,
+    "estimated_time": 60,
+    "input_type": "text",
+    "output_type": "progress",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": true,
+      "time_extension": true,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "adaptive-summary",
+    "title": "Adaptive Summary",
+    "description": "Summarizes performance and recommends adaptive changes with previews of next section",
+    "skills": ["meta-learning", "self-regulation", "planning"],
+    "difficulty": 2,
+    "estimated_time": 60,
+    "input_type": "text",
+    "output_type": "scaffold",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": true,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "outcome-summary",
+    "title": "Outcome Summary",
+    "description": "Summarizes lab outcomes with completion stats, skill improvements, and recommended next steps",
+    "skills": ["reflection", "progress-tracking", "planning"],
+    "difficulty": 1,
+    "estimated_time": 30,
+    "input_type": "text",
+    "output_type": "completion",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": false,
+      "time_extension": false,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "checkpoint",
+    "title": "Checkpoint",
+    "description": "Auto-save progress indicator with manual save, retry, and restore controls",
+    "skills": ["progress-tracking", "persistence", "time-management"],
+    "difficulty": 1,
+    "estimated_time": 10,
+    "input_type": "text",
+    "output_type": "progress",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": false,
+      "time_extension": true,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
     "id": "step-prompt-interactive",
     "title": "Interactive Step Prompt",
     "description": "Advanced step prompt with interactive features, user input collection, hints, and comprehensive telemetry for adaptive learning experiences",
@@ -221,6 +316,25 @@
       "hint_progression": true,
       "time_extension": false,
       "alternative_widgets": ["short-answer", "multiple-choice"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "error-explain",
+    "title": "Error Explain",
+    "description": "Interactive error explanation widget with fix steps, code examples, and related concepts for debugging support",
+    "skills": ["debugging", "error-analysis", "problem-solving", "code-comprehension", "troubleshooting", "pattern-recognition"],
+    "difficulty": 2,
+    "estimated_time": 120,
+    "input_type": "text",
+    "output_type": "scaffold",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": true,
+      "time_extension": false,
+      "alternative_widgets": ["hint-panel", "coach-chat"]
     },
     "version": "1.0.0",
     "category": "core"

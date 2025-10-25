@@ -80,9 +80,40 @@ export type { NumericConstraint } from './core/numeric-input/numeric-input';
 export type { NumericInputUI } from './core/numeric-input/numeric-input';
 export type { NumericInputProps } from './core/numeric-input/numeric-input';
 export * from './core/numeric-input/numeric-input.metadata';
+export { ErrorExplainComponent } from './core/error-explain/error-explain';
+export type { ErrorExplainUI } from './core/error-explain/error-explain';
+export type { ErrorExplainProps } from './core/error-explain/error-explain';
+export * from './core/error-explain/error-explain.metadata';
+export { OutcomeSummaryComponent } from './core/outcome-summary/outcome-summary';
+export type { OutcomeType } from './core/outcome-summary/outcome-summary';
+export type { LabOutcome } from './core/outcome-summary/outcome-summary';
+export type { NextLabSuggestion } from './core/outcome-summary/outcome-summary';
+export type { OutcomeSummaryUI } from './core/outcome-summary/outcome-summary';
+export * from './core/outcome-summary/outcome-summary.metadata';
+export { AdaptiveSummaryComponent } from './core/adaptive-summary/adaptive-summary';
+export type { AdaptationReason } from './core/adaptive-summary/adaptive-summary';
+export type { SkillAssessment } from './core/adaptive-summary/adaptive-summary';
+export type { Adaptation } from './core/adaptive-summary/adaptive-summary';
+export type { AdaptiveSummaryUI } from './core/adaptive-summary/adaptive-summary';
+export * from './core/adaptive-summary/adaptive-summary.metadata';
+export { GoalSetterComponent } from './core/goal-setter/goal-setter';
+export type { GoalType } from './core/goal-setter/goal-setter';
+export type { GoalStatus } from './core/goal-setter/goal-setter';
+export type { LearningGoal } from './core/goal-setter/goal-setter';
+export type { GoalSetterUI } from './core/goal-setter/goal-setter';
+export * from './core/goal-setter/goal-setter.metadata';
+export { CheckpointComponent } from './core/checkpoint/checkpoint';
+export type { CheckpointState } from './core/checkpoint/checkpoint';
+export type { CheckpointUI } from './core/checkpoint/checkpoint';
+export type { CheckpointSaveData } from './core/checkpoint/checkpoint';
+export * from './core/checkpoint/checkpoint.metadata';
 export * from './core/hint-panel/hint-panel';
 export * from './core/feedback-box/feedback-box';
 export * from './core/confidence-meter/confidence-meter';
+
+// Review Loop
+export { ReviewLoopComponent } from './core/review-loop/review-loop';
+export * from './core/review-loop/review-loop.metadata';
 
 // Category-Specific Widgets
 export * from './coding/code-editor/code-editor';
