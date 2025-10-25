@@ -26,6 +26,14 @@ import { MultipleChoiceComponent } from '../../components/widgets/core/multiple-
 import { MULTIPLE_CHOICE_METADATA } from '../../components/widgets/core/multiple-choice/multiple-choice.metadata';
 import { ShortAnswerComponent } from '../../components/widgets/core/short-answer/short-answer';
 import { SHORT_ANSWER_METADATA } from '../../components/widgets/core/short-answer/short-answer.metadata';
+import { FillInBlanksComponent } from '../../components/widgets/core/fill-in-blanks/fill-in-blanks';
+import { FILL_IN_BLANKS_METADATA } from '../../components/widgets/core/fill-in-blanks/fill-in-blanks.metadata';
+import { MatchingPairsComponent } from '../../components/widgets/core/matching-pairs/matching-pairs';
+import { MATCHING_PAIRS_METADATA } from '../../components/widgets/core/matching-pairs/matching-pairs.metadata';
+import { MatchItem, CorrectMatch } from '../../components/widgets/core/matching-pairs/matching-pairs';
+import { OrderingComponent } from '../../components/widgets/core/ordering/ordering';
+import { ORDERING_METADATA } from '../../components/widgets/core/ordering/ordering.metadata';
+import { OrderItem } from '../../components/widgets/core/ordering/ordering';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -48,6 +56,9 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     LabIntroComponent,
     MultipleChoiceComponent,
     ShortAnswerComponent,
+    FillInBlanksComponent,
+    MatchingPairsComponent,
+    OrderingComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
@@ -245,5 +256,180 @@ Try entering your answer below and click submit. You can also:
     this.logEvent('Short Answer Changed', event);
     console.log('Short answer changed:', event);
   }
+
+  // Fill-in-blanks event handlers
+  handleFillInBlanksSubmit(event: any) {
+    this.logEvent('Fill-in-Blanks Submitted', event);
+    console.log('Fill-in-blanks submitted:', event);
+  }
+
+  handleFillInBlanksChange(event: any) {
+    this.logEvent('Fill-in-Blanks Answers Changed', event);
+    console.log('Fill-in-blanks changed:', event);
+  }
+
+  // Template strings for fill-in-blanks examples
+  fibTemplate1 = 'The quick brown {{animal}} jumps over the lazy {{animal2}}.';
+  fibTemplate2 = 'If x + {{num1}} = {{num2}}, and we subtract {{num3}} from both sides, then x = {{answer}}.';
+  fibTemplate3 = 'JavaScript is an {{type}} programming language that runs in the {{environment}}.';
+  fibTemplate4 = 'Photosynthesis occurs in {{organelle}} which contain the green pigment {{pigment}}. Plants use {{gas}} from the air and produce {{sugar}}.';
+  fibTemplate5 = 'The capital of {{country}} is {{city}}.';
+
+  // Matching Pairs event handlers
+  handleMatchingPairsMatch(event: any) {
+    this.logEvent('Match Created', event);
+    console.log('Match created:', event);
+  }
+
+  handleMatchingPairsUnmatch(event: any) {
+    this.logEvent('Match Removed', event);
+    console.log('Match removed:', event);
+  }
+
+  handleMatchingPairsComplete(event: any) {
+    this.logEvent('Matching Pairs Complete', event);
+    console.log('Matching pairs completed:', event);
+  }
+
+  // Matching Pairs example data
+  vocabularyLeft: MatchItem[] = [
+    { id: 'def1', label: 'Ephemeral', type: 'left' },
+    { id: 'def2', label: 'Ubiquitous', type: 'left' },
+    { id: 'def3', label: 'Serendipity', type: 'left' },
+    { id: 'def4', label: 'Ambiguous', type: 'left' }
+  ];
+
+  vocabularyRight: MatchItem[] = [
+    { id: 'word1', label: 'Lasting for a very short time', type: 'right' },
+    { id: 'word2', label: 'Present everywhere', type: 'right' },
+    { id: 'word3', label: 'Happy accident or fortunate discovery', type: 'right' },
+    { id: 'word4', label: 'Open to multiple interpretations', type: 'right' }
+  ];
+
+  vocabularyMatches: CorrectMatch[] = [
+    { leftId: 'def1', rightId: 'word1', explanation: 'Ephemeral means lasting for a very short time, like a brief moment.' },
+    { leftId: 'def2', rightId: 'word2', explanation: 'Ubiquitous means present everywhere or found everywhere.' },
+    { leftId: 'def3', rightId: 'word3', explanation: 'Serendipity is the occurrence of a happy accident or fortunate discovery.' },
+    { leftId: 'def4', rightId: 'word4', explanation: 'Ambiguous means open to multiple interpretations or unclear.' }
+  ];
+
+  // Programming concepts
+  programmingLeft: MatchItem[] = [
+    { id: 'concept1', label: 'Variable', type: 'left', category: 'Fundamentals' },
+    { id: 'concept2', label: 'Loop', type: 'left', category: 'Control Flow' },
+    { id: 'concept3', label: 'Function', type: 'left', category: 'Fundamentals' },
+    { id: 'concept4', label: 'Array', type: 'left', category: 'Data Structures' },
+    { id: 'concept5', label: 'Object', type: 'left', category: 'Data Structures' }
+  ];
+
+  programmingRight: MatchItem[] = [
+    { id: 'desc1', label: 'Stores a single value', type: 'right', category: 'Fundamentals' },
+    { id: 'desc2', label: 'Repeats code multiple times', type: 'right', category: 'Control Flow' },
+    { id: 'desc3', label: 'Reusable block of code', type: 'right', category: 'Fundamentals' },
+    { id: 'desc4', label: 'Ordered collection of items', type: 'right', category: 'Data Structures' },
+    { id: 'desc5', label: 'Collection of key-value pairs', type: 'right', category: 'Data Structures' }
+  ];
+
+  programmingMatches: CorrectMatch[] = [
+    { leftId: 'concept1', rightId: 'desc1', explanation: 'A variable stores a single value that can be changed.' },
+    { leftId: 'concept2', rightId: 'desc2', explanation: 'A loop repeats code multiple times until a condition is met.' },
+    { leftId: 'concept3', rightId: 'desc3', explanation: 'A function is a reusable block of code that performs a specific task.' },
+    { leftId: 'concept4', rightId: 'desc4', explanation: 'An array is an ordered collection of items accessed by index.' },
+    { leftId: 'concept5', rightId: 'desc5', explanation: 'An object is a collection of key-value pairs representing properties.' }
+  ];
+
+  // Historical events
+  historyLeft: MatchItem[] = [
+    { id: 'event1', label: '1776', type: 'left' },
+    { id: 'event2', label: '1969', type: 'left' },
+    { id: 'event3', label: '1945', type: 'left' }
+  ];
+
+  historyRight: MatchItem[] = [
+    { id: 'desc1h', label: 'Moon landing', type: 'right' },
+    { id: 'desc2h', label: 'US Declaration of Independence', type: 'right' },
+    { id: 'desc3h', label: 'End of World War II', type: 'right' }
+  ];
+
+  historyMatches: CorrectMatch[] = [
+    { leftId: 'event1', rightId: 'desc2h' },
+    { leftId: 'event2', rightId: 'desc1h' },
+    { leftId: 'event3', rightId: 'desc3h' }
+  ];
+
+  // Science - Chemical symbols
+  scienceLeft: MatchItem[] = [
+    { id: 'symbol1', label: 'H₂O', type: 'left' },
+    { id: 'symbol2', label: 'CO₂', type: 'left' },
+    { id: 'symbol3', label: 'NaCl', type: 'left' },
+    { id: 'symbol4', label: 'O₂', type: 'left' }
+  ];
+
+  scienceRight: MatchItem[] = [
+    { id: 'name1', label: 'Water', type: 'right' },
+    { id: 'name2', label: 'Carbon Dioxide', type: 'right' },
+    { id: 'name3', label: 'Salt', type: 'right' },
+    { id: 'name4', label: 'Oxygen', type: 'right' }
+  ];
+
+  scienceMatches: CorrectMatch[] = [
+    { leftId: 'symbol1', rightId: 'name1', explanation: 'H₂O is the chemical formula for water (2 hydrogen, 1 oxygen).' },
+    { leftId: 'symbol2', rightId: 'name2', explanation: 'CO₂ is carbon dioxide (1 carbon, 2 oxygen).' },
+    { leftId: 'symbol3', rightId: 'name3', explanation: 'NaCl is sodium chloride, commonly known as table salt.' },
+    { leftId: 'symbol4', rightId: 'name4', explanation: 'O₂ is molecular oxygen, the form we breathe.' }
+  ];
+
+  // Ordering event handlers
+  handleOrderingReorder(event: any) {
+    this.logEvent('Items Reordered', event);
+    console.log('Items reordered:', event);
+  }
+
+  handleOrderingCheck(event: any) {
+    this.logEvent('Order Checked', event);
+    console.log('Order checked:', event);
+  }
+
+  handleOrderingComplete(event: any) {
+    this.logEvent('Ordering Complete', event);
+    console.log('Ordering completed:', event);
+  }
+
+  // Ordering example data - Steps in making a sandwich
+  sandwichSteps: OrderItem[] = [
+    { id: '1', content: 'Get two slices of bread', correctPosition: 1, explanation: 'Start with the foundation - the bread.' },
+    { id: '2', content: 'Spread mayonnaise on one slice', correctPosition: 2, explanation: 'Add condiments before the fillings.' },
+    { id: '3', content: 'Add lettuce and tomato', correctPosition: 3, explanation: 'Layer the vegetables first.' },
+    { id: '4', content: 'Place cheese and meat', correctPosition: 4, explanation: 'Add the protein and dairy.' },
+    { id: '5', content: 'Top with the second slice of bread', correctPosition: 5, explanation: 'Complete the sandwich with the top slice.' }
+  ];
+
+  // Ordering - Software development lifecycle
+  sdlcSteps: OrderItem[] = [
+    { id: '1', content: 'Requirements Gathering', correctPosition: 1, explanation: 'Understand what needs to be built.', category: 'Planning' },
+    { id: '2', content: 'Design', correctPosition: 2, explanation: 'Plan the architecture and UI/UX.', category: 'Planning' },
+    { id: '3', content: 'Implementation', correctPosition: 3, explanation: 'Write the actual code.', category: 'Development' },
+    { id: '4', content: 'Testing', correctPosition: 4, explanation: 'Verify the software works correctly.', category: 'Quality Assurance' },
+    { id: '5', content: 'Deployment', correctPosition: 5, explanation: 'Release the software to users.', category: 'Operations' },
+    { id: '6', content: 'Maintenance', correctPosition: 6, explanation: 'Fix bugs and add features.', category: 'Operations' }
+  ];
+
+  // Ordering - Historical events
+  historicalEvents: OrderItem[] = [
+    { id: '1', content: 'Declaration of Independence (1776)', correctPosition: 1, explanation: 'The United States declared independence from Britain.' },
+    { id: '2', content: 'Constitution Ratified (1788)', correctPosition: 2, explanation: 'The U.S. Constitution was ratified.' },
+    { id: '3', content: 'Civil War (1861-1865)', correctPosition: 3, explanation: 'A war between the Union and Confederacy.' },
+    { id: '4', content: 'World War I (1914-1918)', correctPosition: 4, explanation: 'The first global war.' },
+    { id: '5', content: 'World War II (1939-1945)', correctPosition: 5, explanation: 'The second global war.' }
+  ];
+
+  // Ordering - Steps in a loop
+  loopSteps: OrderItem[] = [
+    { id: '1', content: 'Initialize counter variable', correctPosition: 1, explanation: 'Set up the loop control variable.' },
+    { id: '2', content: 'Check condition', correctPosition: 2, explanation: 'Determine if loop should continue.' },
+    { id: '3', content: 'Execute loop body', correctPosition: 3, explanation: 'Run the code inside the loop.' },
+    { id: '4', content: 'Update counter', correctPosition: 4, explanation: 'Modify the loop control variable.' },
+    { id: '5', content: 'Repeat from step 2', correctPosition: 5, explanation: 'Go back and check the condition again.' }
+  ];
 }
 

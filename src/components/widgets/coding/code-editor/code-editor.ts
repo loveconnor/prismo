@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
 import { FontService } from '../../../../services/font.service';
@@ -645,13 +645,17 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   }
 
   private saveUserSettings(): void {
-    // Save to localStorage or user preferences
-    localStorage.setItem('codeEditorSettings', JSON.stringify(this.userSettings));
+    // Save to localStorage or user preferences (browser only)
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('codeEditorSettings', JSON.stringify(this.userSettings));
+    }
     this.setDataValue('user_settings', this.userSettings);
   }
 
   private loadUserSettings(): void {
-    // Load from localStorage or user preferences
+    // Load from localStorage or user preferences (browser only)
+    if (!isPlatformBrowser(this.platformId)) return;
+    
     const saved = localStorage.getItem('codeEditorSettings');
     if (saved) {
       this.userSettings = { ...this.userSettings, ...JSON.parse(saved) };

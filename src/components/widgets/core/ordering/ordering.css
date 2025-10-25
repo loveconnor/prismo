@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+/* Ensure proper drag cursor */
+[draggable="true"] {
+  cursor: move;
+}
+
+[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+/* Smooth transitions for all interactive elements */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Icon sizing */
+ng-icon {
+  display: inline-block;
+}
+

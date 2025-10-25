@@ -150,6 +150,63 @@
     "category": "core"
   },
   {
+    "id": "fill-in-blanks",
+    "title": "Fill in the Blanks",
+    "description": "Interactive template-based exercises with multiple blank types, validation modes, hints, and comprehensive feedback for contextualized learning",
+    "skills": ["comprehension", "vocabulary", "recall", "application", "pattern-recognition", "context-clues"],
+    "difficulty": 2,
+    "estimated_time": 120,
+    "input_type": "text",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": false,
+      "alternative_widgets": ["short-answer", "multiple-choice", "matching"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "matching-pairs",
+    "title": "Matching Pairs",
+    "description": "Interactive matching exercise supporting drag-drop, select, and connect modes with visual feedback and explanations",
+    "skills": ["associations", "pattern-recognition", "vocabulary", "concepts", "relationships", "categorization"],
+    "difficulty": 2,
+    "estimated_time": 180,
+    "input_type": "interaction",
+    "output_type": "matches",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": false,
+      "alternative_widgets": ["multiple-choice", "fill-in-blanks", "categorization"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "ordering",
+    "title": "Ordering",
+    "description": "Interactive sequencing exercise with drag-drop and button modes for arranging items in correct order",
+    "skills": ["sequencing", "logical-order", "chronology", "processes", "steps", "organization"],
+    "difficulty": 2,
+    "estimated_time": 120,
+    "input_type": "interaction",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": false,
+      "alternative_widgets": ["matching-pairs", "fill-in-blanks"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
     "id": "hint-panel",
     "title": "Hint Panel",
     "description": "Progressive hint disclosure with multiple tiers",

@@ -595,6 +595,421 @@
     </app-card>
   </div>
 
+  <!-- Fill-in-the-Blanks Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Fill-in-the-Blanks Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Interactive template-based exercises with multiple blank types
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Simple Text Blanks -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Simple Text Blanks</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-1"
+              [template]="fibTemplate1"
+              [blanks]="[
+                {
+                  id: 'animal',
+                  placeholder: 'animal',
+                  type: 'text',
+                  correctAnswers: ['fox'],
+                  caseSensitive: false,
+                  hint: 'A small wild canine'
+                },
+                {
+                  id: 'animal2',
+                  placeholder: 'animal',
+                  type: 'text',
+                  correctAnswers: ['dog'],
+                  caseSensitive: false,
+                  hint: 'A common domestic pet'
+                }
+              ]"
+              [showHints]="true"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+
+          <!-- Number Blanks -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Number Blanks (Math)</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-2"
+              [template]="fibTemplate2"
+              [blanks]="[
+                {
+                  id: 'num1',
+                  placeholder: 'number',
+                  type: 'number',
+                  correctAnswers: ['5'],
+                  hint: 'A small positive integer'
+                },
+                {
+                  id: 'num2',
+                  placeholder: 'result',
+                  type: 'number',
+                  correctAnswers: ['12'],
+                  hint: 'The sum'
+                },
+                {
+                  id: 'num3',
+                  placeholder: 'operation',
+                  type: 'number',
+                  correctAnswers: ['5'],
+                  hint: 'Same as the first number'
+                },
+                {
+                  id: 'answer',
+                  placeholder: 'x value',
+                  type: 'number',
+                  correctAnswers: ['7'],
+                  hint: 'The final result'
+                }
+              ]"
+              [showHints]="true"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+
+          <!-- Select Dropdowns -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Select Dropdowns</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-3"
+              [template]="fibTemplate3"
+              [blanks]="[
+                {
+                  id: 'type',
+                  placeholder: 'type',
+                  type: 'select',
+                  correctAnswers: ['interpreted'],
+                  options: ['compiled', 'interpreted', 'assembly', 'markup'],
+                  hint: 'Executed line by line'
+                },
+                {
+                  id: 'environment',
+                  placeholder: 'where',
+                  type: 'select',
+                  correctAnswers: ['browser'],
+                  options: ['browser', 'database', 'filesystem', 'kernel'],
+                  hint: 'Web-based environment'
+                }
+              ]"
+              [showHints]="true"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+
+          <!-- Science Vocabulary -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Science Vocabulary (Multiple Correct Answers)</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-4"
+              [template]="fibTemplate4"
+              [blanks]="[
+                {
+                  id: 'organelle',
+                  placeholder: 'cell structure',
+                  type: 'text',
+                  correctAnswers: ['chloroplast', 'chloroplasts'],
+                  caseSensitive: false,
+                  hint: 'Green organelles in plants'
+                },
+                {
+                  id: 'pigment',
+                  placeholder: 'green pigment',
+                  type: 'text',
+                  correctAnswers: ['chlorophyll'],
+                  caseSensitive: false,
+                  hint: 'Makes plants green'
+                },
+                {
+                  id: 'gas',
+                  placeholder: 'atmospheric gas',
+                  type: 'text',
+                  correctAnswers: ['carbon dioxide', 'CO2'],
+                  caseSensitive: false,
+                  hint: 'What we exhale'
+                },
+                {
+                  id: 'sugar',
+                  placeholder: 'product',
+                  type: 'text',
+                  correctAnswers: ['glucose'],
+                  caseSensitive: false,
+                  hint: 'Simple sugar'
+                }
+              ]"
+              [showHints]="true"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+
+          <!-- Compact Variant -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Compact Variant (No Hints)</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-5"
+              [template]="fibTemplate5"
+              [blanks]="[
+                {
+                  id: 'country',
+                  placeholder: 'country',
+                  type: 'text',
+                  correctAnswers: ['France'],
+                  caseSensitive: false
+                },
+                {
+                  id: 'city',
+                  placeholder: 'city',
+                  type: 'text',
+                  correctAnswers: ['Paris'],
+                  caseSensitive: false
+                }
+              ]"
+              [ui]="{
+                variant: 'compact',
+                emphasizeBlanks: true
+              }"
+              [showHints]="false"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Matching Pairs Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Matching Pairs Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Interactive matching exercises with drag-drop and select modes
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Vocabulary Matching (Select Mode) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Vocabulary Matching (Select Mode)</h3>
+            <app-matching-pairs
+              id="showcase-mp-1"
+              title="Match Vocabulary Terms"
+              instructions="Match each word with its definition."
+              [leftItems]="vocabularyLeft"
+              [rightItems]="vocabularyRight"
+              [correctMatches]="vocabularyMatches"
+              mode="select"
+              [shuffleItems]="false"
+              [showHints]="true"
+              [requireAllMatches]="true"
+              [ui]="{ variant: 'default', showCategories: false, emphasizeMatches: true }"
+              [onMatch]="handleMatchingPairsMatch.bind(this)"
+              [onUnmatch]="handleMatchingPairsUnmatch.bind(this)"
+              [onComplete]="handleMatchingPairsComplete.bind(this)"
+              (matchCreated)="handleMatchingPairsMatch($event)"
+              (matchRemoved)="handleMatchingPairsUnmatch($event)"
+              (complete)="handleMatchingPairsComplete($event)"
+            ></app-matching-pairs>
+          </div>
+
+          <!-- Programming Concepts (Drag-Drop Mode with Categories) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Programming Concepts (Drag-Drop with Categories)</h3>
+            <app-matching-pairs
+              id="showcase-mp-2"
+              title="Match Programming Concepts"
+              instructions="Drag items from the left to match with their descriptions on the right."
+              [leftItems]="programmingLeft"
+              [rightItems]="programmingRight"
+              [correctMatches]="programmingMatches"
+              mode="drag-drop"
+              [shuffleItems]="true"
+              [showHints]="true"
+              [requireAllMatches]="true"
+              [ui]="{ variant: 'default', showCategories: true, emphasizeMatches: true }"
+              [onMatch]="handleMatchingPairsMatch.bind(this)"
+              [onUnmatch]="handleMatchingPairsUnmatch.bind(this)"
+              [onComplete]="handleMatchingPairsComplete.bind(this)"
+              (matchCreated)="handleMatchingPairsMatch($event)"
+              (matchRemoved)="handleMatchingPairsUnmatch($event)"
+              (complete)="handleMatchingPairsComplete($event)"
+            ></app-matching-pairs>
+          </div>
+
+          <!-- Historical Events (Shuffled) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Historical Events (Shuffled, No Explanations)</h3>
+            <app-matching-pairs
+              id="showcase-mp-3"
+              title="Match Years to Events"
+              instructions="Match each year with the historical event that occurred."
+              [leftItems]="historyLeft"
+              [rightItems]="historyRight"
+              [correctMatches]="historyMatches"
+              mode="select"
+              [shuffleItems]="true"
+              [showHints]="false"
+              [requireAllMatches]="true"
+              [ui]="{ variant: 'default', showCategories: false, emphasizeMatches: true }"
+              [onMatch]="handleMatchingPairsMatch.bind(this)"
+              [onUnmatch]="handleMatchingPairsUnmatch.bind(this)"
+              [onComplete]="handleMatchingPairsComplete.bind(this)"
+              (matchCreated)="handleMatchingPairsMatch($event)"
+              (matchRemoved)="handleMatchingPairsUnmatch($event)"
+              (complete)="handleMatchingPairsComplete($event)"
+            ></app-matching-pairs>
+          </div>
+
+          <!-- Science - Chemical Symbols (Compact) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Chemical Symbols (Compact Variant)</h3>
+            <app-matching-pairs
+              id="showcase-mp-4"
+              title="Chemical Formulas"
+              instructions="Match each chemical formula with its common name."
+              [leftItems]="scienceLeft"
+              [rightItems]="scienceRight"
+              [correctMatches]="scienceMatches"
+              mode="select"
+              [shuffleItems]="false"
+              [showHints]="true"
+              [requireAllMatches]="true"
+              [ui]="{ variant: 'compact', showCategories: false, emphasizeMatches: true }"
+              [onMatch]="handleMatchingPairsMatch.bind(this)"
+              [onUnmatch]="handleMatchingPairsUnmatch.bind(this)"
+              [onComplete]="handleMatchingPairsComplete.bind(this)"
+              (matchCreated)="handleMatchingPairsMatch($event)"
+              (matchRemoved)="handleMatchingPairsUnmatch($event)"
+              (complete)="handleMatchingPairsComplete($event)"
+            ></app-matching-pairs>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Ordering Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Ordering Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Interactive sequencing exercises with drag-drop and button modes
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Simple Ordering (Drag-Drop Mode) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Simple Ordering (Drag-Drop Mode)</h3>
+            <app-ordering
+              id="showcase-ord-1"
+              title="How to Make a Sandwich"
+              instructions="Drag the steps into the correct order."
+              [items]="sandwichSteps"
+              mode="drag-drop"
+              [shuffleItems]="true"
+              [showHints]="true"
+              [showPositions]="true"
+              [autoCheck]="true"
+              [ui]="{ variant: 'default', showCategories: false, emphasizeCorrect: true }"
+              [onReorder]="handleOrderingReorder.bind(this)"
+              [onComplete]="handleOrderingComplete.bind(this)"
+              (reorder)="handleOrderingReorder($event)"
+              (complete)="handleOrderingComplete($event)"
+            ></app-ordering>
+          </div>
+
+          <!-- Software Development Lifecycle (Button Mode with Categories) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">SDLC Steps (Button Mode with Categories)</h3>
+            <app-ordering
+              id="showcase-ord-2"
+              title="Software Development Lifecycle"
+              instructions="Use the arrow buttons to arrange these phases in order."
+              [items]="sdlcSteps"
+              mode="buttons"
+              [shuffleItems]="true"
+              [showHints]="true"
+              [showPositions]="true"
+              [autoCheck]="true"
+              [ui]="{ variant: 'default', showCategories: true, emphasizeCorrect: true }"
+              [onReorder]="handleOrderingReorder.bind(this)"
+              [onComplete]="handleOrderingComplete.bind(this)"
+              (reorder)="handleOrderingReorder($event)"
+              (complete)="handleOrderingComplete($event)"
+            ></app-ordering>
+          </div>
+
+          <!-- Historical Events (Manual Check) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Historical Events (Manual Check Mode)</h3>
+            <app-ordering
+              id="showcase-ord-3"
+              title="U.S. Historical Timeline"
+              instructions="Arrange these events in chronological order, then click 'Check Order'."
+              [items]="historicalEvents"
+              mode="drag-drop"
+              [shuffleItems]="true"
+              [showHints]="true"
+              [showPositions]="true"
+              [autoCheck]="false"
+              [ui]="{ variant: 'default', showCategories: false, emphasizeCorrect: true }"
+              [onReorder]="handleOrderingReorder.bind(this)"
+              [onCheck]="handleOrderingCheck.bind(this)"
+              [onComplete]="handleOrderingComplete.bind(this)"
+              (reorder)="handleOrderingReorder($event)"
+              (check)="handleOrderingCheck($event)"
+              (complete)="handleOrderingComplete($event)"
+            ></app-ordering>
+          </div>
+
+          <!-- Loop Steps (Compact Variant) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Programming Loop Steps (Compact)</h3>
+            <app-ordering
+              id="showcase-ord-4"
+              title="For Loop Execution Order"
+              instructions="Order these steps as they occur in a for loop."
+              [items]="loopSteps"
+              mode="drag-drop"
+              [shuffleItems]="true"
+              [showHints]="true"
+              [showPositions]="true"
+              [autoCheck]="true"
+              [ui]="{ variant: 'compact', showCategories: false, emphasizeCorrect: true }"
+              [onReorder]="handleOrderingReorder.bind(this)"
+              [onComplete]="handleOrderingComplete.bind(this)"
+              (reorder)="handleOrderingReorder($event)"
+              (complete)="handleOrderingComplete($event)"
+            ></app-ordering>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
   <!-- Multiple Choice Widget Section -->
   <div class="mb-8">
     <app-card>
