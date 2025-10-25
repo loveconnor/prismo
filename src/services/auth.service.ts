@@ -98,7 +98,7 @@ export class AuthService {
   private readonly REFRESH_TOKEN_COOKIE = 'refresh_token';
 
   // API base - pointing to Flask backend
-  private readonly API_URL = 'https://localhost:5000/auth';
+  private readonly API_URL = 'http://localhost:5000/auth';
 
   // Subjects for Rx interop
   private currentUserSubject = new BehaviorSubject<User | null>(null);

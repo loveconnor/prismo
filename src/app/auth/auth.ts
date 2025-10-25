@@ -11,7 +11,7 @@ import { InputComponent } from '../../components/ui/input/input';
 import { LabelComponent } from '../../components/ui/label/label';
 import { PasswordInputComponent } from '../../components/ui/password-input/password-input';
 import { TextComponent, TextLinkComponent, StrongComponent } from '../../components/ui/text/text';
-import { SimpleAuthService } from '../../services/simple-auth.service';
+import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -176,7 +176,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class AuthComponent {
   private fb = inject(FormBuilder);
-  private authService = inject(SimpleAuthService);
+  private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private router = inject(Router);
 

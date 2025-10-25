@@ -20,8 +20,12 @@ def create_app(config_name="default"):
     # Load configuration
     app.config.from_object(config[config_name])
 
-    # Enable CORS for all routes
-    CORS(app)
+    # Enable CORS for all routes with specific configuration
+    CORS(app, 
+         origins=["http://localhost:4200", "http://127.0.0.1:4200", "https://localhost:4200"],
+         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         supports_credentials=True)
 
     # Register blueprints
     from app.admin_routes import admin_bp

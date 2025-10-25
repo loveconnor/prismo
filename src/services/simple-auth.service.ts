@@ -40,7 +40,7 @@ export class SimpleAuthService {
   public sessionCheckComplete = signal<boolean>(false);
   
   // API URL
-  private readonly API_URL = 'https://localhost:5000/auth';
+  private readonly API_URL = 'http://localhost:5000/auth';
   
   constructor() {
     this.initializeAuth();

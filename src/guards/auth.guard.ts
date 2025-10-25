@@ -1,12 +1,12 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { SimpleAuthService } from '../services/simple-auth.service';
+import { AuthService } from '../services/auth.service';
 
 /**
  * Guard to protect routes that require authentication
  */
 export const authGuard = () => {
-  const authService = inject(SimpleAuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
   console.log('AuthGuard: Checking authentication...');
@@ -28,7 +28,7 @@ export const authGuard = () => {
  * Guard to redirect authenticated users away from auth pages
  */
 export const guestGuard = () => {
-  const authService = inject(SimpleAuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
   if (!authService.isLoggedIn()) {
