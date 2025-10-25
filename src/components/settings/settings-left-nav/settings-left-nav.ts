@@ -31,18 +31,18 @@ const NAV_GROUPS: NavGroup[] = [
     label: 'General',
     items: [
       { id: 'profile', icon: 'lucideUser', label: 'Profile & Preferences' },
-      { id: 'appearance', icon: 'lucideMoon', label: 'Appearance' },
+      // { id: 'appearance', icon: 'lucideMoon', label: 'Appearance' },
       { id: 'notifications', icon: 'lucideBell', label: 'Notifications' },
-      { id: 'privacy', icon: 'lucideLock', label: 'Privacy & Data' },
-      { id: 'security', icon: 'lucideShield', label: 'Account Security' }
+      // { id: 'privacy', icon: 'lucideLock', label: 'Privacy & Data' },
+      // { id: 'security', icon: 'lucideShield', label: 'Account Security' }
     ]
   },
   {
     label: 'Learning',
     items: [
       { id: 'adaptive', icon: 'lucideBrain', label: 'Adaptive Learning' },
-      { id: 'progress', icon: 'lucideChartBar', label: 'Progress Tracking' },
-      { id: 'curriculum', icon: 'lucideBookOpen', label: 'Curriculum Access' }
+      // { id: 'progress', icon: 'lucideChartBar', label: 'Progress Tracking' },
+      // { id: 'curriculum', icon: 'lucideBookOpen', label: 'Curriculum Access' }
     ]
   }
 ];
