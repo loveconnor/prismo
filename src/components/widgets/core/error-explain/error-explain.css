@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+/* Smooth transitions */
+.transition-colors {
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Icon sizing */
+ng-icon {
+  display: inline-block;
+}
+
+/* Code block styling */
+pre {
+  overflow-x: auto;
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace;
+}
+

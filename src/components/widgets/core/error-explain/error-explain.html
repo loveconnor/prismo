@@ -1,0 +1,81 @@
+<div
+  role="alert"
+  [attr.aria-label]="a11yLabel || 'Error explanation: ' + errorSignature"
+  [ngClass]="getContainerClasses()"
+>
+  <!-- Header -->
+  <div class="mb-3 flex items-start gap-3">
+    <ng-icon name="lucideTriangleAlert" class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"></ng-icon>
+    <div class="flex-1">
+      <h4 class="font-semibold text-red-600 dark:text-red-400">
+        Error Detected
+      </h4>
+      <code class="mt-1 block text-sm text-red-300 font-mono bg-red-500/20 px-2 py-1 rounded">
+        {{ errorSignature }}
+      </code>
+      <p *ngIf="errorMessage" class="mt-1 text-sm text-[#a9b1bb]">
+        {{ errorMessage }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Explanation -->
+  <div class="mb-4">
+    <p class="text-sm text-[#e5e7eb]">{{ explanation }}</p>
+  </div>
+
+  <!-- Fix Steps -->
+  <div *ngIf="fixSteps.length > 0" class="mb-4">
+    <h5 [ngClass]="getFixHeaderClasses()">
+      How to fix:
+    </h5>
+    <ol class="space-y-2">
+      <li *ngFor="let step of fixSteps; let index = index" class="flex items-start gap-2 text-sm">
+        <span class="flex-shrink-0 w-5 h-5 bg-[#60a5fa] text-white text-xs rounded-full flex items-center justify-center font-medium">
+          {{ index + 1 }}
+        </span>
+        <span class="text-[#a9b1bb]">{{ step }}</span>
+      </li>
+    </ol>
+  </div>
+
+  <!-- Code Example -->
+  <div *ngIf="codeExample && showCodeExample" class="mb-4">
+    <h5 class="text-sm font-medium text-[#e5e7eb] mb-2">Example:</h5>
+    <pre class="overflow-x-auto rounded bg-[#0a0e12] p-3 text-sm"><code class="text-[#e5e7eb]">{{ codeExample }}</code></pre>
+  </div>
+
+  <!-- Related Concepts -->
+  <div *ngIf="relatedConcepts.length > 0" class="mb-4">
+    <h5 class="text-sm font-medium text-[#e5e7eb] mb-2 flex items-center gap-2">
+      <ng-icon name="lucideLightbulb" class="h-4 w-4"></ng-icon>
+      Related concepts:
+    </h5>
+    <div class="flex flex-wrap gap-2">
+      <span
+        *ngFor="let concept of relatedConcepts"
+        class="rounded-md border border-[#1f2937] bg-[#0b0f14] px-2 py-1 text-xs text-[#a9b1bb]"
+      >
+        {{ concept }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div *ngIf="allowDismiss" class="flex justify-end gap-2">
+    <button
+      (click)="handleFixApplied()"
+      class="inline-flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+    >
+      <ng-icon name="lucideCircleCheck" class="h-4 w-4"></ng-icon>
+      Fixed
+    </button>
+    <button
+      (click)="handleDismiss()"
+      class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] transition-colors"
+    >
+      Dismiss
+    </button>
+  </div>
+</div>
+

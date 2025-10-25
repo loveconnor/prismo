@@ -1,0 +1,191 @@
+<div
+  [attr.role]="variant === 'inline' ? 'group' : null"
+  [attr.aria-label]="a11yLabel || 'Coach chat'"
+  [class]="variant === 'inline' ? 'rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm' : 
+           variant === 'sidebar' ? 'fixed right-0 top-0 z-40 h-full w-[380px] overflow-y-auto border-l border-[#1f2937] bg-[#0b0f14] shadow-xl' :
+           'bg-[#0b0f14]'"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between border-b border-[#1f2937] px-4 py-3">
+    <div class="flex items-center gap-3">
+      <ng-icon name="lucideMessageSquare" class="h-5 w-5 text-[#60a5fa]"></ng-icon>
+      <div>
+        <h3 class="text-sm font-semibold text-[#e5e7eb]">
+          {{ a11yLabel || 'Coach' }}
+        </h3>
+        <p *ngIf="showContextChip" class="text-xs text-[#6b7280]">{{ stepId }}</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Policy Badge -->
+      <div 
+        class="flex items-center gap-1 rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-xs text-amber-500"
+        [title]="'Coaching policy'"
+      >
+        <ng-icon name="lucideShield" class="h-3 w-3"></ng-icon>
+        {{ !allowDirectAnswers ? 'No solutions' : 'Guided help' }}
+      </div>
+
+      <!-- Token Meter -->
+      <div *ngIf="showTokenMeter" class="flex items-center gap-1 text-xs text-[#6b7280]">
+        <ng-icon name="lucideZap" class="h-3 w-3"></ng-icon>
+        {{ tokensUsed() }}
+      </div>
+
+      <button
+        *ngIf="variant !== 'sidebar'"
+        (click)="handleToggleCollapse()"
+        class="text-[#9ca3af] hover:text-[#e5e7eb] transition-colors"
+        [attr.aria-label]="chatState() === 'collapsed' ? 'Expand coach' : 'Collapse coach'"
+        type="button"
+      >
+        <ng-icon 
+          *ngIf="chatState() === 'collapsed'"
+          name="lucideChevronDown" 
+          class="h-5 w-5"
+        ></ng-icon>
+        <ng-icon 
+          *ngIf="chatState() !== 'collapsed'"
+          name="lucideChevronUp" 
+          class="h-5 w-5"
+        ></ng-icon>
+      </button>
+
+      <button
+        *ngIf="variant === 'modal'"
+        (click)="handleToggleCollapse()"
+        class="text-[#9ca3af] hover:text-[#e5e7eb] transition-colors"
+        aria-label="Close coach"
+        type="button"
+      >
+        <ng-icon name="lucideX" class="h-5 w-5"></ng-icon>
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="chatState() !== 'collapsed'">
+    <!-- Thread -->
+    <div
+      #container
+      class="space-y-3 overflow-y-auto px-4 py-3"
+      [style.max-height.px]="maxHeightPx"
+      role="log"
+      aria-live="polite"
+      [attr.aria-atomic]="false"
+    >
+      <div
+        *ngFor="let message of messages()"
+        [class]="'flex ' + getMessageClasses(message.role)"
+      >
+        <div *ngIf="message.role === 'system'" class="rounded-lg bg-blue-500/10 px-3 py-2 text-xs italic text-blue-400">
+          <div [innerHTML]="message.contentMD | safeHtml"></div>
+        </div>
+
+        <div *ngIf="message.role !== 'system'" [class]="getMessageBubbleClasses(message.role)">
+          <div class="prose prose-sm dark:prose-invert coach-message-content">
+            <div [innerHTML]="message.contentMD | safeHtml"></div>
+          </div>
+          <div *ngIf="message.toolCalls && message.toolCalls.length > 0" class="mt-2 flex items-center gap-2 text-xs text-[#6b7280]">
+            <ng-icon name="lucideLoader" class="h-3 w-3 animate-spin"></ng-icon>
+            Analyzing...
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="isStreaming()" class="flex justify-start">
+        <div class="rounded-xl bg-[#1f2937] px-3 py-2">
+          <ng-icon name="lucideLoader" class="h-4 w-4 animate-spin text-[#60a5fa]"></ng-icon>
+        </div>
+      </div>
+
+      <div #messagesEnd></div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="border-t border-[#1f2937] px-4 py-2">
+      <div class="flex flex-wrap gap-2">
+        <button
+          *ngFor="let action of quickActions"
+          (click)="handleQuickAction(action)"
+          [disabled]="isStreaming() || chatState() === 'locked'"
+          class="inline-flex items-center gap-1 rounded-md border border-[#1f2937] bg-[#0b0f14] px-2 py-1 text-xs text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          type="button"
+        >
+          <ng-icon 
+            *ngIf="action.id === 'plan'"
+            name="lucideLightbulb" 
+            class="h-3 w-3"
+          ></ng-icon>
+          <ng-icon 
+            *ngIf="action.id === 'explain_error'"
+            name="lucideTriangleAlert" 
+            class="h-3 w-3"
+          ></ng-icon>
+          {{ action.label }}
+        </button>
+        
+        <button
+          *ngIf="integrations.workedExampleAvailable"
+          (click)="handleWorkedExample()"
+          class="inline-flex items-center gap-1 rounded-md border border-[#1f2937] bg-[#0b0f14] px-2 py-1 text-xs text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors"
+          type="button"
+        >
+          <ng-icon name="lucideBookOpen" class="h-3 w-3"></ng-icon>
+          Worked Example
+        </button>
+      </div>
+    </div>
+
+    <!-- Composer -->
+    <div class="border-t border-[#1f2937] px-3 py-2">
+      <div class="flex flex-col gap-2">
+        <textarea
+          #textarea
+          [value]="inputValue()"
+          (input)="inputValue.set($any($event.target).value)"
+          (keydown)="handleKeyDown($event)"
+          (focus)="chatState.set('composing')"
+          [disabled]="isStreaming() || chatState() === 'locked' || coachReadOnly"
+          [placeholder]="chatState() === 'locked' ? 'Coach is locked' :
+                        isStreaming() ? 'Coach is thinking...' :
+                        'Ask a question...'"
+          class="w-full resize-none rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa] disabled:cursor-not-allowed disabled:opacity-50"
+          rows="3"
+        ></textarea>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 text-xs text-[#6b7280]">
+            <ng-icon name="lucideClock" class="h-3 w-3"></ng-icon>
+            {{ messagesSentThisMinute() }}/{{ perMinute }} per min
+            <span class="text-[#4b5563]">•</span>
+            {{ messagesSentThisSession() }}/{{ perSession }} this session
+          </div>
+
+          <button
+            (click)="handleSendMessage()"
+            [disabled]="!inputValue().trim() || isStreaming() || chatState() === 'locked' || coachReadOnly"
+            class="inline-flex items-center gap-2 rounded-lg bg-[#3b82f6] px-4 py-2 text-sm font-medium text-white hover:bg-[#2563eb] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+          >
+            <ng-container *ngIf="isStreaming()">
+              <ng-icon name="lucideLoader" class="h-4 w-4 animate-spin"></ng-icon>
+              Thinking...
+            </ng-container>
+            <ng-container *ngIf="!isStreaming()">
+              Send
+              <ng-icon name="lucideSend" class="h-4 w-4"></ng-icon>
+              <kbd class="hidden rounded border border-white/20 px-1 py-0.5 text-xs sm:inline">⌘↵</kbd>
+            </ng-container>
+          </button>
+        </div>
+      </div>
+
+      <!-- Safety Notice -->
+      <p class="mt-2 text-xs text-[#6b7280]">
+        AI can make mistakes. Verify important information.
+      </p>
+    </div>
+  </ng-container>
+</div>
+
