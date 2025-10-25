@@ -65,6 +65,18 @@ function handle401Error(req: HttpRequest<any>, next: HttpHandlerFn, authService:
 }
 
 function isAuthEndpoint(url: string): boolean {
-  const authEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh', '/api/auth/forgot-password'];
+  const authEndpoints = [
+    '/api/auth/login', 
+    '/api/auth/register', 
+    '/api/auth/refresh', 
+    '/api/auth/forgot-password',
+    '/auth/login',
+    '/auth/register', 
+    '/auth/refresh', 
+    '/auth/forgot-password',
+    '/auth/verify',
+    '/auth/confirm',
+    '/auth/resend'
+  ];
   return authEndpoints.some(endpoint => url.includes(endpoint));
 }

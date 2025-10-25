@@ -10,7 +10,7 @@ import { InputComponent } from '../../components/ui/input/input';
 import { LabelComponent } from '../../components/ui/label/label';
 import { PasswordInputComponent } from '../../components/ui/password-input/password-input';
 import { TextComponent, TextLinkComponent, StrongComponent } from '../../components/ui/text/text';
-import { AuthService, RegisterData, AuthResponse, AuthError } from '../../services/auth.service';
+import { SimpleAuthService } from '../../services/simple-auth.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -207,7 +207,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
+  private authService = inject(SimpleAuthService);
   private toastService = inject(ToastService);
   private router = inject(Router);
 
@@ -258,44 +258,14 @@ export class RegisterComponent {
       this.isLoading.set(true);
       this.errorMessage.set('');
 
-      const userData: RegisterData = {
-        email: this.registerForm.value.email,
-        username: this.registerForm.value.name, // Map name field to username for backend
-        password: this.registerForm.value.password
-      };
-
-      this.authService.register(userData).subscribe({
-        next: (response: AuthResponse) => {
-          this.isLoading.set(false);
-          this.toastService.show({
-            title: 'Account Created!',
-            description: 'Please check your email for a verification code.',
-            type: 'success'
-          });
-          // Redirect to verification page with email
-          this.router.navigate(['/verify'], { 
-            queryParams: { email: this.registerForm.value.email } 
-          });
-        },
-        error: (error: AuthError) => {
-          this.isLoading.set(false);
-          this.errorMessage.set(error.message || 'Registration failed. Please try again.');
-          
-          // Show field-specific errors if available
-          if (error.field) {
-            const control = this.registerForm.get(error.field);
-            if (control) {
-              control.setErrors({ serverError: error.message });
-            }
-          }
-
-          this.toastService.show({
-            title: 'Registration Failed',
-            description: error.message || 'Please check your information and try again.',
-            type: 'error'
-          });
-        }
+      this.toastService.show({
+        title: 'Registration',
+        description: 'Registration is not implemented in the simple auth service. Please use the login page.',
+        type: 'info'
       });
+      
+      this.isLoading.set(false);
+      this.router.navigate(['/login']);
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.registerForm.controls).forEach(key => {
@@ -308,30 +278,10 @@ export class RegisterComponent {
    * Handle Google signup
    */
   onGoogleSignup(): void {
-    this.isLoading.set(true);
-    this.errorMessage.set('');
-    
-    this.authService.loginWithGoogle();
-    
-    // For demo purposes, we'll use the demo login
-    this.authService.demoLogin().subscribe({
-      next: (response: AuthResponse) => {
-        this.isLoading.set(false);
-        this.toastService.show({
-          title: 'Welcome!',
-          description: `Account created successfully. Welcome, ${response.user.name}!`,
-          type: 'success'
-        });
-      },
-      error: (error: AuthError) => {
-        this.isLoading.set(false);
-        this.errorMessage.set('Google signup failed. Please try again.');
-        this.toastService.show({
-          title: 'Signup Failed',
-          description: 'Google signup failed. Please try again.',
-          type: 'error'
-        });
-      }
+    this.toastService.show({
+      title: 'Google Signup',
+      description: 'Google signup is not implemented yet. Please use email/password registration.',
+      type: 'info'
     });
   }
 

@@ -11,7 +11,7 @@ import { InputComponent } from '../../components/ui/input/input';
 import { LabelComponent } from '../../components/ui/label/label';
 import { PasswordInputComponent } from '../../components/ui/password-input/password-input';
 import { TextComponent, TextLinkComponent, StrongComponent } from '../../components/ui/text/text';
-import { AuthService, LoginCredentials, AuthResponse, AuthError } from '../../services/auth.service';
+import { SimpleAuthService } from '../../services/simple-auth.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -163,18 +163,6 @@ import { ToastService } from '../../services/toast.service';
           </app-text-link>
         </app-text>
         
-        <!-- Demo login button for testing -->
-        <div class="text-center">
-          <app-button 
-            type="button" 
-            variant="outline" 
-            size="sm"
-            (click)="onDemoLogin()"
-            [disabled]="isLoading()"
-          >
-            Demo Login
-          </app-button>
-        </div>
       </form>
     </div>
   `,
@@ -188,7 +176,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class AuthComponent {
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
+  private authService = inject(SimpleAuthService);
   private toastService = inject(ToastService);
   private router = inject(Router);
 
@@ -221,7 +209,7 @@ export class AuthComponent {
       this.isLoading.set(true);
       this.errorMessage.set('');
 
-      const credentials: LoginCredentials = {
+      const credentials = {
         email: this.loginForm.value.email,
         password: this.loginForm.value.password,
         remember: this.loginForm.value.remember
@@ -230,9 +218,11 @@ export class AuthComponent {
       this.authService.login(credentials).subscribe({
         next: (response) => {
           this.isLoading.set(false);
+          const userData = response.user || response.user_data;
+          const userName = userData?.name || userData?.username || 'User';
           this.toastService.show({
             title: 'Success!',
-            description: `Welcome back, ${response.user.name}!`,
+            description: `Welcome back, ${userName}!`,
             type: 'success'
           });
           // Navigation is handled by the auth service
@@ -268,43 +258,13 @@ export class AuthComponent {
    * Handle Google login
    */
   onGoogleLogin(): void {
-    this.isLoading.set(true);
-    this.errorMessage.set('');
-    
-    this.authService.loginWithGoogle();
-    
-    // For demo purposes, we'll use the demo login
-    this.authService.demoLogin().subscribe({
-      next: (response: AuthResponse) => {
-        this.isLoading.set(false);
-        this.toastService.show({
-          title: 'Success!',
-          description: `Welcome, ${response.user.name}!`,
-          type: 'success'
-        });
-      },
-      error: (error: AuthError) => {
-        this.isLoading.set(false);
-        this.errorMessage.set('Google login failed. Please try again.');
-        this.toastService.show({
-          title: 'Login Failed',
-          description: 'Google login failed. Please try again.',
-          type: 'error'
-        });
-      }
+    this.toastService.show({
+      title: 'Google Login',
+      description: 'Google login is not implemented yet. Please use email/password login.',
+      type: 'info'
     });
   }
 
-  /**
-   * Demo login for testing
-   */
-  onDemoLogin(): void {
-    this.loginForm.patchValue({
-      email: 'demo@example.com',
-      password: 'password123'
-    });
-    this.onSubmit();
-  }
 
   /**
    * Check if a form field is invalid and has been touched

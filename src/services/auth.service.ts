@@ -13,6 +13,8 @@ import {
 import { map } from 'rxjs/operators';
 import { CookieService } from './cookie.service';
 import { JwtService } from './jwt.service';
+import { TokenStorageService } from './token-storage.service';
+import { AuthHttpService } from './auth-http.service';
 
 // Unified interfaces
 export interface User {
@@ -61,7 +63,8 @@ export interface ProfileUpdateData {
 }
 
 export interface AuthResponse {
-  user: User;
+  user?: User;
+  user_data?: User; // Backend returns user_data
   access_token?: string; // HEAD variant
   token?: string; // other variant
   refresh_token?: string; // HEAD variant
@@ -87,6 +90,8 @@ export class AuthService {
   private router = inject(Router);
   private cookieService = inject(CookieService);
   private jwtService = inject(JwtService);
+  private tokenStorage = inject(TokenStorageService);
+  private authHttp = inject(AuthHttpService);
 
   // Cookie names (if you prefer localStorage, swap implementations below)
   private readonly ACCESS_TOKEN_COOKIE = 'access_token';
@@ -108,6 +113,7 @@ export class AuthService {
   // Signals for modern Angular
   public isAuthenticated = signal<boolean>(false);
   public currentUser = signal<User | null>(null);
+  private sessionCheckComplete = signal<boolean>(false);
 
   constructor() {
     this.checkExistingSession();
@@ -140,8 +146,7 @@ export class AuthService {
   // Login (supports email or username)
   login(credentials: LoginCredentials): Observable<AuthResponse> {
     this.isLoadingSubject.next(true);
-    return this.http
-      .post<AuthResponse>(`${this.API_URL}/login`, credentials)
+    return this.authHttp.login(credentials)
       .pipe(
         tap((res) => this.handleAuthSuccess(res, credentials.remember)),
         catchError((err) => this.handleLoadingError(err))
@@ -152,15 +157,15 @@ export class AuthService {
   refreshToken(): Observable<AuthResponse> {
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
-      this.logout();
+      console.log('No refresh token available');
       return throwError(() => new Error('No refresh token available'));
     }
-    return this.http
-      .post<AuthResponse>(`${this.API_URL}/refresh`, { refreshToken })
+    return this.authHttp.refreshToken(refreshToken)
       .pipe(
         tap((res) => this.handleAuthSuccess(res)),
         catchError((err) => {
-          this.logout();
+          console.log('Token refresh failed:', err);
+          // Don't call logout here to avoid circular dependency
           return this.handleAuthError(err);
         })
       );
@@ -220,8 +225,7 @@ export class AuthService {
   verifyToken(): Observable<VerifyResponse> {
     const token = this.getAccessToken();
     if (!token) return of({ valid: false });
-    return this.http
-      .post<VerifyResponse>(`${this.API_URL}/verify`, { token })
+    return this.authHttp.verifyToken(token)
       .pipe(
         tap((resp) => {
           if (resp.valid && resp.user) {
@@ -229,12 +233,12 @@ export class AuthService {
             this.currentUser.set(resp.user);
             this.isAuthenticated.set(true);
             this.isAuthenticatedSubject.next(true);
-          } else {
-            this.logout();
           }
+          // Don't call logout here to avoid circular dependency
         }),
         catchError((err) => {
-          this.logout();
+          // Don't call logout here to avoid circular dependency
+          console.log('Token verification error:', err);
           return this.handleAuthError(err);
         })
       );
@@ -264,9 +268,8 @@ export class AuthService {
 
   // Logout
   logout(): void {
-    // Clear cookies
-    this.cookieService.delete(this.ACCESS_TOKEN_COOKIE);
-    this.cookieService.delete(this.REFRESH_TOKEN_COOKIE);
+    // Clear tokens
+    this.tokenStorage.clearTokens();
 
     // Clear state
     this.currentUserSubject.next(null);
@@ -274,6 +277,7 @@ export class AuthService {
     this.isAuthenticated.set(false);
     this.isAuthenticatedSubject.next(false);
     this.isLoadingSubject.next(false);
+    this.sessionCheckComplete.set(false);
 
     // Navigate
     this.router.navigate(['/login']);
@@ -283,11 +287,15 @@ export class AuthService {
 
   // Tokens
   getAccessToken(): string | null {
-    return this.cookieService.get(this.ACCESS_TOKEN_COOKIE);
+    const token = this.tokenStorage.getAccessToken();
+    console.log('Retrieving access token:', token ? token.substring(0, 20) + '...' : 'null');
+    return token;
   }
 
   getRefreshToken(): string | null {
-    return this.cookieService.get(this.REFRESH_TOKEN_COOKIE);
+    const token = this.tokenStorage.getRefreshToken();
+    console.log('Retrieving refresh token:', token ? token.substring(0, 20) + '...' : 'null');
+    return token;
   }
 
   // State getters
@@ -296,8 +304,29 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
+    const sessionComplete = this.sessionCheckComplete();
     const token = this.getAccessToken();
-    return token ? this.jwtService.isTokenValid(token) : false;
+    const hasValidToken = token ? this.jwtService.isTokenValid(token) : false;
+    const isAuthenticated = this.isAuthenticated();
+    
+    console.log('AuthService.isLoggedIn() - Debug:', {
+      sessionComplete,
+      hasToken: !!token,
+      hasValidToken,
+      isAuthenticated,
+      result: sessionComplete && hasValidToken && isAuthenticated
+    });
+    
+    // If session check hasn't completed yet, assume not logged in to be safe
+    if (!sessionComplete) {
+      console.log('Session check not complete, returning false');
+      return false;
+    }
+    
+    // User is logged in if they have a valid token AND the auth state is set
+    const result = hasValidToken && isAuthenticated;
+    console.log('Final auth result:', result);
+    return result;
   }
 
   // Demo login (dev only)
@@ -363,28 +392,26 @@ export class AuthService {
     const refreshExpiryDays = 30;
 
     if (access) {
-      this.cookieService.set(this.ACCESS_TOKEN_COOKIE, access, {
-        expires: tokenExpiryDays,
-        secure: true,
-        sameSite: 'strict',
-      });
+      console.log('Storing access token:', access.substring(0, 20) + '...');
+      this.tokenStorage.setAccessToken(access);
+      console.log('Access token stored successfully');
     }
     if (refresh) {
-      this.cookieService.set(this.REFRESH_TOKEN_COOKIE, refresh, {
-        expires: refreshExpiryDays,
-        secure: true,
-        sameSite: 'strict',
-      });
+      console.log('Storing refresh token:', refresh.substring(0, 20) + '...');
+      this.tokenStorage.setRefreshToken(refresh);
+      console.log('Refresh token stored successfully');
     }
 
-    // Update state
-    if (response.user) {
-      this.currentUserSubject.next(response.user);
-      this.currentUser.set(response.user);
+    // Update state - handle both user and user_data from backend
+    const userData = response.user || response.user_data;
+    if (userData) {
+      this.currentUserSubject.next(userData);
+      this.currentUser.set(userData);
     }
     this.isAuthenticated.set(true);
     this.isAuthenticatedSubject.next(true);
     this.isLoadingSubject.next(false);
+    this.sessionCheckComplete.set(true);
 
     // Navigate
     this.router.navigate(['/dashboard']);
@@ -411,26 +438,61 @@ export class AuthService {
   }
 
   private checkExistingSession(): void {
+    console.log('Starting session check...');
     const token = this.getAccessToken();
-    if (!token) return;
+    console.log('Token found:', !!token);
+    
+    if (!token) {
+      console.log('No token found, marking session check complete');
+      this.sessionCheckComplete.set(true);
+      return;
+    }
 
+    console.log('Verifying token with backend...');
     this.verifyToken().subscribe({
       next: (resp) => {
+        console.log('Token verification response:', resp);
         if (resp.valid && resp.user) {
+          console.log('Token valid, user authenticated');
           // already handled in verifyToken tap
         } else {
+          console.log('Token invalid, logging out');
           this.logout();
         }
+        this.sessionCheckComplete.set(true);
+        console.log('Session check complete (success)');
       },
-      error: () => {
+      error: (error) => {
+        console.log('Token verification failed:', error);
         const refreshToken = this.getRefreshToken();
         if (refreshToken) {
+          console.log('Attempting token refresh...');
           this.refreshToken().subscribe({
-            next: () => {},
-            error: () => this.logout(),
+            next: () => {
+              console.log('Token refresh successful');
+              this.sessionCheckComplete.set(true);
+              console.log('Session check complete (refresh success)');
+            },
+            error: (refreshError) => {
+              console.log('Token refresh failed:', refreshError);
+              // Clear session without calling logout to avoid circular dependency
+              this.currentUserSubject.next(null);
+              this.currentUser.set(null);
+              this.isAuthenticated.set(false);
+              this.isAuthenticatedSubject.next(false);
+              this.sessionCheckComplete.set(true);
+              console.log('Session check complete (refresh failed)');
+            },
           });
         } else {
-          this.logout();
+          console.log('No refresh token, clearing session');
+          // Clear session without calling logout to avoid circular dependency
+          this.currentUserSubject.next(null);
+          this.currentUser.set(null);
+          this.isAuthenticated.set(false);
+          this.isAuthenticatedSubject.next(false);
+          this.sessionCheckComplete.set(true);
+          console.log('Session check complete (no refresh token)');
         }
       },
     });

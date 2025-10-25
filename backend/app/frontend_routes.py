@@ -60,6 +60,13 @@ def widget_lab():
     return render_template("widget-lab/index.html")
 
 
+@frontend_bp.route("/labs/demo")
+@require_auth
+def demo_lab():
+    """Serve the demo lab page"""
+    return render_template("labs/demo/index.html")
+
+
 @frontend_bp.route("/login")
 def login():
     """Serve the login page"""
