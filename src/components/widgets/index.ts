@@ -115,6 +115,10 @@ export * from './core/confidence-meter/confidence-meter';
 export { ReviewLoopComponent } from './core/review-loop/review-loop';
 export * from './core/review-loop/review-loop.metadata';
 
+// Console Output
+export { ConsoleOutputComponent } from './coding/console-output/console-output';
+export * from './coding/console-output/console-output.metadata';
+
 // Category-Specific Widgets
 export * from './coding/code-editor/code-editor';
 export * from './math/equation-input/equation-input';

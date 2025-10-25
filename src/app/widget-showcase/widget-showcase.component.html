@@ -1298,6 +1298,26 @@
     </app-card>
   </div>
 
+  <!-- Console Output Widget Section (near bottom) -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Console Output</h2>
+        <p class="text-sm text-muted-foreground">Streamed console output with copy/download/clear</p>
+      </app-card-header>
+      <app-card-content>
+        <app-console-output
+          id="showcase-console"
+          [title]="'Console Output'"
+          [lines]="consoleDemoLines"
+          [isRunning]="false"
+          [showTimestamps]="true"
+          [ui]="{ variant: 'default', height: 'md', theme: 'dark' }"
+        ></app-console-output>
+      </app-card-content>
+    </app-card>
+  </div>
+
   <!-- Code Editor Widget Section (last) -->
   <div class="mb-8">
     <app-card>

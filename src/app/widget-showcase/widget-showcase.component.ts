@@ -49,6 +49,8 @@ import { StepPromptComponent } from '../../components/widgets/core/step-prompt/s
 import { HintPanelComponent } from '../../components/widgets/core/hint-panel/hint-panel';
 import { FeedbackBoxComponent } from '../../components/widgets/core/feedback-box/feedback-box';
 import { ConfidenceMeterComponent } from '../../components/widgets/core/confidence-meter/confidence-meter';
+import { ConsoleOutputComponent } from '../../components/widgets/coding/console-output/console-output';
+import type { ConsoleLine } from '../../components/widgets/coding/console-output/console-output';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -86,6 +88,7 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     HintPanelComponent,
     FeedbackBoxComponent,
     ConfidenceMeterComponent,
+    ConsoleOutputComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
@@ -186,6 +189,13 @@ console.log(factorial(5)); // Should return 120`;
       timesCorrect: 0,
       timesAttempted: 1
     }
+  ];
+
+  // Console Output demo data
+  consoleDemoLines: ConsoleLine[] = [
+    { id: 'l1', type: 'info', content: 'Initializing...', timestamp: new Date() },
+    { id: 'l2', type: 'stdout', content: 'Running tests...', timestamp: new Date() },
+    { id: 'l3', type: 'success', content: 'All tests passed.', timestamp: new Date() }
   ];
 
   // Widget examples

@@ -299,6 +299,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
 
   public code: string = '';
   public output: string = '';
+  // legacy simple output only for showcase; no structured console here
   public outputStatus: 'idle' | 'running' | 'success' | 'error' = 'idle';
   public isRunning = false;
   public runsCount = 0;
@@ -652,11 +653,8 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
         typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
       ).join(' ');
       
-      if (this.output) {
-        this.output += '\n' + message;
-      } else {
-        this.output = message;
-      }
+      // Append to simple output string only
+      this.output = this.output ? this.output + '\n' + message : message;
       
       // Also call original console.log to maintain normal behavior
       (window as any).__originalConsoleLog.apply(console, args);
@@ -670,6 +668,8 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       delete (window as any).__originalConsoleLog;
     }
   }
+
+  clearConsole(): void { this.output = ''; }
 
   private runTestCases(): void {
     this.testCases.forEach(test => {

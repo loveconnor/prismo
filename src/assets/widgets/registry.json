@@ -370,6 +370,25 @@
     "category": "core"
   },
   {
+    "id": "console-output",
+    "title": "Console Output",
+    "description": "Streamed console output with copy, download, clear, timestamps, and auto-scroll",
+    "skills": ["debugging", "output-reading", "tooling"],
+    "difficulty": 1,
+    "estimated_time": 30,
+    "input_type": "text",
+    "output_type": "visualization",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": false,
+      "time_extension": false,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
     "id": "code-editor",
     "title": "Code Editor",
     "description": "Interactive code editor with run and reset functionality",
