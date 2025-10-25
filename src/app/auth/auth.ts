@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import { LogoComponent } from '../../components/ui/logo/logo';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CheckboxComponent } from '../../components/ui/checkbox/checkbox';
@@ -11,13 +11,15 @@ import { InputComponent } from '../../components/ui/input/input';
 import { LabelComponent } from '../../components/ui/label/label';
 import { PasswordInputComponent } from '../../components/ui/password-input/password-input';
 import { TextComponent, TextLinkComponent, StrongComponent } from '../../components/ui/text/text';
+import { AuthService, LoginCredentials } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     LogoComponent,
     ButtonComponent,
@@ -33,23 +35,65 @@ import { TextComponent, TextLinkComponent, StrongComponent } from '../../compone
   ],
   template: `
     <div class="flex min-h-screen items-center justify-center bg-white px-4 py-12 dark:bg-zinc-950">
-      <form action="" method="POST" class="grid w-full max-w-sm grid-cols-1 gap-8">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="grid w-full max-w-sm grid-cols-1 gap-8">
         <app-logo className="h-6 text-zinc-950 dark:text-white" />
         <app-heading>Sign in to your account</app-heading>
         
+        <!-- Error message display -->
+        @if (errorMessage()) {
+          <div class="rounded-md bg-red-50 p-4 dark:bg-red-950/20">
+            <div class="text-sm text-red-700 dark:text-red-400">
+              {{ errorMessage() }}
+            </div>
+          </div>
+        }
+        
         <app-field>
           <app-label for="email">Email</app-label>
-          <app-input type="email" id="email" name="email" />
+          <app-input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="Enter your email"
+            formControlName="email"
+            [class.border-red-500]="isFieldInvalid('email')"
+          />
+          @if (isFieldInvalid('email')) {
+            <div class="mt-1 text-sm text-red-600 dark:text-red-400">
+              @if (loginForm.get('email')?.hasError('required')) {
+                Email is required
+              }
+              @if (loginForm.get('email')?.hasError('email')) {
+                Please enter a valid email address
+              }
+            </div>
+          }
         </app-field>
         
         <app-field>
           <app-label for="password">Password</app-label>
-          <app-password-input id="password" name="password" />
+          <app-password-input 
+            id="password" 
+            name="password" 
+            placeholder="Enter your password"
+            formControlName="password"
+            [class.border-red-500]="isFieldInvalid('password')"
+          />
+          @if (isFieldInvalid('password')) {
+            <div class="mt-1 text-sm text-red-600 dark:text-red-400">
+              @if (loginForm.get('password')?.hasError('required')) {
+                Password is required
+              }
+              @if (loginForm.get('password')?.hasError('minlength')) {
+                Password must be at least 6 characters long
+              }
+            </div>
+          }
         </app-field>
         
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <app-checkbox id="remember" name="remember" />
+            <app-checkbox id="remember" formControlName="remember" />
             <app-label for="remember" className="!mb-0">Remember me</app-label>
           </div>
           <app-text className="!mb-0">
@@ -59,13 +103,32 @@ import { TextComponent, TextLinkComponent, StrongComponent } from '../../compone
           </app-text>
         </div>
         
-        <app-button type="submit" color="blue" className="w-full">
-          Login
+        <app-button 
+          type="submit" 
+          color="blue" 
+          className="w-full"
+          [disabled]="loginForm.invalid || isLoading()"
+        >
+          @if (isLoading()) {
+            <svg class="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Signing in...
+          } @else {
+            Sign in
+          }
         </app-button>
         
         <div class="text-center text-sm text-zinc-600 dark:text-zinc-400">Or continue with</div>
         
-        <app-button type="button" variant="outline" className="w-full">
+        <app-button 
+          type="button" 
+          variant="outline" 
+          className="w-full"
+          (click)="onGoogleLogin()"
+          [disabled]="isLoading()"
+        >
           <svg
             data-slot="icon"
             class="mr-2 h-4 w-4"
@@ -99,6 +162,19 @@ import { TextComponent, TextLinkComponent, StrongComponent } from '../../compone
             <app-strong>Sign up</app-strong>
           </app-text-link>
         </app-text>
+        
+        <!-- Demo login button for testing -->
+        <div class="text-center">
+          <app-button 
+            type="button" 
+            variant="outline" 
+            size="sm"
+            (click)="onDemoLogin()"
+            [disabled]="isLoading()"
+          >
+            Demo Login
+          </app-button>
+        </div>
       </form>
     </div>
   `,
@@ -110,5 +186,154 @@ import { TextComponent, TextLinkComponent, StrongComponent } from '../../compone
     }
   `]
 })
-export class AuthComponent {}
+export class AuthComponent {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+
+  // Reactive form
+  loginForm: FormGroup;
+
+  // State signals
+  isLoading = signal(false);
+  errorMessage = signal<string>('');
+
+  constructor() {
+    // Initialize reactive form with validation
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      remember: [false]
+    });
+
+    // Check if user is already authenticated
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  /**
+   * Handle form submission
+   */
+  onSubmit(): void {
+    if (this.loginForm.valid) {
+      this.isLoading.set(true);
+      this.errorMessage.set('');
+
+      const credentials: LoginCredentials = {
+        email: this.loginForm.value.email,
+        password: this.loginForm.value.password,
+        remember: this.loginForm.value.remember
+      };
+
+      this.authService.login(credentials).subscribe({
+        next: (response) => {
+          this.isLoading.set(false);
+          this.toastService.show({
+            title: 'Success!',
+            description: `Welcome back, ${response.user.name}!`,
+            type: 'success'
+          });
+          // Navigation is handled by the auth service
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(error.message || 'Login failed. Please try again.');
+          
+          // Show field-specific errors if available
+          if (error.field) {
+            const control = this.loginForm.get(error.field);
+            if (control) {
+              control.setErrors({ serverError: error.message });
+            }
+          }
+
+          this.toastService.show({
+            title: 'Login Failed',
+            description: error.message || 'Please check your credentials and try again.',
+            type: 'error'
+          });
+        }
+      });
+    } else {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.loginForm.controls).forEach(key => {
+        this.loginForm.get(key)?.markAsTouched();
+      });
+    }
+  }
+
+  /**
+   * Handle Google login
+   */
+  onGoogleLogin(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    
+    this.authService.loginWithGoogle();
+    
+    // For demo purposes, we'll use the demo login
+    this.authService.demoLogin().subscribe({
+      next: (response) => {
+        this.isLoading.set(false);
+        this.toastService.show({
+          title: 'Success!',
+          description: `Welcome, ${response.user.name}!`,
+          type: 'success'
+        });
+      },
+      error: (error) => {
+        this.isLoading.set(false);
+        this.errorMessage.set('Google login failed. Please try again.');
+        this.toastService.show({
+          title: 'Login Failed',
+          description: 'Google login failed. Please try again.',
+          type: 'error'
+        });
+      }
+    });
+  }
+
+  /**
+   * Demo login for testing
+   */
+  onDemoLogin(): void {
+    this.loginForm.patchValue({
+      email: 'demo@example.com',
+      password: 'password123'
+    });
+    this.onSubmit();
+  }
+
+  /**
+   * Check if a form field is invalid and has been touched
+   */
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.loginForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  /**
+   * Get validation error message for a field
+   */
+  getFieldError(fieldName: string): string {
+    const field = this.loginForm.get(fieldName);
+    if (field && field.errors && (field.dirty || field.touched)) {
+      if (field.errors['required']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
+      }
+      if (field.errors['email']) {
+        return 'Please enter a valid email address';
+      }
+      if (field.errors['minlength']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} must be at least ${field.errors['minlength'].requiredLength} characters`;
+      }
+      if (field.errors['serverError']) {
+        return field.errors['serverError'];
+      }
+    }
+    return '';
+  }
+}
 
