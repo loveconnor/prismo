@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthHttpService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:5000/auth';
+  private readonly API_URL = 'https://localhost:5000/auth';
 
   /**
    * Verify token with backend (bypasses interceptor)

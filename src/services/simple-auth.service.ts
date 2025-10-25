@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
@@ -27,8 +27,8 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class SimpleAuthService {
-  private http = new HttpClient();
-  private router = new Router();
+  private http = inject(HttpClient);
+  private router = inject(Router);
   
   // Simple state management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -40,7 +40,7 @@ export class SimpleAuthService {
   public sessionCheckComplete = signal<boolean>(false);
   
   // API URL
-  private readonly API_URL = 'http://localhost:5000/auth';
+  private readonly API_URL = 'https://localhost:5000/auth';
   
   constructor() {
     this.initializeAuth();
