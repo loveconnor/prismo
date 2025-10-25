@@ -33,6 +33,7 @@ import { foldGutter } from '@codemirror/language';
 import { search } from '@codemirror/search';
 import { history } from '@codemirror/commands';
 import { highlightSelectionMatches } from '@codemirror/search';
+import { indentWithTab } from '@codemirror/commands';
 
 interface TestCase {
   id: string;
@@ -357,7 +358,31 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
         const container = this.editorContainer.nativeElement;
         
         const keydownHandler = (e: KeyboardEvent) => {
-          // Immediately stop propagation for ALL keyboard events in the editor
+          // For Tab key, we need special handling
+          if (e.key === 'Tab') {
+            // Prevent default browser tab navigation
+            e.preventDefault();
+            // Stop propagation to parent handlers
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            // Manually insert tab or trigger indent if CodeMirror didn't handle it
+            if (this.editorView) {
+              const state = this.editorView.state;
+              const from = state.selection.main.from;
+              const to = state.selection.main.to;
+              const indentText = '    '; // 2 spaces for indentation
+              
+              const transaction = state.update({
+                changes: { from, to, insert: indentText },
+                selection: { anchor: from + indentText.length }
+              });
+              this.editorView.dispatch(transaction);
+            }
+            return;
+          }
+          
+          // For all other keys, stop propagation
           e.stopPropagation();
           e.stopImmediatePropagation();
         };
@@ -419,6 +444,9 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       // Core functionality (always enabled)
       history(),
       highlightSelectionMatches(),
+      
+      // Enable Tab key for indentation
+      keymap.of([indentWithTab]),
       
       // Language support (conditional)
       ...languageSupport,
