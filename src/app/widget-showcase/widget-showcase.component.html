@@ -105,6 +105,29 @@
           </app-card-content>
         </app-card>
 
+        <!-- Review Loop Widget Demo -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Review Loop Demo</h3>
+            <p class="text-sm text-muted-foreground mt-1">
+              Adaptive practice on weak skills with timer and results
+            </p>
+          </app-card-header>
+
+          <app-card-content>
+            <app-review-loop
+              id="showcase-review-loop"
+              [weakSkills]="weakSkillsDemo"
+              [reviewMode]="'adaptive'"
+              [questionsPerSkill]="2"
+              [timeLimit]="5"
+              [targetAccuracy]="0.8"
+              [questionPool]="reviewQuestionPool"
+              [ui]="{ variant: 'default', showProgress: true, showTimer: true, showExplanations: true }"
+            ></app-review-loop>
+          </app-card-content>
+        </app-card>
+
         <!-- Coach Chat Widget Demo -->
         <app-card>
           <app-card-header>

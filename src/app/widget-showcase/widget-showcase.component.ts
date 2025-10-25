@@ -37,6 +37,14 @@ import { OrderItem } from '../../components/widgets/core/ordering/ordering';
 import { NumericInputComponent } from '../../components/widgets/core/numeric-input/numeric-input';
 import { NUMERIC_INPUT_METADATA } from '../../components/widgets/core/numeric-input/numeric-input.metadata';
 import { NumericConstraint } from '../../components/widgets/core/numeric-input/numeric-input';
+import { ErrorExplainComponent } from '../../components/widgets/core/error-explain/error-explain';
+import { CheckpointComponent } from '../../components/widgets/core/checkpoint/checkpoint';
+import { OutcomeSummaryComponent } from '../../components/widgets/core/outcome-summary/outcome-summary';
+import { AdaptiveSummaryComponent } from '../../components/widgets/core/adaptive-summary/adaptive-summary';
+import { GoalSetterComponent } from '../../components/widgets/core/goal-setter/goal-setter';
+import { GoalType, LearningGoal } from '../../components/widgets/core/goal-setter/goal-setter';
+import { CodeEditorComponent } from '../../components/widgets/coding/code-editor/code-editor';
+import { ReviewLoopComponent } from '../../components/widgets/core/review-loop/review-loop';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -63,6 +71,13 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     MatchingPairsComponent,
     OrderingComponent,
     NumericInputComponent,
+    ErrorExplainComponent,
+    CheckpointComponent,
+    OutcomeSummaryComponent,
+    AdaptiveSummaryComponent,
+    GoalSetterComponent,
+    CodeEditorComponent,
+    ReviewLoopComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
@@ -111,6 +126,57 @@ console.log(factorial(5)); // Should return 120`;
       input: '3',
       expectedOutput: '6',
       description: 'factorial(3) should return 6'
+    }
+  ];
+
+  // Review Loop demo data
+  weakSkillsDemo: string[] = ['loops', 'arrays'];
+  reviewQuestionPool: any[] = [
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: 'What does a for loop do?',
+      options: ['Executes code once', 'Repeats code', 'Stops code', 'Compiles code'],
+      correctAnswer: 'Repeats code',
+      explanation: 'Loops allow repeated execution until a condition changes.',
+      skillTag: 'loops',
+      difficulty: 'easy',
+      timesCorrect: 1,
+      timesAttempted: 3
+    },
+    {
+      id: 'q2',
+      type: 'true-false',
+      question: 'A while loop may execute zero times.',
+      correctAnswer: 'True',
+      explanation: 'If the condition is false initially, it executes zero times.',
+      skillTag: 'loops',
+      difficulty: 'medium',
+      timesCorrect: 0,
+      timesAttempted: 1
+    },
+    {
+      id: 'q3',
+      type: 'multiple-choice',
+      question: 'Which method adds an item to the end of a JavaScript array?',
+      options: ['push', 'pop', 'shift', 'unshift'],
+      correctAnswer: 'push',
+      explanation: 'push appends an element to the end of the array.',
+      skillTag: 'arrays',
+      difficulty: 'easy',
+      timesCorrect: 0,
+      timesAttempted: 2
+    },
+    {
+      id: 'q4',
+      type: 'short-answer',
+      question: 'What index is the first element in most programming languages arrays?',
+      correctAnswer: '0',
+      explanation: 'Arrays are typically zero-indexed.',
+      skillTag: 'arrays',
+      difficulty: 'medium',
+      timesCorrect: 0,
+      timesAttempted: 1
     }
   ];
 
