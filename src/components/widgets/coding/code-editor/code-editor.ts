@@ -69,43 +69,98 @@ interface TestCase {
   template: `
     <app-card>
       <app-card-header>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <h3 class="text-lg font-semibold text-foreground">{{ title }}</h3>
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-              {{ language }}
-            </span>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <h3 class="text-lg font-semibold text-foreground">{{ title }}</h3>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+                {{ language }}
+              </span>
+            </div>
+            <div class="flex gap-2">
+              <app-button 
+                variant="default"
+                size="sm"
+                (click)="runCode()"
+                [disabled]="isRunning || !hasCode"
+              >
+                <ng-icon name="lucidePlay" class="w-4 h-4 mr-2"></ng-icon>
+                <span *ngIf="!isRunning">Run</span>
+                <span *ngIf="isRunning">Running...</span>
+              </app-button>
+              
+               <app-button 
+                 variant="outline"
+                 size="sm"
+                 (click)="resetCode()"
+                 [disabled]="isRunning"
+               >
+                 <ng-icon name="lucideRotateCcw" class="w-4 h-4 mr-2"></ng-icon>
+                 Reset
+               </app-button>
+               
+               <app-button 
+                 variant="outline"
+                 size="sm"
+                 (click)="toggleSettings()"
+               >
+                 <ng-icon name="lucideSettings" class="w-4 h-4 mr-2"></ng-icon>
+                 Settings
+               </app-button>
+            </div>
           </div>
-          <div class="flex gap-2">
-            <app-button 
-              variant="default"
-              size="sm"
-              (click)="runCode()"
-              [disabled]="isRunning || !hasCode"
-            >
-              <ng-icon name="lucidePlay" class="w-4 h-4 mr-2"></ng-icon>
-              <span *ngIf="!isRunning">Run</span>
-              <span *ngIf="isRunning">Running...</span>
-            </app-button>
-            
-             <app-button 
-               variant="outline"
-               size="sm"
-               (click)="resetCode()"
-               [disabled]="isRunning"
-             >
-               <ng-icon name="lucideRotateCcw" class="w-4 h-4 mr-2"></ng-icon>
-               Reset
-             </app-button>
-             
-             <app-button 
-               variant="outline"
-               size="sm"
-               (click)="toggleSettings()"
-             >
-               <ng-icon name="lucideSettings" class="w-4 h-4 mr-2"></ng-icon>
-               Settings
-             </app-button>
+          
+          <!-- Settings Panel (inside header) -->
+          <div *ngIf="isSettingsOpen && allowUserSettings" class="pt-3 border-t">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <h4 class="text-sm font-semibold text-foreground">Editor Settings</h4>
+                <app-button 
+                  variant="outline" 
+                  size="sm" 
+                  (click)="resetUserSettings()"
+                >
+                  Reset to Defaults
+                </app-button>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <div class="flex items-center justify-between">
+                  <label class="text-sm text-foreground">Syntax Highlighting</label>
+                  <app-switch 
+                    [(ngModel)]="userSettings.syntaxHighlighting"
+                    (ngModelChange)="updateUserSetting('syntaxHighlighting', $event)"
+                    [disabled]="!enableSyntaxHighlighting"
+                  ></app-switch>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <label class="text-sm text-foreground">Auto Completion</label>
+                  <app-switch 
+                    [(ngModel)]="userSettings.autoCompletion"
+                    (ngModelChange)="updateUserSetting('autoCompletion', $event)"
+                    [disabled]="!enableAutoCompletion"
+                  ></app-switch>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <label class="text-sm text-foreground">Line Numbers</label>
+                  <app-switch 
+                    [(ngModel)]="userSettings.lineNumbers"
+                    (ngModelChange)="updateUserSetting('lineNumbers', $event)"
+                    [disabled]="!enableLineNumbers"
+                  ></app-switch>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <label class="text-sm text-foreground">Word Wrap</label>
+                  <app-switch 
+                    [(ngModel)]="userSettings.wordWrap"
+                    (ngModelChange)="updateUserSetting('wordWrap', $event)"
+                  ></app-switch>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </app-card-header>
@@ -120,7 +175,12 @@ interface TestCase {
             
              <div 
                #editorContainer
-               class="w-full h-[180px] overflow-hidden"
+               class="w-full overflow-hidden"
+               [style.height]="height"
+               [style.min-height]="minHeight"
+               (click)="focusEditor()"
+               tabindex="-1"
+               data-code-editor="true"
              ></div>
           </div>
           
@@ -144,59 +204,6 @@ interface TestCase {
           </div>
          </div>
        </app-card-content>
-       
-       <!-- Settings Panel -->
-       <div *ngIf="isSettingsOpen && allowUserSettings" class="border-t bg-muted/50 p-4">
-         <div class="space-y-4">
-           <div class="flex items-center justify-between">
-             <h4 class="text-sm font-semibold text-foreground">Editor Settings</h4>
-             <app-button 
-               variant="outline" 
-               size="sm" 
-               (click)="resetUserSettings()"
-             >
-               Reset to Defaults
-             </app-button>
-           </div>
-           
-           <div class="grid grid-cols-2 gap-4">
-             <div class="flex items-center justify-between">
-               <label class="text-sm text-foreground">Syntax Highlighting</label>
-               <app-switch 
-                 [(ngModel)]="userSettings.syntaxHighlighting"
-                 (ngModelChange)="updateUserSetting('syntaxHighlighting', $event)"
-                 [disabled]="!enableSyntaxHighlighting"
-               ></app-switch>
-             </div>
-             
-             <div class="flex items-center justify-between">
-               <label class="text-sm text-foreground">Auto Completion</label>
-               <app-switch 
-                 [(ngModel)]="userSettings.autoCompletion"
-                 (ngModelChange)="updateUserSetting('autoCompletion', $event)"
-                 [disabled]="!enableAutoCompletion"
-               ></app-switch>
-             </div>
-             
-             <div class="flex items-center justify-between">
-               <label class="text-sm text-foreground">Line Numbers</label>
-               <app-switch 
-                 [(ngModel)]="userSettings.lineNumbers"
-                 (ngModelChange)="updateUserSetting('lineNumbers', $event)"
-                 [disabled]="!enableLineNumbers"
-               ></app-switch>
-             </div>
-             
-             <div class="flex items-center justify-between">
-               <label class="text-sm text-foreground">Word Wrap</label>
-               <app-switch 
-                 [(ngModel)]="userSettings.wordWrap"
-                 (ngModelChange)="updateUserSetting('wordWrap', $event)"
-               ></app-switch>
-             </div>
-           </div>
-         </div>
-       </div>
        
        <div class="mt-4" *ngIf="testCases.length > 0 && hasRunCode">
         <div class="flex items-center justify-between mb-3">
@@ -309,6 +316,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   public isSettingsOpen = false;
   
   private editorView?: EditorView;
+  private eventListenerCleanup: (() => void)[] = [];
 
   constructor(
     protected override fontService: FontService,
@@ -343,11 +351,47 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     // Add a small delay to ensure the container is ready
     setTimeout(() => {
       this.initializeEditor();
+      
+      // Add direct event listeners to prevent event bubbling
+      if (this.editorContainer && typeof document !== 'undefined') {
+        const container = this.editorContainer.nativeElement;
+        
+        const keydownHandler = (e: KeyboardEvent) => {
+          // Immediately stop propagation for ALL keyboard events in the editor
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+        };
+        
+        const keypressHandler = (e: KeyboardEvent) => {
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+        };
+        
+        const keyupHandler = (e: KeyboardEvent) => {
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+        };
+        
+        // Add listeners in capture phase (before bubble phase)
+        container.addEventListener('keydown', keydownHandler, { capture: true });
+        container.addEventListener('keypress', keypressHandler, { capture: true });
+        container.addEventListener('keyup', keyupHandler, { capture: true });
+        
+        // Store cleanup functions
+        this.eventListenerCleanup.push(
+          () => container.removeEventListener('keydown', keydownHandler, { capture: true }),
+          () => container.removeEventListener('keypress', keypressHandler, { capture: true }),
+          () => container.removeEventListener('keyup', keyupHandler, { capture: true })
+        );
+      }
     }, 100);
   }
 
   override ngOnDestroy(): void {
     this.editorView?.destroy();
+    
+    // Clean up event listeners
+    this.eventListenerCleanup.forEach(cleanup => cleanup());
   }
 
   private initializeEditor(): void {
@@ -391,9 +435,8 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       // Auto-completion (conditional)
       ...(this.enableAutoCompletion && this.userSettings.autoCompletion ? [autocompletion()] : []),
       
-      // Search functionality (always enabled)
-      search(),
-      keymap.of(searchKeymap),
+      // Search functionality (conditional - only if enabled)
+      ...(this.enableSearch ? [search()] : []),
       
       // Word wrap (conditional)
       ...(this.userSettings.wordWrap ? [EditorView.lineWrapping] : []),
@@ -436,11 +479,22 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     // Create editor with conditional extensions
     this.editorView = new EditorView({
       doc: this.starterCode || this.code,
-      extensions,
+      extensions: [
+        ...extensions,
+        // Ensure editor is editable
+        EditorView.editable.of(true)
+      ],
       parent: this.editorContainer.nativeElement
     });
 
     this.code = this.starterCode || this.code;
+    
+    // Focus the editor to ensure it can receive input
+    setTimeout(() => {
+      if (this.editorView) {
+        this.editorView.focus();
+      }
+    }, 200);
   }
 
   private getLanguageSupport() {
@@ -621,6 +675,18 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
 
   protected initializeWidgetData(): void {
     this.code = this.starterCode || this.getConfigValue('starterCode', '');
+    
+    // Allow height configuration through metadata
+    const metadataHeight = this.getConfigValue('editorHeight', '');
+    if (metadataHeight) {
+      this.height = metadataHeight;
+    }
+    
+    const metadataMinHeight = this.getConfigValue('editorMinHeight', '');
+    if (metadataMinHeight) {
+      this.minHeight = metadataMinHeight;
+    }
+    
     this.setDataValue('language', this.language);
     this.setDataValue('code', this.code);
     this.setDataValue('runs_count', 0);
@@ -642,6 +708,12 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     this.isSettingsOpen = !this.isSettingsOpen;
   }
 
+  focusEditor(): void {
+    if (this.editorView) {
+      this.editorView.focus();
+    }
+  }
+
   updateUserSetting(setting: keyof typeof this.userSettings, value: boolean): void {
     this.userSettings[setting] = value;
     this.saveUserSettings();
@@ -650,15 +722,19 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
 
   private saveUserSettings(): void {
     // Save to localStorage or user preferences
-    localStorage.setItem('codeEditorSettings', JSON.stringify(this.userSettings));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('codeEditorSettings', JSON.stringify(this.userSettings));
+    }
     this.setDataValue('user_settings', this.userSettings);
   }
 
   private loadUserSettings(): void {
     // Load from localStorage or user preferences
-    const saved = localStorage.getItem('codeEditorSettings');
-    if (saved) {
-      this.userSettings = { ...this.userSettings, ...JSON.parse(saved) };
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('codeEditorSettings');
+      if (saved) {
+        this.userSettings = { ...this.userSettings, ...JSON.parse(saved) };
+      }
     }
   }
 
@@ -681,3 +757,4 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     this.initializeEditor();
   }
 }
+
