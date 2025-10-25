@@ -47,6 +47,10 @@ interface ModuleState {
           <p class="module-description" *ngIf="moduleDefinition?.description">
             {{ moduleDefinition.description }}
           </p>
+          <!-- 🎯 ADD DIFFICULTY DISPLAY -->
+          <span class="difficulty-badge" [class]="getDifficultyClasses(moduleDefinition.difficulty)">
+            {{ getDifficultyLabel(moduleDefinition.difficulty) }}
+          </span>
         </div>
         
         <div class="module-progress" *ngIf="moduleState$ | async as state">
@@ -366,5 +370,27 @@ export class ModuleContainerComponent implements OnInit, OnDestroy {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+  }
+
+  getDifficultyClasses(difficulty: number | undefined): string {
+    const classes = {
+      1: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
+      2: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400',
+      3: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+      4: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400',
+      5: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+    };
+    return classes[difficulty as keyof typeof classes] || classes[1];
+  }
+
+  getDifficultyLabel(difficulty: number | undefined): string {
+    const labels = {
+      1: 'Very Easy',
+      2: 'Easy', 
+      3: 'Medium',
+      4: 'Hard',
+      5: 'Very Hard'
+    };
+    return labels[difficulty as keyof typeof labels] || 'Easy';
   }
 }
