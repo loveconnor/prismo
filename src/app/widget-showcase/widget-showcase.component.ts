@@ -51,6 +51,16 @@ import { FeedbackBoxComponent } from '../../components/widgets/core/feedback-box
 import { ConfidenceMeterComponent } from '../../components/widgets/core/confidence-meter/confidence-meter';
 import { ConsoleOutputComponent } from '../../components/widgets/coding/console-output/console-output';
 import type { ConsoleLine } from '../../components/widgets/coding/console-output/console-output';
+import { TestFeedbackComponent } from '../../components/widgets/coding/test-feedback/test-feedback';
+import type { TestSuite } from '../../components/widgets/coding/test-feedback/test-feedback';
+import { ComplexityPromptComponent } from '../../components/widgets/coding/complexity-prompt/complexity-prompt';
+import { COMPLEXITY_PROMPT_METADATA as COMPLEXITY_PROMPT_MD } from '../../components/widgets/coding/complexity-prompt/complexity-prompt.metadata';
+import { RefactorPromptComponent } from '../../components/widgets/coding/refactor-prompt/refactor-prompt';
+import { REFACTOR_PROMPT_METADATA as REFACTOR_PROMPT_MD } from '../../components/widgets/coding/refactor-prompt/refactor-prompt.metadata';
+import { AlgorithmSimulatorComponent } from '../../components/widgets/coding/algorithm-simulator/algorithm-simulator';
+import { ALGORITHM_SIMULATOR_METADATA as ALGO_SIM_MD } from '../../components/widgets/coding/algorithm-simulator/algorithm-simulator.metadata';
+import { CodeReviewCommentComponent } from '../../components/widgets/coding/code-review-comment/code-review-comment';
+import { CODE_REVIEW_COMMENT_METADATA as CRC_MD } from '../../components/widgets/coding/code-review-comment/code-review-comment.metadata';
 import { WidgetInputType, WidgetOutputType } from '../../types/widget.types';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
@@ -89,6 +99,11 @@ import { TabsContentComponent } from '../../components/ui/tabs/tabs-content';
     FeedbackBoxComponent,
     ConfidenceMeterComponent,
     ConsoleOutputComponent,
+    TestFeedbackComponent,
+    ComplexityPromptComponent,
+    RefactorPromptComponent,
+    AlgorithmSimulatorComponent,
+    CodeReviewCommentComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
@@ -196,6 +211,70 @@ console.log(factorial(5)); // Should return 120`;
     { id: 'l1', type: 'info', content: 'Initializing...', timestamp: new Date() },
     { id: 'l2', type: 'stdout', content: 'Running tests...', timestamp: new Date() },
     { id: 'l3', type: 'success', content: 'All tests passed.', timestamp: new Date() }
+  ];
+
+  // Complexity Prompt demo data
+  COMPLEXITY_PROMPT_METADATA = COMPLEXITY_PROMPT_MD;
+  complexityQuestion = 'What is the time complexity of the following algorithm?';
+  complexityCodeSnippet = `function hasDuplicate(arr) {
+  const seen = new Set();
+  for (let i = 0; i < arr.length; i++) {
+    if (seen.has(arr[i])) return true;
+    seen.add(arr[i]);
+  }
+  return false;
+}`;
+
+  // Refactor Prompt demo data
+  REFACTOR_PROMPT_METADATA = REFACTOR_PROMPT_MD;
+  refactorPrompt = 'Refactor to improve readability and remove duplication.';
+  refactorOriginalCode = `function processData(data) {
+  let result = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i] && data[i].value !== undefined && data[i].value !== null) {
+      const v = data[i].value;
+      if (v > 0) {
+        const tmp = { id: data[i].id, squared: v * v };
+        result.push(tmp);
+      } else {
+        result.push({ id: data[i].id, squared: 0 });
+      }
+    }
+  }
+  // duplicate summary calc
+  let sum = 0;
+  for (let i = 0; i < result.length; i++) {
+    sum += result[i].squared;
+  }
+  return { result: result, sum: sum };
+}`;
+
+  // Algorithm Simulator demo metadata exposure
+  ALGORITHM_SIMULATOR_METADATA = ALGO_SIM_MD;
+
+  // Code Review Comment demo data
+  CODE_REVIEW_COMMENT_METADATA = CRC_MD;
+  crcLineNumber = 42;
+  crcCode = `function add(a, b) {\n  // TODO: handle non-number inputs\n  return a + b\n}`;
+  crcMessage = 'Consider adding input validation and handling non-number types to prevent runtime errors.';
+  crcAuthor = 'Reviewer';
+  crcTimestamp = '2h ago';
+
+  // Test Feedback demo data
+  testSuitesDemo: TestSuite[] = [
+    {
+      id: 'suite-1',
+      name: 'Factorial Tests',
+      tests: [
+        { id: 't1', name: 'factorial(5) should return 120', status: 'fail', expectedOutput: '120', actualOutput: 'Test output for input: 5', executionTime: 12 },
+        { id: 't2', name: 'factorial(0) should return 1', status: 'pass', expectedOutput: '1', actualOutput: '1', executionTime: 3 },
+        { id: 't3', name: 'factorial(3) should return 6', status: 'error', errorMessage: 'TypeError: undefined is not a function', executionTime: 8, stackTrace: 'at factorial (index.js:10:5)\nat run (index.js:25:3)' }
+      ],
+      totalTests: 3,
+      passedTests: 1,
+      failedTests: 2,
+      executionTime: 23
+    }
   ];
 
   // Widget examples
@@ -352,6 +431,10 @@ Try entering your answer below and click submit. You can also:
       timestamp: new Date().toISOString()
     };
     this.events.update(events => [event, ...events].slice(0, 10)); // Keep last 10 events
+  }
+
+  handleReviewResolved() {
+    this.logEvent('Code Review Resolved', {});
   }
 
   private clearEvents() {

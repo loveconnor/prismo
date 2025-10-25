@@ -64,6 +64,84 @@
 
       <!-- Center - Widget Preview -->
       <div class="lg:col-span-2 space-y-6">
+        <!-- Complexity Prompt Widget Demo -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Complexity Prompt</h3>
+            <p class="text-sm text-muted-foreground mt-1">Analyze algorithm complexity with Big-O visualization</p>
+          </app-card-header>
+          <app-card-content>
+            <app-complexity-prompt
+              [metadata]="COMPLEXITY_PROMPT_METADATA"
+              id="showcase-complexity-1"
+              [question]="complexityQuestion"
+              [codeSnippet]="complexityCodeSnippet"
+              language="javascript"
+              category="time"
+              [showFeedback]="true"
+              [showCorrectAnswer]="true"
+              [ui]="{ showGraph: true, showHints: true }"
+            ></app-complexity-prompt>
+          </app-card-content>
+        </app-card>
+
+        <!-- Refactor Prompt Widget Demo -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Refactor Prompt</h3>
+            <p class="text-sm text-muted-foreground mt-1">Refactor code with suggestions, comparison, and hints</p>
+          </app-card-header>
+          <app-card-content>
+            <app-refactor-prompt
+              [metadata]="REFACTOR_PROMPT_METADATA"
+              id="showcase-refactor-1"
+              [prompt]="refactorPrompt"
+              [originalCode]="refactorOriginalCode"
+              language="javascript"
+              [ui]="{ showHints: true, showBenefits: true, allowCustomSolution: true }"
+              [requiredRefactors]="1"
+              [showComparison]="false"
+            ></app-refactor-prompt>
+          </app-card-content>
+        </app-card>
+
+        <!-- Algorithm Simulator Widget Demo -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Algorithm Simulator</h3>
+            <p class="text-sm text-muted-foreground mt-1">Bubble Sort, Quick Sort, and Fibonacci recursion tree</p>
+          </app-card-header>
+          <app-card-content>
+            <app-algorithm-simulator
+              [metadata]="ALGORITHM_SIMULATOR_METADATA"
+              defaultAlgorithm="bubble"
+            ></app-algorithm-simulator>
+          </app-card-content>
+        </app-card>
+
+        <!-- Code Review Comment Widget Demo -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Code Review Comment</h3>
+            <p class="text-sm text-muted-foreground mt-1">Theme-aware feedback stub</p>
+          </app-card-header>
+          <app-card-content>
+            <app-code-review-comment
+              [metadata]="CODE_REVIEW_COMMENT_METADATA"
+              [lineNumber]="crcLineNumber"
+              [code]="crcCode"
+              language="typescript"
+              commentType="suggestion"
+              title="Add input validation"
+              [message]="crcMessage"
+              [author]="crcAuthor"
+              [timestamp]="crcTimestamp"
+              [showLineHighlight]="true"
+              (resolved)="handleReviewResolved()"
+            ></app-code-review-comment>
+          </app-card-content>
+        </app-card>
+
         <!-- Step Prompt Widget Demo -->
         <app-card>
           <app-card-header>
@@ -1314,6 +1392,27 @@
           [showTimestamps]="true"
           [ui]="{ variant: 'default', height: 'md', theme: 'dark' }"
         ></app-console-output>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Test Feedback Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Test Feedback</h2>
+        <p class="text-sm text-muted-foreground">Grouped pass/fail results and details</p>
+      </app-card-header>
+      <app-card-content>
+        <app-test-feedback
+          id="showcase-test-feedback"
+          [title]="'Test Results'"
+          [testSuites]="testSuitesDemo"
+          [isRunning]="false"
+          [ui]="{ variant: 'default', showDetails: true, showStackTraces: false, groupBySuite: true }"
+          [maxVisibleTests]="50"
+          [autoExpandFailures]="true"
+        ></app-test-feedback>
       </app-card-content>
     </app-card>
   </div>

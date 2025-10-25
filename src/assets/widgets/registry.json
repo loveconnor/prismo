@@ -1,5 +1,24 @@
 [
   {
+    "id": "complexity-prompt",
+    "title": "Complexity Prompt",
+    "description": "Analyze algorithm complexity by selecting the correct Big-O with hints and visualization",
+    "skills": ["big-o", "algorithm-analysis", "complexity", "loops", "recursion"],
+    "difficulty": 3,
+    "estimated_time": 120,
+    "input_type": "multiple-choice",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": false,
+      "alternative_widgets": ["multiple-choice"]
+    },
+    "version": "1.0.0",
+    "category": "coding"
+  },
+  {
     "id": "step-prompt",
     "title": "Step Prompt",
     "description": "Displays task or question text with optional formatting",
@@ -387,6 +406,80 @@
     },
     "version": "1.0.0",
     "category": "core"
+  },
+  {
+    "id": "test-feedback",
+    "title": "Test Feedback",
+    "description": "Displays grouped test results with stats and details",
+    "skills": ["testing", "debugging", "analysis"],
+    "difficulty": 1,
+    "estimated_time": 60,
+    "input_type": "text",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": false,
+      "time_extension": false,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "refactor-prompt",
+    "title": "Refactor Prompt",
+    "description": "Refactor code with guided suggestions, comparison view, and best-practices hints",
+    "skills": ["refactoring", "readability", "maintainability", "performance", "correctness"],
+    "difficulty": 3,
+    "estimated_time": 300,
+    "input_type": "code",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": true,
+      "alternative_widgets": ["code-editor"]
+    },
+    "version": "1.0.0",
+    "category": "coding"
+  },
+  {
+    "id": "algorithm-simulator",
+    "title": "Algorithm Simulator",
+    "description": "Interactive visualizations for bubble sort, quick sort, and recursion tree",
+    "skills": ["sorting", "recursion", "visualization", "algorithms"],
+    "difficulty": 3,
+    "estimated_time": 300,
+    "input_type": "text",
+    "output_type": "visualization",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": false,
+      "time_extension": false
+    },
+    "version": "1.0.0",
+    "category": "coding"
+  },
+  {
+    "id": "code-review-comment",
+    "title": "Code Review Comment",
+    "description": "Theme-aware code review comment card with replies, likes, and resolve",
+    "skills": ["code-review", "communication", "feedback"],
+    "difficulty": 2,
+    "estimated_time": 60,
+    "input_type": "text",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": false,
+      "time_extension": false
+    },
+    "version": "1.0.0",
+    "category": "coding"
   },
   {
     "id": "code-editor",

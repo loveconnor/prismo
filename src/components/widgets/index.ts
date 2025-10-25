@@ -119,6 +119,21 @@ export * from './core/review-loop/review-loop.metadata';
 export { ConsoleOutputComponent } from './coding/console-output/console-output';
 export * from './coding/console-output/console-output.metadata';
 
+// Test Feedback
+export { TestFeedbackComponent } from './coding/test-feedback/test-feedback';
+export * from './coding/test-feedback/test-feedback.metadata';
+// Complexity Prompt
+export { ComplexityPromptComponent } from './coding/complexity-prompt/complexity-prompt';
+export * from './coding/complexity-prompt/complexity-prompt.metadata';
+// Refactor Prompt
+export { RefactorPromptComponent } from './coding/refactor-prompt/refactor-prompt';
+export * from './coding/refactor-prompt/refactor-prompt.metadata';
+// Algorithm Simulator
+export { AlgorithmSimulatorComponent } from './coding/algorithm-simulator/algorithm-simulator';
+export * from './coding/algorithm-simulator/algorithm-simulator.metadata';
+// Code Review Comment
+export { CodeReviewCommentComponent } from './coding/code-review-comment/code-review-comment';
+export * from './coding/code-review-comment/code-review-comment.metadata';
 // Category-Specific Widgets
 export * from './coding/code-editor/code-editor';
 export * from './math/equation-input/equation-input';
