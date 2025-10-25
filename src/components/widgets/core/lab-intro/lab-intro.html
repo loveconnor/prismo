@@ -1,0 +1,251 @@
+<!-- Modal Variant -->
+<ng-container *ngIf="variant === 'modal'">
+  <app-dialog [open]="true">
+    <div class="bg-[#0b0f14] p-6">
+      <div
+        role="banner"
+        [attr.aria-label]="a11yLabel || 'Lab introduction'"
+        class="flex flex-col gap-4"
+      >
+        <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+      </div>
+    </div>
+  </app-dialog>
+</ng-container>
+
+<!-- Hero / Card Variant -->
+<div
+  *ngIf="variant !== 'modal'"
+  role="banner"
+  [attr.aria-label]="a11yLabel || 'Lab introduction'"
+  [class]="cn(
+    'mx-auto flex w-full flex-col gap-4 rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm',
+    variant === 'hero' && 'max-w-5xl p-5 md:p-7',
+    variant === 'card' && 'max-w-2xl p-4 md:p-5',
+    compact && 'p-3'
+  )"
+>
+  <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+</div>
+
+<!-- Prereq Modal -->
+<app-dialog [open]="showPrereqModal()" (openChange)="handleClosePrereqModal()">
+  <div class="bg-[#0b0f14] p-6">
+    <h3 class="mb-4 text-lg font-semibold text-[#e5e7eb]">Prerequisites</h3>
+    <p class="mb-3 text-sm text-[#a9b1bb]">
+      Before starting, make sure you're familiar with:
+    </p>
+    <ul class="mb-4 list-disc space-y-2 pl-5 text-sm text-[#a9b1bb]">
+      <li *ngFor="let prereq of prerequisites">{{ prereq }}</li>
+    </ul>
+    <div class="flex justify-end gap-2">
+      <button
+        (click)="handleClosePrereqModal()"
+        class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-4 py-2 text-sm text-[#a9b1bb] transition-colors hover:bg-[#0e1318]"
+        type="button"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="handlePrereqAck()"
+        class="rounded-lg bg-[#3b82f6] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2563eb]"
+        type="button"
+      >
+        I understand, let's start
+      </button>
+    </div>
+  </div>
+</app-dialog>
+
+<!-- Content Template -->
+<ng-template #contentTemplate>
+  <!-- Header -->
+  <div class="flex flex-col gap-1">
+    <h1 *ngIf="variant === 'hero'" class="text-2xl font-semibold text-[#e5e7eb] md:text-3xl">
+      {{ title }}
+    </h1>
+    <h2 *ngIf="variant !== 'hero'" class="text-xl font-semibold text-[#e5e7eb] md:text-2xl">
+      {{ title }}
+    </h2>
+    
+    <p *ngIf="subtitle" class="text-sm text-[#93a3b8] md:text-base">
+      {{ subtitle }}
+    </p>
+    
+    <!-- Badge Row -->
+    <div class="mt-2 flex flex-wrap items-center gap-2">
+      <!-- Difficulty -->
+      <div [class]="cn('flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium', getDifficultyColor(difficulty))">
+        <ng-icon [name]="getDifficultyIcon(difficulty)" class="h-3 w-3"></ng-icon>
+        <span class="capitalize">{{ difficulty }}</span>
+      </div>
+      
+      <!-- Estimated Time -->
+      <div class="flex items-center gap-1 rounded-full border border-[#1f2937] px-2 py-0.5 text-xs text-[#93a3b8]">
+        <ng-icon name="lucideClock" class="h-3 w-3"></ng-icon>
+        <span>≈ {{ estimatedMinutes }} min</span>
+        <span 
+          *ngIf="estimationModelOrigin === 'historical'" 
+          class="ml-1 text-[10px] opacity-70" 
+          title="Based on your past sessions"
+        >*</span>
+      </div>
+      
+      <!-- Progress -->
+      <div 
+        *ngIf="progress && progress.percent > 0" 
+        class="flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-xs text-blue-400"
+      >
+        <ng-icon name="lucideCircleCheck" class="h-3 w-3"></ng-icon>
+        <span>{{ progress.percent | number:'1.0-0' }}% complete</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="mt-4 grid gap-3">
+    <!-- Objective -->
+    <div>
+      <h3 class="mb-2 text-sm font-medium text-[#e5e7eb]">What you'll learn</h3>
+      <ul 
+        *ngIf="objectiveArray().length > 0" 
+        class="list-disc space-y-1 pl-5 text-sm text-[#a9b1bb] md:text-base"
+      >
+        <li *ngFor="let obj of displayedObjectives()">{{ obj }}</li>
+      </ul>
+      <p 
+        *ngIf="objectiveArray().length === 1 && !isArray(objective)" 
+        class="text-sm text-[#a9b1bb] md:text-base"
+      >
+        {{ objective }}
+      </p>
+      
+      <button
+        *ngIf="hasOverflow() && !detailsExpanded()"
+        (click)="handleExpandCollapse()"
+        class="mt-1 inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
+        type="button"
+      >
+        <ng-icon name="lucideChevronDown" class="h-3 w-3"></ng-icon>
+        Show {{ objectiveArray().length - 3 }} more
+      </button>
+      
+      <button
+        *ngIf="hasOverflow() && detailsExpanded()"
+        (click)="handleExpandCollapse()"
+        class="mt-1 inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
+        type="button"
+      >
+        <ng-icon name="lucideChevronUp" class="h-3 w-3"></ng-icon>
+        Show less
+      </button>
+    </div>
+
+    <!-- Skills -->
+    <div *ngIf="showSkillChips && skills.length > 0">
+      <h3 class="mb-2 text-sm font-medium text-[#e5e7eb]">Skills</h3>
+      <div class="flex flex-wrap gap-1.5">
+        <span
+          *ngFor="let skill of skills.slice(0, 8)"
+          class="rounded-full border border-[#1f2937] px-2 py-1 text-xs text-[#a9b1bb]"
+        >
+          {{ skill }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Prerequisites -->
+    <div 
+      *ngIf="prerequisites.length > 0 && detailsExpanded()" 
+      class="rounded-lg border border-[#1f2937] bg-[#0a0e12] p-3"
+    >
+      <h3 class="mb-2 text-sm font-medium text-[#e5e7eb]">Prerequisites</h3>
+      <ul class="list-disc space-y-1 pl-5 text-sm text-[#a9b1bb]">
+        <li *ngFor="let prereq of prerequisites">{{ prereq }}</li>
+      </ul>
+    </div>
+
+    <!-- Requirements -->
+    <div *ngIf="requirements.length > 0 && detailsExpanded()">
+      <h3 class="mb-2 text-sm font-medium text-[#e5e7eb]">Requirements</h3>
+      <div class="flex flex-wrap gap-2">
+        <span *ngFor="let req of requirements" class="text-xs text-[#93a3b8]">
+          <a
+            *ngIf="req.url"
+            [href]="req.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-400 hover:underline"
+          >
+            {{ req.label }}
+          </a>
+          <ng-container *ngIf="!req.url">{{ req.label }}</ng-container>
+        </span>
+      </div>
+    </div>
+
+    <!-- Mini Syllabus -->
+    <div 
+      *ngIf="showMiniSyllabus && miniSyllabus.length > 0 && detailsExpanded()" 
+      class="rounded-lg border border-[#1f2937] bg-[#0e1318]/40 p-3"
+    >
+      <div class="mb-2 flex items-center justify-between">
+        <h3 class="text-sm font-medium text-[#e5e7eb]">Steps</h3>
+        <span *ngIf="syllabusString()" class="text-xs text-[#6b7280]">{{ syllabusString() }}</span>
+      </div>
+      <div class="grid gap-1">
+        <div *ngFor="let step of miniSyllabus; let i = index" class="flex items-center justify-between text-sm">
+          <span class="text-[#a9b1bb]">
+            {{ i + 1 }}. {{ step.step }}
+          </span>
+          <span *ngIf="step.estMin" class="text-xs text-[#6b7280]">~{{ step.estMin }} min</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last Step (if resuming) -->
+    <div 
+      *ngIf="progress && progress.lastStepTitle" 
+      class="rounded-lg border border-blue-500/20 bg-blue-500/10 p-3 text-sm text-blue-400"
+    >
+      <p class="font-medium">Last step:</p>
+      <p class="text-blue-300">{{ progress.lastStepTitle }}</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-4 flex flex-wrap items-center gap-2">
+    <!-- Primary CTA -->
+    <button
+      (click)="handleStartClick()"
+      [disabled]="labReadOnly || labIntroState() === 'readOnly'"
+      [class]="cn(
+        'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
+        labReadOnly || labIntroState() === 'readOnly'
+          ? 'cursor-not-allowed bg-[#1f2937] text-[#6b7280]'
+          : 'bg-[#3b82f6] text-white hover:bg-[#2563eb]'
+      )"
+      type="button"
+    >
+      <ng-icon name="lucidePlay" class="h-4 w-4"></ng-icon>
+      {{ primaryLabel() }}
+    </button>
+
+    <!-- Secondary CTAs -->
+    <button
+      *ngFor="let sec of cta.secondary || []"
+      (click)="handleSecondaryClick(sec.action, sec.href)"
+      class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] transition-colors hover:bg-[#0e1318] hover:text-[#e5e7eb]"
+      type="button"
+    >
+      <ng-icon [name]="getSecondaryIcon(sec.action)" class="h-4 w-4"></ng-icon>
+      {{ sec.label }}
+    </button>
+  </div>
+
+  <!-- Policy Note -->
+  <p *ngIf="noAnswerRevealInPreview && variant !== 'hero'" class="mt-2 text-xs text-[#6b7280]">
+    Preview mode: answers are hidden
+  </p>
+</ng-template>
+

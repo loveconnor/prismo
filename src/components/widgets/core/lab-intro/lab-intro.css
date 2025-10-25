@@ -1,0 +1,65 @@
+/* LabIntro Component Styles */
+
+:host {
+  display: block;
+}
+
+/* Smooth transitions for expand/collapse */
+.grid {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Ensure proper text wrapping in objectives */
+ul li {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Badge animations */
+.rounded-full {
+  transition: all 0.15s ease-in-out;
+}
+
+/* Button hover states */
+button {
+  transition: all 0.15s ease-in-out;
+}
+
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Modal overlay animations */
+:host ::ng-deep app-dialog {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .md\:text-3xl {
+    font-size: 1.875rem;
+  }
+  
+  .md\:text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .md\:p-7 {
+    padding: 1.75rem;
+  }
+  
+  .md\:p-5 {
+    padding: 1.25rem;
+  }
+}
+

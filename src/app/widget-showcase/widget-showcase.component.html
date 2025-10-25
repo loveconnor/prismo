@@ -1,0 +1,882 @@
+<div class="min-h-screen bg-background py-8 px-4">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <header class="mb-8">
+      <h1 class="text-4xl font-bold text-foreground mb-2">Widget Showcase</h1>
+      <p class="text-lg text-muted-foreground">
+        Explore and test the StepPromptInteractiveComponent with various configurations
+      </p>
+    </header>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left Sidebar - Example Selector -->
+      <div class="lg:col-span-1">
+        <app-card class="sticky top-4">
+          <app-card-header>
+            <h2 class="text-xl font-semibold text-foreground">Examples</h2>
+            <p class="text-sm text-muted-foreground mt-1">
+              Select an example to preview
+            </p>
+          </app-card-header>
+          
+          <app-card-content>
+            <div class="space-y-2">
+              <!-- Custom Example -->
+              <button
+                (click)="selectExample('custom')"
+                [class]="'w-full text-left px-4 py-3 rounded-lg border transition-colors ' +
+                         (activeExample() === 'custom' 
+                           ? 'border-primary bg-primary/10 text-primary' 
+                           : 'border-border bg-card text-foreground hover:bg-accent')"
+              >
+                <div class="font-medium">Try It Yourself!</div>
+                <div class="text-sm opacity-80">Interactive demo example</div>
+              </button>
+
+              <!-- Predefined Examples -->
+              <button
+                *ngFor="let item of examples | keyvalue"
+                (click)="selectExample(item.key)"
+                [class]="'w-full text-left px-4 py-3 rounded-lg border transition-colors ' +
+                         (activeExample() === item.key 
+                           ? 'border-primary bg-primary/10 text-primary' 
+                           : 'border-border bg-card text-foreground hover:bg-accent')"
+              >
+                <div class="font-medium">{{ item.value.name }}</div>
+                <div class="text-sm opacity-80">{{ item.value.description }}</div>
+              </button>
+            </div>
+
+            <!-- Keyboard Shortcuts Info -->
+            <div class="mt-6 p-4 bg-accent/50 rounded-lg">
+              <h3 class="text-sm font-semibold text-foreground mb-2">⌨️ Keyboard Shortcuts</h3>
+              <div class="space-y-1 text-xs text-muted-foreground">
+                <div><kbd class="px-1.5 py-0.5 bg-background rounded border">H</kbd> Show hint</div>
+                <div><kbd class="px-1.5 py-0.5 bg-background rounded border">Enter</kbd> Submit</div>
+                <div><kbd class="px-1.5 py-0.5 bg-background rounded border">→</kbd> Next step</div>
+                <div><kbd class="px-1.5 py-0.5 bg-background rounded border">Esc</kbd> Close hint</div>
+              </div>
+            </div>
+          </app-card-content>
+        </app-card>
+      </div>
+
+      <!-- Center - Widget Preview -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Coach Chat Widget Demo -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Coach Chat Demo</h3>
+            <p class="text-sm text-muted-foreground mt-1">
+              Try the AI coaching assistant
+            </p>
+          </app-card-header>
+          
+          <app-card-content>
+            <app-coach-chat
+              [metadata]="{ id: 'coach-chat', title: 'Coach Chat', description: 'AI Coach', skills: [], difficulty: 3, estimated_time: 300, input_type: WidgetInputType.TEXT, output_type: WidgetOutputType.SCAFFOLD, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              coachId="showcase-coach"
+              stepId="step-1"
+              variant="inline"
+              [context]="coachContext"
+              [policy]="{ allowDirectAnswers: false, requireSocraticFirst: true, allowCodeSnippets: true }"
+              [integrations]="{ workedExampleAvailable: true }"
+              (messageSent)="logEvent('Coach Message Sent', $event)"
+              (replyCompleted)="logEvent('Coach Reply Completed', $event)"
+              (hintSuggested)="logEvent('Coach Hint Suggested', $event)"
+            />
+          </app-card-content>
+        </app-card>
+
+        <!-- Reflection Prompt Widget Demo -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Reflection Prompt Demo</h3>
+            <p class="text-sm text-muted-foreground mt-1">
+              Try the self-reflection tool
+            </p>
+          </app-card-header>
+          
+          <app-card-content>
+            <app-reflection-prompt
+              [metadata]="{ id: 'reflection-prompt', title: 'Reflection', description: 'Reflect on learning', skills: [], difficulty: 2, estimated_time: 180, input_type: WidgetInputType.TEXT, output_type: WidgetOutputType.FEEDBACK, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              reflectionId="showcase-reflection"
+              scope="step"
+              scopeId="step-1"
+              promptText="What did you learn in this section? What concepts are still unclear?"
+              [chips]="{ 
+                feelings: ['confident', 'confused', 'curious', 'frustrated', 'excited'],
+                topics: ['recursion', 'base case', 'loops', 'functions'] 
+              }"
+              [ui]="{ variant: 'inline', showWordCount: true }"
+              (reflectionSubmitted)="logEvent('Reflection Submitted', $event)"
+              (reflectionSkipped)="logEvent('Reflection Skipped', $event)"
+              (suggestHint)="logEvent('Suggest Hint from Reflection', $event)"
+            />
+          </app-card-content>
+        </app-card>
+
+        <!-- Timer Widget Demo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <app-card>
+            <app-card-header>
+              <h3 class="text-lg font-semibold text-foreground">Countdown Timer</h3>
+              <p class="text-sm text-muted-foreground mt-1">
+                3-minute countdown with alerts
+              </p>
+            </app-card-header>
+            
+            <app-card-content>
+              <app-timer
+                [metadata]="{ id: 'timer', title: 'Timer', description: 'Timer widget', skills: [], difficulty: 2, estimated_time: 60, input_type: WidgetInputType.TEXT, output_type: WidgetOutputType.PROGRESS, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+                timerId="showcase-countdown"
+                scope="step"
+                scopeId="step-1"
+                mode="countdown"
+                [durationMs]="180000"
+                [autoStart]="false"
+                [allowPause]="true"
+                [allowReset]="true"
+                [allowAddTime]="true"
+                [ui]="{ variant: 'card', size: 'md' }"
+                [alerts]="[
+                  { at: 'remaining', value: 60000, label: '1 minute remaining', severity: 'warn' },
+                  { at: 'remaining', value: 10000, label: '10 seconds left!', severity: 'critical' }
+                ]"
+                (timerExpired)="logEvent('Timer Expired', $event)"
+                (timerAlertFired)="logEvent('Timer Alert', $event)"
+              />
+            </app-card-content>
+          </app-card>
+
+          <app-card>
+            <app-card-header>
+              <h3 class="text-lg font-semibold text-foreground">Stopwatch</h3>
+              <p class="text-sm text-muted-foreground mt-1">
+                Track elapsed time with target
+              </p>
+            </app-card-header>
+            
+            <app-card-content>
+              <app-timer
+                [metadata]="{ id: 'timer', title: 'Timer', description: 'Timer widget', skills: [], difficulty: 2, estimated_time: 60, input_type: WidgetInputType.TEXT, output_type: WidgetOutputType.PROGRESS, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+                timerId="showcase-stopwatch"
+                scope="step"
+                scopeId="step-1"
+                mode="stopwatch"
+                [autoStart]="false"
+                [allowPause]="true"
+                [allowReset]="true"
+                [ui]="{ variant: 'card', size: 'md' }"
+                [pacing]="{ targetMs: 120000 }"
+                (timerTick)="logEvent('Timer Tick', $event)"
+              />
+            </app-card-content>
+          </app-card>
+        </div>
+
+        <!-- Widget Display -->
+        <div>
+          <!-- Custom Example -->
+          <app-step-prompt-interactive
+            *ngIf="activeExample() === 'custom'"
+            [metadata]="customExample.metadata"
+            [promptConfig]="customExample.config"
+            (primaryAction)="handlePrimaryAction($event)"
+            (submitResponse)="handleSubmit($event)"
+            (hintRequested)="handleHintRequest($event)"
+            (hintOpened)="handleHintOpen($event)"
+            (stepViewStart)="handleViewStart($event)"
+            (stepViewComplete)="handleViewComplete($event)"
+          />
+
+          <!-- Predefined Examples -->
+          <app-step-prompt-interactive
+            *ngIf="activeExample() !== 'custom'"
+            [metadata]="currentExample.metadata"
+            [promptConfig]="currentExample.config"
+            (primaryAction)="handlePrimaryAction($event)"
+            (submitResponse)="handleSubmit($event)"
+            (hintRequested)="handleHintRequest($event)"
+            (hintOpened)="handleHintOpen($event)"
+            (stepViewStart)="handleViewStart($event)"
+            (stepViewComplete)="handleViewComplete($event)"
+            (timeUp)="handleTimeUp()"
+          />
+        </div>
+
+        <!-- Event Log -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Event Log</h3>
+            <p class="text-sm text-muted-foreground mt-1">
+              Real-time events from the widget (last 10 events)
+            </p>
+          </app-card-header>
+          
+          <app-card-content>
+            <div *ngIf="events().length === 0" class="text-center py-8 text-muted-foreground">
+              No events yet. Interact with the widget to see events here.
+            </div>
+
+            <div *ngIf="events().length > 0" class="space-y-2">
+              <div
+                *ngFor="let event of events()"
+                class="p-3 bg-accent/50 rounded-lg border border-border"
+              >
+                <div class="flex items-start justify-between">
+                  <div>
+                    <div class="font-medium text-sm text-foreground">{{ event.type }}</div>
+                    <div class="text-xs text-muted-foreground mt-1">
+                      {{ event.timestamp }}
+                    </div>
+                  </div>
+                  <span class="text-xs bg-primary/20 text-primary px-2 py-1 rounded">
+                    Event
+                  </span>
+                </div>
+                <pre class="mt-2 text-xs bg-background p-2 rounded overflow-x-auto">{{ event.data | json }}</pre>
+              </div>
+            </div>
+          </app-card-content>
+        </app-card>
+
+        <!-- Documentation Links -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Documentation</h3>
+          </app-card-header>
+          
+          <app-card-content>
+            <div class="space-y-2">
+              <a
+                href="/components/widgets/core/step-prompt/README.md"
+                class="block p-3 border border-border rounded-lg hover:bg-accent transition-colors"
+                target="_blank"
+              >
+                <div class="font-medium text-foreground">📖 README</div>
+                <div class="text-sm text-muted-foreground">Component overview and features</div>
+              </a>
+              
+              <a
+                href="/components/widgets/core/step-prompt/INTEGRATION_GUIDE.md"
+                class="block p-3 border border-border rounded-lg hover:bg-accent transition-colors"
+                target="_blank"
+              >
+                <div class="font-medium text-foreground">🚀 Integration Guide</div>
+                <div class="text-sm text-muted-foreground">How to use in your app</div>
+              </a>
+              
+              <a
+                href="/components/widgets/core/step-prompt/step-prompt-interactive.example.ts"
+                class="block p-3 border border-border rounded-lg hover:bg-accent transition-colors"
+                target="_blank"
+              >
+                <div class="font-medium text-foreground">💻 Code Examples</div>
+                <div class="text-sm text-muted-foreground">Example implementations</div>
+              </a>
+            </div>
+          </app-card-content>
+        </app-card>
+
+        <!-- Widget Metadata -->
+        <app-card>
+          <app-card-header>
+            <h3 class="text-lg font-semibold text-foreground">Widget Metadata</h3>
+            <p class="text-sm text-muted-foreground mt-1">
+              ACE (Adaptive Curriculum Engine) metadata for current example
+            </p>
+          </app-card-header>
+          
+          <app-card-content>
+            <div class="space-y-3">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <div class="text-xs text-muted-foreground">ID</div>
+                  <div class="text-sm font-mono text-foreground">
+                    {{ activeExample() === 'custom' ? customExample.metadata.id : currentExample.metadata.id }}
+                  </div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">Category</div>
+                  <div class="text-sm text-foreground">
+                    {{ activeExample() === 'custom' ? customExample.metadata.category : currentExample.metadata.category }}
+                  </div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">Difficulty</div>
+                  <div class="text-sm text-foreground">
+                    {{ activeExample() === 'custom' ? customExample.metadata.difficulty : currentExample.metadata.difficulty }} / 5
+                  </div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">Est. Time</div>
+                  <div class="text-sm text-foreground">
+                    {{ activeExample() === 'custom' ? customExample.metadata.estimated_time : currentExample.metadata.estimated_time }}s
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="text-xs text-muted-foreground mb-1">Skills</div>
+                <div class="flex flex-wrap gap-1">
+                  <span
+                    *ngFor="let skill of (activeExample() === 'custom' ? customExample.metadata.skills : currentExample.metadata.skills)"
+                    class="text-xs bg-primary/20 text-primary px-2 py-1 rounded"
+                  >
+                    {{ skill }}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <div class="text-xs text-muted-foreground mb-1">Adaptive Hooks</div>
+                <pre class="text-xs bg-background p-2 rounded overflow-x-auto">{{ (activeExample() === 'custom' ? customExample.metadata.adaptive_hooks : currentExample.metadata.adaptive_hooks) | json }}</pre>
+              </div>
+            </div>
+          </app-card-content>
+        </app-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lab Intro Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Lab Introduction Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Comprehensive lab landing page
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Hero Variant - New Lab -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Hero Variant - New Lab</h3>
+            <app-lab-intro
+              [metadata]="{ id: 'lab-intro', title: 'Lab Introduction', description: 'Comprehensive lab landing page', skills: [], difficulty: 3, estimated_time: 120, input_type: WidgetInputType.TEXT, output_type: WidgetOutputType.COMPLETION, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              id="showcase-lab-intro-1"
+              labId="intro-to-data-structures"
+              title="Introduction to Data Structures"
+              subtitle="Master the fundamentals"
+              [objective]="[
+                'Understand arrays, linked lists, and stacks',
+                'Implement basic data structure operations',
+                'Analyze time and space complexity',
+                'Apply data structures to solve problems'
+              ]"
+              difficulty="medium"
+              [estimatedMinutes]="90"
+              [skills]="['data-structures', 'algorithms', 'complexity-analysis', 'problem-solving']"
+              [ui]="{ variant: 'hero', showSkillChips: true, showMiniSyllabus: true }"
+              [miniSyllabus]="[
+                { step: 'Introduction to arrays', estMin: 15 },
+                { step: 'Linked lists fundamentals', estMin: 20 },
+                { step: 'Stack operations', estMin: 20 },
+                { step: 'Practice problems', estMin: 35 }
+              ]"
+              [cta]="{ 
+                secondary: [
+                  { label: 'Preview', action: 'preview' },
+                  { label: 'Share', action: 'share' }
+                ]
+              }"
+              (labViewed)="logEvent('Lab Viewed', $event)"
+              (startClicked)="logEvent('Lab Started', $event)"
+              (secondaryClicked)="logEvent('Secondary Action', $event)"
+            ></app-lab-intro>
+          </div>
+
+          <!-- Card Variant - With Prerequisites -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Card Variant - With Prerequisites</h3>
+            <app-lab-intro
+              [metadata]="{ id: 'lab-intro', title: 'Lab Introduction', description: 'Comprehensive lab landing page', skills: [], difficulty: 3, estimated_time: 120, input_type: WidgetInputType.TEXT, output_type: WidgetOutputType.COMPLETION, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              id="showcase-lab-intro-2"
+              labId="advanced-algorithms"
+              title="Advanced Algorithms"
+              subtitle="Dynamic programming and graph algorithms"
+              [objective]="[
+                'Master dynamic programming techniques',
+                'Implement graph algorithms',
+                'Optimize recursive solutions',
+                'Solve complex algorithmic challenges'
+              ]"
+              difficulty="hard"
+              [estimatedMinutes]="120"
+              [skills]="['dynamic-programming', 'graphs', 'algorithms', 'optimization']"
+              [prerequisites]="[
+                'Basic data structures knowledge',
+                'Understanding of Big-O notation',
+                'Experience with recursion'
+              ]"
+              [policy]="{ requirePrereqAck: true }"
+              [ui]="{ variant: 'card', showSkillChips: true }"
+              [cta]="{ 
+                secondary: [
+                  { label: 'View rubric', action: 'rubric' }
+                ]
+              }"
+              (labViewed)="logEvent('Lab Viewed', $event)"
+              (prereqAck)="logEvent('Prerequisites Acknowledged', $event)"
+              (startClicked)="logEvent('Lab Started', $event)"
+            ></app-lab-intro>
+          </div>
+
+          <!-- Card Variant - Resume with Progress -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Card Variant - Resume with Progress</h3>
+            <app-lab-intro
+              [metadata]="{ id: 'lab-intro', title: 'Lab Introduction', description: 'Comprehensive lab landing page', skills: [], difficulty: 3, estimated_time: 120, input_type: WidgetInputType.TEXT, output_type: WidgetOutputType.COMPLETION, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              id="showcase-lab-intro-3"
+              labId="web-development-basics"
+              title="Web Development Basics"
+              subtitle="HTML, CSS, and JavaScript fundamentals"
+              objective="Build a responsive portfolio website from scratch"
+              difficulty="easy"
+              [estimatedMinutes]="60"
+              [skills]="['html', 'css', 'javascript', 'responsive-design']"
+              [progress]="{ percent: 45, lastStepTitle: 'CSS Flexbox and Grid' }"
+              [ui]="{ variant: 'card', showSkillChips: true, compact: true }"
+              [integrations]="{ resumeAvailable: true, estimationModelOrigin: 'historical' }"
+              [cta]="{ 
+                secondary: [
+                  { label: 'Start over', action: 'cancel' }
+                ]
+              }"
+              (labViewed)="logEvent('Lab Viewed', $event)"
+              (startClicked)="logEvent('Lab Resumed', $event)"
+            ></app-lab-intro>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Short Answer Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Short Answer Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Text input with multiple validation modes and real-time feedback
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Exact Match -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Exact Match Validation</h3>
+            <app-short-answer
+              id="showcase-sa-1"
+              question="What is the capital of France?"
+              placeholder="Enter your answer..."
+              [validation]="{
+                mode: 'exact',
+                expected: ['Paris', 'paris'],
+                caseSensitive: false,
+                ignoreWhitespace: true
+              }"
+              [maxLength]="50"
+              [minLength]="1"
+              [showFeedback]="true"
+              correctFeedback="Correct! Paris is the capital of France."
+              incorrectFeedback="Not quite. Think about major European capitals."
+              (submit)="handleShortAnswerSubmit($event)"
+              (valueChange)="handleShortAnswerChange($event)"
+            ></app-short-answer>
+          </div>
+
+          <!-- Contains Keywords -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Contains Keywords Validation</h3>
+            <app-short-answer
+              id="showcase-sa-2"
+              question="Explain why photosynthesis is important for life on Earth."
+              placeholder="Write your explanation..."
+              [validation]="{
+                mode: 'contains',
+                expected: ['oxygen', 'energy', 'food', 'glucose'],
+                caseSensitive: false,
+                ignoreWhitespace: true
+              }"
+              [maxLength]="200"
+              [minLength]="20"
+              [showFeedback]="true"
+              correctFeedback="Good! Your answer mentions key aspects of photosynthesis."
+              incorrectFeedback="Think about what photosynthesis produces and why that matters."
+              (submit)="handleShortAnswerSubmit($event)"
+              (valueChange)="handleShortAnswerChange($event)"
+            ></app-short-answer>
+          </div>
+
+          <!-- Similarity/Fuzzy Match -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Similarity (Fuzzy) Matching</h3>
+            <app-short-answer
+              id="showcase-sa-3"
+              question="Name the process by which plants convert sunlight into chemical energy."
+              placeholder="Enter the term..."
+              [validation]="{
+                mode: 'similarity',
+                expected: ['photosynthesis'],
+                caseSensitive: false,
+                ignoreWhitespace: true,
+                similarityThreshold: 0.8
+              }"
+              [maxLength]="100"
+              [minLength]="5"
+              [showFeedback]="true"
+              correctFeedback="Correct! Photosynthesis is the process."
+              incorrectFeedback="Close! Check your spelling or try again."
+              (submit)="handleShortAnswerSubmit($event)"
+              (valueChange)="handleShortAnswerChange($event)"
+            ></app-short-answer>
+          </div>
+
+          <!-- Open-Ended (No Validation) -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Open-Ended (No Validation)</h3>
+            <app-short-answer
+              id="showcase-sa-4"
+              question="Describe a time when you solved a difficult problem. What strategies did you use?"
+              placeholder="Share your experience..."
+              [validation]="{
+                mode: 'none',
+                expected: []
+              }"
+              [maxLength]="500"
+              [minLength]="50"
+              [ui]="{
+                variant: 'default',
+                showCharCount: true,
+                autoResize: true
+              }"
+              [showFeedback]="true"
+              correctFeedback="Thank you for sharing your experience!"
+              (submit)="handleShortAnswerSubmit($event)"
+              (valueChange)="handleShortAnswerChange($event)"
+            ></app-short-answer>
+          </div>
+
+          <!-- Compact Variant -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Compact Variant</h3>
+            <app-short-answer
+              id="showcase-sa-5"
+              question="What is 7 × 8?"
+              placeholder="Answer"
+              [validation]="{
+                mode: 'exact',
+                expected: ['56'],
+                caseSensitive: false,
+                ignoreWhitespace: true
+              }"
+              [maxLength]="10"
+              [minLength]="1"
+              [ui]="{
+                variant: 'compact',
+                showCharCount: false,
+                autoResize: false
+              }"
+              [showFeedback]="true"
+              correctFeedback="Correct!"
+              incorrectFeedback="Try again."
+              (submit)="handleShortAnswerSubmit($event)"
+              (valueChange)="handleShortAnswerChange($event)"
+            ></app-short-answer>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Fill-in-the-Blanks Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Fill-in-the-Blanks Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Interactive template-based exercises with multiple blank types
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Simple Text Blanks -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Simple Text Blanks</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-1"
+              template="The quick brown &#123;&#123;animal&#125;&#125; jumps over the lazy &#123;&#123;animal2&#125;&#125;."
+              [blanks]="[
+                {
+                  id: 'animal',
+                  placeholder: 'animal',
+                  type: 'text',
+                  correctAnswers: ['fox'],
+                  caseSensitive: false,
+                  hint: 'A small wild canine'
+                },
+                {
+                  id: 'animal2',
+                  placeholder: 'animal',
+                  type: 'text',
+                  correctAnswers: ['dog'],
+                  caseSensitive: false,
+                  hint: 'A common domestic pet'
+                }
+              ]"
+              [showHints]="true"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+
+          <!-- Number Blanks -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Number Blanks (Math)</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-2"
+              template="The equation x + &#123;&#123;num1&#125;&#125; = &#123;&#123;num2&#125;&#125; can be solved by subtracting &#123;&#123;num3&#125;&#125; from both sides, giving x = &#123;&#123;answer&#125;&#125;."
+              [blanks]="[
+                {
+                  id: 'num1',
+                  placeholder: 'number',
+                  type: 'number',
+                  correctAnswers: ['5'],
+                  hint: 'A small positive integer'
+                },
+                {
+                  id: 'num2',
+                  placeholder: 'result',
+                  type: 'number',
+                  correctAnswers: ['12'],
+                  hint: 'The sum'
+                },
+                {
+                  id: 'num3',
+                  placeholder: 'operation',
+                  type: 'number',
+                  correctAnswers: ['5'],
+                  hint: 'Same as the first number'
+                },
+                {
+                  id: 'answer',
+                  placeholder: 'x value',
+                  type: 'number',
+                  correctAnswers: ['7'],
+                  hint: 'The final result'
+                }
+              ]"
+              [showHints]="true"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+
+          <!-- Select Dropdowns -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Select Dropdowns</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-3"
+              template="JavaScript is a &#123;&#123;type&#125;&#125; language that runs in the &#123;&#123;environment&#125;&#125;."
+              [blanks]="[
+                {
+                  id: 'type',
+                  placeholder: 'type',
+                  type: 'select',
+                  correctAnswers: ['interpreted'],
+                  options: ['compiled', 'interpreted', 'assembly', 'markup'],
+                  hint: 'Executed line by line'
+                },
+                {
+                  id: 'environment',
+                  placeholder: 'where',
+                  type: 'select',
+                  correctAnswers: ['browser'],
+                  options: ['browser', 'database', 'filesystem', 'kernel'],
+                  hint: 'Web-based environment'
+                }
+              ]"
+              [showHints]="true"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+
+          <!-- Science Vocabulary -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Science Vocabulary (Multiple Correct Answers)</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-4"
+              template="Photosynthesis occurs in the &#123;&#123;organelle&#125;&#125; of plant cells, where &#123;&#123;pigment&#125;&#125; absorbs light energy to convert &#123;&#123;gas&#125;&#125; and water into &#123;&#123;sugar&#125;&#125; and oxygen."
+              [blanks]="[
+                {
+                  id: 'organelle',
+                  placeholder: 'cell structure',
+                  type: 'text',
+                  correctAnswers: ['chloroplast', 'chloroplasts'],
+                  caseSensitive: false,
+                  hint: 'Green organelles in plants'
+                },
+                {
+                  id: 'pigment',
+                  placeholder: 'green pigment',
+                  type: 'text',
+                  correctAnswers: ['chlorophyll'],
+                  caseSensitive: false,
+                  hint: 'Makes plants green'
+                },
+                {
+                  id: 'gas',
+                  placeholder: 'atmospheric gas',
+                  type: 'text',
+                  correctAnswers: ['carbon dioxide', 'CO2'],
+                  caseSensitive: false,
+                  hint: 'What we exhale'
+                },
+                {
+                  id: 'sugar',
+                  placeholder: 'product',
+                  type: 'text',
+                  correctAnswers: ['glucose'],
+                  caseSensitive: false,
+                  hint: 'Simple sugar'
+                }
+              ]"
+              [showHints]="true"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+
+          <!-- Compact Variant -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Compact Variant (No Hints)</h3>
+            <app-fill-in-blanks
+              id="showcase-fib-5"
+              template="The capital of &#123;&#123;country&#125;&#125; is &#123;&#123;city&#125;&#125;."
+              [blanks]="[
+                {
+                  id: 'country',
+                  placeholder: 'country',
+                  type: 'text',
+                  correctAnswers: ['France'],
+                  caseSensitive: false
+                },
+                {
+                  id: 'city',
+                  placeholder: 'city',
+                  type: 'text',
+                  correctAnswers: ['Paris'],
+                  caseSensitive: false
+                }
+              ]"
+              [ui]="{
+                variant: 'compact',
+                emphasizeBlanks: true
+              }"
+              [showHints]="false"
+              [showFeedback]="true"
+              (submit)="handleFillInBlanksSubmit($event)"
+              (answersChange)="handleFillInBlanksChange($event)"
+            ></app-fill-in-blanks>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+
+  <!-- Multiple Choice Widget Section -->
+  <div class="mb-8">
+    <app-card>
+      <app-card-header>
+        <h2 class="text-xl font-semibold">Multiple Choice Widget</h2>
+        <p class="text-sm text-muted-foreground">
+          Interactive multiple choice questions
+        </p>
+      </app-card-header>
+      
+      <app-card-content>
+        <div class="grid gap-6">
+          <!-- Single Choice -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Single Choice</h3>
+            <app-multiple-choice
+              [metadata]="{ id: 'multiple-choice', title: 'Multiple Choice', description: 'Interactive multiple choice', skills: [], difficulty: 2, estimated_time: 60, input_type: WidgetInputType.MULTIPLE_CHOICE, output_type: WidgetOutputType.FEEDBACK, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              id="showcase-mc-1"
+              question="What is the capital of France?"
+              [options]="[
+                { id: '1', label: 'London', value: 'london', isCorrect: false },
+                { id: '2', label: 'Berlin', value: 'berlin', isCorrect: false },
+                { id: '3', label: 'Paris', value: 'paris', isCorrect: true },
+                { id: '4', label: 'Madrid', value: 'madrid', isCorrect: false }
+              ]"
+              selectionMode="single"
+              [correctAnswers]="['paris']"
+              [required]="true"
+              [ui]="{ variant: 'default', emphasizeCorrect: true }"
+              (valueChange)="logEvent('Multiple Choice Value Changed', $event)"
+              (choiceSubmit)="logEvent('Multiple Choice Submitted', $event)"
+            ></app-multiple-choice>
+          </div>
+
+          <!-- Multiple Selection with Rationale -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Multiple Selection with Rationale</h3>
+            <app-multiple-choice
+              [metadata]="{ id: 'multiple-choice', title: 'Multiple Choice', description: 'Interactive multiple choice', skills: [], difficulty: 2, estimated_time: 60, input_type: WidgetInputType.MULTIPLE_CHOICE, output_type: WidgetOutputType.FEEDBACK, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              id="showcase-mc-2"
+              question="Which of the following are programming languages?"
+              [options]="[
+                { id: '1', label: 'Python', value: 'python', isCorrect: true, rationale: 'Python is a high-level, interpreted programming language.' },
+                { id: '2', label: 'HTML', value: 'html', isCorrect: false, rationale: 'HTML is a markup language, not a programming language.' },
+                { id: '3', label: 'JavaScript', value: 'javascript', isCorrect: true, rationale: 'JavaScript is a programming language commonly used for web development.' },
+                { id: '4', label: 'CSS', value: 'css', isCorrect: false, rationale: 'CSS is a stylesheet language, not a programming language.' }
+              ]"
+              selectionMode="multiple"
+              [correctAnswers]="['python', 'javascript']"
+              [showRationale]="true"
+              [required]="true"
+              [ui]="{ variant: 'default', emphasizeCorrect: true }"
+              (valueChange)="logEvent('Multiple Choice Value Changed', $event)"
+              (choiceSubmit)="logEvent('Multiple Choice Submitted', $event)"
+            ></app-multiple-choice>
+          </div>
+
+          <!-- Assessment Variant -->
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Assessment Variant</h3>
+            <app-multiple-choice
+              [metadata]="{ id: 'multiple-choice', title: 'Multiple Choice', description: 'Interactive multiple choice', skills: [], difficulty: 2, estimated_time: 60, input_type: WidgetInputType.MULTIPLE_CHOICE, output_type: WidgetOutputType.FEEDBACK, dependencies: [], adaptive_hooks: {}, version: '1.0.0', category: 'core' }"
+              id="showcase-mc-3"
+              question="What is the time complexity of binary search?"
+              [options]="[
+                { id: '1', label: 'O(n)', value: 'on', isCorrect: false, rationale: 'O(n) is linear time complexity.' },
+                { id: '2', label: 'O(log n)', value: 'ologn', isCorrect: true, rationale: 'Binary search divides the search space in half each iteration.' },
+                { id: '3', label: 'O(n²)', value: 'on2', isCorrect: false, rationale: 'O(n²) is quadratic time complexity.' }
+              ]"
+              selectionMode="single"
+              [correctAnswers]="['ologn']"
+              [showRationale]="true"
+              [required]="true"
+              [ui]="{ variant: 'assessment', emphasizeCorrect: true }"
+              (valueChange)="logEvent('Multiple Choice Value Changed', $event)"
+              (choiceSubmit)="logEvent('Multiple Choice Submitted', $event)"
+            ></app-multiple-choice>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+</div>
+

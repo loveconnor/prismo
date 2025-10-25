@@ -1,0 +1,325 @@
+/* Reflection Prompt Styles */
+
+/* Textarea styling */
+textarea {
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: #0e1318;
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* Chip animations */
+button[data-active="true"] {
+  animation: chipSelect 0.2s ease-out;
+}
+
+@keyframes chipSelect {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Submit button spinner */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Autosave indicator animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.autosave-indicator {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Submitted state animation */
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.submitted-icon {
+  animation: checkmark 0.5s ease-out;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Modal content */
+.modal-content {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Keyboard shortcut badge */
+kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Focus visible for accessibility */
+button:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* Chip hover effects */
+button[type="button"]:not(:disabled):hover {
+  transform: translateY(-1px);
+  transition: transform 0.15s ease;
+}
+
+button[type="button"]:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Character count warning */
+.char-count-warning {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Disabled state */
+[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Privacy notice styling */
+.privacy-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+/* Word count meter */
+.word-count-meter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .modal-content {
+    margin: 1rem;
+  }
+  
+  /* Hide keyboard shortcuts on mobile */
+  kbd {
+    display: none !important;
+  }
+  
+  /* Stack footer buttons */
+  .footer-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .footer-actions button {
+    width: 100%;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  button {
+    border-width: 2px;
+  }
+  
+  textarea {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Collapse/expand animation */
+.collapse-enter {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.collapse-enter-active {
+  max-height: 1000px;
+}
+
+.collapse-exit {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in;
+}
+
+.collapse-exit-active {
+  max-height: 0;
+}
+
+/* Skip modal overlay */
+.skip-modal-overlay {
+  backdrop-filter: blur(4px);
+}
+
+/* Chip selection feedback */
+button[data-active="true"]::after {
+  content: "✓";
+  margin-left: 0.25rem;
+  font-weight: bold;
+}
+
+/* Loading state for submit button */
+.submit-button-loading {
+  position: relative;
+}
+
+.submit-button-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  margin-top: -0.5rem;
+  margin-left: -0.5rem;
+  border: 2px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Autosave status indicator */
+.autosave-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #10b981;
+}
+
+/* Error state */
+.error-state {
+  border-color: #ef4444 !important;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Success state */
+.success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Chip container */
+.chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+/* Sentiment indicators (for analytics/debugging) */
+[data-sentiment="pos"] {
+  --sentiment-color: #10b981;
+}
+
+[data-sentiment="neg"] {
+  --sentiment-color: #ef4444;
+}
+
+[data-sentiment="neutral"] {
+  --sentiment-color: #6b7280;
+}
+
+/* Focus trap for modal */
+.modal-focus-trap {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+

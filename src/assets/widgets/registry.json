@@ -17,6 +17,158 @@
     "category": "core"
   },
   {
+    "id": "step-prompt-interactive",
+    "title": "Interactive Step Prompt",
+    "description": "Advanced step prompt with interactive features, user input collection, hints, and comprehensive telemetry for adaptive learning experiences",
+    "skills": ["comprehension", "reading", "problem-solving", "critical-thinking", "self-assessment", "metacognition"],
+    "difficulty": 2,
+    "estimated_time": 120,
+    "input_type": "text",
+    "output_type": "scaffold",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": true,
+      "alternative_widgets": ["step-prompt", "video-prompt", "interactive-demo"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "coach-chat",
+    "title": "Coach Chat",
+    "description": "AI-powered coaching interface with Socratic dialogue, policy controls, and contextual help for adaptive learning",
+    "skills": ["problem-solving", "critical-thinking", "metacognition", "self-guided-learning", "conceptual-understanding"],
+    "difficulty": 3,
+    "estimated_time": 300,
+    "input_type": "text",
+    "output_type": "scaffold",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": true,
+      "alternative_widgets": ["hint-panel", "feedback-box", "worked-example"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "reflection-prompt",
+    "title": "Reflection Prompt",
+    "description": "Self-reflection and metacognition tool with sentiment analysis, autosave, and adaptive feedback triggers",
+    "skills": ["metacognition", "self-reflection", "self-assessment", "emotional-awareness", "learning-synthesis"],
+    "difficulty": 2,
+    "estimated_time": 180,
+    "input_type": "text",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": true,
+      "time_extension": false,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "timer",
+    "title": "Timer",
+    "description": "Stopwatch and countdown timer with alerts, pacing, and auto-submit for time-based learning activities",
+    "skills": ["time-management", "pacing", "focus", "self-regulation"],
+    "difficulty": 2,
+    "estimated_time": 60,
+    "input_type": "text",
+    "output_type": "progress",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": false,
+      "time_extension": true,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "lab-intro",
+    "title": "Lab Introduction",
+    "description": "Comprehensive lab landing page with objectives, prerequisites, skills, and start/resume functionality",
+    "skills": ["information-architecture", "user-onboarding", "prerequisite-gating", "progress-tracking", "call-to-action", "responsive-design"],
+    "difficulty": 3,
+    "estimated_time": 120,
+    "input_type": "text",
+    "output_type": "completion",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": false,
+      "hint_progression": false,
+      "time_extension": false,
+      "alternative_widgets": []
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "multiple-choice",
+    "title": "Multiple Choice",
+    "description": "Interactive multiple choice questions with single or multiple selection modes, shuffling, rationale display, and validation",
+    "skills": ["comprehension", "knowledge-recall", "critical-thinking", "decision-making", "pattern-recognition"],
+    "difficulty": 2,
+    "estimated_time": 60,
+    "input_type": "multiple-choice",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": false,
+      "time_extension": false,
+      "alternative_widgets": ["true-false", "matching", "fill-in-blank"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "short-answer",
+    "title": "Short Answer",
+    "description": "A text input widget with multiple validation modes, real-time feedback, and character limits for collecting and validating short-form student responses",
+    "skills": ["comprehension", "written-expression", "recall", "critical-thinking", "analysis"],
+    "difficulty": 2,
+    "estimated_time": 90,
+    "input_type": "text",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": false,
+      "alternative_widgets": ["multiple-choice", "fill-in-blank", "text-editor"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
+    "id": "fill-in-blanks",
+    "title": "Fill in the Blanks",
+    "description": "An interactive template-based widget for fill-in-the-blank exercises with multiple blank types, hints, validation, and comprehensive feedback",
+    "skills": ["comprehension", "recall", "vocabulary", "grammar", "attention-to-detail"],
+    "difficulty": 2,
+    "estimated_time": 120,
+    "input_type": "text",
+    "output_type": "feedback",
+    "dependencies": [],
+    "adaptive_hooks": {
+      "difficulty_adjustment": true,
+      "hint_progression": true,
+      "time_extension": false,
+      "alternative_widgets": ["short-answer", "multiple-choice", "matching"]
+    },
+    "version": "1.0.0",
+    "category": "core"
+  },
+  {
     "id": "hint-panel",
     "title": "Hint Panel",
     "description": "Progressive hint disclosure with multiple tiers",

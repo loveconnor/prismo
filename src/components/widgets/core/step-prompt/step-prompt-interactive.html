@@ -1,0 +1,231 @@
+<div
+  role="group"
+  [attr.aria-label]="promptConfig?.a11yLabel || 'Step ' + promptConfig?.stepNumber + ' of ' + promptConfig?.totalSteps"
+  [attr.aria-describedby]="promptConfig?.ariaDescription"
+  [class]="'mx-auto max-w-3xl ' + getContainerClasses()"
+>
+  <!-- ==================== HEADER ==================== -->
+  <header class="mb-4 flex items-start justify-between gap-3" #cardHeader>
+    <div class="flex-1">
+      <!-- Step Indicator -->
+      <div class="mb-3" *ngIf="promptConfig?.stepNumber && promptConfig?.totalSteps">
+        <div class="mb-2 flex items-center gap-2 text-xs text-[#6b7280]">
+          <span class="font-medium">Step {{ promptConfig.stepNumber }} of {{ promptConfig.totalSteps }}</span>
+        </div>
+        <!-- Progress Bar -->
+        <div class="w-full bg-[#1f2937] rounded-full h-1.5">
+          <div
+            class="bg-[#60a5fa] h-1.5 rounded-full transition-all duration-300"
+            [style.width.%]="getProgressPercentage()"
+          ></div>
+        </div>
+      </div>
+      
+      <!-- Title -->
+      <h2 
+        *ngIf="promptConfig?.title"
+        [id]="metadata.id + '-title'"
+        [class]="'font-semibold text-[#e5e7eb] ' + (promptConfig?.variant === 'compact' ? 'text-lg' : 'text-xl')"
+      >
+        {{ promptConfig.title }}
+      </h2>
+    </div>
+
+    <!-- Meta Badges -->
+    <div class="flex flex-wrap items-center gap-2">
+      <span 
+        *ngIf="promptConfig?.difficulty"
+        [class]="'inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs font-medium ' + getDifficultyColor()"
+      >
+        {{ promptConfig.difficulty }}
+      </span>
+
+      <span 
+        *ngIf="timeRemaining() !== undefined"
+        [class]="'inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs ' + 
+                 (isTimeWarning() ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-[#1f2937] bg-[#0b0f14] text-[#9ca3af]')"
+      >
+        <ng-icon name="lucideClock" class="h-3 w-3"></ng-icon>
+        {{ getTimeDisplay() }}
+      </span>
+
+      <span 
+        *ngIf="promptConfig?.estimatedMinutes && timeRemaining() === undefined"
+        class="inline-flex items-center gap-1 rounded-full border border-[#1f2937] bg-[#0b0f14] px-2 py-1 text-xs text-[#9ca3af]"
+      >
+        <ng-icon name="lucideClock" class="h-3 w-3"></ng-icon>
+        {{ promptConfig.estimatedMinutes }}m
+      </span>
+    </div>
+  </header>
+
+  <!-- Skill Tags -->
+  <div class="mb-4 flex flex-wrap gap-2" *ngIf="promptConfig?.skillTags && (promptConfig?.skillTags?.length ?? 0) > 0">
+    <span
+      *ngFor="let tag of promptConfig?.skillTags || []"
+      class="rounded-md border border-[#1f2937] bg-[#0b0f14] px-2 py-1 text-xs text-[#a9b1bb]"
+    >
+      {{ tag }}
+    </span>
+  </div>
+
+  <!-- ==================== BODY ==================== -->
+  <div [id]="metadata.id + '-body'" class="mb-4" #bodyContainer>
+    <!-- Prompt Type Icon + Body -->
+    <div class="flex gap-3">
+      <div class="mt-1 flex-shrink-0 text-[#60a5fa]">
+        <ng-icon [name]="getPromptIcon()" class="h-5 w-5"></ng-icon>
+      </div>
+      <div class="prose prose-sm flex-1 dark:prose-invert step-prompt-content">
+        <div [innerHTML]="(promptConfig?.bodyMD || '') | safeHtml"></div>
+      </div>
+    </div>
+
+    <!-- Example Block -->
+    <div class="relative mt-4" *ngIf="promptConfig?.example">
+      <pre class="overflow-x-auto rounded-lg border border-[#1f2937] bg-[#0a0e12] p-4 text-sm"><code class="text-[#e5e7eb]">{{ promptConfig.example }}</code></pre>
+      <button
+        (click)="handleCopyExample()"
+        class="absolute right-2 top-2 rounded-md border border-[#1f2937] bg-[#0e1318] p-2 text-[#9ca3af] hover:text-[#e5e7eb] transition-colors"
+        aria-label="Copy example"
+        type="button"
+      >
+        <ng-icon 
+          *ngIf="copied()"
+          name="lucideCheckCircle2" 
+          class="h-4 w-4 text-emerald-500"
+        ></ng-icon>
+        <ng-icon 
+          *ngIf="!copied()"
+          name="lucideCopy" 
+          class="h-4 w-4"
+        ></ng-icon>
+      </button>
+    </div>
+
+    <!-- Tip Callout -->
+    <div class="mt-4 flex gap-3 rounded-lg border-l-2 border-blue-500 bg-[#0b3b77]/20 px-4 py-3" *ngIf="promptConfig?.tip">
+      <ng-icon name="lucideLightbulb" class="h-5 w-5 flex-shrink-0 text-blue-400"></ng-icon>
+      <p class="text-sm text-[#a9b1bb]">{{ promptConfig.tip }}</p>
+    </div>
+
+    <!-- Media Assets -->
+    <div class="mt-4 grid gap-4 md:grid-cols-2" *ngIf="promptConfig?.assets && (promptConfig?.assets?.length ?? 0) > 0">
+      <img
+        *ngFor="let asset of promptConfig?.assets || []; let idx = index"
+        [src]="asset"
+        [alt]="'Step asset ' + (idx + 1)"
+        class="rounded-lg border border-[#1f2937]"
+      />
+    </div>
+
+    <!-- User Input -->
+    <div class="mt-6" *ngIf="promptConfig?.requiresSubmission">
+      <label
+        [for]="metadata.id + '-input'"
+        class="block text-sm font-medium text-[#e5e7eb] mb-2"
+      >
+        {{ promptConfig.inputLabel || 'Your Response' }}
+      </label>
+      
+      <!-- Text Input -->
+      <input
+        *ngIf="promptConfig.inputType === 'text'"
+        [id]="metadata.id + '-input'"
+        type="text"
+        [value]="userResponse()"
+        (input)="handleInputChange($any($event.target).value)"
+        [placeholder]="promptConfig.inputPlaceholder || 'Enter your answer...'"
+        [class]="'w-full rounded-lg border bg-[#0a0e12] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280] transition-colors ' +
+                 (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#60a5fa] focus:ring-[#60a5fa]')"
+        [disabled]="promptConfig.readOnly || currentState() === 'completed'"
+      />
+      
+      <!-- Textarea Input -->
+      <textarea
+        *ngIf="promptConfig.inputType === 'textarea'"
+        [id]="metadata.id + '-input'"
+        [value]="userResponse()"
+        (input)="handleInputChange($any($event.target).value)"
+        [placeholder]="promptConfig.inputPlaceholder || 'Enter your answer...'"
+        rows="4"
+        [class]="'w-full rounded-lg border bg-[#0a0e12] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280] transition-colors ' +
+                 (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#60a5fa] focus:ring-[#60a5fa]')"
+        [disabled]="promptConfig.readOnly || currentState() === 'completed'"
+      ></textarea>
+      
+      <!-- Code Input -->
+      <pre *ngIf="promptConfig.inputType === 'code'" class="relative">
+        <textarea
+          [id]="metadata.id + '-input'"
+          [value]="userResponse()"
+          (input)="handleInputChange($any($event.target).value)"
+          [placeholder]="promptConfig.inputPlaceholder || 'Write your code here...'"
+          rows="8"
+          [class]="'w-full rounded-lg border bg-[#0a0e12] px-3 py-2 font-mono text-sm text-[#e5e7eb] placeholder-[#6b7280] transition-colors ' +
+                   (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#60a5fa] focus:ring-[#60a5fa]')"
+          [disabled]="promptConfig.readOnly || currentState() === 'completed'"
+        ></textarea>
+      </pre>
+      
+      <p class="mt-1 text-sm text-red-400" *ngIf="inputError()">{{ inputError() }}</p>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="flex items-center justify-between gap-4 border-t border-[#1f2937] pt-4" #cardFooter>
+    <!-- Secondary Actions -->
+    <div class="flex items-center gap-2">
+      <button
+        *ngIf="promptConfig?.ctaSecondary?.showHint && promptConfig?.integrations?.showHintPanel"
+        (click)="handleHintRequest('button')"
+        class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors"
+        aria-label="Show hint"
+        type="button"
+      >
+        <ng-icon name="lucideLightbulb" class="h-4 w-4"></ng-icon>
+        Show Hint
+        <kbd class="ml-1 rounded border border-[#1f2937] px-1.5 py-0.5 text-xs">H</kbd>
+      </button>
+      
+      <button
+        *ngIf="promptConfig?.ctaSecondary?.openCoach && promptConfig?.integrations?.showCoach"
+        (click)="handleCoachOpen()"
+        class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors"
+        aria-label="Open coach"
+        type="button"
+      >
+        <ng-icon name="lucideMessageSquare" class="h-4 w-4"></ng-icon>
+        Coach
+      </button>
+      
+      <button
+        *ngIf="promptConfig?.ctaSecondary?.custom"
+        class="inline-flex items-center gap-2 rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:text-[#e5e7eb] transition-colors"
+        type="button"
+      >
+        {{ promptConfig?.ctaSecondary?.custom?.label }}
+      </button>
+    </div>
+
+    <!-- Primary Action -->
+    <button
+      (click)="handlePrimaryAction()"
+      [disabled]="isPrimaryButtonDisabled()"
+      [class]="'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ' +
+               (isPrimaryButtonDisabled() 
+                 ? 'cursor-not-allowed bg-[#1f2937] text-[#6b7280]' 
+                 : 'bg-[#3b82f6] text-white hover:bg-[#2563eb]')"
+      type="button"
+    >
+      {{ promptConfig?.ctaPrimary?.label }}
+      <kbd 
+        *ngIf="shouldShowPrimaryKeyboardHint()"
+        class="rounded border border-white/20 px-1.5 py-0.5 text-xs"
+      >
+        {{ promptConfig?.ctaPrimary?.action === 'submit' ? 'Enter' : '→' }}
+      </kbd>
+    </button>
+  </footer>
+</div>
+
