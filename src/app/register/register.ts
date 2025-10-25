@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import { LogoComponent } from '../../components/ui/logo/logo';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { FieldComponent } from '../../components/ui/field/field';
@@ -10,13 +10,15 @@ import { InputComponent } from '../../components/ui/input/input';
 import { LabelComponent } from '../../components/ui/label/label';
 import { PasswordInputComponent } from '../../components/ui/password-input/password-input';
 import { TextComponent, TextLinkComponent, StrongComponent } from '../../components/ui/text/text';
+import { AuthService, RegisterData, AuthResponse, AuthError } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     LogoComponent,
     ButtonComponent,
@@ -31,32 +33,134 @@ import { TextComponent, TextLinkComponent, StrongComponent } from '../../compone
   ],
   template: `
     <div class="flex min-h-screen items-center justify-center bg-white px-4 py-12 dark:bg-zinc-950">
-      <form action="" method="POST" class="grid w-full max-w-sm grid-cols-1 gap-8">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="grid w-full max-w-sm grid-cols-1 gap-8">
         <app-logo className="h-6 text-zinc-950 dark:text-white" />
         <app-heading>Create your account</app-heading>
         
+        <!-- Error message display -->
+        @if (errorMessage()) {
+          <div class="rounded-md bg-red-50 p-4 dark:bg-red-950/20">
+            <div class="text-sm text-red-700 dark:text-red-400">
+              {{ errorMessage() }}
+            </div>
+          </div>
+        }
+        
         <app-field>
           <app-label for="email">Email</app-label>
-          <app-input type="email" id="email" name="email" />
+          <app-input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="Enter your email"
+            formControlName="email"
+            [class.border-red-500]="isFieldInvalid('email')"
+          />
+          @if (isFieldInvalid('email')) {
+            <div class="mt-1 text-sm text-red-600 dark:text-red-400">
+              @if (registerForm.get('email')?.hasError('required')) {
+                Email is required
+              }
+              @if (registerForm.get('email')?.hasError('email')) {
+                Please enter a valid email address
+              }
+            </div>
+          }
         </app-field>
         
         <app-field>
           <app-label for="name">Full name</app-label>
-          <app-input type="text" id="name" name="name" />
+          <app-input 
+            type="text" 
+            id="name" 
+            name="name" 
+            placeholder="Enter your full name"
+            formControlName="name"
+            [class.border-red-500]="isFieldInvalid('name')"
+          />
+          @if (isFieldInvalid('name')) {
+            <div class="mt-1 text-sm text-red-600 dark:text-red-400">
+              @if (registerForm.get('name')?.hasError('required')) {
+                Full name is required
+              }
+              @if (registerForm.get('name')?.hasError('minlength')) {
+                Name must be at least 2 characters long
+              }
+            </div>
+          }
         </app-field>
         
         <app-field>
           <app-label for="password">Password</app-label>
-          <app-password-input id="password" name="password" />
+          <app-password-input 
+            id="password" 
+            name="password" 
+            placeholder="Enter your password"
+            formControlName="password"
+            [class.border-red-500]="isFieldInvalid('password')"
+          />
+          @if (isFieldInvalid('password')) {
+            <div class="mt-1 text-sm text-red-600 dark:text-red-400">
+              @if (registerForm.get('password')?.hasError('required')) {
+                Password is required
+              }
+              @if (registerForm.get('password')?.hasError('minlength')) {
+                Password must be at least 8 characters long
+              }
+              @if (registerForm.get('password')?.hasError('pattern')) {
+                Password must contain at least one uppercase letter, one lowercase letter, and one number
+              }
+            </div>
+          }
         </app-field>
         
-        <app-button type="submit" color="blue" className="w-full">
-          Create account
+        <app-field>
+          <app-label for="confirmPassword">Confirm password</app-label>
+          <app-password-input 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            placeholder="Confirm your password"
+            formControlName="confirmPassword"
+            [class.border-red-500]="isFieldInvalid('confirmPassword')"
+          />
+          @if (isFieldInvalid('confirmPassword')) {
+            <div class="mt-1 text-sm text-red-600 dark:text-red-400">
+              @if (registerForm.get('confirmPassword')?.hasError('required')) {
+                Please confirm your password
+              }
+              @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
+                Passwords do not match
+              }
+            </div>
+          }
+        </app-field>
+        
+        <app-button 
+          type="submit" 
+          color="blue" 
+          className="w-full"
+          [disabled]="registerForm.invalid || isLoading()"
+        >
+          @if (isLoading()) {
+            <svg class="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Creating account...
+          } @else {
+            Create account
+          }
         </app-button>
         
         <div class="text-center text-sm text-zinc-600 dark:text-zinc-400">Or continue with</div>
         
-        <app-button type="button" variant="outline" className="w-full">
+        <app-button 
+          type="button" 
+          variant="outline" 
+          className="w-full"
+          (click)="onGoogleSignup()"
+          [disabled]="isLoading()"
+        >
           <svg
             data-slot="icon"
             class="mr-2 h-4 w-4"
@@ -101,5 +205,170 @@ import { TextComponent, TextLinkComponent, StrongComponent } from '../../compone
     }
   `]
 })
-export class RegisterComponent {}
+export class RegisterComponent {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+
+  // Reactive form
+  registerForm: FormGroup;
+
+  // State signals
+  isLoading = signal(false);
+  errorMessage = signal<string>('');
+
+  constructor() {
+    // Initialize reactive form with validation
+    this.registerForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      password: ['', [
+        Validators.required, 
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+      ]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validators: this.passwordMatchValidator });
+
+    // Check if user is already authenticated
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  /**
+   * Custom validator to check if passwords match
+   */
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      return { passwordMismatch: true };
+    }
+    return null;
+  }
+
+  /**
+   * Handle form submission
+   */
+  onSubmit(): void {
+    if (this.registerForm.valid) {
+      this.isLoading.set(true);
+      this.errorMessage.set('');
+
+      const userData: RegisterData = {
+        email: this.registerForm.value.email,
+        name: this.registerForm.value.name,
+        password: this.registerForm.value.password
+      };
+
+      this.authService.register(userData).subscribe({
+        next: (response: AuthResponse) => {
+          this.isLoading.set(false);
+          this.toastService.show({
+            title: 'Welcome!',
+            description: `Account created successfully. Welcome, ${response.user.name}!`,
+            type: 'success'
+          });
+          // Navigation is handled by the auth service
+        },
+        error: (error: AuthError) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(error.message || 'Registration failed. Please try again.');
+          
+          // Show field-specific errors if available
+          if (error.field) {
+            const control = this.registerForm.get(error.field);
+            if (control) {
+              control.setErrors({ serverError: error.message });
+            }
+          }
+
+          this.toastService.show({
+            title: 'Registration Failed',
+            description: error.message || 'Please check your information and try again.',
+            type: 'error'
+          });
+        }
+      });
+    } else {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.registerForm.controls).forEach(key => {
+        this.registerForm.get(key)?.markAsTouched();
+      });
+    }
+  }
+
+  /**
+   * Handle Google signup
+   */
+  onGoogleSignup(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    
+    this.authService.loginWithGoogle();
+    
+    // For demo purposes, we'll use the demo login
+    this.authService.demoLogin().subscribe({
+      next: (response: AuthResponse) => {
+        this.isLoading.set(false);
+        this.toastService.show({
+          title: 'Welcome!',
+          description: `Account created successfully. Welcome, ${response.user.name}!`,
+          type: 'success'
+        });
+      },
+      error: (error: AuthError) => {
+        this.isLoading.set(false);
+        this.errorMessage.set('Google signup failed. Please try again.');
+        this.toastService.show({
+          title: 'Signup Failed',
+          description: 'Google signup failed. Please try again.',
+          type: 'error'
+        });
+      }
+    });
+  }
+
+  /**
+   * Check if a form field is invalid and has been touched
+   */
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.registerForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  /**
+   * Get validation error message for a field
+   */
+  getFieldError(fieldName: string): string {
+    const field = this.registerForm.get(fieldName);
+    if (field && field.errors && (field.dirty || field.touched)) {
+      if (field.errors['required']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
+      }
+      if (field.errors['email']) {
+        return 'Please enter a valid email address';
+      }
+      if (field.errors['minlength']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} must be at least ${field.errors['minlength'].requiredLength} characters`;
+      }
+      if (field.errors['pattern']) {
+        return 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
+      }
+      if (field.errors['serverError']) {
+        return field.errors['serverError'];
+      }
+    }
+    
+    // Check for password mismatch
+    if (fieldName === 'confirmPassword' && this.registerForm.hasError('passwordMismatch') && field?.touched) {
+      return 'Passwords do not match';
+    }
+    
+    return '';
+  }
+}
 

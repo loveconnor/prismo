@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
@@ -24,6 +24,8 @@ import { AvatarDropdownComponent } from '../components/ui/avatar-dropdown/avatar
 import { SettingsModalComponent } from '../components/settings/settings-modal/settings-modal';
 import { ThemeService } from '../services/theme.service';
 import { FontService } from '../services/font.service';
+import { AuthService } from '../services/auth.service';
+import { ToastContainerComponent } from '../components/ui/toast-container/toast-container';
 
 @Component({
   selector: 'app-root',
@@ -52,7 +54,8 @@ import { FontService } from '../services/font.service';
     SidebarHeadingComponent,
     SidebarLabelComponent,
     AvatarDropdownComponent,
-    SettingsModalComponent
+    SettingsModalComponent,
+    ToastContainerComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -60,12 +63,14 @@ import { FontService } from '../services/font.service';
 export class App {
   settingsOpen = false;
   currentUrl = signal('');
+  
+  // Inject services
+  public themeService = inject(ThemeService);
+  public fontService = inject(FontService);
+  public authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(
-    public themeService: ThemeService,
-    public fontService: FontService,
-    private router: Router
-  ) {
+  constructor() {
     // Update currentUrl signal on navigation
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -95,5 +100,9 @@ export class App {
     event?.preventDefault();
     event?.stopPropagation();
     this.settingsOpen = true;
+  }
+
+  onLogout(): void {
+    this.authService.logout();
   }
 }

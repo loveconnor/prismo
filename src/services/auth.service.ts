@@ -1,159 +1,415 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ApiService } from './api.service';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import {
+  Observable,
+  BehaviorSubject,
+  throwError,
+  of,
+  defer,
+  tap,
+  catchError,
+} from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CookieService } from './cookie.service';
+import { JwtService } from './jwt.service';
 
+// Unified interfaces
 export interface User {
   id: string;
   email: string;
-  username: string;
+  username?: string; // from HEAD variant
+  name?: string; // from other variant
+  avatar?: string;
   profile?: any;
   preferences?: any;
-  is_active: boolean;
+  is_active?: boolean;
+}
+
+export interface LoginCredentials {
+  email?: string;
+  username?: string;
+  password: string;
+  remember?: boolean;
+}
+
+export interface RegisterData {
+  email: string;
+  username?: string;
+  name?: string;
+  password: string;
+  confirmPassword?: string;
+}
+
+export interface ConfirmRegistrationData {
+  email: string;
+  confirmationCode: string;
+}
+
+export interface ConfirmForgotPasswordData {
+  email: string;
+  confirmationCode: string;
+  newPassword: string;
+}
+
+export interface ProfileUpdateData {
+  name?: string;
+  username?: string;
+  avatar?: string;
+  profile?: any;
+  preferences?: any;
 }
 
 export interface AuthResponse {
-  access_token: string;
-  refresh_token: string;
   user: User;
+  access_token?: string; // HEAD variant
+  token?: string; // other variant
+  refresh_token?: string; // HEAD variant
+  refreshToken?: string; // other variant
+}
+
+export interface VerifyResponse {
+  valid: boolean;
+  user?: User;
+}
+
+export interface AuthError {
+  message: string;
+  field?: string;
+  code?: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private cookieService = inject(CookieService);
+  private jwtService = inject(JwtService);
 
+  // Cookie names (if you prefer localStorage, swap implementations below)
+  private readonly ACCESS_TOKEN_COOKIE = 'access_token';
+  private readonly REFRESH_TOKEN_COOKIE = 'refresh_token';
+
+  // API base - update to your actual endpoint base
+  private readonly API_URL = '/api/auth';
+
+  // Subjects for Rx interop
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private isLoadingSubject = new BehaviorSubject<boolean>(false);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+
+  // Public observables
+  public currentUser$ = this.currentUserSubject.asObservable();
+  public isLoading$ = this.isLoadingSubject.asObservable();
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  constructor(
-    private apiService: ApiService,
-    private router: Router
-  ) {
-    this.checkAuthStatus();
+  // Signals for modern Angular
+  public isAuthenticated = signal<boolean>(false);
+  public currentUser = signal<User | null>(null);
+
+  constructor() {
+    this.checkExistingSession();
   }
 
-  // Check if user is authenticated on app initialization
-  private checkAuthStatus(): void {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      this.verifyToken(token);
+  // Register
+  register(userData: RegisterData): Observable<AuthResponse> {
+    this.isLoadingSubject.next(true);
+    return this.http
+      .post<AuthResponse>(`${this.API_URL}/register`, userData)
+      .pipe(
+        tap((res) => this.handleAuthSuccess(res)),
+        catchError((err) => this.handleLoadingError(err))
+      );
+  }
+
+  // Confirm registration
+  confirmRegistration(
+    confirmData: ConfirmRegistrationData
+  ): Observable<AuthResponse> {
+    this.isLoadingSubject.next(true);
+    return this.http
+      .post<AuthResponse>(`${this.API_URL}/confirm`, confirmData)
+      .pipe(
+        tap((res) => this.handleAuthSuccess(res)),
+        catchError((err) => this.handleLoadingError(err))
+      );
+  }
+
+  // Login (supports email or username)
+  login(credentials: LoginCredentials): Observable<AuthResponse> {
+    this.isLoadingSubject.next(true);
+    return this.http
+      .post<AuthResponse>(`${this.API_URL}/login`, credentials)
+      .pipe(
+        tap((res) => this.handleAuthSuccess(res, credentials.remember)),
+        catchError((err) => this.handleLoadingError(err))
+      );
+  }
+
+  // Refresh token
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
     }
+    return this.http
+      .post<AuthResponse>(`${this.API_URL}/refresh`, { refreshToken })
+      .pipe(
+        tap((res) => this.handleAuthSuccess(res)),
+        catchError((err) => {
+          this.logout();
+          return this.handleAuthError(err);
+        })
+      );
   }
 
-  // Register a new user
-  register(userData: {
-    username: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }): Observable<any> {
-    return this.apiService.register(userData);
+  // Forgot password
+  forgotPassword(email: string): Observable<{ message: string }> {
+    this.isLoadingSubject.next(true);
+    return this.http
+      .post<{ message: string }>(`${this.API_URL}/forgot-password`, { email })
+      .pipe(
+        tap(() => this.isLoadingSubject.next(false)),
+        catchError((err) => this.handleLoadingError(err))
+      );
   }
 
-  // Login user
-  login(credentials: {
-    username: string;
-    password: string;
-  }): Observable<AuthResponse> {
-    return this.apiService.login(credentials);
+  // Confirm forgot password
+  confirmForgotPassword(
+    confirmData: ConfirmForgotPasswordData
+  ): Observable<{ message: string }> {
+    this.isLoadingSubject.next(true);
+    return this.http
+      .post<{ message: string }>(
+        `${this.API_URL}/confirm-forgot-password`,
+        confirmData
+      )
+      .pipe(
+        tap(() => this.isLoadingSubject.next(false)),
+        catchError((err) => this.handleLoadingError(err))
+      );
   }
 
-  // Logout user
+  // Profile
+  getProfile(): Observable<User> {
+    return this.http.get<User>(`${this.API_URL}/profile`).pipe(
+      tap((user) => {
+        this.currentUserSubject.next(user);
+        this.currentUser.set(user);
+      }),
+      catchError((err) => this.handleAuthError(err))
+    );
+  }
+
+  updateProfile(profileData: ProfileUpdateData): Observable<User> {
+    this.isLoadingSubject.next(true);
+    return this.http.put<User>(`${this.API_URL}/profile`, profileData).pipe(
+      tap((user) => {
+        this.currentUserSubject.next(user);
+        this.currentUser.set(user);
+        this.isLoadingSubject.next(false);
+      }),
+      catchError((err) => this.handleLoadingError(err))
+    );
+  }
+
+  // Verify token with backend
+  verifyToken(): Observable<VerifyResponse> {
+    const token = this.getAccessToken();
+    if (!token) return of({ valid: false });
+    return this.http
+      .post<VerifyResponse>(`${this.API_URL}/verify`, { token })
+      .pipe(
+        tap((resp) => {
+          if (resp.valid && resp.user) {
+            this.currentUserSubject.next(resp.user);
+            this.currentUser.set(resp.user);
+            this.isAuthenticated.set(true);
+            this.isAuthenticatedSubject.next(true);
+          } else {
+            this.logout();
+          }
+        }),
+        catchError((err) => {
+          this.logout();
+          return this.handleAuthError(err);
+        })
+      );
+  }
+
+  // Logout
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
-    
+    // Clear cookies
+    this.cookieService.delete(this.ACCESS_TOKEN_COOKIE);
+    this.cookieService.delete(this.REFRESH_TOKEN_COOKIE);
+
+    // Clear state
     this.currentUserSubject.next(null);
+    this.currentUser.set(null);
+    this.isAuthenticated.set(false);
     this.isAuthenticatedSubject.next(false);
-    
+    this.isLoadingSubject.next(false);
+
+    // Navigate
     this.router.navigate(['/login']);
+    // If you must hard refresh, uncomment:
+    // window.location.reload();
   }
 
-  // Verify token
-  private verifyToken(token: string): void {
-    this.apiService.verifyToken(token).subscribe({
-      next: (response: any) => {
-        if (response.valid) {
-          this.currentUserSubject.next(response.user);
-          this.isAuthenticatedSubject.next(true);
+  // Tokens
+  getAccessToken(): string | null {
+    return this.cookieService.get(this.ACCESS_TOKEN_COOKIE);
+  }
+
+  getRefreshToken(): string | null {
+    return this.cookieService.get(this.REFRESH_TOKEN_COOKIE);
+  }
+
+  // State getters
+  getCurrentUser(): User | null {
+    return this.currentUser();
+  }
+
+  isLoggedIn(): boolean {
+    const token = this.getAccessToken();
+    return token ? this.jwtService.isTokenValid(token) : false;
+  }
+
+  // Demo login (dev only)
+  demoLogin(): Observable<AuthResponse> {
+    this.isLoadingSubject.next(true);
+    const demoUser: User = {
+      id: 'demo-user-1',
+      email: 'demo@example.com',
+      name: 'Demo User',
+      username: 'demo',
+      avatar:
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face',
+      is_active: true,
+    };
+
+    const demoToken = this.jwtService.createDemoToken(demoUser, false);
+    const refreshToken = this.jwtService.createDemoToken(demoUser, true);
+
+    const demoResponse: AuthResponse = {
+      user: demoUser,
+      token: demoToken,
+      refreshToken,
+      access_token: demoToken,
+      refresh_token: refreshToken,
+    };
+
+    return defer(() => {
+      return new Observable<AuthResponse>((observer) => {
+        setTimeout(() => {
+          this.handleAuthSuccess(demoResponse);
+          observer.next(demoResponse);
+          observer.complete();
+        }, 800);
+      });
+    });
+  }
+
+  // OAuth placeholder
+  loginWithGoogle(): void {
+    // Implement real OAuth redirect or PKCE flow here
+    console.log('Google OAuth login - implement with your provider');
+    // Temporary: demo
+    this.demoLogin().subscribe({
+      next: () => console.log('Demo Google login successful'),
+      error: (e) => console.error('Google login failed:', e),
+    });
+  }
+
+  // Helpers
+  private handleAuthSuccess(
+    response: AuthResponse,
+    remember: boolean = false
+  ): void {
+    // Normalize token property names
+    const access =
+      response.access_token || response.token || this.getAccessToken();
+    const refresh =
+      response.refresh_token || response.refreshToken || this.getRefreshToken();
+
+    // Cookie expirations
+    const tokenExpiryDays = remember ? 30 : 1;
+    const refreshExpiryDays = 30;
+
+    if (access) {
+      this.cookieService.set(this.ACCESS_TOKEN_COOKIE, access, {
+        expires: tokenExpiryDays,
+        secure: true,
+        sameSite: 'strict',
+      });
+    }
+    if (refresh) {
+      this.cookieService.set(this.REFRESH_TOKEN_COOKIE, refresh, {
+        expires: refreshExpiryDays,
+        secure: true,
+        sameSite: 'strict',
+      });
+    }
+
+    // Update state
+    if (response.user) {
+      this.currentUserSubject.next(response.user);
+      this.currentUser.set(response.user);
+    }
+    this.isAuthenticated.set(true);
+    this.isAuthenticatedSubject.next(true);
+    this.isLoadingSubject.next(false);
+
+    // Navigate
+    this.router.navigate(['/dashboard']);
+  }
+
+  private handleAuthError(error: any) {
+    const authError: AuthError =
+      error?.error?.message
+        ? {
+            message: error.error.message,
+            field: error.error.field,
+            code: error.error.code,
+          }
+        : error?.message
+          ? { message: error.message }
+          : { message: 'An unexpected error occurred. Please try again.' };
+
+    return throwError(() => authError);
+  }
+
+  private handleLoadingError(error: any) {
+    this.isLoadingSubject.next(false);
+    return this.handleAuthError(error);
+  }
+
+  private checkExistingSession(): void {
+    const token = this.getAccessToken();
+    if (!token) return;
+
+    this.verifyToken().subscribe({
+      next: (resp) => {
+        if (resp.valid && resp.user) {
+          // already handled in verifyToken tap
         } else {
           this.logout();
         }
       },
       error: () => {
-        this.logout();
-      }
-    });
-  }
-
-  // Refresh token
-  refreshToken(): Observable<any> {
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (!refreshToken) {
-      this.logout();
-      throw new Error('No refresh token available');
-    }
-    
-    return this.apiService.refreshToken(refreshToken);
-  }
-
-  // Forgot password
-  forgotPassword(email: string): Observable<any> {
-    return this.apiService.forgotPassword(email);
-  }
-
-  // Confirm forgot password
-  confirmForgotPassword(email: string, code: string, newPassword: string): Observable<any> {
-    return this.apiService.confirmForgotPassword(email, code, newPassword);
-  }
-
-  // Get current user
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
-  }
-
-  // Check if user is authenticated
-  isAuthenticated(): boolean {
-    return this.isAuthenticatedSubject.value;
-  }
-
-  // Set authentication state
-  setAuthState(user: User, tokens: { access_token: string; refresh_token: string }): void {
-    localStorage.setItem('access_token', tokens.access_token);
-    localStorage.setItem('refresh_token', tokens.refresh_token);
-    localStorage.setItem('user', JSON.stringify(user));
-    
-    this.currentUserSubject.next(user);
-    this.isAuthenticatedSubject.next(true);
-  }
-
-  // Get stored tokens
-  getAccessToken(): string | null {
-    return localStorage.getItem('access_token');
-  }
-
-  getRefreshToken(): string | null {
-    return localStorage.getItem('refresh_token');
-  }
-
-  // Handle login success
-  handleLoginSuccess(response: AuthResponse): void {
-    this.setAuthState(response.user, {
-      access_token: response.access_token,
-      refresh_token: response.refresh_token
-    });
-    
-    this.router.navigate(['/dashboard']);
-  }
-
-  // Handle registration success
-  handleRegistrationSuccess(): void {
-    this.router.navigate(['/login'], {
-      queryParams: { message: 'Registration successful. Please check your email for confirmation.' }
+        const refreshToken = this.getRefreshToken();
+        if (refreshToken) {
+          this.refreshToken().subscribe({
+            next: () => {},
+            error: () => this.logout(),
+          });
+        } else {
+          this.logout();
+        }
+      },
     });
   }
 }
