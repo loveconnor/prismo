@@ -126,7 +126,7 @@
         <ng-icon name="lucideLightbulb" class="h-4 w-4"></ng-icon>
         {{ showHint() ? 'Hide Hint' : 'Show Refactoring Tips' }}
       </button>
-      <div *ngIf="showHint()" class="mt-2 rounded-lg border border-blue-500/20 bg-blue-500/10 p-3">
+      <div *ngIf="showHint()" class="mt-2 rounded-lg border border-blue-500/20 bg-primary-strong/10 p-3">
         <h5 class="text-sm font-medium text-blue-400 mb-2">Refactoring Principles:</h5>
         <ul class="text-sm text-[#a9b1bb] space-y-1">
           <li>• <strong>DRY (Don't Repeat Yourself):</strong> Eliminate code duplication</li>
@@ -161,7 +161,7 @@
       <div *ngIf="timeLimit" class="text-sm text-[#6b7280]">
         Time remaining: {{ Math.floor(timeLimit / 60) }}:{{ (timeLimit % 60) < 10 ? ('0' + (timeLimit % 60)) : (timeLimit % 60) }}
       </div>
-      <button type="button" (click)="handleSubmit()" [disabled]="selectedSuggestions().size < requiredRefactors && !customCode().trim()" class="rounded-lg bg-[#bc78f9] px-4 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+      <button type="button" (click)="handleSubmit()" [disabled]="selectedSuggestions().size < requiredRefactors && !customCode().trim()" class="rounded-lg bg-[#bc78f9] px-4 py-2 text-sm font-medium text-white hover:bg-[#BC78F9] disabled:opacity-50 transition-colors">
         Submit Refactoring
       </button>
     </div>

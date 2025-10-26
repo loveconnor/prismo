@@ -305,7 +305,7 @@ export class FillInBlanksComponent extends WidgetBaseComponent implements OnInit
     ];
 
     if (this.emphasizeBlanks) {
-      classes.push('bg-blue-500/10 border-blue-500/50');
+      classes.push('bg-primary-strong/10 border-blue-500/50');
     } else {
       classes.push('border-[#1f2937]');
     }

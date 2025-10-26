@@ -4,12 +4,15 @@
   [ngClass]="'mx-auto w-full max-w-4xl rounded-t-xl border border-b-0 border-[#1f2937] bg-[#0e1318] shadow-sm'"
 >
   <!-- Celebration Header -->
-  <div *ngIf="variant === 'celebration'" class="relative rounded-t-xl border-b border-[#1f2937] bg-[#0b0f14] p-8 text-center">
-    <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 ring-2 ring-emerald-500/20">
-      <ng-icon [name]="outcomeIconName()" class="h-10 w-10 text-emerald-500"></ng-icon>
+  <div *ngIf="variant === 'celebration'" class="relative overflow-hidden rounded-t-xl border-b border-[#1f2937] bg-gradient-to-r from-[#bc78f9] to-[#BC78F9] p-8 text-center">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative z-10">
+      <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-white/20 ring-2 ring-white/20">
+        <ng-icon [name]="outcomeIconName()" class="h-10 w-10 text-white"></ng-icon>
+      </div>
+      <h1 class="text-3xl font-bold text-white mb-2">Lab Complete!</h1>
+      <p class="text-white/90 text-lg">{{ labTitle }}</p>
     </div>
-    <h1 class="text-3xl font-bold text-[#e5e7eb] mb-2">Lab Complete!</h1>
-    <p class="text-[#a9b1bb] text-lg">{{ labTitle }}</p>
   </div>
 
   <!-- Main Content -->
@@ -128,7 +131,7 @@
             <p class="text-sm text-[#a9b1bb] mb-3">{{ suggestion.reason }}</p>
             <div class="flex items-center justify-between">
               <span class="text-xs text-[#6b7280]">{{ suggestion.estimatedMinutes }} min</span>
-              <button (click)="handleNextLabSelect(suggestion.id)" class="inline-flex items-center gap-1 rounded-lg bg-[#bc78f9] px-3 py-1.5 text-sm text-white hover:bg-[#3b82f6] transition-colors">
+              <button (click)="handleNextLabSelect(suggestion.id)" class="inline-flex items-center gap-1 rounded-lg bg-[#bc78f9] px-3 py-1.5 text-sm text-white hover:bg-[#BC78F9] transition-colors">
                 Start Lab
                 <ng-icon name="lucideChevronRight" class="h-4 w-4"></ng-icon>
               </button>
@@ -156,5 +159,3 @@
     </div>
   </div>
 </div>
-
-

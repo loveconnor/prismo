@@ -13,7 +13,7 @@
   justify-content: center;
   border-radius: 0.5rem;
   background: rgba(59, 130, 246, 0.12);
-  color: #3b82f6;
+  color: #BC78F9;
 }
 
 :host-context(.theme-light) .icon-pill {

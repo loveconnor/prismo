@@ -51,7 +51,7 @@
 
               <button *ngIf="skillResult.needsRetry"
                       (click)="retrySkill(skillResult.skill)"
-                      class="inline-flex items-center gap-2 rounded-lg bg-[#bc78f9] px-3 py-1.5 text-sm text-white hover:bg-[#3b82f6] transition-colors">
+                      class="inline-flex items-center gap-2 rounded-lg bg-[#bc78f9] px-3 py-1.5 text-sm text-white hover:bg-[#BC78F9] transition-colors">
                 <ng-icon name="lucideRotateCcw" class="h-4 w-4"></ng-icon>
                 Review Again
               </button>
@@ -61,7 +61,7 @@
 
         <!-- Actions -->
         <div class="flex justify-center gap-3">
-          <button (click)="startReviewSession()" class="rounded-lg bg-[#bc78f9] px-6 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] transition-colors">
+          <button (click)="startReviewSession()" class="rounded-lg bg-[#bc78f9] px-6 py-2 text-sm font-medium text-white hover:bg-[#BC78F9] transition-colors">
             Start New Review
           </button>
         </div>
@@ -93,7 +93,7 @@
       <p class="mb-6 text-[#6b7280]">No weak skills identified. Great job!</p>
     </ng-template>
 
-    <button (click)="startReviewSession()" [disabled]="weakSkills.length === 0" class="rounded-lg bg-[#bc78f9] px-6 py-3 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+    <button (click)="startReviewSession()" [disabled]="weakSkills.length === 0" class="rounded-lg bg-[#bc78f9] px-6 py-3 text-sm font-medium text-white hover:bg-[#BC78F9] disabled:opacity-50 transition-colors">
       Start Review Session
     </button>
   </div>
@@ -171,7 +171,7 @@
 
     <!-- Explanation -->
     <div *ngIf="showExplanations && session.questions[currentQuestionIndex] as q"
-         class="mb-6 rounded-lg border border-blue-500/20 bg-blue-500/10 p-4"
+         class="mb-6 rounded-lg border border-blue-500/20 bg-primary-strong/10 p-4"
          [hidden]="!userAnswers[q.id] || !q.explanation">
       <h4 class="mb-2 font-medium text-blue-400">Explanation</h4>
       <p class="text-sm text-[#a9b1bb]">{{ q.explanation }}</p>
@@ -185,7 +185,7 @@
 
       <button (click)="nextQuestion()"
               [disabled]="!userAnswers[q2.id]"
-              class="rounded-lg bg-[#bc78f9] px-6 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+              class="rounded-lg bg-[#bc78f9] px-6 py-2 text-sm font-medium text-white hover:bg-[#BC78F9] disabled:opacity-50 transition-colors">
         {{ currentQuestionIndex < session.questions.length - 1 ? 'Next Question' : 'Complete Review' }}
       </button>
     </div>

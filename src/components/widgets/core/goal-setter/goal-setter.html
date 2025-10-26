@@ -16,7 +16,7 @@
         <button
           *ngIf="activeGoalsCount() < maxGoals"
           (click)="startAdd()"
-          class="inline-flex items-center gap-2 rounded-lg bg-[#bc78f9] px-3 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] transition-colors"
+          class="inline-flex items-center gap-2 rounded-lg bg-[#bc78f9] px-3 py-2 text-sm font-medium text-white hover:bg-[#BC78F9] transition-colors"
         >
           <ng-icon name="lucidePlus" class="h-4 w-4"></ng-icon>
           Add Goal
@@ -94,7 +94,7 @@
         <!-- Actions -->
         <div class="flex justify-end gap-2">
           <button (click)="cancelAdd()" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-4 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] transition-colors">Cancel</button>
-          <button (click)="handleAddGoal()" [disabled]="!newGoal.title.trim()" class="rounded-lg bg-[#bc78f9] px-4 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">Add Goal</button>
+          <button (click)="handleAddGoal()" [disabled]="!newGoal.title.trim()" class="rounded-lg bg-[#bc78f9] px-4 py-2 text-sm font-medium text-white hover:bg-[#BC78F9] disabled:opacity-50 transition-colors">Add Goal</button>
         </div>
       </div>
     </div>

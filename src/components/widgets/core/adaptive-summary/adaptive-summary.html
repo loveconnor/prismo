@@ -109,7 +109,7 @@
                   [ngClass]="{
                     'text-red-500 bg-red-500/10 border-red-500/20': adaptation.impact === 'high',
                     'text-amber-500 bg-amber-500/10 border-amber-500/20': adaptation.impact === 'medium',
-                    'text-blue-500 bg-blue-500/10 border-blue-500/20': adaptation.impact === 'low'
+                    'text-blue-500 bg-primary-strong/10 border-blue-500/20': adaptation.impact === 'low'
                   }"
                 >
                   {{ adaptation.impact }} impact
@@ -162,7 +162,7 @@
         Customize Adaptations
       </button>
 
-      <button *ngIf="onAcceptAdaptations && adaptations.length > 0" (click)="handleAccept()" class="rounded-lg bg-[#bc78f9] px-4 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] transition-colors">
+      <button *ngIf="onAcceptAdaptations && adaptations.length > 0" (click)="handleAccept()" class="rounded-lg bg-[#bc78f9] px-4 py-2 text-sm font-medium text-white hover:bg-[#BC78F9] transition-colors">
         Accept Adaptations
       </button>
 
