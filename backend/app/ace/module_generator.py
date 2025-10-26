@@ -12,8 +12,8 @@ import asyncio
 import time
 from datetime import datetime
 from typing import Dict, List, Any, Optional
-import requests
 from app.orm import orm
+from app.claude_routes import get_claude_response
 from .learner_profile import LearnerProfile, LearnerProfileManager
 from .skill_tree import SkillTreeManager
 
@@ -50,20 +50,7 @@ class ModuleGenerator:
         # Rate limiter to avoid hitting API limits (10 requests per minute by default)
         self.rate_limiter = RateLimiter(requests_per_minute=10)
         
-        # AWS Bedrock API configuration
-        self.aws_region = os.getenv("AWS_REGION", "us-east-1")
-        self.bedrock_api_token = os.getenv("BEDROCK_API_TOKEN")
-        
-        if not self.bedrock_api_token:
-            print("⚠️  Warning: BEDROCK_API_TOKEN not found in environment variables")
-        else:
-            print(f"✓ Bedrock API token loaded")
-        
-        # Bedrock API endpoint for Claude 3.5 Sonnet
-        self.bedrock_url = f"https://bedrock-runtime.{self.aws_region}.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/invoke"
-        
-        print(f"✓ ModuleGenerator initialized with Bedrock API")
-        print(f"✓ Region: {self.aws_region}")
+        print(f"✓ ModuleGenerator initialized with Claude via Bedrock")
         print(f"✓ Widget registry loaded: {len(self.widget_registry)} widgets")
         print(f"✓ Rate limiter: 10 requests per minute")
     
@@ -154,12 +141,17 @@ SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={
         abbreviated = []
         
         for widget in self.widget_registry:
-            if widget.get("name") in critical_widgets:
-                full_schemas.append(widget)
+            # Convert 'name' to 'id' for metadata
+            widget_copy = widget.copy()
+            if "name" in widget_copy:
+                widget_copy["id"] = widget_copy.pop("name")
+            
+            if widget.get("name") in critical_widgets or widget.get("id") in critical_widgets:
+                full_schemas.append(widget_copy)
             else:
                 # Keep essential fields only
                 abbreviated.append({
-                    "name": widget.get("name"),
+                    "id": widget.get("name"),
                     "title": widget.get("title"),
                     "skills": widget.get("skills", []),
                     "category": widget.get("category"),
@@ -172,22 +164,84 @@ SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={
                     "version": widget.get("version", "1.0.0")
                 })
         
-        return f"""CRITICAL WIDGETS (use exact schemas):
+        return f"""CRITICAL WIDGETS (use exact schemas, copy metadata exactly):
 {json.dumps(full_schemas, indent=2)}
 
 OTHER AVAILABLE WIDGETS (copy structure, adapt props):
 {json.dumps(abbreviated, indent=2)}"""
     
+    def _fix_json_string(self, text: str) -> str:
+        """Attempt to fix common JSON formatting issues by escaping unescaped newlines in string values"""
+        import re
+        
+        # This function fixes strings that contain literal newlines instead of \n
+        # Strategy: Find string values (content between quotes) and escape special chars
+        
+        result = []
+        in_string = False
+        escape_next = False
+        i = 0
+        
+        while i < len(text):
+            char = text[i]
+            
+            # Handle escape sequences
+            if escape_next:
+                result.append(char)
+                escape_next = False
+                i += 1
+                continue
+            
+            # Check for backslash (escape character)
+            if char == '\\':
+                result.append(char)
+                escape_next = True
+                i += 1
+                continue
+            
+            # Toggle string mode when we hit a quote
+            if char == '"':
+                result.append(char)
+                in_string = not in_string
+                i += 1
+                continue
+            
+            # If we're inside a string, escape special characters
+            if in_string:
+                if char == '\n':
+                    result.append('\\n')
+                elif char == '\r':
+                    result.append('\\r')
+                elif char == '\t':
+                    result.append('\\t')
+                else:
+                    result.append(char)
+            else:
+                # Outside strings, keep everything as-is
+                result.append(char)
+            
+            i += 1
+        
+        return ''.join(result)
+    
     async def _generate_module_with_bedrock(self, module_name: str, topic: str, target_skills: List[str],
                                             difficulty: str, estimated_time: int, context: str) -> Dict[str, Any]:
         """Use AWS Bedrock API to generate a module with strict JSON output"""
         
-        # Widget difficulty mapping
-        widget_counts = {"beginner": 3, "intermediate": 5, "advanced": 7}
-        num_learning_widgets = widget_counts.get(difficulty, 3)
+        # Widget difficulty mapping - reduced to fit in token limit
+        widget_counts = {"beginner": 2, "intermediate": 3, "advanced": 5}
+        num_learning_widgets = widget_counts.get(difficulty, 2)
         
         # Create the streamlined prompt
         prompt = f"""Generate a learning module for "{topic}" as valid JSON only (no markdown, no explanations).
+
+CRITICAL JSON RULES:
+1. All strings MUST be on ONE line - replace actual newlines with \\n
+2. Escape quotes inside strings: use \\" not "
+3. For code in "starterCode" field: replace newlines with \\n, NOT actual line breaks
+4. Keep "prompt" and "starterCode" content CONCISE (under 500 chars each)
+5. Example: "starterCode": "line1\\nline2\\nline3" NOT "starterCode": "line1
+   line2"
 
 === OUTPUT FORMAT ===
 {{
@@ -215,12 +269,19 @@ OTHER AVAILABLE WIDGETS (copy structure, adapt props):
 
 2. WIDGET STRUCTURE:
    {{
-     "name": "<unique-instance-id>",
-     "metadata": <EXACT_COPY_FROM_REGISTRY>,
+     "name": "<unique-instance-id>",  // This is the INSTANCE name (e.g., "intro-step-prompt-001")
+     "metadata": {{
+       "id": "<widget-type>",  // This is the TYPE (e.g., "step-prompt", "confidence-meter")
+       <COPY_REST_FROM_REGISTRY>
+     }},
      "props": {{<custom_content_per_props_hint>}},
      "position": <number>,
      "dependencies_met": true
    }}
+   
+   IMPORTANT: Widget has TWO identifiers:
+   - "name" at root level = unique instance name
+   - "id" in metadata = widget type from registry
 
 3. metadata.id MUST BE: step-prompt | confidence-meter | feedback-box | multiple-choice | code-editor | short-answer | etc.
 
@@ -235,95 +296,72 @@ OTHER AVAILABLE WIDGETS (copy structure, adapt props):
 
 Return JSON only."""
         
-        # Retry configuration for rate limiting
-        max_retries = 3
-        base_delay = 2  # seconds
+        # System prompt for Claude
+        system_prompt = """You are an expert educational content architect. Output ONLY valid JSON.
+CRITICAL: ALL string values must be on a SINGLE line. Replace newlines with \\n escape sequences.
+For multi-line code in "starterCode" or "prompt" fields: Use \\n NOT actual line breaks.
+Example: "starterCode": "import React\\n\\nfunction App() {\\n  return <div>Hello</div>\\n}"
+After every learning widget, insert confidence-meter then feedback-box widgets. Match widget metadata exactly to registry schemas."""
         
         try:
-            print(f"📡 Calling AWS Bedrock API (Claude 3.5 Sonnet)")
+            print(f"📡 Calling Claude via Bedrock")
             print(f"   Topic: {topic}")
             print(f"   Target Skills: {', '.join(target_skills)}")
             
             # Wait for rate limiter before making request
             await self.rate_limiter.acquire()
             
-            # Prepare the request body for Claude Sonnet 3.5
-            request_body = {
-                "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 4000,
-                "system": "You are an expert educational content architect. Output ONLY valid JSON - no markdown, no explanations. CRITICAL: After every learning widget, immediately insert confidence-meter then feedback-box widgets. This triple pattern is mandatory. Match widget metadata exactly to registry schemas. Build progressive learning sequences.",
-                "messages": [{"role": "user", "content": prompt}],
-            }
+            # Make the API call using claude_routes function
+            loop = asyncio.get_event_loop()
+            generated_text = await loop.run_in_executor(
+                None,
+                lambda: get_claude_response(prompt, system_prompt, max_tokens=200000)
+            )
             
-            # Headers with the Bearer token
-            headers = {
-                "Authorization": f"Bearer {self.bedrock_api_token}",
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            }
-            
-            # Retry loop for handling rate limits
-            for attempt in range(max_retries):
-                # Make the API call asynchronously
-                loop = asyncio.get_event_loop()
-                response = await loop.run_in_executor(
-                    None,
-                    lambda: requests.post(self.bedrock_url, headers=headers, data=json.dumps(request_body), timeout=60)
-                )
+            if generated_text:
+                print(f"✓ Claude returned response ({len(generated_text)} chars)")
                 
-                # Check if the request was successful
-                if response.status_code == 200:
-                    response_body = response.json()
+                # Clean up the response (remove markdown if present)
+                generated_text = generated_text.strip()
+                if generated_text.startswith('```json'):
+                    generated_text = generated_text[7:]
+                if generated_text.startswith('```'):
+                    generated_text = generated_text[3:]
+                if generated_text.endswith('```'):
+                    generated_text = generated_text[:-3]
+                generated_text = generated_text.strip()
+                
+                # Try to parse the JSON
+                try:
+                    module = json.loads(generated_text)
+                except json.JSONDecodeError as e:
+                    print(f"⚠️  JSON parse error: {e}")
+                    print(f"   Attempting to fix common JSON issues...")
                     
-                    # Extract and print the content
-                    if "content" in response_body and len(response_body["content"]) > 0:
-                        generated_text = response_body["content"][0]["text"]
-                        
-                        print(f"✓ Bedrock API returned response ({len(generated_text)} chars)")
-                        
-                        # Clean up the response (remove markdown if present)
-                        generated_text = generated_text.strip()
-                        if generated_text.startswith('```json'):
-                            generated_text = generated_text[7:]
-                        if generated_text.startswith('```'):
-                            generated_text = generated_text[3:]
-                        if generated_text.endswith('```'):
-                            generated_text = generated_text[:-3]
-                        generated_text = generated_text.strip()
-                        
-                        # Parse the JSON
-                        module = json.loads(generated_text)
-                        
-                        print(f"✓ Successfully parsed module: {module.get('name', 'unknown')}")
-                        print(f"✓ Module has {len(module.get('widgets', []))} widgets")
-                        
-                        # Validate the generated module
-                        self._validate_generated_module(module)
-                        return module
-                    else:
-                        raise Exception("No content found in Bedrock response")
+                    # Save the raw response for debugging first
+                    debug_file = f"/tmp/module_generation_error_{int(time.time())}.txt"
+                    with open(debug_file, 'w') as f:
+                        f.write(generated_text)
+                    print(f"   Raw response saved to: {debug_file}")
+                    
+                    # Try to fix the JSON by escaping unescaped content
+                    try:
+                        fixed_text = self._fix_json_string(generated_text)
+                        module = json.loads(fixed_text)
+                        print(f"✓ Successfully fixed and parsed JSON!")
+                    except Exception as fix_error:
+                        print(f"   Failed to fix JSON: {fix_error}")
+                        # Re-raise original error
+                        raise
                 
-                # Handle rate limiting (429 Too Many Requests)
-                elif response.status_code == 429:
-                    if attempt < max_retries - 1:
-                        # Exponential backoff: 2s, 4s, 8s
-                        delay = base_delay * (2 ** attempt)
-                        print(f"⚠️  Rate limit hit (429). Retrying in {delay}s... (attempt {attempt + 1}/{max_retries})")
-                        await asyncio.sleep(delay)
-                        continue
-                    else:
-                        raise Exception(f"Rate limit exceeded after {max_retries} attempts. Please try again later.")
+                print(f"✓ Successfully parsed module: {module.get('name', 'unknown')}")
+                print(f"✓ Module has {len(module.get('widgets', []))} widgets")
                 
-                # Handle other HTTP errors
-                else:
-                    # Check if we should retry on certain error codes
-                    if response.status_code in [500, 502, 503, 504] and attempt < max_retries - 1:
-                        delay = base_delay * (2 ** attempt)
-                        print(f"⚠️  Server error ({response.status_code}). Retrying in {delay}s... (attempt {attempt + 1}/{max_retries})")
-                        await asyncio.sleep(delay)
-                        continue
-                    else:
-                        raise Exception(f"HTTP {response.status_code}: {response.text}")
+                # Validate the generated module
+                self._validate_generated_module(module)
+                return module
+            else:
+                raise Exception("No response from Claude")
                         
         except json.JSONDecodeError as e:
             print(f"✗ Failed to parse JSON from Bedrock response: {e}")
