@@ -1,0 +1,328 @@
+{
+  "name": "coding-32dc08ed",
+  "title": "Master Functions and Loops in Python",
+  "description": "Learn to write reusable code with functions and control program flow with loops. Build foundational programming skills through interactive exercises and real-world examples.",
+  "skills": [
+    "loops",
+    "functions",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Python Functions and Loops",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Python Functions and Loops",
+        "prompt": "In this module, you'll learn two essential programming concepts:\n\n1. **Functions**: Reusable blocks of code that perform specific tasks\n2. **Loops**: Structures that repeat code automatically\n\nThese tools help you write cleaner, more efficient code. Let's start by understanding why functions matter and how to create them."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Introduction Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Let's Begin!",
+        "message": "You're about to start your journey into functions and loops. These concepts form the backbone of programming.",
+        "explanation": "Functions allow you to organize code logically and reuse it multiple times. Loops let you automate repetitive tasks efficiently.",
+        "nextSteps": [
+          "Continue to learn about function basics",
+          "Understand function parameters and return values",
+          "Practice writing your first function"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Starting Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident do you feel about understanding functions and loops?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Write Your First Function",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Create a Greeting Function",
+        "language": "python",
+        "starterCode": "# Define a function that takes a name and returns a greeting\ndef greet(name):\n    message = f\"Hello, {name}!\"\n    return message\n\n# Call the function with different names\nprint(greet(\"Alice\"))\nprint(greet(\"Bob\"))\nprint(greet(\"Charlie\"))",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Hello, Alice!\nHello, Bob!\nHello, Charlie!",
+            "description": "Function should return correct greetings"
+          }
+        ],
+        "instructions": "Modify the function to make all names uppercase in the greeting. Example: 'Hello, ALICE!'"
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Function Exercise Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Function Work!",
+        "message": "You've successfully created and called a function. Functions are powerful tools for reusing code.",
+        "explanation": "By defining a function, you created a reusable block of code. The function parameters (name) allow you to pass different data each time you call it.",
+        "nextSteps": [
+          "Learn how loops automate repetition",
+          "Combine functions and loops for powerful patterns",
+          "Practice loop structures and iteration"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Functions Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you now about writing and calling functions?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Master Loops with For and While",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Build a Number Multiplier Function with Loops",
+        "language": "python",
+        "starterCode": "# Create a function that uses a loop to multiply a number\ndef multiply_numbers(n, count):\n    results = []\n    # Add a for loop here to multiply n by 1, 2, 3... up to count\n    for i in range(1, count + 1):\n        results.append(n * i)\n    return results\n\n# Test the function\nprint(multiply_numbers(5, 4))\nprint(multiply_numbers(3, 5))",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "[5, 10, 15, 20]\n[3, 6, 9, 12, 15]",
+            "description": "Function should return list of multiples"
+          }
+        ],
+        "instructions": "Verify the code runs correctly. Then modify it to use a while loop instead of a for loop and get the same results."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Loops and Functions Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Loop Mastery!",
+        "message": "You've combined functions and loops to create powerful, reusable code. This is professional-level programming!",
+        "explanation": "By using loops inside functions, you automated repetitive calculations. This pattern is used in real-world applications constantly—data processing, automation, and more.",
+        "nextSteps": [
+          "Practice nested loops and complex iterations",
+          "Explore loop control (break, continue)",
+          "Challenge yourself with advanced patterns"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Final Confidence Assessment",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident do you feel about using functions and loops together?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T05:23:21.849626",
+    "module_id": "8755617c-a127-46f1-a511-96512c5563ea",
+    "saved_to_filesystem": true
+  }
+}

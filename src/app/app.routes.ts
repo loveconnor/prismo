@@ -59,6 +59,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   { 
+    path: 'labs/:name', 
+    loadComponent: () => import('./widget-lab/widget-lab').then(m => m.WidgetLabComponent),
+    canActivate: [authGuard]
+  },
+  { 
     path: 'widget-showcase', 
     loadComponent: () => import('./widget-showcase/widget-showcase.component').then(m => m.WidgetShowcaseComponent),
     canActivate: [authGuard]

@@ -524,10 +524,23 @@ export class WidgetLabComponent implements OnInit, OnDestroy {
     }
 
     try {
+      // First try to load from auto-generated-labs folder
+      const autoGenPath = `/assets/modules/auto-generated-labs/${moduleId}.json`;
+      try {
+        const moduleData = await this.http.get<ModuleDefinition>(autoGenPath).toPromise();
+        this.moduleDefinition = moduleData || null;
+        console.log('[WidgetLab] Successfully loaded module from auto-generated-labs:', moduleId);
+        return;
+      } catch (autoGenError) {
+        console.log('[WidgetLab] Module not found in auto-generated-labs, trying regular modules folder');
+      }
+
+      // Fall back to regular modules folder
       const moduleData = await this.http.get<ModuleDefinition>(`/assets/modules/${moduleId}.json`).toPromise();
       this.moduleDefinition = moduleData || null;
+      console.log('[WidgetLab] Successfully loaded module from modules folder:', moduleId);
     } catch (error) {
-      console.error('Failed to load module:', error);
+      console.error('Failed to load module from both locations:', error);
       // Handle error - could show error message to user
     }
   }
