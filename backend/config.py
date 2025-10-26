@@ -20,6 +20,10 @@ class Config:
     COGNITO_CLIENT_ID = os.getenv("COGNITO_CLIENT_ID", "63rmk63l7a9iis438elt3lofpr")
     COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
     DYNAMODB_TABLE_PREFIX = os.getenv("DYNAMODB_TABLE_PREFIX", "prismo")
+    
+    # STEVE API Configuration
+    STEVE_API_URL = os.getenv("STEVE_API_URL", "https://stevellmapi.vercel.app/generate-content")
+    STEVE_API_KEY = os.getenv("STEVE_API_KEY")
 
 
 class DevelopmentConfig(Config):
