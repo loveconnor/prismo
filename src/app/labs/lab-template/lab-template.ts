@@ -7,6 +7,7 @@ import { Subject, throwError } from 'rxjs';
 import { LabDataService, LabData } from '../../../services/lab-data.service';
 import { ModuleSessionService, ModuleSession } from '../../../services/module-session.service';
 import { WidgetInteractionService } from '../../../services/widget-interaction.service';
+import { environment } from '../../../environments/environment';
 
 // Import all available widgets
 import { StepPromptComponent } from '../../../components/widgets/core/step-prompt/step-prompt';
@@ -543,16 +544,8 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // Check if ID is numerical
-    const isNumerical = /^\d+$/.test(labId);
-    
-    if (isNumerical) {
-      // Load from backend API
-      this.loadModuleFromBackend(labId);
-    } else {
-      // Load from assets JSON file
-      this.loadModuleFromAssets(labId);
-    }
+    // Always try to load from backend API first for UUIDs or any ID
+    this.loadLabFromBackend(labId);
   }
 
   private loadModuleFromAssets(moduleId: string): void {
@@ -667,16 +660,17 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  private loadModuleFromBackend(moduleId: string): void {
-    this.http.get<any>(`/api/modules/${moduleId}`)
+  private loadLabFromBackend(labId: string): void {
+    console.log(`Loading lab ${labId} from backend API...`);
+    this.http.get<any>(`${environment.apiUrl}/api/labs/${labId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          console.log(`Loaded module ${moduleId} from backend:`, response);
-          // Backend returns { module: {...} }
-          const moduleData = response.module;
-          const labFromModule = this.labDataService.convertModuleToLab(moduleData);
-          this.labData = labFromModule;
+          console.log(`Loaded lab ${labId} from backend:`, response);
+          // Backend returns the lab data directly
+          const labData = response;
+          const labFromResponse = this.labDataService.convertLabToLabData(labData);
+          this.labData = labFromResponse;
           this.extractWidgetsFromLabData();
           this.loading = false;
           this.error = null;
@@ -684,9 +678,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          this.error = err.message || `Failed to load module ${moduleId} from backend`;
-          this.loading = false;
-          this.cdr.detectChanges();
+          console.error(`Failed to load lab ${labId} from backend:`, err);
+          // Fallback to assets if backend fails
+          this.loadModuleFromAssets(labId);
         }
       });
   }

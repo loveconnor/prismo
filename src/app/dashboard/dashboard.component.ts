@@ -8,6 +8,7 @@ import { AvatarComponent } from '../../components/ui/avatar/avatar';
 import { HeroCardsComponent } from './hero-cards.component';
 import { RecommendedLabsComponent } from './recommended-labs.component';
 import { RecentLabsComponent } from './recent-labs.component';
+import { PublicLabsComponent } from './public-labs.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +17,8 @@ import { RecentLabsComponent } from './recent-labs.component';
     CommonModule,
     HeroCardsComponent,
     RecommendedLabsComponent,
-    RecentLabsComponent
+    RecentLabsComponent,
+    PublicLabsComponent
   ],
   template: `
     <div class="p-6">
@@ -37,6 +39,9 @@ import { RecentLabsComponent } from './recent-labs.component';
 
         <!-- Hero Cards -->
         <app-hero-cards />
+
+        <!-- Public Labs -->
+        <app-public-labs />
 
         <!-- Recommended Labs -->
         <app-recommended-labs />
