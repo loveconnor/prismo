@@ -1,52 +1,44 @@
 <div
   role="region"
   [attr.aria-label]="'Lab completion summary: ' + labTitle"
-  [ngClass]="'mx-auto w-full max-w-4xl rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm'"
+  [ngClass]="'mx-auto w-full max-w-4xl rounded-t-xl border border-b-0 border-[#1f2937] bg-[#0e1318] shadow-sm'"
 >
   <!-- Celebration Header -->
-  <div *ngIf="variant === 'celebration'" class="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-[#bc78f9] to-[#3b82f6] p-6 text-center">
-    <div class="absolute inset-0 bg-black/20"></div>
-    <div class="relative z-10">
-      <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
-        <ng-icon [name]="outcomeIconName()" class="h-8 w-8 text-white"></ng-icon>
-      </div>
-      <h1 class="text-2xl font-bold text-white">Lab Complete!</h1>
-      <p class="mt-2 text-white/90">{{ labTitle }}</p>
+  <div *ngIf="variant === 'celebration'" class="relative rounded-t-xl border-b border-[#1f2937] bg-[#0b0f14] p-8 text-center">
+    <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 ring-2 ring-emerald-500/20">
+      <ng-icon [name]="outcomeIconName()" class="h-10 w-10 text-emerald-500"></ng-icon>
     </div>
+    <h1 class="text-3xl font-bold text-[#e5e7eb] mb-2">Lab Complete!</h1>
+    <p class="text-[#a9b1bb] text-lg">{{ labTitle }}</p>
   </div>
 
   <!-- Main Content -->
-  <div class="p-6">
+  <div class="p-8">
     <!-- Summary Section -->
-    <div class="mb-6">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="flex items-center gap-2" [ngClass]="getOutcomeColor()">
-          <ng-icon [name]="outcomeIconName()" class="h-6 w-6"></ng-icon>
-          <h2 class="text-xl font-semibold text-[#e5e7eb]">Lab Summary</h2>
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="flex items-center gap-2.5">
+          <ng-icon name="lucideTrophy" class="h-5 w-5 text-emerald-500"></ng-icon>
+          <h2 class="text-lg font-semibold text-[#e5e7eb]">Summary</h2>
         </div>
       </div>
 
-      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div *ngIf="completionPercent !== undefined" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
-          <div class="text-2xl font-bold text-[#bc78f9]">{{ completionPercent }}%</div>
+      <div class="grid gap-4 md:grid-cols-3">
+        <div *ngIf="completionPercent !== undefined" class="rounded-lg border border-[#1f2937] bg-[#12161b] p-5 hover:border-[#2d3748] transition-colors">
+          <div class="text-3xl font-bold text-emerald-500 mb-1">{{ completionPercent }}%</div>
           <div class="text-sm text-[#a9b1bb]">Completion</div>
         </div>
 
-        <div *ngIf="labTimeSpent" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
-          <div class="flex items-center gap-2">
-            <ng-icon name="lucideClock" class="h-4 w-4 text-[#a9b1bb]"></ng-icon>
-            <span class="text-2xl font-bold text-[#e5e7eb]">{{ labTimeSpent }}</span>
+        <div *ngIf="labTimeSpent" class="rounded-lg border border-[#1f2937] bg-[#12161b] p-5 hover:border-[#2d3748] transition-colors">
+          <div class="flex items-center gap-2 mb-1">
+            <ng-icon name="lucideClock" class="h-5 w-5 text-[#60a5fa]"></ng-icon>
+            <span class="text-3xl font-bold text-[#e5e7eb]">{{ labTimeSpent }}</span>
           </div>
           <div class="text-sm text-[#a9b1bb]">Minutes</div>
         </div>
 
-        <div *ngIf="attempts" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
-          <div class="text-2xl font-bold text-[#e5e7eb]">{{ attempts }}</div>
-          <div class="text-sm text-[#a9b1bb]">Attempts</div>
-        </div>
-
-        <div *ngIf="score !== undefined" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
-          <div class="text-2xl font-bold text-emerald-500">{{ (score || 0) * 100 | number: '1.0-0' }}%</div>
+        <div *ngIf="score !== undefined" class="rounded-lg border border-[#1f2937] bg-[#12161b] p-5 hover:border-[#2d3748] transition-colors">
+          <div class="text-3xl font-bold text-emerald-500 mb-1">{{ (score || 0) * 100 | number: '1.0-0' }}%</div>
           <div class="text-sm text-[#a9b1bb]">Score</div>
         </div>
       </div>
@@ -91,23 +83,29 @@
     </div>
 
     <!-- Strengths and Improvements -->
-    <div *ngIf="strengths.length > 0 || areasForImprovement.length > 0" class="mb-6 grid gap-6 md:grid-cols-2">
+    <div *ngIf="strengths.length > 0 || areasForImprovement.length > 0" class="mb-8">
       <div *ngIf="strengths.length > 0">
-        <h3 class="mb-3 text-lg font-semibold text-emerald-500">Strengths</h3>
-        <div class="space-y-2">
-          <div *ngFor="let strength of strengths" class="flex items-center gap-2 text-[#a9b1bb]">
-            <div class="h-2 w-2 rounded-full bg-emerald-500"></div>
-            {{ strength }}
+        <h3 class="mb-4 flex items-center gap-2 text-base font-semibold text-[#e5e7eb]">
+          <ng-icon name="lucideCircleCheck" class="h-4 w-4 text-emerald-500"></ng-icon>
+          Strengths
+        </h3>
+        <div class="space-y-2.5">
+          <div *ngFor="let strength of strengths" class="flex items-start gap-3 rounded-lg border border-[#1f2937] bg-[#12161b] p-3.5 hover:border-emerald-500/20 transition-colors">
+            <div class="h-1.5 w-1.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+            <span class="text-[#e5e7eb] leading-relaxed">{{ strength }}</span>
           </div>
         </div>
       </div>
 
-      <div *ngIf="areasForImprovement.length > 0">
-        <h3 class="mb-3 text-lg font-semibold text-amber-500">Areas for Improvement</h3>
-        <div class="space-y-2">
-          <div *ngFor="let area of areasForImprovement" class="flex items-center gap-2 text-[#a9b1bb]">
-            <div class="h-2 w-2 rounded-full bg-amber-500"></div>
-            {{ area }}
+      <div *ngIf="areasForImprovement.length > 0" [class.mt-6]="strengths.length > 0">
+        <h3 class="mb-4 flex items-center gap-2 text-base font-semibold text-[#e5e7eb]">
+          <ng-icon name="lucideTrendingUp" class="h-4 w-4 text-amber-500"></ng-icon>
+          Areas for Improvement
+        </h3>
+        <div class="space-y-2.5">
+          <div *ngFor="let area of areasForImprovement" class="flex items-start gap-3 rounded-lg border border-[#1f2937] bg-[#12161b] p-3.5 hover:border-amber-500/20 transition-colors">
+            <div class="h-1.5 w-1.5 rounded-full bg-amber-500 mt-2 flex-shrink-0"></div>
+            <span class="text-[#e5e7eb] leading-relaxed">{{ area }}</span>
           </div>
         </div>
       </div>

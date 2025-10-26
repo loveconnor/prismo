@@ -76,7 +76,8 @@ function isAuthEndpoint(url: string): boolean {
     '/auth/forgot-password',
     '/auth/verify',
     '/auth/confirm',
-    '/auth/resend'
+    '/auth/resend',
+    '/api/claude/'  // Skip all Claude AI endpoints
   ];
   return authEndpoints.some(endpoint => url.includes(endpoint));
 }

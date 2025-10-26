@@ -157,3 +157,158 @@ def claude_health():
             ),
             503,
         )
+
+
+@claude_bp.route("/claude/review-code", methods=["POST"])
+def review_code():
+    """
+    Review code using Claude AI
+
+    Request body:
+    {
+        "code": "Code to review",
+        "language": "javascript|python|etc",
+        "context": "Optional context about what the code should do"
+    }
+
+    Returns:
+    {
+        "success": true,
+        "comments": [
+            {
+                "lineNumber": 5,
+                "type": "suggestion|warning|error|info",
+                "message": "Review comment",
+                "title": "Brief title"
+            }
+        ],
+        "overallFeedback": "Overall assessment",
+        "error": null
+    }
+    """
+    try:
+        print("=== Code Review Request Received ===")
+        data = request.get_json()
+        print(f"Request data keys: {data.keys() if data else 'None'}")
+
+        if not data or "code" not in data:
+            print("ERROR: Missing code field")
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "comments": [],
+                        "overallFeedback": None,
+                        "error": "Missing required field: code",
+                    }
+                ),
+                400,
+            )
+
+        code = data["code"]
+        language = data.get("language", "javascript")
+        context = data.get("context", "")
+
+        print(f"Code length: {len(code)} chars")
+        print(f"Language: {language}")
+        print(f"Context: {context}")
+
+        # Build the system prompt for code review
+        system_prompt = f"""You are an expert code reviewer and programming instructor.
+Review the provided {language} code and provide constructive feedback.
+
+Focus on:
+- Code correctness and potential bugs
+- Best practices and style
+- Performance optimization opportunities
+- Security concerns
+- Educational insights for learning
+
+Return your review as a JSON object with this structure:
+{{
+    "comments": [
+        {{
+            "lineNumber": <number>,
+            "type": "suggestion|warning|error|info",
+            "title": "Brief title (max 50 chars)",
+            "message": "Detailed feedback (max 200 chars)"
+        }}
+    ],
+    "overallFeedback": "Brief overall assessment (max 300 chars)"
+}}
+
+Be concise, friendly, and educational. Limit to 3-5 most important comments."""
+
+        # Build the message
+        message = f"""Review this {language} code:
+
+```{language}
+{code}
+```
+"""
+        
+        if context:
+            message += f"\n\nContext: {context}"
+
+        print("Calling Claude AI...")
+        # Get review from Claude
+        response = get_claude_response(message, system_prompt, max_tokens=2000)
+        print(f"Claude response received: {len(response) if response else 0} chars")
+
+        if response:
+            # Parse the JSON response
+            try:
+                print("Parsing Claude response...")
+                # Extract JSON from markdown code blocks if present
+                if "```json" in response:
+                    json_start = response.find("```json") + 7
+                    json_end = response.find("```", json_start)
+                    response = response[json_start:json_end].strip()
+                elif "```" in response:
+                    json_start = response.find("```") + 3
+                    json_end = response.find("```", json_start)
+                    response = response[json_start:json_end].strip()
+                
+                review_data = json.loads(response)
+                print(f"Successfully parsed review with {len(review_data.get('comments', []))} comments")
+                
+                return jsonify({
+                    "success": True,
+                    "comments": review_data.get("comments", []),
+                    "overallFeedback": review_data.get("overallFeedback", ""),
+                    "error": None
+                })
+            except json.JSONDecodeError as e:
+                print(f"JSON parse error: {e}")
+                print(f"Raw response: {response[:200]}...")
+                # If JSON parsing fails, return the raw response as overall feedback
+                return jsonify({
+                    "success": True,
+                    "comments": [],
+                    "overallFeedback": response[:300],  # Limit length
+                    "error": None
+                })
+        else:
+            print("ERROR: No response from Claude")
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "comments": [],
+                        "overallFeedback": None,
+                        "error": "Failed to get review from AI",
+                    }
+                ),
+                500,
+            )
+
+    except Exception as e:
+        print(f"ERROR in review_code: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "success": False,
+            "comments": [],
+            "overallFeedback": None,
+            "error": str(e)
+        }), 500

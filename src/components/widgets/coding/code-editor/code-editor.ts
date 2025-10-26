@@ -1,6 +1,7 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { WidgetBaseComponent } from '../../base/widget-base';
 import { FontService } from '../../../../services/font.service';
 import { ThemeService } from '../../../../services/theme.service';
@@ -9,6 +10,7 @@ import { CardComponent } from '../../../ui/card/card';
 import { CardContentComponent } from '../../../ui/card/card-content';
 import { CardHeaderComponent } from '../../../ui/card/card-header';
 import { SwitchComponent } from '../../../ui/switch/switch';
+import { CodeReviewCommentComponent } from '../code-review-comment/code-review-comment';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { 
   lucidePlay, 
@@ -16,8 +18,11 @@ import {
   lucideCheck, 
   lucideX, 
   lucideClock,
-  lucideSettings
+  lucideSettings,
+  lucideSparkles,
+  lucideInfo
 } from '@ng-icons/lucide';
+import { environment } from '../../../../environments/environment';
 import { EditorView, basicSetup } from 'codemirror';
 import { javascript, javascriptLanguage } from '@codemirror/lang-javascript';
 import { python, pythonLanguage } from '@codemirror/lang-python';
@@ -44,6 +49,13 @@ interface TestCase {
   actualOutput?: string;
 }
 
+interface CodeReviewComment {
+  lineNumber?: number;
+  type: 'info' | 'warning' | 'error' | 'success' | 'suggestion';
+  title?: string;
+  message: string;
+}
+
 @Component({
   selector: 'app-code-editor',
   standalone: true,
@@ -55,6 +67,7 @@ interface TestCase {
     CardHeaderComponent,
     ButtonComponent,
     SwitchComponent,
+    CodeReviewCommentComponent,
     NgIconComponent
   ],
   providers: [
@@ -64,7 +77,9 @@ interface TestCase {
       lucideCheck,
       lucideX,
       lucideClock,
-      lucideSettings
+      lucideSettings,
+      lucideSparkles,
+      lucideInfo
     })
   ],
   template: `
@@ -88,6 +103,17 @@ interface TestCase {
                 <ng-icon name="lucidePlay" class="w-4 h-4 mr-2"></ng-icon>
                 <span *ngIf="!isRunning">Run</span>
                 <span *ngIf="isRunning">Running...</span>
+              </app-button>
+              
+              <app-button 
+                variant="outline"
+                size="sm"
+                (click)="getAIReview()"
+                [disabled]="isGettingReview || !hasCode"
+              >
+                <ng-icon name="lucideSparkles" class="w-4 h-4 mr-2"></ng-icon>
+                <span *ngIf="!isGettingReview">AI Review</span>
+                <span *ngIf="isGettingReview">Reviewing...</span>
               </app-button>
               
                <app-button 
@@ -183,6 +209,33 @@ interface TestCase {
                tabindex="-1"
                data-code-editor="true"
              ></div>
+             
+             <!-- AI Review Comments -->
+             <div *ngIf="reviewComments.length > 0" class="mt-4 space-y-3">
+               <div class="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
+                 <ng-icon name="lucideSparkles" class="w-4 h-4 text-sky-500"></ng-icon>
+                 <span>AI Code Review</span>
+               </div>
+               <div *ngFor="let comment of reviewComments" class="animate-in fade-in slide-in-from-top-2 duration-300">
+                 <app-code-review-comment
+                   [lineNumber]="comment.lineNumber"
+                   [commentType]="comment.type"
+                   [title]="comment.title"
+                   [message]="comment.message"
+                   [author]="'AI Assistant'"
+                   [showLineHighlight]="false"
+                 ></app-code-review-comment>
+               </div>
+               <div *ngIf="overallReviewFeedback" class="p-4 rounded-lg border border-[#1f2937] bg-[#12161b]">
+                 <div class="flex items-start gap-3">
+                   <ng-icon name="lucideInfo" class="w-5 h-5 text-sky-500 flex-shrink-0 mt-0.5"></ng-icon>
+                   <div>
+                     <div class="text-sm font-medium text-[#e5e7eb] mb-1">Overall Assessment</div>
+                     <div class="text-sm text-[#a9b1bb]">{{ overallReviewFeedback }}</div>
+                   </div>
+                 </div>
+               </div>
+             </div>
           </div>
           
           <div class="space-y-2" *ngIf="showOutput">
@@ -306,6 +359,11 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   public lastExecutionTime?: number;
   public hasRunCode = false;
   
+  // AI Review state
+  public isGettingReview = false;
+  public reviewComments: CodeReviewComment[] = [];
+  public overallReviewFeedback: string = '';
+  
   // User Settings State
   public userSettings = {
     syntaxHighlighting: true,
@@ -323,6 +381,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   constructor(
     protected override fontService: FontService,
     themeService: ThemeService,
+    private http: HttpClient,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     super(themeService, fontService, platformId);
@@ -600,6 +659,8 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     this.hasRunCode = false;
     this.runsCount = 0;
     this.lastExecutionTime = undefined;
+    this.reviewComments = [];
+    this.overallReviewFeedback = '';
     
     // Reset test results
     this.testCases.forEach(test => {
@@ -610,6 +671,44 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     this.setDataValue('code', this.code);
     this.setDataValue('runs_count', 0);
     this.setDataValue('last_modified', new Date());
+  }
+
+  getAIReview(): void {
+    if (!this.hasCode || this.isGettingReview) return;
+
+    this.isGettingReview = true;
+    this.reviewComments = [];
+    this.overallReviewFeedback = '';
+
+    // Call the AI review API using the backend URL from environment
+    const apiUrl = `${environment.apiUrl}/api/claude/review-code`;
+    
+    this.http.post<any>(apiUrl, {
+      code: this.code,
+      language: this.language,
+      context: this.title
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.reviewComments = response.comments || [];
+          this.overallReviewFeedback = response.overallFeedback || '';
+          
+          // Track that review was requested
+          this.setDataValue('ai_review_requested', true);
+          this.setDataValue('ai_review_timestamp', new Date());
+        }
+        this.isGettingReview = false;
+      },
+      error: (error) => {
+        console.error('AI review failed:', error);
+        this.reviewComments = [{
+          type: 'error',
+          title: 'Review Failed',
+          message: 'Unable to get AI code review. Please try again later.'
+        }];
+        this.isGettingReview = false;
+      }
+    });
   }
 
   private executeCode(): void {

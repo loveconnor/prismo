@@ -158,6 +158,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             [editorConfig]="codeEditorWidget?.config || codeEditorWidget?.props"
             (completeStep)="handleCompleteStep()"
             (codePassed)="handleCodePassed()"
+            (aiReviewComplete)="handleAIReviewComplete($event)"
           >
             <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
               <button
@@ -296,6 +297,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             [collapsed]="rightPanelCollapsed"
             [hints]="hintWidgets"
             [feedback]="feedbackWidgets"
+            [aiReview]="aiReviewFeedback"
           ></app-support-panel>
         </div>
       </div>
@@ -336,7 +338,8 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
 
     <!-- Outcome Summary Modal -->
     <div *ngIf="showOutcomeSummary" 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4"
+         (click)="handleOutcomeSummaryContinue()">
       <div class="max-w-4xl w-full max-h-[90vh] overflow-auto" (click)="$event.stopPropagation()">
         <app-outcome-summary
           [id]="'outcome-' + (labData?.id || 'lab')"
@@ -344,22 +347,22 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
           [labTitle]="labData?.title || 'Lab Complete'"
           [outcomeType]="'completion'"
           [completionPercent]="completionPercentage"
-          [timeSpent]="labTimeSpent"
+          [labTimeSpent]="labTimeSpent"
           [score]="completionPercentage / 100"
           [keyTakeaways]="labData?.metadata?.tags || []"
           [strengths]="getLabStrengths()"
-          [ui]="{ variant: 'celebration', showConfetti: true, showSkillProgress: true, showNextSteps: true }"
+          [ui]="{ variant: 'celebration', showConfetti: false, showSkillProgress: true, showNextSteps: false }"
         ></app-outcome-summary>
-        <div class="mt-4 flex justify-center gap-3 pb-6">
+        <div class="bg-[#0e1318] border border-t-0 border-[#1f2937] rounded-b-xl px-8 py-5 flex justify-end gap-3 shadow-sm">
           <app-button 
             variant="outline"
             (click)="restartLab()"
-            className="px-6 py-2">
+            className="px-5 py-2.5 border-[#1f2937] hover:border-[#2d3748] hover:bg-[#12161b]">
             Restart Lab
           </app-button>
           <app-button 
             (click)="handleOutcomeSummaryContinue()"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2">
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 shadow-sm">
             Continue to Labs
           </app-button>
         </div>
@@ -396,6 +399,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
   public feedbackWidgets: any[] = [];
+  public aiReviewFeedback: string = '';
   public hasSteps = false;
   public codePassed = false;
   public showFeedbackModal = false;
@@ -910,6 +914,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       this.confidenceWidget = stepConfidence;
       this.showConfidenceMeter = true;
     }
+    this.cdr.detectChanges();
+  }
+
+  handleAIReviewComplete(feedback: string): void {
+    this.aiReviewFeedback = feedback;
     this.cdr.detectChanges();
   }
 
