@@ -183,12 +183,14 @@
   --muted-custom: #9ca3af;
   --text-custom: #e5e7eb;
   --text-dim: #a9b1bb;
-  --primary-custom: #3b82f6;
-  --primary-strong: #2563eb;
+  /* --primary-custom: #3b82f6;
+  --primary-strong: #2563eb; */
+  --primary-custom: #BC78F9;
+  --primary-strong: #BC78F9;
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --accent-custom: #60a5fa;
+  --accent-custom: #bc78f9;
 
   /* Default shadcn tokens */
   --background: oklch(0.145 0 0);
@@ -213,12 +215,14 @@
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
+  /* --chart-4: oklch(0.627 0.265 303.9); */
+  --chart-4: oklch(0.6975 0.1906 306.44);
   --chart-5: oklch(0.645 0.246 16.439);
   --radius: 0.625rem;
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  /* --sidebar-primary: oklch(0.488 0.243 264.376); */
+  --sidebar-primary: oklch(0.6975 0.1906 306.44);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
@@ -298,7 +302,7 @@
   --success: #16a34a;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --accent-custom: #60a5fa;
+  --accent-custom: #bc78f9;
 }
 
 .theme-light body { background: #ffffff; color: #111827; }
@@ -496,12 +500,14 @@
   --muted-custom: #6b7280;
   --text-custom: #111827;
   --text-dim: #374151;
-  --primary-custom: #3b82f6;
-  --primary-strong: #2563eb;
+  /* --primary-custom: #3b82f6;
+  --primary-strong: #2563eb; */
+  --primary-custom: #BC78F9;
+  --primary-strong: #BC78F9;
   --success: #16a34a;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --accent-custom: #60a5fa;
+  --accent-custom: #bc78f9;
 }
 
 /* Dark theme - when .dark class is present */
@@ -536,12 +542,14 @@
   --muted-custom: #9ca3af;
   --text-custom: #e5e7eb;
   --text-dim: #a9b1bb;
-  --primary-custom: #3b82f6;
-  --primary-strong: #2563eb;
+  /* --primary-custom: #3b82f6;
+  --primary-strong: #2563eb; */
+  --primary-custom: #BC78F9;
+  --primary-strong: #BC78F9;
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --accent-custom: #60a5fa;
+  --accent-custom: #bc78f9;
 }
 
 /* Font family classes */

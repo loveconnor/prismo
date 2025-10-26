@@ -15,7 +15,7 @@
         <!-- Progress Bar -->
         <div class="w-full bg-[#1f2937] rounded-full h-1.5">
           <div
-            class="bg-[#60a5fa] h-1.5 rounded-full transition-all duration-300"
+            class="bg-[#bc78f9] h-1.5 rounded-full transition-all duration-300"
             [style.width.%]="getProgressPercentage()"
           ></div>
         </div>
@@ -73,7 +73,7 @@
   <div [id]="metadata.id + '-body'" class="mb-4" #bodyContainer>
     <!-- Prompt Type Icon + Body -->
     <div class="flex gap-3">
-      <div class="mt-1 flex-shrink-0 text-[#60a5fa]">
+      <div class="mt-1 flex-shrink-0 text-[#bc78f9]">
         <ng-icon [name]="getPromptIcon()" class="h-5 w-5"></ng-icon>
       </div>
       <div class="prose prose-sm flex-1 dark:prose-invert step-prompt-content">
@@ -137,7 +137,7 @@
         (input)="handleInputChange($any($event.target).value)"
         [placeholder]="promptConfig.inputPlaceholder || 'Enter your answer...'"
         [class]="'w-full rounded-lg border bg-[#0a0e12] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280] transition-colors ' +
-                 (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#60a5fa] focus:ring-[#60a5fa]')"
+                 (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#bc78f9] focus:ring-[#bc78f9]')"
         [disabled]="promptConfig.readOnly || currentState() === 'completed'"
       />
       
@@ -150,7 +150,7 @@
         [placeholder]="promptConfig.inputPlaceholder || 'Enter your answer...'"
         rows="4"
         [class]="'w-full rounded-lg border bg-[#0a0e12] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280] transition-colors ' +
-                 (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#60a5fa] focus:ring-[#60a5fa]')"
+                 (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#bc78f9] focus:ring-[#bc78f9]')"
         [disabled]="promptConfig.readOnly || currentState() === 'completed'"
       ></textarea>
       
@@ -163,7 +163,7 @@
           [placeholder]="promptConfig.inputPlaceholder || 'Write your code here...'"
           rows="8"
           [class]="'w-full rounded-lg border bg-[#0a0e12] px-3 py-2 font-mono text-sm text-[#e5e7eb] placeholder-[#6b7280] transition-colors ' +
-                   (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#60a5fa] focus:ring-[#60a5fa]')"
+                   (inputError() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#1f2937] focus:border-[#bc78f9] focus:ring-[#bc78f9]')"
           [disabled]="promptConfig.readOnly || currentState() === 'completed'"
         ></textarea>
       </pre>

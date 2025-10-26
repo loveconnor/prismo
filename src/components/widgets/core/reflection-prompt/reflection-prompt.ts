@@ -488,8 +488,8 @@ export class ReflectionPromptComponent extends WidgetBaseComponent implements On
       return cn(
         base,
         selected
-          ? 'border-[#60a5fa] bg-[#60a5fa]/20 text-[#60a5fa]'
-          : 'border-[#1f2937] text-[#9ca3af] hover:border-[#60a5fa]/50 hover:bg-[#60a5fa]/10'
+          ? 'border-[#bc78f9] bg-[#bc78f9]/20 text-[#bc78f9]'
+          : 'border-[#1f2937] text-[#9ca3af] hover:border-[#bc78f9]/50 hover:bg-[#bc78f9]/10'
       );
     } else {
       return cn(

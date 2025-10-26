@@ -15,9 +15,9 @@
   <div class="flex items-center justify-between p-4" [ngClass]="theme === 'dark' ? 'border-b border-[#1f2937] bg-[#0e1318]' : 'border-b border-gray-200 bg-gray-50'">
     <div class="flex items-center gap-3">
       <div class="flex items-center gap-2">
-        <div *ngIf="isRunning; else idleIcon" class="h-4 w-4 animate-spin rounded-full border-2 border-[#60a5fa] border-t-transparent"></div>
+        <div *ngIf="isRunning; else idleIcon" class="h-4 w-4 animate-spin rounded-full border-2 border-[#bc78f9] border-t-transparent"></div>
         <ng-template #idleIcon>
-          <ng-icon name="lucideTerminal" class="h-5 w-5 text-[#60a5fa]"></ng-icon>
+          <ng-icon name="lucideTerminal" class="h-5 w-5 text-[#bc78f9]"></ng-icon>
         </ng-template>
         <h3 class="text-lg font-semibold text-[#e5e7eb]">{{ title }}</h3>
       </div>

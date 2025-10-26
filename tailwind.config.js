@@ -114,8 +114,8 @@ module.exports = {
         accent: {
           custom: {
             DEFAULT: 'var(--accent-custom)',
-            light: '#60a5fa',
-            dark: '#60a5fa',
+            light: '#bc78f9',
+            dark: '#bc78f9',
           },
         },
         

@@ -306,7 +306,7 @@ export class ComplexityPromptComponent extends WidgetBaseComponent implements On
 
     return cn(
       'rounded-lg border p-3 text-left transition-all',
-      selected ? this.getComplexityColor(optionLevel) : 'border-[#1f2937] bg-[#0b0f14] text-[#a9b1bb] hover:bg-[#0e1318] hover:border-[#60a5fa]',
+      selected ? this.getComplexityColor(optionLevel) : 'border-[#1f2937] bg-[#0b0f14] text-[#a9b1bb] hover:bg-[#0e1318] hover:border-[#bc78f9]',
       showAnswer && correct && 'ring-2 ring-emerald-500',
       showAnswer && selected && !correct && 'ring-2 ring-red-500'
     );

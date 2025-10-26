@@ -363,11 +363,11 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
   getOptionClasses(status: ChoiceStatus, isSelected: boolean): string {
     return cn(
       'w-full rounded-lg border p-4 text-left transition-all',
-      status === 'selected' && 'border-[#60a5fa] bg-[#60a5fa]/10',
+      status === 'selected' && 'border-[#bc78f9] bg-[#bc78f9]/10',
       status === 'correct' && this.emphasizeCorrect && 'border-emerald-500 bg-emerald-500/10',
       status === 'incorrect' && 'border-red-500 bg-red-500/10',
       status === 'readOnly' && 'opacity-70 cursor-not-allowed',
-      !isSelected && !this.submitted() && !this.readOnly() && 'border-[#1f2937] hover:border-[#60a5fa]/50 hover:bg-[#60a5fa]/5',
+      !isSelected && !this.submitted() && !this.readOnly() && 'border-[#1f2937] hover:border-[#bc78f9]/50 hover:bg-[#bc78f9]/5',
       (this.submitted() || this.readOnly()) && 'cursor-default'
     );
   }
@@ -376,14 +376,14 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
     if (this.selectionMode === 'single') {
       return cn(
         'h-4 w-4 rounded-full border-2 transition-colors',
-        isSelected ? 'border-[#60a5fa] bg-[#60a5fa]' : 'border-[#6b7280]',
+        isSelected ? 'border-[#bc78f9] bg-[#bc78f9]' : 'border-[#6b7280]',
         status === 'correct' && this.emphasizeCorrect && 'border-emerald-500 bg-emerald-500',
         status === 'incorrect' && 'border-red-500 bg-red-500'
       );
     } else {
       return cn(
         'h-4 w-4 rounded border-2 transition-colors',
-        isSelected ? 'border-[#60a5fa] bg-[#60a5fa]' : 'border-[#6b7280]',
+        isSelected ? 'border-[#bc78f9] bg-[#bc78f9]' : 'border-[#6b7280]',
         status === 'correct' && this.emphasizeCorrect && 'border-emerald-500 bg-emerald-500',
         status === 'incorrect' && 'border-red-500 bg-red-500'
       );

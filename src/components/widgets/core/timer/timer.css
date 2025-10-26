@@ -108,7 +108,7 @@ kbd {
 
 /* Focus visible for accessibility */
 button:focus-visible {
-  outline: 2px solid #60a5fa;
+  outline: 2px solid #bc78f9;
   outline-offset: 2px;
 }
 
@@ -310,7 +310,7 @@ button:focus-visible {
 .alert-info {
   border-color: #3b82f6;
   background-color: rgba(59, 130, 246, 0.1);
-  color: #60a5fa;
+  color: #bc78f9;
 }
 
 .alert-warn {

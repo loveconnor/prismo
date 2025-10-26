@@ -20,7 +20,7 @@
             <div class="text-sm text-[#a9b1bb]">Overall Accuracy</div>
           </div>
           <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4 text-center">
-            <div class="text-2xl font-bold text-[#60a5fa]">{{ formatTime(results.timeSpent) }}</div>
+            <div class="text-2xl font-bold text-[#bc78f9]">{{ formatTime(results.timeSpent) }}</div>
             <div class="text-sm text-[#a9b1bb]">Time Spent</div>
           </div>
           <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4 text-center">
@@ -51,7 +51,7 @@
 
               <button *ngIf="skillResult.needsRetry"
                       (click)="retrySkill(skillResult.skill)"
-                      class="inline-flex items-center gap-2 rounded-lg bg-[#60a5fa] px-3 py-1.5 text-sm text-white hover:bg-[#3b82f6] transition-colors">
+                      class="inline-flex items-center gap-2 rounded-lg bg-[#bc78f9] px-3 py-1.5 text-sm text-white hover:bg-[#3b82f6] transition-colors">
                 <ng-icon name="lucideRotateCcw" class="h-4 w-4"></ng-icon>
                 Review Again
               </button>
@@ -61,7 +61,7 @@
 
         <!-- Actions -->
         <div class="flex justify-center gap-3">
-          <button (click)="startReviewSession()" class="rounded-lg bg-[#60a5fa] px-6 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] transition-colors">
+          <button (click)="startReviewSession()" class="rounded-lg bg-[#bc78f9] px-6 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] transition-colors">
             Start New Review
           </button>
         </div>
@@ -76,8 +76,8 @@
   [attr.aria-label]="a11yLabel || 'Review loop'"
   class="mx-auto w-full max-w-2xl rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm">
   <div class="p-6 text-center">
-    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#60a5fa]/20">
-      <ng-icon name="lucideTarget" class="h-8 w-8 text-[#60a5fa]"></ng-icon>
+    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#bc78f9]/20">
+      <ng-icon name="lucideTarget" class="h-8 w-8 text-[#bc78f9]"></ng-icon>
     </div>
 
     <h2 class="mb-2 text-xl font-semibold text-[#e5e7eb]">Skill Review</h2>
@@ -93,7 +93,7 @@
       <p class="mb-6 text-[#6b7280]">No weak skills identified. Great job!</p>
     </ng-template>
 
-    <button (click)="startReviewSession()" [disabled]="weakSkills.length === 0" class="rounded-lg bg-[#60a5fa] px-6 py-3 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+    <button (click)="startReviewSession()" [disabled]="weakSkills.length === 0" class="rounded-lg bg-[#bc78f9] px-6 py-3 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
       Start Review Session
     </button>
   </div>
@@ -109,7 +109,7 @@
     <div class="mb-6">
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-          <ng-icon name="lucideTarget" class="h-6 w-6 text-[#60a5fa]"></ng-icon>
+          <ng-icon name="lucideTarget" class="h-6 w-6 text-[#bc78f9]"></ng-icon>
           <h2 class="text-xl font-semibold text-[#e5e7eb]">Skill Review</h2>
         </div>
 
@@ -124,7 +124,7 @@
 
       <!-- Progress Bar -->
       <div *ngIf="showProgress" class="h-2 bg-[#1f2937] rounded-full overflow-hidden">
-        <div class="h-full bg-[#60a5fa] transition-all duration-300" [style.width.%]="((currentQuestionIndex + 1) / session.questions.length) * 100"></div>
+        <div class="h-full bg-[#bc78f9] transition-all duration-300" [style.width.%]="((currentQuestionIndex + 1) / session.questions.length) * 100"></div>
       </div>
     </div>
 
@@ -145,7 +145,7 @@
         <button *ngFor="let option of options; let idx = index"
                 (click)="handleAnswer(currentQuestion.id, option)"
                 class="w-full rounded-lg border p-3 text-left transition-colors"
-                [ngClass]="isSelectedAnswer(currentQuestion.id, option) ? 'border-[#60a5fa] bg-[#60a5fa]/10 text-[#60a5fa]' : 'border-[#1f2937] bg-[#0b0f14] text-[#a9b1bb] hover:bg-[#0e1318]'">
+                [ngClass]="isSelectedAnswer(currentQuestion.id, option) ? 'border-[#bc78f9] bg-[#bc78f9]/10 text-[#bc78f9]' : 'border-[#1f2937] bg-[#0b0f14] text-[#a9b1bb] hover:bg-[#0e1318]'">
           {{ option }}
         </button>
       </div>
@@ -155,7 +155,7 @@
         <button *ngFor="let tf of ['True','False']"
                 (click)="handleAnswer(currentQuestion.id, tf)"
                 class="flex-1 rounded-lg border p-3 text-center transition-colors"
-                [ngClass]="isSelectedTF(currentQuestion.id, tf) ? 'border-[#60a5fa] bg-[#60a5fa]/10 text-[#60a5fa]' : 'border-[#1f2937] bg-[#0b0f14] text-[#a9b1bb] hover:bg-[#0e1318]'">
+                [ngClass]="isSelectedTF(currentQuestion.id, tf) ? 'border-[#bc78f9] bg-[#bc78f9]/10 text-[#bc78f9]' : 'border-[#1f2937] bg-[#0b0f14] text-[#a9b1bb] hover:bg-[#0e1318]'">
           {{ tf }}
         </button>
       </div>
@@ -166,7 +166,7 @@
                 (ngModelChange)="handleAnswer(currentQuestion.id, $event)"
                 placeholder="Type your answer..."
                 rows="3"
-                class="w-full resize-none rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#60a5fa] focus:outline-none"></textarea>
+                class="w-full resize-none rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#bc78f9] focus:outline-none"></textarea>
     </div>
 
     <!-- Explanation -->
@@ -185,7 +185,7 @@
 
       <button (click)="nextQuestion()"
               [disabled]="!userAnswers[q2.id]"
-              class="rounded-lg bg-[#60a5fa] px-6 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+              class="rounded-lg bg-[#bc78f9] px-6 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
         {{ currentQuestionIndex < session.questions.length - 1 ? 'Next Question' : 'Complete Review' }}
       </button>
     </div>

@@ -399,7 +399,7 @@ export class NumericInputComponent extends WidgetBaseComponent implements OnInit
 
   getInputClasses(): string {
     const classes = [
-      'w-full rounded-lg border bg-[#0b0f14] px-4 py-3 text-left text-lg font-mono text-[#e5e7eb] placeholder-[#6b7280] transition-colors focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa]'
+      'w-full rounded-lg border bg-[#0b0f14] px-4 py-3 text-left text-lg font-mono text-[#e5e7eb] placeholder-[#6b7280] transition-colors focus:border-[#bc78f9] focus:outline-none focus:ring-1 focus:ring-[#bc78f9]'
     ];
 
     const submittedState = this.submitted();

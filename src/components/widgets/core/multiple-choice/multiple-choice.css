@@ -27,7 +27,7 @@ button:disabled {
 /* Smooth color transitions */
 .border-emerald-500,
 .border-red-500,
-.border-\[#60a5fa\] {
+.border-\[#bc78f9\] {
   transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
