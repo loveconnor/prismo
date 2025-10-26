@@ -281,7 +281,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const labId = this.route.snapshot.paramMap.get('id');
     const currentUrl = this.router.url;
 
-    if (!labId && !currentUrl.includes('pt01') && !currentUrl.includes('javascript-array-methods') && !currentUrl.includes('test-fullstack-todo')) {
+    if (
+      !labId && !currentUrl.includes('pt01') && 
+      !currentUrl.includes('javascript-array-methods') && 
+      !currentUrl.includes('test-fullstack-todo') &&
+      !currentUrl.includes('binary-search-tree')
+    ) {
       this.error = 'No lab ID provided';
       this.loading = false;
       return;
@@ -313,6 +318,27 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     } else if (currentUrl.includes('javascript-array-methods')) {
       actualLabId = 'javascript-array-methods';
+    } else if (currentUrl.includes('binary-search-tree')) {
+      this.http.get<any>('/assets/modules/python/binary-search-tree.json')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (json) => {
+            console.log('Loaded binary-search-tree.json:', json);
+            const labFromModule = this.labDataService.convertModuleToLab(json);
+            console.log('Converted to lab:', labFromModule);
+            this.labData = labFromModule;
+            this.extractWidgetsFromLabData();
+            this.loading = false;
+            this.error = null;
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            this.error = err.message || 'Failed to load module JSON';
+            this.loading = false;
+            this.cdr.detectChanges();
+          }
+        });
+      return;
     } else if (currentUrl.includes('test-fullstack-todo')) {
       // Load the test fullstack todo module JSON and convert to lab
       this.http.get<any>('/assets/modules/test-fullstack-todo.json')

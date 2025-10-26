@@ -694,7 +694,10 @@ export class LabDataService {
     // For now, we'll return the example-coding-module lab as an example
     if (moduleId === 'pt01' || moduleId === 'example-coding-module') {
       return this.getLab('example-coding-module');
+    } else if (moduleId === 'binary-search-tree') {
+      return this.getLab('binary-search-tree');
     }
+    
     
     return throwError(() => new Error(`Module with ID "${moduleId}" not found`));
   }
