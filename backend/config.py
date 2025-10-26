@@ -19,7 +19,7 @@ class Config:
     COGNITO_USER_POOL_ID = os.getenv("COGNITO_USER_POOL_ID", "us-east-1_JEflDBGQ0")
     COGNITO_CLIENT_ID = os.getenv("COGNITO_CLIENT_ID", "63rmk63l7a9iis438elt3lofpr")
     COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
-    COGNITO_DOMAIN = os.getenv("COGNITO_DOMAIN", f"prismo-{COGNITO_USER_POOL_ID.split('_')[1]}")
+    COGNITO_DOMAIN = os.getenv("COGNITO_DOMAIN", "us-east-1jefldbgq0")
     DYNAMODB_TABLE_PREFIX = os.getenv("DYNAMODB_TABLE_PREFIX", "prismo")
     
     # OAuth Configuration

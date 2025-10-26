@@ -8,6 +8,6 @@ export const environment = {
     region: 'us-east-1',
     userPoolId: 'us-east-1_JEflDBGQ0',
     clientId: '63rmk63l7a9iis438elt3lofpr',
-    domain: 'prismo-jefldbgq0',
+    domain: 'us-east-1jefldbgq0',
   },
 };
