@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, AfterViewInit, inject, ChangeDetectorRef 
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil, catchError } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
 import { LabDataService, LabData } from '../../../services/lab-data.service';
 
 // Import all available widgets
@@ -306,125 +306,150 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private loadLab(): void {
     const labId = this.route.snapshot.paramMap.get('id');
-    const currentUrl = this.router.url;
-
-
-    if (
-      !labId && !currentUrl.includes('pt01') && 
-      !currentUrl.includes('javascript-array-methods') && 
-      !currentUrl.includes('test-fullstack-todo') &&
-      !currentUrl.includes('binary-search-tree')
-    ) {
+    
+    if (!labId) {
       this.error = 'No lab ID provided';
       this.loading = false;
       return;
     }
 
-    // Handle specific routes: strictly load from module JSON for pt01
-    let actualLabId = labId;
-    if (currentUrl.includes('pt01')) {
-      // Load the CS1 pt01 module JSON and convert to lab using HttpClient (triggers CD in zoneless mode)
-      this.http.get<any>('/assets/modules/CS1/01-Lab/pt03.json')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (json) => {
-            console.log('Loaded pt01.json:', json);
-            const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
-            this.labData = labFromModule;
-            this.extractWidgetsFromLabData();
-            this.loading = false;
-            this.error = null;
-            this.cdr.detectChanges();
-          },
-          error: (err) => {
-            this.error = err.message || 'Failed to load module JSON';
-            this.loading = false;
-            this.cdr.detectChanges();
-          }
-        });
-      return;
-    } else if (currentUrl.includes('javascript-array-methods')) {
-      actualLabId = 'javascript-array-methods';
-    } else if (currentUrl.includes('binary-search-tree')) {
-      this.http.get<any>('/assets/modules/python/binary-search-tree.json')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (json) => {
-            console.log('Loaded binary-search-tree.json:', json);
-            const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
-            this.labData = labFromModule;
-            this.extractWidgetsFromLabData();
-            this.loading = false;
-            this.error = null;
-            this.cdr.detectChanges();
-          },
-          error: (err) => {
-            this.error = err.message || 'Failed to load module JSON';
-            this.loading = false;
-            this.cdr.detectChanges();
-          }
-        });
-      return;
-    } else if (currentUrl.includes('test-fullstack-todo')) {
-      // Load the test fullstack todo module JSON and convert to lab
-      this.http.get<any>('/assets/modules/test-fullstack-todo.json')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (json) => {
-            console.log('Loaded test-fullstack-todo.json:', json);
-            const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
-            this.labData = labFromModule;
-            this.extractWidgetsFromLabData();
-            this.loading = false;
-            this.error = null;
-            this.cdr.detectChanges();
-          },
-          error: (err) => {
-            this.error = err.message || 'Failed to load test module JSON';
-            this.loading = false;
-            this.cdr.detectChanges();
-          }
-        });
-      return;
-    } else if (currentUrl.includes('fullstack-todo-with-steps')) {
-      // Load the fullstack todo with steps module JSON and convert to lab
-      this.http.get<any>('/assets/modules/fullstack-todo-with-steps.json')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (json) => {
-            console.log('Loaded fullstack-todo-with-steps.json:', json);
-            const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
-            this.labData = labFromModule;
-            this.extractWidgetsFromLabData();
-            this.loading = false;
-            this.error = null;
-            this.cdr.detectChanges();
-          },
-          error: (err) => {
-            this.error = err.message || 'Failed to load fullstack todo with steps module JSON';
-            this.loading = false;
-            this.cdr.detectChanges();
-          }
-        });
-      return;
+    // Check if ID is numerical
+    const isNumerical = /^\d+$/.test(labId);
+    
+    if (isNumerical) {
+      // Load from backend API
+      this.loadModuleFromBackend(labId);
+    } else {
+      // Load from assets JSON file
+      this.loadModuleFromAssets(labId);
     }
+  }
 
-    this.labDataService.getLab(actualLabId!)
+  private loadModuleFromAssets(moduleId: string): void {
+    // First try the direct path
+    this.http.get<any>(`/assets/modules/${moduleId}.json`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (labData) => {
-          this.labData = labData;
+        next: (json) => {
+          console.log(`Successfully loaded ${moduleId} from direct path`);
+          this.handleModuleLoad(json);
+        },
+        error: (err) => {
+          console.log(`Not found at direct path, searching subfolders...`);
+          this.searchForModuleInSubfolders(moduleId);
+        }
+      });
+  }
+
+  private searchForModuleInSubfolders(moduleId: string): void {
+    // Use a more dynamic approach - try to find the file by making requests
+    // to common subfolder patterns and see which ones exist
+    this.tryDynamicSubfolderSearch(moduleId);
+  }
+
+  private tryDynamicSubfolderSearch(moduleId: string): void {
+    // Create a more intelligent search that can discover folder structures
+    // This approach tries to find the file by making educated guesses
+    // based on common naming patterns and folder structures
+    
+    const searchPaths = this.generateSearchPaths(moduleId);
+    let currentPathIndex = 0;
+
+    const tryNextPath = () => {
+      if (currentPathIndex >= searchPaths.length) {
+        this.error = `Module ${moduleId} not found. Searched ${searchPaths.length} possible locations.`;
+        this.loading = false;
+        this.cdr.detectChanges();
+        return;
+      }
+
+      const currentPath = searchPaths[currentPathIndex];
+      console.log(`Searching: ${currentPath}`);
+
+      this.http.get<any>(currentPath)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (json) => {
+            console.log(`Found module at: ${currentPath}`);
+            this.handleModuleLoad(json);
+          },
+          error: (err) => {
+            currentPathIndex++;
+            tryNextPath();
+          }
+        });
+    };
+
+    tryNextPath();
+  }
+
+  private generateSearchPaths(moduleId: string): string[] {
+    const paths = [];
+    
+    // Direct path first
+    paths.push(`/assets/modules/${moduleId}.json`);
+    
+    // Common language/framework folders
+    const languages = ['python', 'javascript', 'java', 'cpp', 'csharp', 'typescript', 'go', 'rust', 'php', 'ruby'];
+    languages.forEach(lang => {
+      paths.push(`/assets/modules/${lang}/${moduleId}.json`);
+    });
+    
+    // Common course/level folders
+    const courseLevels = ['CS1', 'CS2', 'CS3', 'intro', 'advanced', 'beginner', 'intermediate', 'expert'];
+    courseLevels.forEach(level => {
+      paths.push(`/assets/modules/${level}/${moduleId}.json`);
+    });
+    
+    // Lab/lesson folders
+    const labFolders = ['01-Lab', '02-Lab', '03-Lab', 'lab1', 'lab2', 'lab3', 'lessons', 'exercises', 'tutorials'];
+    labFolders.forEach(lab => {
+      paths.push(`/assets/modules/${lab}/${moduleId}.json`);
+    });
+    
+    // Nested combinations (e.g., CS1/01-Lab/)
+    courseLevels.forEach(level => {
+      labFolders.forEach(lab => {
+        paths.push(`/assets/modules/${level}/${lab}/${moduleId}.json`);
+      });
+    });
+    
+    // Language + level combinations
+    languages.forEach(lang => {
+      courseLevels.forEach(level => {
+        paths.push(`/assets/modules/${lang}/${level}/${moduleId}.json`);
+      });
+    });
+    
+    return paths;
+  }
+
+  private handleModuleLoad(json: any): void {
+    const labFromModule = this.labDataService.convertModuleToLab(json);
+    this.labData = labFromModule;
+    this.extractWidgetsFromLabData();
+    this.loading = false;
+    this.error = null;
+    this.cdr.detectChanges();
+  }
+
+  private loadModuleFromBackend(moduleId: string): void {
+    this.http.get<any>(`/api/modules/${moduleId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log(`Loaded module ${moduleId} from backend:`, response);
+          // Backend returns { module: {...} }
+          const moduleData = response.module;
+          const labFromModule = this.labDataService.convertModuleToLab(moduleData);
+          this.labData = labFromModule;
           this.extractWidgetsFromLabData();
           this.loading = false;
           this.error = null;
           this.cdr.detectChanges();
         },
         error: (err) => {
-          this.error = err.message || 'Failed to load lab';
+          this.error = err.message || `Failed to load module ${moduleId} from backend`;
           this.loading = false;
           this.cdr.detectChanges();
         }
