@@ -20,6 +20,13 @@ export class TokenStorageService {
    */
   setAccessToken(token: string): void {
     if (!this.isBrowser()) return;
+    const oldToken = localStorage.getItem(this.ACCESS_TOKEN_KEY);
+    const changed = oldToken !== token;
+    console.log('[TokenStorage] Setting access token:', {
+      newTokenPrefix: token?.substring(0, 30),
+      oldTokenPrefix: oldToken?.substring(0, 30),
+      tokenChanged: changed
+    });
     localStorage.setItem(this.ACCESS_TOKEN_KEY, token);
   }
 

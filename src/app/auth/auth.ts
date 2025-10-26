@@ -230,11 +230,15 @@ export class AuthComponent {
           this.isLoading.set(false);
           const userData = response.user || response.user_data;
           const userName = userData?.name || userData?.username || 'User';
-          this.toastService.show({
-            title: 'Success!',
-            description: `Welcome back, ${userName}!`,
-            type: 'success'
-          });
+          
+          // Wrap toast in setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+          setTimeout(() => {
+            this.toastService.show({
+              title: 'Success!',
+              description: `Welcome back, ${userName}!`,
+              type: 'success'
+            });
+          }, 0);
           
           // Check authentication state after login
           setTimeout(() => {

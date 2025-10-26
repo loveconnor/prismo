@@ -32,6 +32,7 @@ export class SettingsContentComponent {
   @Input() activeSection = 'profile';
 
   displayName = 'Student';
+  avatarUrl = '';
   timeZone = 'America/New_York';
   themeMode = 'System';
   fontFamily: FontFamily = 'system';
@@ -54,6 +55,26 @@ export class SettingsContentComponent {
     
     // Initialize font options based on available fonts
     this.initializeFontOptions();
+    
+    // Load avatar from localStorage
+    try {
+      const savedAvatar = localStorage.getItem('user_avatar');
+      if (savedAvatar) {
+        this.avatarUrl = savedAvatar;
+      }
+    } catch (error) {
+      console.error('Failed to load avatar:', error);
+    }
+    
+    // Load display name from localStorage
+    try {
+      const savedDisplayName = localStorage.getItem('user_display_name');
+      if (savedDisplayName) {
+        this.displayName = savedDisplayName;
+      }
+    } catch (error) {
+      console.error('Failed to load display name:', error);
+    }
   }
 
   readonly timeZoneOptions: SelectOption[] = [
@@ -146,6 +167,67 @@ export class SettingsContentComponent {
     this.fontService.setFontSize(this.fontSize);
   }
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      console.error('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      console.error('File size must be less than 5MB');
+      return;
+    }
+
+    // Read and convert to base64
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      if (e.target?.result) {
+        this.avatarUrl = e.target.result as string;
+        // Save to localStorage
+        try {
+          localStorage.setItem('user_avatar', this.avatarUrl);
+          // Dispatch custom event to notify other components
+          window.dispatchEvent(new CustomEvent('avatar-updated'));
+        } catch (error) {
+          console.error('Failed to save avatar:', error);
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeAvatar(): void {
+    this.avatarUrl = '';
+    try {
+      localStorage.removeItem('user_avatar');
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('avatar-updated'));
+    } catch (error) {
+      console.error('Failed to remove avatar:', error);
+    }
+  }
+
+  onDisplayNameChange(value: string): void {
+    this.displayName = value;
+    try {
+      localStorage.setItem('user_display_name', value);
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('displayname-updated'));
+    } catch (error) {
+      console.error('Failed to save display name:', error);
+    }
+  }
+
   get isDark(): boolean {
     return this.themeService.isDarkMode();
   }
@@ -172,5 +254,17 @@ export class SettingsContentComponent {
     return this.isDark 
       ? 'hover:bg-white/10 text-[#e5e7eb] focus:text-[#e5e7eb]' 
       : 'hover:bg-slate-100 text-[#111827] focus:text-[#111827] font-medium';
+  }
+
+  get uploadButtonClasses(): string {
+    return this.isDark
+      ? 'bg-[#0d1117] border-[#30363d] text-[#e5e7eb] hover:bg-[#161b22]'
+      : 'bg-white border-[#d1d5db] text-[#111827] hover:bg-[#f3f4f6]';
+  }
+
+  get removeButtonClasses(): string {
+    return this.isDark
+      ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10'
+      : 'text-red-600 hover:text-red-700 hover:bg-red-50';
   }
 }

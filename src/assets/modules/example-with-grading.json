@@ -89,33 +89,8 @@
         "message": "You've completed the exercise. The AI has approved your code!",
         "variant": "success"
       },
-      "dependencies_met": true
-    },
-    {
-      "id": "confidence-meter",
-      "metadata": {
-        "id": "confidence-meter",
-        "title": "Confidence Meter",
-        "description": "Self-rating slider for confidence assessment",
-        "skills": ["self-assessment", "metacognition"],
-        "difficulty": 2,
-        "estimated_time": 20,
-        "input_type": "slider",
-        "output_type": "progress",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "title": "Rate Your Confidence",
-        "description": "How confident do you feel about writing JavaScript functions now?",
-        "scaleLabels": ["Not confident", "Slightly confident", "Moderately confident", "Very confident", "Extremely confident"],
-        "autoSubmit": true
-      },
-      "dependencies_met": true
+      "position": 3,
+      "dependencies_met": false
     }
   ],
   "completion_criteria": {

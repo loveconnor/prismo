@@ -401,6 +401,8 @@ class CognitoAuthService:
     def verify_token(self, access_token: str) -> Dict[str, Any]:
         """Verify access token and get user info"""
         try:
+            print(f"DEBUG: Verifying token (first 30 chars): {access_token[:30]}...")
+            
             # First try to decode as JWT to get user info directly
             import jwt
             try:
@@ -408,23 +410,35 @@ class CognitoAuthService:
                 decoded = jwt.decode(access_token, options={'verify_signature': False})
                 user_id = decoded.get('sub')
                 username = decoded.get('username')
+                print(f"DEBUG: JWT decoded - user_id: {user_id}, username: {username}")
                 
                 if user_id and username:
                     # Get user from DynamoDB using the user ID
-                    user_data = self.user_model.get_user_by_cognito_id(user_id)
-                    
-                    return {
-                        "success": True, 
-                        "user_data": user_data, 
-                        "user_id": user_id,
-                        "username": username,
-                        "cognito_user": {"Username": username}
-                    }
+                    try:
+                        user_data = self.user_model.get_user_by_cognito_id(user_id)
+                        print(f"DEBUG: User data retrieved from DynamoDB: {bool(user_data)}")
+                        
+                        if user_data:
+                            return {
+                                "success": True, 
+                                "user_data": user_data, 
+                                "user_id": user_id,
+                                "username": username,
+                                "cognito_user": {"Username": username}
+                            }
+                        else:
+                            print(f"WARNING: No user found in DynamoDB for user_id: {user_id}")
+                            # Continue to Cognito verification as fallback
+                    except Exception as db_error:
+                        print(f"WARNING: DynamoDB lookup failed: {db_error}")
+                        # Continue to Cognito verification as fallback
             except Exception as jwt_error:
                 print(f"JWT decode failed: {jwt_error}")
             
             # Fallback to Cognito get_user method
+            print("DEBUG: Falling back to Cognito get_user method")
             response = self.cognito.get_user(AccessToken=access_token)
+            print(f"DEBUG: Cognito get_user succeeded for user: {response.get('Username')}")
 
             # Get user from DynamoDB
             user_data = self.user_model.get_user_by_cognito_id(response["Username"])
@@ -432,9 +446,13 @@ class CognitoAuthService:
             return {"success": True, "user_data": user_data, "cognito_user": response}
 
         except ClientError as e:
-            return {"success": False, "error": f"Token verification failed: {e}"}
+            error_msg = f"Token verification failed: {e}"
+            print(f"ERROR: {error_msg}")
+            return {"success": False, "error": error_msg}
         except Exception as e:
-            return {"success": False, "error": f"Unexpected error: {e}"}
+            error_msg = f"Unexpected error: {e}"
+            print(f"ERROR: {error_msg}")
+            return {"success": False, "error": error_msg}
 
     def update_user_profile(
         self, access_token: str, profile_updates: Dict[str, Any]

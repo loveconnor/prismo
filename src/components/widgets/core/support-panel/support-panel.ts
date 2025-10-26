@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TabsNewComponent } from '../../../ui/tabs/tabs-new';
 import { TabsListComponent } from '../../../ui/tabs/tabs-list';
@@ -37,23 +37,37 @@ interface HintItem {
   templateUrl: './support-panel.html',
   styleUrls: ['./support-panel.css']
 })
-export class SupportPanelComponent {
+export class SupportPanelComponent implements OnChanges {
   @Input() collapsed = false;
   @Input() onToggleCollapse?: () => void;
   @Input() hints: any[] = [];
   @Input() feedback: any[] = [];
   @Input() sessionId: string = '';
+  @Input() aiReview: string = '';
+  @Input() refactorData: any = null; // New input for refactor feedback
 
   openHints: number[] = [];
 
   // Get the default tab value based on what content is available
   get defaultTabValue(): string {
+    if (this.aiReview) return 'feedback'; // Auto-switch to feedback if AI review exists
     if (this.hasHints) return 'hints';
     if (this.hasFeedback) return 'feedback';
     return 'hints';
   }
 
   value = this.defaultTabValue;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Auto-switch to feedback tab when AI review comes in
+    if (changes['aiReview'] && changes['aiReview'].currentValue && !changes['aiReview'].previousValue) {
+      this.value = 'feedback';
+    }
+    // Auto-switch to feedback tab when refactor data comes in
+    if (changes['refactorData'] && changes['refactorData'].currentValue && !changes['refactorData'].previousValue) {
+      this.value = 'feedback';
+    }
+  }
 
   // Check if hints exist
   get hasHints(): boolean {
@@ -64,12 +78,18 @@ export class SupportPanelComponent {
 
   // Check if feedback exists
   get hasFeedback(): boolean {
-    return this.feedback && this.feedback.length > 0;
+    // Always return true to show the feedback tab even when empty
+    return true;
   }
 
   // Check if the panel should be visible at all
   get shouldShowPanel(): boolean {
     return this.hasHints || this.hasFeedback;
+  }
+  
+  // Check if there are actual feedback items to display
+  get hasActualFeedback(): boolean {
+    return this.feedback && this.feedback.length > 0;
   }
 
   // Get formatted hints from input
