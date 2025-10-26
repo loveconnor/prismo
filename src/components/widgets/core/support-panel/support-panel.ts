@@ -5,6 +5,7 @@ import { TabsListComponent } from '../../../ui/tabs/tabs-list';
 import { TabsTriggerComponent } from '../../../ui/tabs/tabs-trigger';
 import { TabsContentComponent } from '../../../ui/tabs/tabs-content';
 import { HintPanelComponent } from '../hint-panel/hint-panel';
+import { FeedbackBoxComponent } from '../feedback-box/feedback-box';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideChevronDown, lucideChevronRight } from '@ng-icons/lucide';
 
@@ -23,8 +24,8 @@ interface HintItem {
     TabsListComponent,
     TabsTriggerComponent,
     TabsContentComponent,
-
     HintPanelComponent,
+    FeedbackBoxComponent,
     NgIconComponent
   ],
   providers: [
@@ -101,6 +102,18 @@ export class SupportPanelComponent {
   trackByHintLevel = (_: number, item: HintItem) => item.level;
 
   trackByHintWidget = (_: number, item: any) => item.id;
+
+  trackByFeedback = (_: number, item: any) => item.id;
+
+  getFeedbackProps(feedbackWidget: any) {
+    return {
+      type: feedbackWidget.config?.type || feedbackWidget.type || 'info',
+      title: feedbackWidget.config?.title || feedbackWidget.title || 'Feedback',
+      message: feedbackWidget.config?.message || feedbackWidget.message || '',
+      explanation: feedbackWidget.config?.explanation || feedbackWidget.explanation,
+      nextSteps: feedbackWidget.config?.nextSteps || feedbackWidget.nextSteps
+    };
+  }
 }
 
 
