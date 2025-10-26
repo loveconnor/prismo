@@ -263,7 +263,10 @@ CRITICAL JSON RULES:
 
 === MANDATORY RULES ===
 1. WIDGET PATTERN (STRICT - NO EXCEPTIONS):
-   Pos 1-3: step-prompt → feedback-box → confidence-meter (intro)
+   IMPORTANT: DO NOT create an intro step-prompt widget. The lab background modal already provides the introduction.
+   Start directly with learning widgets:
+   
+   Pos 1-3: [learning-widget] → feedback-box → confidence-meter
    Pos 4-6: [learning-widget] → feedback-box → confidence-meter
    Pos 7-9: [learning-widget] → feedback-box → confidence-meter
    Continue for {num_learning_widgets} learning widgets total
@@ -300,8 +303,7 @@ CRITICAL JSON RULES:
 
 3. POSITION FIELD RULES (CRITICAL):
    ✓ INCLUDE "position" for ACTIVE LEARNING widgets that require user work:
-     - step-prompt (instructional content)
-     - code-editor (coding exercises)
+     - code-editor (coding exercises) - USE THIS for programming labs
      - multiple-choice (questions)
      - short-answer (text responses)
      - fill-in-blanks (completion tasks)
@@ -310,17 +312,19 @@ CRITICAL JSON RULES:
      - text-editor (writing tasks)
      
    ✗ EXCLUDE "position" (DO NOT ADD) for PASSIVE/SUPPORT widgets:
+     - step-prompt (NEVER USE - lab background modal provides introduction)
      - feedback-box (provides feedback, no user action)
      - confidence-meter (optional self-assessment)
      - hint-panel (optional help, no required action)
 
     THE POSITION NUMBER ONLY INCREMENTS FOR ACTIVE LEARNING WIDGETS. So feedback and confidence-meter widgets do NOT increment the position value
-   Example CORRECT structure:
+   
+   Example CORRECT structure (starting with a learning widget):
    {{
-     "id": "step-prompt",
+     "id": "code-editor",
      "metadata": {{...}},
      "props": {{...}},
-     "position": 1,  // ✓ Has position - active learning
+     "position": 1,  // ✓ First learning widget - active learning
      "dependencies_met": true
    }}
    
@@ -332,7 +336,8 @@ CRITICAL JSON RULES:
    }}
 
 
-4. metadata.id values: step-prompt | feedback-box | confidence-meter | multiple-choice | code-editor | short-answer | etc.
+4. metadata.id values: code-editor | multiple-choice | short-answer | feedback-box | confidence-meter | etc.
+   NEVER use: step-prompt (lab background modal already provides introduction)
 
 === CRITICAL: FEEDBACK-BOX PROPS EXAMPLE ===
 CORRECT feedback-box props structure:
@@ -373,9 +378,10 @@ Example: "starterCode": "import React\\n\\nfunction App() {\\n  return <div>Hell
 CRITICAL POSITION FIELD RULE:
 - CHOOSE widgets based on the learning objective, if they want multiple choice, use a multiple-choice widget.
 - ONLY add "position" field to widgets requiring active learning/user work
-- INCLUDE position: step-prompt, code-editor, multiple-choice, short-answer, fill-in-blanks, matching-pairs, numeric-input, text-editor
-- EXCLUDE position: feedback-box, confidence-meter, hint-panel
-- WHEN GIVING CODE PROBELMS: Do not give the solution in the starterCode
+- INCLUDE position: code-editor, multiple-choice, short-answer, fill-in-blanks, matching-pairs, numeric-input, text-editor
+- EXCLUDE position: step-prompt (NEVER USE), feedback-box, confidence-meter, hint-panel
+- DO NOT USE step-prompt widget - the lab background modal already provides introduction
+- WHEN GIVING CODE PROBLEMS: Do not give the solution in the starterCode
 - Example: feedback-box and confidence-meter should NOT have "position" field
 
 CRITICAL FEEDBACK-BOX RULE:
@@ -520,35 +526,41 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
             "skills": target_skills,
             "widgets": [
                 {
-                    "id": "step-prompt",  # Root id must match metadata.id
+                    "id": "multiple-choice",  # Start with a learning widget, not step-prompt
                     "metadata": {
-                        "id": "step-prompt",
-                        "title": "Step Prompt",
-                        "description": "Displays task or question text with optional formatting",
-                        "skills": ["comprehension", "reading"],
-                        "difficulty": 4,
-                        "estimated_time": 30,
-                        "input_type": "text",
-                        "output_type": "scaffold",
+                        "id": "multiple-choice",
+                        "title": "Multiple Choice Question",
+                        "description": "Select the correct answer from multiple options",
+                        "skills": target_skills,
+                        "difficulty": 2,
+                        "estimated_time": 60,
+                        "input_type": "selection",
+                        "output_type": "evaluation",
                         "dependencies": [],
                         "adaptive_hooks": {
                             "difficulty_adjustment": True,
                             "hint_progression": False
                         },
                         "version": "1.0.0",
-                        "category": "core"
+                        "category": "assessment"
                     },
                     "props": {
-                        "title": f"Welcome to {topic}!",
-                        "prompt": f"In this module, you'll explore {topic}. Take your time and practice as much as you need.",
-                        "estimatedTime": 30
+                        "title": f"Understanding {topic}",
+                        "question": f"What is the main purpose of {topic}?",
+                        "options": [
+                            f"To learn and practice {topic}",
+                            "To avoid learning",
+                            "To skip exercises",
+                            "None of the above"
+                        ],
+                        "correctAnswer": 0
                     },
                     "position": 1,
                     "dependencies_met": True
                 }
             ],
             "completion_criteria": {
-                "required_widgets": ["step-prompt"],
+                "required_widgets": ["multiple-choice"],
                 "min_completion_percentage": 80,
                 "max_attempts": 3,
                 "time_limit": estimated_time

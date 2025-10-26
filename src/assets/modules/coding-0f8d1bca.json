@@ -1,0 +1,545 @@
+{
+  "name": "coding-0f8d1bca",
+  "title": "Mastering Python Loops: From Basics to Algorithm Optimization",
+  "description": "Learn to write efficient Python loops and analyze algorithm complexity through hands-on coding challenges and simulations.",
+  "skills": [
+    "algorithms",
+    "python",
+    "for loops",
+    "while loop",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "For Loop Fundamentals",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Write a For Loop to Sum Numbers",
+        "language": "python",
+        "starterCode": "# Write a for loop that sums numbers from 1 to n\nn = 10\ntotal = 0\n# YOUR CODE HERE\nprint(f\"Sum: {total}\")",
+        "testCases": [
+          {
+            "input": "n = 10",
+            "expectedOutput": "55"
+          },
+          {
+            "input": "n = 5",
+            "expectedOutput": "15"
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You successfully implemented a for loop to sum numbers.",
+        "explanation": "For loops iterate through a sequence. Using range(1, n+1) creates numbers from 1 to n. Each iteration adds the current value to the total.",
+        "nextSteps": [
+          "Try using a while loop for the same problem",
+          "Optimize this for larger numbers",
+          "Explore nested loops"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with for loops?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "While Loop Challenge",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Find the First N Prime Numbers Using While Loop",
+        "language": "python",
+        "starterCode": "# Find the first n prime numbers using a while loop\nn = 5\nprimes = []\ncandidate = 2\n# YOUR CODE HERE\nprint(f\"First {n} primes: {primes}\")",
+        "testCases": [
+          {
+            "input": "n = 5",
+            "expectedOutput": "[2, 3, 5, 7, 11]"
+          },
+          {
+            "input": "n = 3",
+            "expectedOutput": "[2, 3, 5]"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You implemented a while loop to find prime numbers.",
+        "explanation": "While loops continue until a condition is false. This algorithm checks each candidate number for primality by testing divisibility. While loops are ideal when you don't know the exact iteration count.",
+        "nextSteps": [
+          "Compare performance of for vs while loops",
+          "Analyze the algorithm complexity",
+          "Optimize the prime-checking logic"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with while loops?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "simulator",
+      "metadata": {
+        "id": "simulator",
+        "title": "Algorithm Simulator",
+        "description": "Step-by-step algorithm visualization and simulation",
+        "skills": [
+          "algorithms",
+          "visualization",
+          "comprehension"
+        ],
+        "difficulty": 3,
+        "estimated_time": 180,
+        "input_type": "button",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Bubble Sort Algorithm Simulator",
+        "content": "Watch how bubble sort works step-by-step. Use nested loops to compare adjacent elements and swap them if needed. See how each pass moves the largest unsorted element to its correct position.",
+        "algorithm": "bubbleSort",
+        "initialData": [
+          64,
+          34,
+          25,
+          12,
+          22,
+          11,
+          90
+        ],
+        "stepDescription": "Step {step}: Comparing and swapping elements to sort the array"
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Algorithm Visualization Complete",
+        "message": "You've seen how nested loops work in bubble sort.",
+        "explanation": "Bubble sort uses two nested loops: the outer loop controls passes through the array, and the inner loop compares adjacent elements. This O(n²) algorithm is simple but inefficient for large datasets.",
+        "nextSteps": [
+          "Implement bubble sort in Python",
+          "Learn about algorithm time complexity",
+          "Explore more efficient sorting algorithms"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you understanding algorithm visualization?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "complexity-prompt",
+      "metadata": {
+        "id": "complexity-prompt",
+        "title": "Complexity Analysis",
+        "description": "Analyze and explain algorithm complexity",
+        "skills": [
+          "algorithms",
+          "analysis",
+          "complexity"
+        ],
+        "difficulty": 4,
+        "estimated_time": 180,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Analyze Loop Complexity",
+        "question": "Analyze the time and space complexity of this code:\n\nfor i in range(n):\n    for j in range(n):\n        print(i * j)\n\nExplain why the time complexity is O(n²) and what this means for performance.",
+        "expectedAnswer": "O(n²) time because both loops run n times, resulting in n*n operations. O(1) space as no extra space grows with input size."
+      },
+      "position": 4,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Complexity Analysis Correct!",
+        "message": "You correctly identified the O(n²) time complexity.",
+        "explanation": "Nested loops multiply complexity. With nested for loops, you perform n operations n times = n² total operations. Understanding complexity helps you write scalable code for large datasets.",
+        "nextSteps": [
+          "Analyze complexity of other algorithms",
+          "Learn about O(n log n) algorithms",
+          "Practice optimizing code based on complexity"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you analyzing algorithm complexity?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Implement an Optimized Search Algorithm",
+        "language": "python",
+        "starterCode": "# Implement binary search using a while loop\n# Binary search is O(log n) and much faster than linear search\ndef binary_search(arr, target):\n    left = 0\n    right = len(arr) - 1\n    # YOUR CODE HERE\n    return -1\n\narr = [1, 3, 5, 7, 9, 11, 13, 15]\nprint(binary_search(arr, 7))",
+        "testCases": [
+          {
+            "input": "binary_search([1, 3, 5, 7, 9], 7)",
+            "expectedOutput": "3"
+          },
+          {
+            "input": "binary_search([1, 3, 5, 7, 9], 10)",
+            "expectedOutput": "-1"
+          }
+        ]
+      },
+      "position": 5,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Binary Search Implemented!",
+        "message": "You successfully implemented an O(log n) algorithm.",
+        "explanation": "Binary search divides the search space in half each iteration using a while loop. For 1 million elements, linear search needs ~500k comparisons; binary search needs only ~20. This demonstrates how algorithm choice impacts performance.",
+        "nextSteps": [
+          "Compare binary search with linear search performance",
+          "Learn about divide-and-conquer algorithms",
+          "Master other efficient searching and sorting techniques"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you implementing efficient algorithms?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "simulator",
+      "complexity-prompt"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "difficulty": "challenge",
+  "_metadata": {
+    "generated_at": "2025-10-26T12:25:14.079855",
+    "module_id": "3571e9dc-d807-4718-a6bd-8ee8d5b03f3a",
+    "saved_to_filesystem": true
+  }
+}
