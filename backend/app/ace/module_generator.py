@@ -121,7 +121,7 @@ SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={
         props_examples = {
             "step-prompt": "title, prompt, estimatedTime",
             "confidence-meter": "minLabel, maxLabel, question",
-            "feedback-box": "type, title, message, explanation, nextSteps",
+            "feedback-box": "type, title, message, explanation, nextSteps (MUST BE ARRAY)",
             "multiple-choice": "title, question, options, correctAnswer",
             "code-editor": "title, language, starterCode, testCases",
             "short-answer": "title, question, expectedAnswer",
@@ -149,10 +149,11 @@ SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={
             if widget.get("name") in critical_widgets or widget.get("id") in critical_widgets:
                 full_schemas.append(widget_copy)
             else:
-                # Keep essential fields only
+                # Keep essential fields only - MUST include description
                 abbreviated.append({
                     "id": widget.get("name"),
                     "title": widget.get("title"),
+                    "description": widget.get("description"),  # CRITICAL: Must include description
                     "skills": widget.get("skills", []),
                     "category": widget.get("category"),
                     "difficulty": widget.get("difficulty"),
@@ -262,28 +263,94 @@ CRITICAL JSON RULES:
 
 === MANDATORY RULES ===
 1. WIDGET PATTERN (STRICT - NO EXCEPTIONS):
-   Pos 1-3: step-prompt → confidence-meter → feedback-box (intro)
-   Pos 4-6: [learning-widget] → confidence-meter → feedback-box
-   Pos 7-9: [learning-widget] → confidence-meter → feedback-box
+   Pos 1-3: step-prompt → feedback-box → confidence-meter (intro)
+   Pos 4-6: [learning-widget] → feedback-box → confidence-meter
+   Pos 7-9: [learning-widget] → feedback-box → confidence-meter
    Continue for {num_learning_widgets} learning widgets total
 
 2. WIDGET STRUCTURE:
    {{
-     "name": "<unique-instance-id>",  // This is the INSTANCE name (e.g., "intro-step-prompt-001")
+     "id": "<widget-type>",  // CRITICAL: Must match metadata.id (e.g., "step-prompt")
      "metadata": {{
-       "id": "<widget-type>",  // This is the TYPE (e.g., "step-prompt", "confidence-meter")
-       <COPY_REST_FROM_REGISTRY>
+       "id": "<widget-type>",  // MUST BE SAME as root "id" (e.g., "step-prompt")
+       "title": "<Widget Title>",  // REQUIRED
+       "description": "<What this widget does>",  // REQUIRED - DO NOT OMIT
+       "skills": ["skill1", "skill2"],  // REQUIRED
+       "difficulty": 2,  // REQUIRED
+       "estimated_time": 30,  // REQUIRED
+       "input_type": "text",  // REQUIRED
+       "output_type": "scaffold",  // REQUIRED
+       "dependencies": [],  // REQUIRED
+       "adaptive_hooks": {{}},  // REQUIRED
+       "version": "1.0.0",  // REQUIRED
+       "category": "core"  // REQUIRED
      }},
      "props": {{<custom_content_per_props_hint>}},
-     "position": <number>,
+     "position": <number>,  // SEE RULE 3 BELOW
      "dependencies_met": true
    }}
    
-   IMPORTANT: Widget has TWO identifiers:
-   - "name" at root level = unique instance name
-   - "id" in metadata = widget type from registry
+   CRITICAL: Root "id" MUST equal metadata "id"
+   Example: Both should be "step-prompt" or "confidence-meter", NOT unique names like "intro-step-prompt-001"
+   
+   REQUIRED METADATA FIELDS (12 total):
+   id, title, description, skills, difficulty, estimated_time,
+   input_type, output_type, dependencies, adaptive_hooks, version, category
 
-3. metadata.id MUST BE: step-prompt | confidence-meter | feedback-box | multiple-choice | code-editor | short-answer | etc.
+3. POSITION FIELD RULES (CRITICAL):
+   ✓ INCLUDE "position" for ACTIVE LEARNING widgets that require user work:
+     - step-prompt (instructional content)
+     - code-editor (coding exercises)
+     - multiple-choice (questions)
+     - short-answer (text responses)
+     - fill-in-blanks (completion tasks)
+     - matching-pairs (matching exercises)
+     - numeric-input (math problems)
+     - text-editor (writing tasks)
+     
+   ✗ EXCLUDE "position" (DO NOT ADD) for PASSIVE/SUPPORT widgets:
+     - feedback-box (provides feedback, no user action)
+     - confidence-meter (optional self-assessment)
+     - hint-panel (optional help, no required action)
+
+    THE POSITION NUMBER ONLY INCREMENTS FOR ACTIVE LEARNING WIDGETS. So feedback and confidence-meter widgets do NOT increment the position value
+   Example CORRECT structure:
+   {{
+     "id": "step-prompt",
+     "metadata": {{...}},
+     "props": {{...}},
+     "position": 1,  // ✓ Has position - active learning
+     "dependencies_met": true
+   }}
+   
+   {{
+     "id": "feedback-box",
+     "metadata": {{...}},
+     "props": {{...}},
+     "dependencies_met": true  // ✗ NO position field - passive widget
+   }}
+
+
+4. metadata.id values: step-prompt | feedback-box | confidence-meter | multiple-choice | code-editor | short-answer | etc.
+
+=== CRITICAL: FEEDBACK-BOX PROPS EXAMPLE ===
+CORRECT feedback-box props structure:
+{{
+  "type": "success",  // or "error", "warning", "info"
+  "title": "Great Job!",
+  "message": "You completed the task successfully.",
+  "explanation": "This demonstrates your understanding of the concept.",
+  "nextSteps": [
+    "Try the next challenge",
+    "Review the documentation",
+    "Practice with variations"
+  ]
+}}
+
+WRONG (DO NOT USE):
+{{
+  "nextSteps": "Try the next challenge"  // ❌ NEVER use string, MUST be array
+}}
 
 === WIDGET QUICK REF ===
 {self._get_widget_schema_reference()}
@@ -301,6 +368,18 @@ Return JSON only."""
 CRITICAL: ALL string values must be on a SINGLE line. Replace newlines with \\n escape sequences.
 For multi-line code in "starterCode" or "prompt" fields: Use \\n NOT actual line breaks.
 Example: "starterCode": "import React\\n\\nfunction App() {\\n  return <div>Hello</div>\\n}"
+
+CRITICAL POSITION FIELD RULE:
+- ONLY add "position" field to widgets requiring active learning/user work
+- INCLUDE position: step-prompt, code-editor, multiple-choice, short-answer, fill-in-blanks, matching-pairs, numeric-input, text-editor
+- EXCLUDE position: feedback-box, confidence-meter, hint-panel
+- Example: feedback-box and confidence-meter should NOT have "position" field
+
+CRITICAL FEEDBACK-BOX RULE:
+- nextSteps MUST ALWAYS be an ARRAY of strings: ["step1", "step2", "step3"]
+- NEVER use a string for nextSteps: "step1" ❌
+- Even for single step, use array: ["step1"] ✓
+
 After every learning widget, insert confidence-meter then feedback-box widgets. Match widget metadata exactly to registry schemas."""
         
         try:
@@ -387,16 +466,35 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
             raise ValueError("Module must have at least one widget")
         
         for i, widget in enumerate(module["widgets"]):
-            # Check for required widget fields (be flexible about structure)
-            if "name" not in widget:
-                # Generate a name if missing
+            # CRITICAL: Frontend expects "id" at root level, NOT "name"
+            # Convert "name" to "id" if AI generated "name"
+            if "name" in widget and "id" not in widget:
+                widget["id"] = widget.pop("name")
+                print(f"⚠️  Widget {i}: converted 'name' to 'id': {widget['id']}")
+            elif "id" not in widget:
+                # Generate an id if missing
                 widget_type = widget.get("metadata", {}).get("id", "unknown")
-                widget["name"] = f"{widget_type}-{i+1}"
-                print(f"⚠️  Warning: Widget {i} missing 'name', auto-generated: {widget['name']}")
+                widget["id"] = widget_type  # Use widget type, not unique name
+                print(f"⚠️  Warning: Widget {i} missing 'id', auto-generated: {widget['id']}")
             
-            if "position" not in widget:
-                # Auto-assign position if missing
+            # CRITICAL: Root "id" must match metadata "id"
+            metadata_id = widget.get("metadata", {}).get("id")
+            if metadata_id and widget.get("id") != metadata_id:
+                print(f"⚠️  Widget {i}: root id '{widget['id']}' doesn't match metadata.id '{metadata_id}', fixing...")
+                widget["id"] = metadata_id
+            
+            # CRITICAL: Remove position from passive/support widgets
+            passive_widget_types = ['feedback-box', 'confidence-meter', 'hint-panel']
+            widget_type = widget.get("id") or widget.get("metadata", {}).get("id")
+            
+            if widget_type in passive_widget_types:
+                if "position" in widget:
+                    print(f"⚠️  Widget {i} ({widget_type}): Removing 'position' field - passive widget doesn't need it")
+                    del widget["position"]
+            elif "position" not in widget:
+                # Auto-assign position if missing for active learning widgets
                 widget["position"] = i + 1
+                
             if "dependencies_met" not in widget:
                 # Default to True if missing
                 widget["dependencies_met"] = True
@@ -419,7 +517,7 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
             "skills": target_skills,
             "widgets": [
                 {
-                    "name": "step-prompt",
+                    "id": "step-prompt",  # Root id must match metadata.id
                     "metadata": {
                         "id": "step-prompt",
                         "title": "Step Prompt",
