@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
+import { LabsService } from './labs.service';
 
 export interface GenerateModuleRequest {
   topic: string;
@@ -27,6 +28,7 @@ export interface ModuleGenerationResponse {
 })
 export class ModuleGeneratorService {
   private http = inject(HttpClient);
+  private labsService = inject(LabsService);
   private baseUrl = 'http://localhost:5000/api/modules';
 
   /**
@@ -37,6 +39,12 @@ export class ModuleGeneratorService {
     
     return this.http.post<ModuleGenerationResponse>(`${this.baseUrl}/generate`, request)
       .pipe(
+        tap(response => {
+          // Notify that a lab was created to invalidate recommendations cache
+          if (response.success && response.module_id) {
+            this.labsService.notifyLabCreated(response.module_id);
+          }
+        }),
         map(response => {
           if (response.success && response.module) {
             console.log('[ModuleGeneratorService] Module generated successfully:', {
@@ -68,6 +76,12 @@ export class ModuleGeneratorService {
     
     return this.http.post<ModuleGenerationResponse>(`${this.baseUrl}/generate/personalized`, request)
       .pipe(
+        tap(response => {
+          // Notify that a lab was created to invalidate recommendations cache
+          if (response.success && response.module_id) {
+            this.labsService.notifyLabCreated(response.module_id);
+          }
+        }),
         map(response => {
           if (response.success && response.module) {
             console.log('[ModuleGeneratorService] Personalized module generated successfully:', {

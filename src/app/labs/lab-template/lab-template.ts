@@ -897,13 +897,35 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private loadLabFromBackend(labId: string): void {
     console.log(`Loading lab ${labId} from backend API...`);
+    
+    // Try /api/labs first (for static labs)
     this.http.get<any>(`${environment.apiUrl}/api/labs/${labId}`)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(labError => {
+          console.log(`Not found in /api/labs, trying /learning/modules...`);
+          // If not found in labs, try modules endpoint (for generated modules)
+          return this.http.get<any>(`${environment.apiUrl}/learning/modules/${labId}`);
+        })
+      )
       .subscribe({
         next: (response) => {
           console.log(`Loaded lab ${labId} from backend:`, response);
-          // Backend returns the lab data directly
-          const labData = response;
+          // Backend returns the lab data directly or in a wrapper
+          // /api/labs returns labData directly, /learning/modules returns {module: ...}
+          let labData;
+          if (response.module) {
+            // From /learning/modules endpoint - extract content from module
+            labData = response.module.content || response.module;
+          } else if (response.content) {
+            // Direct content object
+            labData = response.content;
+          } else {
+            // Response is the lab data itself
+            labData = response;
+          }
+          
+          console.log(`Extracted lab data:`, labData);
           const labFromResponse = this.labDataService.convertLabToLabData(labData);
           this.labData = labFromResponse;
           this.extractWidgetsFromLabData();

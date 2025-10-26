@@ -9,8 +9,10 @@ from functools import wraps
 from flask import Blueprint, jsonify, request
 from app.orm import orm, PaginationParams
 from app.auth_service import auth_service
+from app.claude_routes import get_claude_response
 from datetime import datetime
 import traceback
+import json
 
 # Learning routes blueprint
 learning_bp = Blueprint("learning", __name__, url_prefix="/learning")
@@ -50,7 +52,7 @@ def get_modules():
     try:
         user_id = request.current_user.get("cognito_user_id")
         module_type = request.args.get('module_type')
-        limit = int(request.args.get('limit', 50))
+        limit = int(request.args.get('limit', 100))  # Increased default limit
         
         print(f"[Get Modules] user_id: {user_id}, module_type: {module_type}, limit: {limit}")
         
@@ -94,6 +96,9 @@ def get_modules():
                 modules_list.append(module.to_dict())
             elif isinstance(module, dict):
                 modules_list.append(module)
+        
+        # Sort by created_at in descending order (newest first)
+        modules_list.sort(key=lambda x: x.get('created_at', ''), reverse=True)
         
         print(f"[Get Modules] Returning {len(modules_list)} modules")
         
@@ -529,3 +534,290 @@ def create_difficulty_level():
         return jsonify({"difficulty_level": level.to_dict()}), 201
     except Exception as e:
         return jsonify({"error": f"Failed to create difficulty level: {e}"}), 500
+
+# ============================================================================
+# LAB RECOMMENDATIONS
+# ============================================================================
+
+@learning_bp.route("/recommendations", methods=["POST"])
+@require_auth
+def get_lab_recommendations():
+    """
+    Generate AI-powered lab recommendations based on user's learning history
+    If no completed labs, recommends from existing available labs
+    
+    Request body:
+    {
+        "count": 3  // Optional, default 3
+    }
+    
+    Returns recommended labs (existing or topics to generate)
+    """
+    try:
+        print(f"[Recommendations] current_user type: {type(request.current_user)}")
+        print(f"[Recommendations] current_user: {request.current_user}")
+        
+        # Safely extract user_id
+        if request.current_user is None:
+            return jsonify({"error": "User not authenticated"}), 401
+            
+        user_id = request.current_user.get("cognito_user_id")
+        print(f"[Recommendations] user_id: {user_id}, type: {type(user_id)}")
+        
+        # Ensure user_id is a string
+        if not user_id or not isinstance(user_id, str):
+            print(f"[Recommendations] ERROR: Invalid user_id. current_user keys: {request.current_user.keys() if isinstance(request.current_user, dict) else 'not a dict'}")
+            return jsonify({"error": "Invalid user data"}), 401
+        
+        data = request.get_json() or {}
+        count = data.get("count", 3)
+        
+        # Get user's completed sessions
+        sessions_result = orm.module_sessions.query_by_user_id(
+            user_id=user_id
+        )
+        
+        # Convert to list if needed
+        completed_sessions = [s for s in sessions_result if s.status == "completed"]
+        in_progress_sessions = [s for s in sessions_result if s.status in ["started", "in_progress"]]
+        
+        # Get IDs of labs the user has already done or is doing
+        user_lab_ids = set([s.module_id for s in sessions_result])
+        
+        # Get user's owned modules (labs they created)
+        try:
+            user_modules_result = orm.modules.query_by_user_id(user_id=user_id, limit=50)
+            user_owned_modules = user_modules_result if isinstance(user_modules_result, list) else []
+            print(f"[Recommendations] Found {len(user_owned_modules)} user-owned modules")
+        except Exception as e:
+            print(f"[Recommendations] Error querying user modules: {e}")
+            user_owned_modules = []
+        
+        # If user has no completed labs, generate recommendations based on owned labs
+        if len(completed_sessions) == 0:
+            if len(user_owned_modules) > 0:
+                # Use AI to recommend next labs based on owned modules
+                print(f"[Recommendations] Using AI with {len(user_owned_modules)} owned modules as context")
+                
+                owned_module_info = []
+                for module in user_owned_modules[:10]:  # Limit to recent 10
+                    content = module.content or {}
+                    owned_module_info.append({
+                        "title": content.get("title", module.name),
+                        "skills": content.get("skills", module.tags or []),
+                        "difficulty": content.get("difficulty", 2),
+                        "description": content.get("description", "")
+                    })
+                
+                # Build AI prompt for owned modules
+                system_prompt = """You are an expert learning path advisor for coding education. 
+The user has created several labs but hasn't completed any yet.
+Based on the labs they've created, recommend new lab topics that would complement their interests and gradually increase in complexity."""
+                
+                user_context = f"""
+User's Created Labs (not yet completed):
+{json.dumps(owned_module_info, indent=2)}
+
+Based on the labs they've created, please recommend {count} new lab topics that would:
+1. Build on similar themes or technologies
+2. Introduce complementary skills
+3. Gradually increase in difficulty
+
+For each recommendation, provide:
+1. Lab title (concise, specific)
+2. Brief description (1-2 sentences)
+3. Key skills to learn (3-5 skills)
+4. Suggested difficulty level (1-5, where 1=beginner, 5=expert)
+
+Respond in valid JSON format like this:
+{{
+  "recommendations": [
+    {{
+      "title": "Lab Title",
+      "description": "Brief description of what they'll learn",
+      "skills": ["skill1", "skill2", "skill3"],
+      "difficulty": 3,
+      "reasoning": "Why this complements their created labs"
+    }}
+  ]
+}}
+"""
+                
+                # Get AI recommendations
+                ai_response = get_claude_response(
+                    message=user_context,
+                    system_prompt=system_prompt,
+                    max_tokens=2000
+                )
+                
+                if ai_response:
+                    try:
+                        # Extract JSON from response
+                        json_start = ai_response.find('{')
+                        json_end = ai_response.rfind('}') + 1
+                        if json_start >= 0 and json_end > json_start:
+                            json_str = ai_response[json_start:json_end]
+                            recommendations_data = json.loads(json_str)
+                        else:
+                            recommendations_data = json.loads(ai_response)
+                        
+                        # Mark AI recommendations as not existing (need to be generated)
+                        recommendations = recommendations_data.get("recommendations", [])
+                        for rec in recommendations:
+                            rec["is_existing"] = False
+                        
+                        return jsonify({
+                            "success": True,
+                            "recommendations": recommendations,
+                            "source": "ai_owned_modules"
+                        }), 200
+                    except json.JSONDecodeError:
+                        print(f"[Recommendations] Failed to parse AI response for owned modules")
+                        # Fall through to existing labs fallback
+            
+            # Fallback: Get all available modules and recommend some
+            print(f"[Recommendations] Falling back to existing available labs")
+            try:
+                all_modules_result = orm.modules.scan(limit=50)
+                all_modules = all_modules_result.items if hasattr(all_modules_result, 'items') else []
+            except Exception as e:
+                print(f"[Recommendations] Error scanning modules: {e}")
+                all_modules = []
+            
+            # Prioritize user's own modules first, then others
+            user_module_ids = set([m.id for m in user_owned_modules])
+            user_modules_not_started = [m for m in user_owned_modules if m.id not in user_lab_ids]
+            other_modules = [m for m in all_modules if m.id not in user_module_ids and m.id not in user_lab_ids]
+            
+            # Combine: prioritize user's own labs, then others
+            available_modules = user_modules_not_started + other_modules
+            
+            # Convert to recommendation format
+            recommendations = []
+            for module in available_modules[:count]:
+                content = module.content or {}
+                is_user_owned = module.id in user_module_ids
+                recommendations.append({
+                    "title": content.get("title", module.name),
+                    "description": content.get("description", "Learn new coding skills"),
+                    "skills": content.get("skills", module.tags or []),
+                    "difficulty": content.get("difficulty", 2),
+                    "reasoning": "Your own lab - ready to start!" if is_user_owned else "Great starting point for your learning journey",
+                    "module_id": module.id,  # Include existing module ID
+                    "is_existing": True  # Flag to indicate this is an existing lab
+                })
+            
+            return jsonify({
+                "success": True,
+                "recommendations": recommendations,
+                "source": "existing_labs"
+            }), 200
+        
+        # Get module details for completed labs
+        completed_modules = []
+        for session in completed_sessions[:10]:  # Limit to last 10 for context
+            try:
+                module = orm.modules.get(session.module_id)
+                if module:
+                    completed_modules.append({
+                        "title": module.content.get("title", module.name),
+                        "skills": module.content.get("skills", module.tags),
+                        "difficulty": module.content.get("difficulty", 2)
+                    })
+            except:
+                continue
+        
+        # Build AI prompt
+        system_prompt = """You are an expert learning path advisor for coding education. 
+Your job is to recommend personalized lab topics based on a student's learning history.
+Provide recommendations that build on their completed work while introducing new concepts."""
+        
+        user_context = f"""
+User's Learning History:
+- Completed {len(completed_sessions)} labs
+- Currently working on {len(in_progress_sessions)} labs
+
+Recent Completed Labs:
+{json.dumps(completed_modules, indent=2)}
+
+Please recommend {count} new lab topics that would be good next steps for this learner.
+For each recommendation, provide:
+1. Lab title (concise, specific)
+2. Brief description (1-2 sentences)
+3. Key skills to learn (3-5 skills)
+4. Suggested difficulty level (1-5, where 1=beginner, 5=expert)
+
+Respond in valid JSON format like this:
+{{
+  "recommendations": [
+    {{
+      "title": "Lab Title",
+      "description": "Brief description of what they'll learn",
+      "skills": ["skill1", "skill2", "skill3"],
+      "difficulty": 3,
+      "reasoning": "Why this is recommended based on their history"
+    }}
+  ]
+}}
+"""
+        
+        # Get AI recommendations
+        ai_response = get_claude_response(
+            message=user_context,
+            system_prompt=system_prompt,
+            max_tokens=2000
+        )
+        
+        if not ai_response:
+            # Fallback to simple recommendations if AI fails
+            return jsonify({
+                "success": True,
+                "recommendations": [
+                    {
+                        "title": "Advanced Coding Concepts",
+                        "description": "Continue your learning journey with intermediate challenges",
+                        "skills": ["problem-solving", "algorithms"],
+                        "difficulty": 3,
+                        "reasoning": "Based on your progress",
+                        "is_existing": False
+                    }
+                ],
+                "source": "fallback"
+            }), 200
+        
+        # Parse AI response
+        try:
+            # Extract JSON from response (in case there's extra text)
+            json_start = ai_response.find('{')
+            json_end = ai_response.rfind('}') + 1
+            if json_start >= 0 and json_end > json_start:
+                json_str = ai_response[json_start:json_end]
+                recommendations_data = json.loads(json_str)
+            else:
+                recommendations_data = json.loads(ai_response)
+            
+            # Mark AI recommendations as not existing (need to be generated)
+            recommendations = recommendations_data.get("recommendations", [])
+            for rec in recommendations:
+                rec["is_existing"] = False
+            
+            return jsonify({
+                "success": True,
+                "recommendations": recommendations,
+                "source": "ai"
+            }), 200
+            
+        except json.JSONDecodeError:
+            # If JSON parsing fails, return error
+            return jsonify({
+                "success": False,
+                "error": "Failed to parse AI recommendations",
+                "raw_response": ai_response
+            }), 500
+            
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({
+            "success": False,
+            "error": f"Failed to generate recommendations: {str(e)}"
+        }), 500

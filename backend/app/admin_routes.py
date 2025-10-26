@@ -839,3 +839,70 @@ def get_system_health():
             "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }), 500
+
+# ============================================================================
+# DATA MAINTENANCE ROUTES
+# ============================================================================
+
+@admin_bp.route("/fix-time-spent", methods=["POST"])
+@require_admin_auth
+def fix_time_spent():
+    """
+    Fix corrupted time_spent values in module_sessions table
+    """
+    try:
+        # Get all module sessions
+        sessions = orm.module_sessions.scan()
+        
+        fixed_count = 0
+        errors = []
+        current_timestamp = int(datetime.utcnow().timestamp())
+        
+        for session in sessions:
+            time_spent = session.get('time_spent', 0)
+            session_id = session.get('id')
+            
+            needs_fix = False
+            new_value = 0
+            reason = ""
+            
+            # If it's larger than current timestamp, it's a timestamp instead of duration
+            if time_spent > current_timestamp:
+                needs_fix = True
+                new_value = 0
+                reason = f"Corrupted timestamp value: {time_spent}"
+            # If it's suspiciously large (> 1 million seconds = 277 hours), might be milliseconds
+            elif time_spent > 1000000:
+                needs_fix = True
+                new_value = int(time_spent / 1000)  # Convert to seconds
+                reason = f"Converted from milliseconds: {time_spent} -> {new_value}"
+            
+            if needs_fix:
+                try:
+                    orm.module_sessions.update(
+                        session_id,
+                        {'time_spent': new_value}
+                    )
+                    fixed_count += 1
+                except Exception as e:
+                    errors.append({
+                        'session_id': session_id,
+                        'error': str(e),
+                        'reason': reason
+                    })
+        
+        return jsonify({
+            "success": True,
+            "total_sessions": len(sessions),
+            "fixed_count": fixed_count,
+            "errors": errors,
+            "timestamp": datetime.utcnow().isoformat()
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+

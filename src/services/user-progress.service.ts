@@ -67,7 +67,8 @@ export class UserProgressService {
   getUserLabProgress(userId?: string): Observable<UserLabProgress[]> {
     // Get the current authenticated user ID
     const currentUser = this.authService.getCurrentUser();
-    const targetUserId = userId || currentUser?.id;
+    // Use cognito_user_id for backend queries, fallback to id if not available
+    const targetUserId = userId || currentUser?.cognito_user_id || currentUser?.id;
     
     if (!targetUserId) {
       console.warn('No user ID available for progress fetch');

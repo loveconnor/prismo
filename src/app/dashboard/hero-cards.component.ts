@@ -31,7 +31,7 @@ import { UserProgressService, UserLabProgress } from '../../services/user-progre
     CreateLabModalComponent
   ],
   template: `
-    <div class="grid gap-4 md:grid-cols-2 items-stretch">
+    <div class="grid gap-4 items-stretch" [ngClass]="lastLab || loading ? 'md:grid-cols-2' : 'md:grid-cols-1'">
       <!-- Continue Learning Card -->
       <app-card className="h-full flex flex-col" *ngIf="lastLab">
         <app-card-header>

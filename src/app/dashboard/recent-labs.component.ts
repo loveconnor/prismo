@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, switchMap, map } from 'rxjs/operators';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { ProgressComponent } from '../../components/ui/progress/progress';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideTreePine, lucideZap, lucidePalette, lucideNetwork, lucideBookOpen } from '@ng-icons/lucide';
+import { UserProgressService, ModuleSession } from '../../services/user-progress.service';
+import { LabsService } from '../../services/labs.service';
 
 type RecentLab = {
   title: string;
@@ -12,7 +16,7 @@ type RecentLab = {
   time: string;
   status: 'in-progress' | 'completed';
   path: string;
-  icon: string; // inline SVG paths
+  icon: string;
 };
 
 @Component({
@@ -29,9 +33,9 @@ type RecentLab = {
     })
   ],
   template: `
-    <section>
+    <section *ngIf="recentLabs.length > 0">
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-2xl font-semibold text-foreground">My Recent Labs</h2>
+        <h2 class="text-2xl font-semibold text-foreground">Continue Where You Left Off</h2>
       </div>
       <div class="overflow-hidden rounded-xl border bg-card">
         <ng-container *ngFor="let lab of recentLabs; let i = index">
@@ -70,8 +74,176 @@ type RecentLab = {
     </section>
   `
 })
-export class RecentLabsComponent {
-  constructor(private router: Router) {}
+export class RecentLabsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  recentLabs: RecentLab[] = [];
+  
+  constructor(
+    private router: Router,
+    private userProgressService: UserProgressService,
+    private labsService: LabsService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    // Load labs first, then recent labs
+    this.labsService.getAllLabs()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.loadRecentLabs();
+        },
+        error: (error) => {
+          console.error('[RecentLabs] Error loading labs:', error);
+          this.loadRecentLabs(); // Still try to load recent labs even if labs fail
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadRecentLabs() {
+    this.userProgressService.getUserLabProgress()
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(sessions => {
+          // Filter for in-progress and completed sessions only, sort by last activity
+          const activeSessions = sessions
+            .filter(s => (s.status === 'in_progress' || s.status === 'started' || s.status === 'completed') && s.lab_id)
+            .sort((a, b) => {
+              const dateA = new Date(a.last_activity_at || 0).getTime();
+              const dateB = new Date(b.last_activity_at || 0).getTime();
+              return dateB - dateA;
+            })
+            .slice(0, 4); // Show top 4  labs
+
+          // For each session, try to get the module details
+          const labObservables = activeSessions.map(session => {
+            const cachedLab = this.labsService.getCachedLabs().find(l => l.id === session.lab_id);
+            
+            if (cachedLab) {
+              // Lab found in cache
+              return of({
+                session,
+                title: cachedLab.title
+              });
+            } else {
+              // Fetch module by ID
+              return this.labsService.getModuleById(session.lab_id).pipe(
+                map(module => ({
+                  session,
+                  title: module?.title || this.formatLabId(session.lab_id)
+                }))
+              );
+            }
+          });
+
+          return labObservables.length > 0 ? forkJoin(labObservables) : of([]);
+        })
+      )
+      .subscribe({
+        next: (labsData) => {
+          this.recentLabs = labsData.map(data => ({
+            title: data.title,
+            progress: Math.round(data.session.progress),
+            time: this.formatTime(data.session.time_spent),
+            status: data.session.status === 'completed' ? 'completed' as const : 'in-progress' as const,
+            path: data.session.lab_id,
+            icon: 'lucideBookOpen'
+          }));
+
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error loading recent labs:', error);
+          this.recentLabs = [];
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  formatLabId(labId: string): string {
+    // Create a more readable title from the ID
+    // Handle special formats like "coding---java-89f30415"
+    if (labId.includes('---')) {
+      // Format: "coding---java-89f30415" -> "Coding Java Lab"
+      const parts = labId.split('---');
+      const mainParts = parts.slice(0, -1); // Remove the hash at the end
+      return mainParts
+        .flatMap(p => p.split('-'))
+        .filter(word => word && word.length > 2) // Remove empty and very short words
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ') + ' Lab';
+    }
+    
+    // Standard format: split by dashes and capitalize
+    return labId.split('-')
+      .filter(word => word && word.length > 2) // Remove empty strings and short IDs
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ') || 'Untitled Lab';
+  }
+
+  getLabTitle(labId: string): string {
+    // Try to get from loaded labs cache
+    const cachedLabs = this.labsService.getCachedLabs();
+    
+    // Try exact match first
+    let lab = cachedLabs.find(l => l.id === labId);
+    
+    // If no exact match, try to match by the end part (after the last dash)
+    if (!lab && labId.includes('-')) {
+      const parts = labId.split('-').filter(p => p); // Remove empty parts
+      const lastPart = parts[parts.length - 1];
+      
+      lab = cachedLabs.find(l => l.id.endsWith(lastPart) || l.id.includes(lastPart));
+    }
+    
+    // If still no match, try matching by any significant part
+    if (!lab && labId.includes('-')) {
+      const normalizedId = labId.toLowerCase();
+      lab = cachedLabs.find(l => {
+        const normalizedLabId = l.id.toLowerCase();
+        return normalizedLabId === normalizedId || 
+               normalizedLabId.includes(normalizedId) || 
+               normalizedId.includes(normalizedLabId);
+      });
+    }
+    
+    if (lab && lab.title) {
+      return lab.title;
+    }
+    
+    // Fallback: Create a more readable title from the ID
+    // Handle special formats like "coding---java-89f30415"
+    if (labId.includes('---')) {
+      // Format: "coding---java-89f30415" -> "Coding Java Lab"
+      const parts = labId.split('---');
+      const mainParts = parts.slice(0, -1); // Remove the hash at the end
+      return mainParts
+        .flatMap(p => p.split('-'))
+        .filter(word => word && word.length > 2) // Remove empty and very short words
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ') + ' Lab';
+    }
+    
+    // Standard format: split by dashes and capitalize
+    return labId.split('-')
+      .filter(word => word && word.length > 2) // Remove empty strings and short IDs
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ') || 'Untitled Lab';
+  }
+
+  formatTime(seconds?: number): string {
+    if (!seconds) return '0 min';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} min`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}h ${remainingMinutes}m`;
+  }
 
   navigateToLab(labPath: string): void {
     this.router.navigate(['/labs', labPath]);
@@ -84,41 +256,6 @@ export class RecentLabsComponent {
     if (title.includes('Graph') || title.includes('Algorithm')) return 'lucideNetwork';
     return 'lucideBookOpen';
   }
-
-  recentLabs: RecentLab[] = [
-    {
-      title: 'Binary Search Tree Implementation',
-      progress: 65,
-      time: '45 min',
-      status: 'in-progress',
-      path: 'binary-search-tree',
-      icon: '<path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z" />'
-    },
-    {
-      title: 'Full-Stack Todo Application',
-      progress: 100,
-      time: '82 min',
-      status: 'completed',
-      path: 'fullstack-todo-with-steps',
-      icon: '<circle cx="12" cy="11.245" r="1.785"></circle><path d="m7.002 14.794-.395-.101c-2.934-.741-4.617-2.001-4.617-3.452 0-1.452 1.684-2.711 4.617-3.452l.395-.1.111.391a19.507 19.507 0 0 0 1.136 2.983l.085.178-.085.178c-.46.963-.841 1.961-1.136 2.985l-.111.39zm-.577-6.095c-2.229.628-3.598 1.586-3.598 2.542 0 .954 1.368 1.913 3.598 2.54.273-.868.603-1.717.985-2.54a20.356 20.356 0 0 1-.985-2.542zm10.572 6.095-.11-.392a19.628 19.628 0 0 0-1.137-2.984l-.085-.177.085-.179c.46-.961.839-1.96 1.137-2.984l.11-.39.395.1c2.935.741 4.617 2 4.617 3.453 0 1.452-1.683 2.711-4.617 3.452l-.395.101zm-.41-3.553c.4.866.733 1.718.987 2.54 2.23-.627 3.599-1.586 3.599-2.54 0-.956-1.368-1.913-3.599-2.542a20.683 20.683 0 0 1-.987 2.542z"></path><path d="m6.419 8.695-.11-.39c-.826-2.908-.576-4.991.687-5.717 1.235-.715 3.222.13 5.303 2.265l.284.292-.284.291a19.718 19.718 0 0 0-2.02 2.474l-.113.162-.196.016a19.646 19.646 0 0 0-3.157.509l-.394.098zm1.582-5.529c-.224 0-.422.049-.589.145-.828.477-.974 2.138-.404 4.38.891-.197 1.79-.338 2.696-.417a21.058 21.058 0 0 1 1.713-2.123c-1.303-1.267-2.533-1.985-3.416-1.985zm7.997 16.984c-1.188 0-2.714-.896-4.298-2.522l-.283-.291.283-.29a19.827 19.827 0 0 0 2.021-2.477l.112-.16.194-.019a19.473 19.473 0 0 0 3.158-.507l.395-.1.111.391c.822 2.906.573 4.992-.688 5.718a1.978 1.978 0 0 1-1.005.257zm-3.415-2.82c1.302 1.267 2.533 1.986 3.415 1.986.225 0 .423-.05.589-.145.829-.478.976-2.142.404-4.384-.89.198-1.79.34-2.698.419a20.526 20.526 0 0 1-1.71 2.124z"></path><path d="m17.58 8.695-.395-.099a19.477 19.477 0 0 0-3.158-.509l-.194-.017-.112-.162A19.551 19.551 0 0 0 11.7 5.434l-.283-.291.283-.29c2.08-2.134 4.066-2.979 5.303-2.265 1.262.727 1.513 2.81.688 5.717l-.111.39zm-3.287-1.421c.954.085 1.858.228 2.698.417.571-2.242.425-3.903-.404-4.381-.824-.477-2.375.253-4.004 1.841.616.67 1.188 1.378 1.71 2.123zM8.001 20.15a1.983 1.983 0 0 1-1.005-.257c-1.263-.726-1.513-2.811-.688-5.718l.108-.391.395.1c.964.243 2.026.414 3.158.507l.194.019.113.16c.604.878 1.28 1.707 2.02 2.477l.284.29-.284.291c-1.583 1.627-3.109 2.522-4.295 2.522zm-.993-5.362c-.57 2.242-.424 3.906.404 4.384.825.47 2.371-.255 4.005-1.842a21.17 21.17 0 0 1-1.713-2.123 20.692 20.692 0 0 1-2.696-.419z"></path><path d="M12 15.313c-.687 0-1.392-.029-2.1-.088l-.196-.017-.113-.162a25.697 25.697 0 0 1-1.126-1.769 26.028 26.028 0 0 1-.971-1.859l-.084-.177.084-.179c.299-.632.622-1.252.971-1.858.347-.596.726-1.192 1.126-1.77l.113-.16.196-.018a25.148 25.148 0 0 1 4.198 0l.194.019.113.16a25.136 25.136 0 0 1 2.1 3.628l.083.179-.083.177a24.742 24.742 0 0 1-2.1 3.628l-.113.162-.194.017c-.706.057-1.412.087-2.098.087zm-1.834-.904c1.235.093 2.433.093 3.667 0a24.469 24.469 0 0 0 1.832-3.168 23.916 23.916 0 0 0-1.832-3.168 23.877 23.877 0 0 0-3.667 0 23.743 23.743 0 0 0-1.832 3.168 24.82 24.82 0 0 0 1.832 3.168z"></path>'
-    },
-    {
-      title: 'JavaScript Array Methods',
-      progress: 30,
-      time: '22 min',
-      status: 'in-progress',
-      path: 'javascript-array-methods',
-      icon: '<path d="M5.625 15c-.183 0-.366-.073-.506-.214A.721.721 0 0 1 4.905 14.28c0-.195.073-.383.214-.506a.721.721 0 0 1 .506-.214h3.334c.183 0 .366.073.506.214a.721.721 0 0 1 .214.506.721.721 0 0 1-.214.506.721.721 0 0 1-.506.214H5.625zm0-3.667c-.183 0-.366-.073-.506-.214A.721.721 0 0 1 4.905 10.613c0-.195.073-.383.214-.506a.721.721 0 0 1 .506-.214h6.666c.183 0 .366.073.506.214a.721.721 0 0 1 .214.506.721.721 0 0 1-.214.506.721.721 0 0 1-.506.214H5.625zm0-3.666c-.183 0-.366-.073-.506-.214A.721.721 0 0 1 4.905 6.947c0-.195.073-.383.214-.506a.721.721 0 0 1 .506-.214h10c.183 0 .366.073.506.214a.721.721 0 0 1 .214.506.721.721 0 0 1-.214.506.721.721 0 0 1-.506.214h-10z" /><path d="M20.447 7.447L16.22 3.22A.75.75 0 0 0 15.69 3H4.5A1.5 1.5 0 0 0 3 4.5v15A1.5 1.5 0 0 0 4.5 21h15a1.5 1.5 0 0 0 1.5-1.5V7.81a.75.75 0 0 0-.22-.53l-.333-.333zm-4.197-3.197l2.5 2.5H16.5a.25.25 0 0 1-.25-.25V4.25zm3 15.5a.25.25 0 0 1-.25.25h-15a.25.25 0 0 1-.25-.25v-15a.25.25 0 0 1 .25-.25h10.75v2.25c0 .69.56 1.25 1.25 1.25h2.25v11.75z" />'
-    },
-    {
-      title: 'C++ Programming Basics',
-      progress: 100,
-      time: '95 min',
-      status: 'completed',
-      path: 'pt01',
-      icon: '<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />'
-    }
-  ];
 }
 
 

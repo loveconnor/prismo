@@ -20,6 +20,7 @@ import { AuthHttpService } from './auth-http.service';
 // Unified interfaces
 export interface User {
   id: string;
+  cognito_user_id?: string; // Cognito user ID for backend queries
   email: string;
   username?: string; // from HEAD variant
   name?: string; // from other variant

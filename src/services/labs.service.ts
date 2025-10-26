@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, forkJoin, of } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, forkJoin, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 
@@ -53,6 +53,13 @@ export class LabsService {
   private apiUrl = environment.apiUrl || 'http://localhost:5000';
   private labsSubject = new BehaviorSubject<Lab[]>([]);
   public labs$ = this.labsSubject.asObservable();
+  
+  // Event emitter for when a new lab is created
+  private labCreatedSubject = new Subject<string>();
+  public labCreated$ = this.labCreatedSubject.asObservable();
+  
+  private readonly RECOMMENDATIONS_CACHE_KEY = 'ai_recommendations_cache';
+  private readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
   constructor(private http: HttpClient) {}
 
@@ -278,4 +285,109 @@ export class LabsService {
     
     return 'lucideBookOpen';
   }
+
+  /**
+   * Get AI-generated lab recommendations based on user's learning history
+   * Uses caching to avoid unnecessary API calls
+   */
+  getAIRecommendations(count: number = 3, forceRefresh: boolean = false): Observable<any> {
+    // Check cache first unless force refresh
+    if (!forceRefresh) {
+      const cached = this.getCachedRecommendations();
+      if (cached) {
+        console.log('[LabsService] Using cached AI recommendations');
+        return of({ success: true, recommendations: cached, source: 'cache' });
+      }
+    }
+    
+    console.log('[LabsService] Fetching fresh AI recommendations');
+    return this.http.post<any>(`${this.apiUrl}/learning/recommendations`, 
+      { count },
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      tap((response: any) => {
+        if (response && response.success && response.recommendations) {
+          this.cacheRecommendations(response.recommendations);
+        }
+      }),
+      catchError(error => {
+        console.error('Error fetching AI recommendations:', error);
+        return of({ success: false, recommendations: [], source: 'error' });
+      })
+    );
+  }
+  
+  /**
+   * Get cached recommendations if they exist and are not expired
+   */
+  private getCachedRecommendations(): any[] | null {
+    try {
+      const cached = localStorage.getItem(this.RECOMMENDATIONS_CACHE_KEY);
+      if (!cached) return null;
+      
+      const { recommendations, timestamp } = JSON.parse(cached);
+      const now = Date.now();
+      
+      // Check if cache is expired
+      if (now - timestamp > this.CACHE_DURATION) {
+        localStorage.removeItem(this.RECOMMENDATIONS_CACHE_KEY);
+        return null;
+      }
+      
+      return recommendations;
+    } catch (error) {
+      console.error('Error reading recommendations cache:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Cache recommendations in localStorage
+   */
+  private cacheRecommendations(recommendations: any[]): void {
+    try {
+      const cacheData = {
+        recommendations,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(this.RECOMMENDATIONS_CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {
+      console.error('Error caching recommendations:', error);
+    }
+  }
+  
+  /**
+   * Clear the recommendations cache (e.g., when a new lab is created)
+   */
+  clearRecommendationsCache(): void {
+    localStorage.removeItem(this.RECOMMENDATIONS_CACHE_KEY);
+  }
+  
+  /**
+   * Notify subscribers that a lab was created
+   */
+  notifyLabCreated(labId: string): void {
+    this.clearRecommendationsCache();
+    this.labCreatedSubject.next(labId);
+  }
+
+  /**
+   * Get a specific module by ID
+   */
+  getModuleById(moduleId: string): Observable<Lab | null> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/learning/modules/${moduleId}`, { headers }).pipe(
+      map(response => {
+        if (response.success && response.module) {
+          return this.convertModuleToLab(response.module);
+        }
+        return null;
+      }),
+      catchError(error => {
+        console.error('Error fetching module:', error);
+        return of(null);
+      })
+    );
+  }
 }
+

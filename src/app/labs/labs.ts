@@ -70,9 +70,36 @@ export class LabsComponent implements OnInit, OnDestroy {
           const inProgressLabs = progress.filter(p => p.status === 'in_progress').length;
           const completedLabs = progress.filter(p => p.status === 'completed').length;
           
-          // Calculate total time from progress
-          const totalSeconds = progress.reduce((sum, p) => sum + (p.time_spent || 0), 0);
+          // Calculate total time from progress with validation
+          // Filter out invalid/corrupted time values (e.g., timestamps instead of durations)
+          const MAX_REASONABLE_HOURS = 3; // Cap at 100 hours to catch any remaining data issues
+          let totalSeconds = 0;
+          
+          progress.forEach(p => {
+            const timeSpent = p.time_spent || 0;
+            // If time_spent looks like milliseconds (> 1000000), convert to seconds
+            // If it's a timestamp (> current unix timestamp in seconds), skip it
+            const currentTimestamp = Date.now() / 1000; // Current time in seconds
+            
+            if (timeSpent > currentTimestamp) {
+              // This looks like a corrupted timestamp, skip it
+              console.warn(`Skipping corrupted time_spent value: ${timeSpent} for session`);
+              return;
+            }
+            
+            let normalizedSeconds = timeSpent;
+            // If value looks like milliseconds, convert to seconds
+            if (timeSpent > 1000000) {
+              normalizedSeconds = timeSpent / 1000;
+            }
+            
+            totalSeconds += normalizedSeconds;
+          });
+          
           const totalHours = Math.round(totalSeconds / 3600);
+          
+          // Additional safety check - cap at reasonable maximum
+          const displayHours = Math.min(totalHours, MAX_REASONABLE_HOURS);
           
           // Calculate completion percentage
           const completionPercentage = totalLabs > 0 
@@ -100,7 +127,7 @@ export class LabsComponent implements OnInit, OnDestroy {
             },
             { 
               label: 'Total Time', 
-              value: totalHours > 0 ? `${totalHours}h` : '0h', 
+              value: displayHours > 0 ? `${displayHours}h` : '0h', 
               trend: 'Learning time', 
               iconType: 'arrow' 
             }
