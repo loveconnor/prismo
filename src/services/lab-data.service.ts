@@ -5,13 +5,34 @@ import { catchError, map } from 'rxjs/operators';
 import { ModuleToLabConverterService, ModuleData } from './module-to-lab-converter.service';
 
 // Types for lab configuration
+export type WidgetSize = 'small' | 'medium' | 'large' | 'full' | 'auto';
+export type WidgetVisibility = 'always' | 'after-submission' | 'on-complete' | 'conditional';
+
+export interface WidgetLayout {
+  size?: WidgetSize;
+  gridColumn?: string;  // e.g., '1 / 3', 'span 2'
+  gridRow?: string;     // e.g., '1 / 2', 'span 1'
+  order?: number;       // flexbox order
+  minHeight?: string;   // e.g., '400px', '50vh'
+  maxHeight?: string;
+}
+
+export interface WidgetCondition {
+  visibility?: WidgetVisibility;
+  dependsOn?: string[];  // IDs of widgets that must be completed
+  requiresSubmission?: boolean;
+  customCondition?: string;  // For future use
+}
+
 export interface LabWidget {
   id: string;
   type: string;
   config: any;
   metadata: any;
-  position?: { x: number; y: number };
-  size?: { width: number; height: number };
+  layout?: WidgetLayout;
+  condition?: WidgetCondition;
+  position?: { x: number; y: number };  // Legacy, kept for compatibility
+  size?: { width: number; height: number };  // Legacy, kept for compatibility
 }
 
 export interface LabSection {
@@ -19,7 +40,9 @@ export interface LabSection {
   title: string;
   description?: string;
   widgets: LabWidget[];
-  layout?: 'grid' | 'stack' | 'custom';
+  layout?: 'grid' | 'stack' | 'custom' | 'dynamic';
+  gridTemplateColumns?: string;  // e.g., 'repeat(3, 1fr)', '2fr 1fr'
+  gap?: string;  // e.g., '1rem', '24px'
 }
 
 export interface LabData {
@@ -293,10 +316,14 @@ export class LabDataService {
           id: 'intro',
           title: 'Welcome to C++',
           description: 'Get started with your first C++ program',
+          layout: 'stack',
           widgets: [
             {
               id: 'step-prompt-1',
               type: 'step-prompt',
+              layout: {
+                size: 'full'
+              },
               config: {
                 title: 'Welcome to C++ Printing!',
                 prompt: 'In this module, you\'ll learn how to create your first C++ program! It will print out text into the console.',
@@ -326,15 +353,22 @@ export class LabDataService {
           id: 'coding-exercise',
           title: 'Your First C++ Program',
           description: 'Write your first C++ program that prints to the console',
-          layout: 'grid',
+          layout: 'dynamic',
+          gridTemplateColumns: '2fr 1fr',
           widgets: [
             {
               id: 'code-editor-1',
               type: 'code-editor',
+              layout: {
+                size: 'large',
+                minHeight: '600px',
+                gridColumn: '1',
+                gridRow: '1 / span 2'
+              },
               config: {
                 title: 'Create Your First Program',
                 language: 'cpp',
-                initialCode: '// Create the int main function that prints out "Hello, human! How are you?"',
+                initialCode: '// Create the int main function that prints out "Hello, human! How are you?"\n\n',
                 placeholder: 'Write your code here...',
                 testCases: [
                   {
@@ -345,7 +379,7 @@ export class LabDataService {
                   }
                 ],
                 width: '100%',
-                height: '300px',
+                height: '100%',
                 enableSyntaxHighlighting: true,
                 enableAutoCompletion: true,
                 enableLineNumbers: true
@@ -372,25 +406,31 @@ export class LabDataService {
             {
               id: 'hint-panel-1',
               type: 'hint-panel',
+              layout: {
+                size: 'small',
+                gridColumn: '2',
+                gridRow: '1',
+                minHeight: '300px'
+              },
               config: {
-                title: 'Hints',
+                title: 'Need Help?',
                 hints: [
                   {
                     id: 'hint-1',
                     tier: 1,
-                    text: 'Remember to include <iostream> at the top.',
+                    text: 'Remember to include <iostream> at the top of your program.',
                     revealed: false
                   },
                   {
                     id: 'hint-2',
                     tier: 2,
-                    text: 'Put you code in the function in the main function',
+                    text: 'Put your code inside the main function: int main() { ... }',
                     revealed: false
                   },
                   {
                     id: 'hint-3',
                     tier: 3,
-                    text: 'Make sure to use cout at the start and endl at the end.',
+                    text: 'Use cout to print: cout << "Hello, human! How are you?" << endl;',
                     revealed: false
                   }
                 ],
@@ -413,6 +453,40 @@ export class LabDataService {
                 version: '1.0.0',
                 category: 'core'
               }
+            },
+            {
+              id: 'console-output-1',
+              type: 'console-output',
+              layout: {
+                size: 'medium',
+                gridColumn: '2',
+                gridRow: '2',
+                minHeight: '250px'
+              },
+              condition: {
+                visibility: 'after-submission',
+                dependsOn: ['code-editor-1'],
+                requiresSubmission: true
+              },
+              config: {
+                title: 'Console Output',
+                placeholder: 'Your code output will appear here after running...',
+                showLineNumbers: false
+              },
+              metadata: {
+                id: 'console-output-1',
+                title: 'Console Output',
+                description: 'Shows code execution results',
+                skills: ['debugging'],
+                difficulty: 1,
+                estimated_time: 60,
+                input_type: 'execution',
+                output_type: 'feedback',
+                dependencies: ['code-editor-1'],
+                adaptive_hooks: {},
+                version: '1.0.0',
+                category: 'coding'
+              }
             }
           ]
         },
@@ -420,11 +494,22 @@ export class LabDataService {
           id: 'reflection',
           title: 'Reflection & Feedback',
           description: 'Assess your learning progress',
-          layout: 'grid',
+          layout: 'dynamic',
+          gridTemplateColumns: '3fr 2fr',
           widgets: [
             {
               id: 'feedback-box-1',
               type: 'feedback-box',
+              layout: {
+                size: 'large',
+                gridColumn: '1',
+                minHeight: '200px'
+              },
+              condition: {
+                visibility: 'after-submission',
+                dependsOn: ['code-editor-1'],
+                requiresSubmission: true
+              },
               config: {
                 type: 'success',
                 title: 'Great Job!',
@@ -458,6 +543,16 @@ export class LabDataService {
             {
               id: 'confidence-meter-1',
               type: 'confidence-meter',
+              layout: {
+                size: 'medium',
+                gridColumn: '2',
+                minHeight: '200px'
+              },
+              condition: {
+                visibility: 'after-submission',
+                dependsOn: ['code-editor-1'],
+                requiresSubmission: true
+              },
               config: {
                 title: 'Rate Your Confidence',
                 description: 'How confident do you feel about C++ printing now?',

@@ -52,38 +52,35 @@ import { gsap } from 'gsap';
     })
   ],
   template: `
-    <app-card>
-      <app-card-header>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-              <ng-icon name="lucideTarget" class="w-5 h-5 text-muted-foreground"></ng-icon>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold text-foreground">{{ title }}</h3>
-              <p class="text-sm text-muted-foreground" *ngIf="description">{{ description }}</p>
-            </div>
-          </div>
-          
+    <div class="w-full bg-[#0e1318] border border-[#1f2937] rounded-xl overflow-hidden" #cardContent>
+      <!-- Header -->
+      <div class="flex items-start gap-3 p-6 border-b border-[#1f2937]">
+        <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-[#151a20] border border-[#1f2937] flex items-center justify-center mt-0.5">
+          <ng-icon name="lucideTarget" class="w-5 h-5 text-blue-400"></ng-icon>
         </div>
-      </app-card-header>
+        <div class="flex-1">
+          <h3 class="text-xl font-semibold text-[#e5e7eb]">{{ title }}</h3>
+          <p class="text-sm text-[#a9b1bb] mt-1" *ngIf="description">{{ description }}</p>
+        </div>
+      </div>
       
-      <app-card-content #cardContent>
+      <!-- Content -->
+      <div class="p-6">
         <div class="space-y-6">
           <!-- Interactive confidence selection -->
           <div class="space-y-4" *ngIf="!isCompleted">
             <!-- Scale labels -->
-            <div class="flex justify-between text-xs font-medium text-muted-foreground">
+            <div class="flex justify-between text-xs font-medium text-[#6b7280]">
               <span class="text-center flex-1" *ngFor="let label of scaleLabels; let i = index">
                 {{ label }}
               </span>
             </div>
             
             <!-- Combined slider and confidence display -->
-            <div class="space-y-3">
+            <div class="space-y-4">
               <input
                 type="range"
-                class="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
+                class="w-full h-2 bg-[#151a20] rounded-lg appearance-none cursor-pointer slider-thumb"
                 [min]="minValue"
                 [max]="maxValue"
                 [step]="step"
@@ -94,72 +91,54 @@ import { gsap } from 'gsap';
               />
               
               <!-- Current confidence display -->
-              <div class="flex items-center justify-center gap-2">
+              <div class="flex items-center justify-center gap-2 bg-[#151a20] border border-[#1f2937] rounded-lg p-4">
                 <ng-icon [name]="getConfidenceIcon()" class="w-5 h-5" [class]="getConfidenceIconColor()"></ng-icon>
-                <span class="text-lg font-bold" [class]="getConfidenceTextColor()">{{ confidenceLevel }}</span>
-                <span class="text-sm font-medium text-muted-foreground">{{ getConfidenceLabel(confidenceLevel) }}</span>
+                <span class="text-2xl font-bold" [class]="getConfidenceTextColor()">{{ confidenceLevel }}</span>
+                <span class="text-sm font-medium text-[#a9b1bb]">{{ getConfidenceLabel(confidenceLevel) }}</span>
               </div>
             </div>
           </div>
           
           <!-- Completed state display -->
-          <div class="space-y-4" *ngIf="isCompleted">
-            <app-alert variant="success" class="text-center">
-              <div class="flex items-center justify-center gap-2 mb-2">
-                <ng-icon name="lucideCircle" class="w-6 h-6"></ng-icon>
-                <h4 class="text-lg font-semibold">Confidence Submitted!</h4>
-              </div>
-              <p class="text-sm mb-3">Your response has been recorded</p>
-              
-              <div class="flex items-center justify-center gap-4 text-sm">
-                <div class="flex items-center gap-1">
-                  <ng-icon [name]="getConfidenceIcon()" class="w-4 h-4"></ng-icon>
-                  <span class="font-semibold">{{ confidenceLevel }} - {{ getConfidenceLabel(confidenceLevel) }}</span>
-                </div>
-                <div class="w-px h-4 bg-current opacity-30"></div>
-                <div class="flex items-center gap-1">
-                  <ng-icon name="lucideClock" class="w-4 h-4"></ng-icon>
-                  <span>{{ submittedAt | date:'short' }}</span>
-                </div>
-              </div>
-            </app-alert>
-          </div>
-          
-          <!-- Action buttons -->
-          <div class="flex gap-3 justify-center" *ngIf="showActions">
-            <app-button 
-              variant="default"
-              size="lg"
-              (click)="submitConfidence()"
-              [disabled]="!isValidConfidence || isCompleted"
-            >
-              <ng-icon name="lucideCheck" class="w-4 h-4 mr-2"></ng-icon>
-              {{ isCompleted ? 'Submitted' : 'Submit Confidence' }}
-            </app-button>
+          <div class="bg-[#151a20] border border-[#1f2937] rounded-lg p-6 text-center" *ngIf="isCompleted">
+            <div class="flex items-center justify-center gap-2 mb-3">
+              <ng-icon name="lucideCheck" class="w-6 h-6 text-green-500"></ng-icon>
+              <h4 class="text-lg font-semibold text-[#e5e7eb]">Confidence Submitted!</h4>
+            </div>
+            <p class="text-sm text-[#a9b1bb] mb-4">Your response has been recorded</p>
             
+            <div class="flex items-center justify-center gap-4 text-sm text-[#a9b1bb]">
+              <div class="flex items-center gap-1">
+                <ng-icon [name]="getConfidenceIcon()" class="w-4 h-4"></ng-icon>
+                <span class="font-semibold">{{ confidenceLevel }} - {{ getConfidenceLabel(confidenceLevel) }}</span>
+              </div>
+              <div class="w-px h-4 bg-[#1f2937]"></div>
+              <div class="flex items-center gap-1">
+                <ng-icon name="lucideClock" class="w-4 h-4"></ng-icon>
+                <span>{{ submittedAt | date:'short' }}</span>
+              </div>
+            </div>
           </div>
         </div>
-      </app-card-content>
+      </div>
       
-      <app-card-footer *ngIf="showFooter" #cardFooter>
-        <div class="flex items-center justify-between text-xs text-muted-foreground">
-          <div class="flex items-center gap-4">
-            <span class="font-mono flex items-center gap-1" *ngIf="submittedAt">
-              <ng-icon name="lucideClock" class="w-3 h-3"></ng-icon>
-              Submitted: {{ submittedAt | date:'short' }}
-            </span>
-            <span class="font-medium flex items-center gap-1" *ngIf="attempts > 0">
-              <ng-icon name="lucideTrendingUp" class="w-3 h-3"></ng-icon>
-              Attempts: {{ attempts }}
-            </span>
-          </div>
-          <div class="flex items-center gap-1" *ngIf="isCompleted">
-            <ng-icon name="lucideStar" class="w-3 h-3 text-yellow-500"></ng-icon>
-            <span class="font-semibold text-yellow-600 dark:text-yellow-400">Completed</span>
-          </div>
+      <!-- Footer -->
+      <div class="flex items-center justify-between p-6 border-t border-[#1f2937] bg-[#0b0f14]" *ngIf="showFooter || showActions">
+        <div class="text-xs text-[#6b7280]" *ngIf="showFooter && !isCompleted">
+          Rate your confidence level
         </div>
-      </app-card-footer>
-    </app-card>
+        
+        <div class="flex gap-3" [class.ml-auto]="!showFooter || isCompleted" *ngIf="showActions">
+          <app-button 
+            (click)="submitConfidence()"
+            [disabled]="!isValidConfidence || isCompleted"
+          >
+            <ng-icon name="lucideCheck" class="w-4 h-4 mr-2"></ng-icon>
+            {{ isCompleted ? 'Submitted' : 'Submit Confidence' }}
+          </app-button>
+        </div>
+      </div>
+    </div>
   `
 })
 export class ConfidenceMeterComponent extends WidgetBaseComponent implements AfterViewInit {
@@ -173,6 +152,7 @@ export class ConfidenceMeterComponent extends WidgetBaseComponent implements Aft
   @Input() scaleLabels: string[] = ['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely'];
   @Input() showActions: boolean = true;
   @Input() showFooter: boolean = true;
+  @Output() submit = new EventEmitter<number>();
 
   // Internal state
   confidenceLevel: number = 3;
@@ -211,6 +191,7 @@ export class ConfidenceMeterComponent extends WidgetBaseComponent implements Aft
     this.setDataValue('submitted_at', this.submittedAt);
     this.setDataValue('attempts', this.attempts);
 
+    this.submit.emit(this.confidenceLevel);
     this.emitStateChange('confidence_submitted', {
       level: this.confidenceLevel,
       label: this.getConfidenceLabel(this.confidenceLevel),

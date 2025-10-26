@@ -98,7 +98,7 @@
           {
             "id": "hint-2",
             "tier": 2,
-            "text": "Put you code in the function in the main function",
+            "text": "Put your code inside the main function",
             "revealed": false
           },
           {
@@ -134,12 +134,12 @@
       "props": {
         "type": "success",
         "title": "Great Job!",
-        "message": "You've successfully completed the JavaScript functions module!",
-        "explanation": "You've learned how to create functions, use parameters, and return values. These are fundamental concepts in programming that you'll use throughout your coding journey.",
+        "message": "You've successfully completed the C++ printing module!",
+        "explanation": "You've learned how to create your first C++ program and print output to the console. This is the foundation of C++ programming that you'll build upon throughout your coding journey.",
         "nextSteps": [
-          "Try creating functions with multiple parameters",
-          "Explore function expressions and arrow functions",
-          "Practice with more complex mathematical functions"
+          "Try printing different messages",
+          "Learn about variables in C++",
+          "Explore more complex C++ features"
         ],
         "showContinueButton": true,
         "autoComplete": true
@@ -167,7 +167,7 @@
       },
       "props": {
         "title": "Rate Your Confidence",
-        "description": "How confident do you feel about JavaScript functions now?",
+        "description": "How confident do you feel about C++ printing now?",
         "scaleLabels": ["Not confident", "Slightly confident", "Moderately confident", "Very confident", "Extremely confident"],
         "autoSubmit": true
       },
