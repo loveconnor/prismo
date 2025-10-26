@@ -1242,19 +1242,52 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     // Update multiple choice options if applicable
     if (this.currentStepWidgetType === 'multiple-choice') {
       const options = widgetForStep?.config?.options || widgetForStep?.props?.options || [];
-      this.currentStepMultipleChoiceOptions = Array.isArray(options) ? options : [];
+      // Convert to ChoiceOption[] format
+      if (Array.isArray(options)) {
+        this.currentStepMultipleChoiceOptions = options.map((opt: any, index: number) => {
+          // If already in ChoiceOption format
+          if (typeof opt === 'object' && opt.id && opt.label) {
+            return opt as ChoiceOption;
+          }
+          // If it's a string, convert it
+          if (typeof opt === 'string') {
+            return {
+              id: `option-${index}`,
+              label: opt,
+              value: opt
+            } as ChoiceOption;
+          }
+          // Fallback
+          return {
+            id: opt.id || `option-${index}`,
+            label: opt.text || opt.label || String(opt),
+            value: opt.value || opt.id || String(opt)
+          } as ChoiceOption;
+        });
+      } else {
+        this.currentStepMultipleChoiceOptions = [];
+      }
     } else {
       this.currentStepMultipleChoiceOptions = [];
     }
     
     // Update algorithm simulator settings if applicable
     if (this.currentStepWidgetType === 'algorithm-simulator') {
-      this.algorithmSimulatorDefaultAlgorithm = widgetForStep?.config?.defaultAlgorithm || 
-                                                 widgetForStep?.props?.defaultAlgorithm || 
-                                                 'bubble';
-      this.algorithmSimulatorEnabledAlgorithms = widgetForStep?.config?.enabledAlgorithms || 
-                                                   widgetForStep?.props?.enabledAlgorithms || 
-                                                   ['bubble', 'quick', 'recursion'];
+      const defaultAlg = widgetForStep?.config?.defaultAlgorithm || 
+                        widgetForStep?.props?.defaultAlgorithm || 
+                        'bubble';
+      // Validate it's a valid Algorithm type
+      this.algorithmSimulatorDefaultAlgorithm = (['bubble', 'quick', 'recursion'].includes(defaultAlg)) 
+        ? defaultAlg as Algorithm 
+        : 'bubble';
+      
+      const enabledAlgs = widgetForStep?.config?.enabledAlgorithms || 
+                         widgetForStep?.props?.enabledAlgorithms || 
+                         ['bubble', 'quick', 'recursion'];
+      // Filter to only valid Algorithm types
+      this.algorithmSimulatorEnabledAlgorithms = (Array.isArray(enabledAlgs) 
+        ? enabledAlgs.filter((alg: string) => ['bubble', 'quick', 'recursion'].includes(alg))
+        : ['bubble', 'quick', 'recursion']) as Algorithm[];
     }
     
     console.log(`Current widget for step ${this.currentStep} (widgetPosition: ${widgetPosition}):`, this.codeEditorWidget);
