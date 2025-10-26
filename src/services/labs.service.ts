@@ -200,6 +200,30 @@ export class LabsService {
   }
 
   /**
+   * Delete a lab or module
+   */
+  deleteLab(labId: string, source: 'lab' | 'module' = 'lab'): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const endpoint = source === 'module' 
+      ? `${this.apiUrl}/learning/modules/${labId}`
+      : `${this.apiUrl}/api/labs/${labId}`;
+    
+    return this.http.delete(endpoint, { headers }).pipe(
+      tap(() => {
+        // Remove the deleted lab from the local cache
+        const currentLabs = this.labsSubject.value;
+        const updatedLabs = currentLabs.filter(lab => lab.id !== labId);
+        this.labsSubject.next(updatedLabs);
+        console.log(`Deleted lab ${labId} from ${source}`);
+      }),
+      catchError(error => {
+        console.error('Error deleting lab:', error);
+        throw error;
+      })
+    );
+  }
+
+  /**
    * Get difficulty label
    */
   getDifficultyLabel(difficulty: number): string {
