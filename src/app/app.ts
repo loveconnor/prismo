@@ -89,7 +89,9 @@ export class App {
   isAuthPage(): boolean {
     const authRoutes = ['/login', '/register', '/forgot-password', '/verify'];
     const url = this.currentUrl();
-    return authRoutes.some(route => url.startsWith(route));
+    const isAuth = authRoutes.some(route => url.startsWith(route));
+    const isLab = url.startsWith('/labs');
+    return isAuth || isLab; // hide global sidebar on lab pages
   }
 
   toggleTheme() {

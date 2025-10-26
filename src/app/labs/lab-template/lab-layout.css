@@ -1,0 +1,230 @@
+/* Dynamic Lab Layout System */
+
+/* Base widget container */
+.lab-widgets-container {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Layout modes */
+.lab-widgets-container.layout-dynamic {
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: minmax(200px, auto);
+}
+
+.lab-widgets-container.layout-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.lab-widgets-container.layout-stack {
+  grid-template-columns: 1fr;
+}
+
+/* Widget size classes */
+.widget-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  overflow: hidden;
+}
+
+/* Ensure widgets inside wrapper fill properly */
+.widget-wrapper > :first-child {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Small widgets - 1/4 of the grid or minimum space */
+.widget-wrapper.size-small {
+  grid-column: span 3;
+  min-height: 200px;
+}
+
+/* Medium widgets - 1/3 to 1/2 of the grid */
+.widget-wrapper.size-medium {
+  grid-column: span 4;
+  min-height: 250px;
+}
+
+/* Large widgets - 2/3 of the grid */
+.widget-wrapper.size-large {
+  grid-column: span 8;
+  min-height: 400px;
+}
+
+/* Full-width widgets - entire row */
+.widget-wrapper.size-full {
+  grid-column: 1 / -1;
+  min-height: 300px;
+}
+
+/* Auto sizing - let content determine */
+.widget-wrapper.size-auto {
+  grid-column: span 6;
+  min-height: auto;
+}
+
+/* Special sizing for code editors in coding labs */
+.widget-wrapper.widget-type-code-editor {
+  min-height: 500px;
+}
+
+.widget-wrapper.widget-type-code-editor.size-large,
+.widget-wrapper.widget-type-code-editor.size-full {
+  min-height: 600px;
+}
+
+/* Hint panels and feedback - smaller by default */
+.widget-wrapper.widget-type-hint-panel,
+.widget-wrapper.widget-type-feedback-box {
+  min-height: 150px;
+}
+
+/* Console output - medium height */
+.widget-wrapper.widget-type-console-output,
+.widget-wrapper.widget-type-test-feedback {
+  min-height: 300px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .lab-widgets-container.layout-dynamic {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  .widget-wrapper.size-small {
+    grid-column: span 4;
+  }
+
+  .widget-wrapper.size-medium {
+    grid-column: span 4;
+  }
+
+  .widget-wrapper.size-large {
+    grid-column: span 8;
+  }
+
+  .widget-wrapper.size-auto {
+    grid-column: span 4;
+  }
+}
+
+@media (max-width: 768px) {
+  .lab-widgets-container.layout-dynamic,
+  .lab-widgets-container.layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .widget-wrapper {
+    grid-column: 1 / -1 !important;
+    min-height: 200px;
+  }
+
+  .widget-wrapper.widget-type-code-editor {
+    min-height: 400px;
+  }
+}
+
+/* Animation for conditional widgets appearing */
+.widget-wrapper.conditional-appear {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hidden state for conditional widgets */
+.widget-wrapper.widget-hidden {
+  display: none;
+}
+
+/* Grid gap variations */
+.lab-widgets-container.gap-sm {
+  gap: 0.5rem;
+}
+
+.lab-widgets-container.gap-md {
+  gap: 1rem;
+}
+
+.lab-widgets-container.gap-lg {
+  gap: 1.5rem;
+}
+
+/* Custom grid areas for specific layouts */
+.widget-wrapper[style*="grid-column"] {
+  /* Custom grid positions override defaults */
+}
+
+/* Professional panel styling for widgets */
+.widget-wrapper app-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.widget-wrapper app-card app-card-content {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Smooth scrolling for overflow content */
+.widget-wrapper * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+}
+
+.widget-wrapper *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.widget-wrapper *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.widget-wrapper *::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 3px;
+}
+
+.widget-wrapper *::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(155, 155, 155, 0.7);
+}
+
+/* Loading state for conditional widgets */
+.widget-wrapper.widget-loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Highlight for recently revealed widgets */
+.widget-wrapper.widget-newly-visible {
+  animation: highlight 1s ease-out;
+}
+
+@keyframes highlight {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+

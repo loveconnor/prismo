@@ -1,0 +1,12 @@
+/* Ensure support panel fills full height and stays above editor only within its own area */
+:host {
+  display: flex;
+  height: 100%;
+  position: relative;
+  z-index: 20; /* above editor's z-10 but confined to its column */
+}
+
+/* Override any height constraints */
+aside {
+  height: 100%;
+}

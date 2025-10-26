@@ -1,0 +1,22 @@
+/* Ensure editor panel fills full height and is constrained */
+:host {
+  display: flex;
+  flex: 1 1 0%;
+  min-width: 0;
+  max-width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 0; /* base stacking context so children z-10 are above neighbors */
+}
+
+/* Ensure main element fills height and is constrained */
+main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}

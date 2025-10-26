@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WidgetBaseComponent } from '../../base/widget-base';
@@ -29,36 +29,51 @@ export type FeedbackType = 'success' | 'error' | 'warning' | 'info';
     })
   ],
   template: `
-    <app-alert 
-      [variant]="getAlertVariant()" 
-      [className]="'w-full'"
-      #feedbackAlert
-    >
-      <ng-icon [name]="getFeedbackIcon()" class="w-5 h-5"></ng-icon>
-      <div class="space-y-3">
-        <h3 class="text-lg font-semibold">{{ title }}</h3>
-        
-        <div class="text-base leading-relaxed" [innerHTML]="formattedMessage"></div>
-        
-        <div *ngIf="explanation" class="bg-background/50 rounded-lg p-3">
-          <h4 class="text-sm font-semibold mb-2">Explanation:</h4>
-          <div class="text-sm leading-relaxed" [innerHTML]="formattedExplanation"></div>
+    <div class="w-full bg-[#0e1318] border border-[#1f2937] rounded-xl overflow-hidden" #feedbackAlert>
+      <!-- Header -->
+      <div class="flex items-start gap-3 p-6 border-b border-[#1f2937]">
+        <div class="flex-shrink-0 mt-0.5" [ngClass]="{
+          'text-green-500': type === 'success',
+          'text-red-500': type === 'error',
+          'text-yellow-500': type === 'warning',
+          'text-blue-500': type === 'info'
+        }">
+          <ng-icon [name]="getFeedbackIcon()" class="w-6 h-6"></ng-icon>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-xl font-semibold text-[#e5e7eb]">{{ title }}</h3>
+          <p class="text-[#a9b1bb] mt-1.5 leading-relaxed" [innerHTML]="formattedMessage"></p>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="p-6 space-y-4">
+        <div *ngIf="explanation" class="bg-[#151a20] border border-[#1f2937] rounded-lg p-4">
+          <h4 class="text-sm font-semibold text-[#e5e7eb] mb-2">Explanation:</h4>
+          <div class="text-sm text-[#a9b1bb] leading-relaxed" [innerHTML]="formattedExplanation"></div>
         </div>
         
-        <div *ngIf="nextSteps && nextSteps.length > 0" class="bg-background/50 rounded-lg p-3">
-          <h4 class="text-sm font-semibold mb-2">Next Steps:</h4>
-          <ul class="space-y-1">
-            <li *ngFor="let step of nextSteps" class="text-sm leading-relaxed">
-              {{ step }}
+        <div *ngIf="nextSteps && nextSteps.length > 0" class="bg-[#151a20] border border-[#1f2937] rounded-lg p-4">
+          <h4 class="text-sm font-semibold text-[#e5e7eb] mb-3">Next Steps:</h4>
+          <ul class="space-y-2">
+            <li *ngFor="let step of nextSteps" class="flex items-start gap-2 text-sm text-[#a9b1bb]">
+              <span class="text-blue-400 mt-0.5">→</span>
+              <span class="flex-1">{{ step }}</span>
             </li>
           </ul>
         </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="flex items-center justify-between p-6 border-t border-[#1f2937] bg-[#0b0f14]">
+        <div class="text-xs text-[#6b7280]" *ngIf="showMeta">
+          {{ timestamp | date:'short' }}
+        </div>
         
-        <div class="flex gap-2 pt-2" *ngIf="showActions">
+        <div class="flex gap-2" *ngIf="showActions">
           <app-button 
             *ngIf="showRetryButton"
             variant="destructive"
-            size="sm"
             (click)="onRetry()"
           >
             Try Again
@@ -66,8 +81,6 @@ export type FeedbackType = 'success' | 'error' | 'warning' | 'info';
           
           <app-button 
             *ngIf="showContinueButton"
-            variant="default"
-            size="sm"
             (click)="onContinue()"
           >
             Continue
@@ -76,23 +89,13 @@ export type FeedbackType = 'success' | 'error' | 'warning' | 'info';
           <app-button 
             *ngIf="showAcknowledgeButton"
             variant="outline"
-            size="sm"
             (click)="onAcknowledge()"
           >
             Got it
           </app-button>
         </div>
-        
-        <div class="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t" *ngIf="showMeta">
-          <span class="font-mono">
-            {{ timestamp | date:'short' }}
-          </span>
-          <span class="font-medium" *ngIf="attemptNumber > 0">
-            Attempt {{ attemptNumber }}
-          </span>
-        </div>
       </div>
-    </app-alert>
+    </div>
   `
 })
 export class FeedbackBoxComponent extends WidgetBaseComponent implements AfterViewInit {
@@ -108,6 +111,9 @@ export class FeedbackBoxComponent extends WidgetBaseComponent implements AfterVi
   @Input() showAcknowledgeButton: boolean = false;
   @Input() showMeta: boolean = true;
   @Input() autoComplete: boolean = false;
+  @Output() continueClicked = new EventEmitter<void>();
+  @Output() acknowledgeClicked = new EventEmitter<void>();
+  @Output() retryClicked = new EventEmitter<void>();
 
   public timestamp = new Date();
   public attemptNumber = 0;
@@ -125,16 +131,19 @@ export class FeedbackBoxComponent extends WidgetBaseComponent implements AfterVi
     this.setDataValue('retry_clicked', true);
     this.setDataValue('retry_time', new Date());
     this.emitStateChange('retry', { timestamp: new Date() });
+    this.retryClicked.emit();
   }
 
   onContinue(): void {
     this.setDataValue('continue_clicked', true);
     this.setDataValue('continue_time', new Date());
     this.acknowledgeAndComplete();
+    this.continueClicked.emit();
   }
 
   onAcknowledge(): void {
     this.acknowledgeAndComplete();
+    this.acknowledgeClicked.emit();
   }
 
   getAlertVariant(): 'default' | 'destructive' | 'warning' | 'success' {

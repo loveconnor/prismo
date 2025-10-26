@@ -1,0 +1,12 @@
+/* Ensure steps panel fills full height and sits above editor only within its column */
+:host {
+  display: flex;
+  height: 100%;
+  position: relative;
+  z-index: 20;
+}
+
+/* Override any height constraints */
+aside {
+  height: 100%;
+}
