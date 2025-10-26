@@ -16,13 +16,18 @@
       </span>
     </div>
 
-    <div class="flex items-center">
-      <app-button (click)="runCode()">
-        <ng-icon name="lucidePlay" class="h-3.5 w-3.5 mr-2"></ng-icon>
+    <div class="flex items-center gap-2">
+      <app-button 
+        (click)="runCode()"
+        className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-[#2563eb] font-medium shadow-sm">
+        <ng-icon name="lucidePlay" class="h-3.5 w-3.5 mr-1.5"></ng-icon>
         <span>Run Code</span>
-        <span class="text-xs opacity-70 ml-2">Ctrl+⏎</span>
+        <span class="ml-2.5 opacity-60 text-xs font-normal border-l border-white/20 pl-2.5">Ctrl+⏎</span>
       </app-button>
-      <app-button class="ml-2" *ngIf="passed && currentStep < totalSteps" (click)="continueStep()">
+      <app-button 
+        *ngIf="passed && currentStep < totalSteps" 
+        (click)="continueStep()"
+        className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
         Continue to Step {{ currentStep + 1 }}
       </app-button>
     </div>
