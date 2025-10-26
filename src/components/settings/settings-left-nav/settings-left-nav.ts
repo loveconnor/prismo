@@ -82,7 +82,7 @@ export class SettingsLeftNavComponent {
     const isDark = this.themeService.isDarkMode();
 
     return cn(
-      'w-full justify-start px-3 py-2 text-sm gap-2 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6]/40',
+      'w-full justify-start px-3 py-2 text-sm gap-2 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#BC78F9]/40',
       isActive
         ? isDark
           ? 'bg-[#1f2937] text-[#e5e7eb]'
@@ -99,7 +99,7 @@ export class SettingsLeftNavComponent {
     return cn(
       'h-4 w-4 shrink-0',
       isActive
-        ? 'text-[#3b82f6]'
+        ? 'text-[#BC78F9]'
         : isDark
           ? 'text-[#94a3b8]'
           : 'text-[#94a3b8]'

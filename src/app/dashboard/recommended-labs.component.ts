@@ -47,10 +47,10 @@ type Lab = {
       <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch auto-rows-fr">
         <ng-container *ngFor="let lab of labs; let i = index">
           <app-card
-            className="group relative grid grid-rows-[auto_1fr_auto] h-full shadow-none hover:shadow-sm transition-colors hover:bg-white/5 focus-within:ring-1 focus-within:ring-[#60a5fa]/30"
+            className="group relative grid grid-rows-[auto_1fr_auto] h-full shadow-none hover:shadow-sm transition-colors hover:bg-white/5 focus-within:ring-1 focus-within:ring-[#bc78f9]/30"
           >
             <app-card-header className="pb-0">
-              <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#60a5fa]">
+              <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#E978FA15] text-[#bc78f9]">
                 <ng-icon [name]="getLabIcon(lab.title)" class="h-6 w-6" aria-hidden="true"></ng-icon>
               </div>
             </app-card-header>

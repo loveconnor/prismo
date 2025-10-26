@@ -15,9 +15,9 @@
 
     <!-- Algorithm Selection -->
     <div class="flex gap-2 mb-4">
-      <button type="button" (click)="setAlgorithm('bubble')" [class]="algorithm() === 'bubble' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Bubble Sort</button>
-      <button type="button" (click)="setAlgorithm('quick')" [class]="algorithm() === 'quick' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Quick Sort</button>
-      <button type="button" (click)="setAlgorithm('recursion')" [class]="algorithm() === 'recursion' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Recursion Tree</button>
+      <button *ngIf="enabledAlgorithms.includes('bubble')" type="button" (click)="setAlgorithm('bubble')" [class]="algorithm() === 'bubble' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Bubble Sort</button>
+      <button *ngIf="enabledAlgorithms.includes('quick')" type="button" (click)="setAlgorithm('quick')" [class]="algorithm() === 'quick' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Quick Sort</button>
+      <button *ngIf="enabledAlgorithms.includes('recursion')" type="button" (click)="setAlgorithm('recursion')" [class]="algorithm() === 'recursion' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Recursion Tree</button>
     </div>
 
     <!-- Controls -->
@@ -39,7 +39,7 @@
     <div *ngIf="algorithm() === 'bubble'" class="space-y-4">
       <div class="flex items-end justify-center gap-1 h-64">
         <div *ngFor="let value of bubbleArray(); let idx = index"
-             [class]="(bubbleSorted().includes(idx) ? 'flex-1 rounded-t-lg bg-green-500 transition-colors' : (bubbleComparing().includes(idx) ? 'flex-1 rounded-t-lg bg-red-500 transition-colors' : 'flex-1 rounded-t-lg bg-blue-500 transition-colors'))"
+             [class]="(bubbleSorted().includes(idx) ? 'flex-1 rounded-t-lg bg-green-500 transition-colors' : (bubbleComparing().includes(idx) ? 'flex-1 rounded-t-lg bg-red-500 transition-colors' : 'flex-1 rounded-t-lg bg-primary-strong transition-colors'))"
              [style.height.%]="(value / bubbleMax) * 100">
           <span class="text-xs text-white text-center block mt-1">{{ value }}</span>
         </div>
@@ -57,7 +57,7 @@
     <div *ngIf="algorithm() === 'quick'" class="space-y-4">
       <div class="flex items-end justify-center gap-1 h-64">
         <div *ngFor="let value of quickCurrent.array; let idx = index"
-             [class]="(idx === quickCurrent.pivot ? 'flex-1 rounded-t-lg bg-purple-500 transition-colors' : (idx === quickCurrent.left ? 'flex-1 rounded-t-lg bg-red-500 transition-colors' : (idx === quickCurrent.right ? 'flex-1 rounded-t-lg bg-orange-500 transition-colors' : 'flex-1 rounded-t-lg bg-blue-500 transition-colors')))"
+             [class]="(idx === quickCurrent.pivot ? 'flex-1 rounded-t-lg bg-purple-500 transition-colors' : (idx === quickCurrent.left ? 'flex-1 rounded-t-lg bg-red-500 transition-colors' : (idx === quickCurrent.right ? 'flex-1 rounded-t-lg bg-orange-500 transition-colors' : 'flex-1 rounded-t-lg bg-primary-strong transition-colors')))"
              [style.height.%]="(value / quickMax) * 100">
           <span class="text-xs text-white text-center block mt-1">{{ value }}</span>
         </div>
@@ -84,7 +84,7 @@
             <line [attr.x1]="e.x1" [attr.y1]="e.y1" [attr.x2]="e.x2" [attr.y2]="e.y2" [attr.stroke]="'var(--border)'" stroke-width="2" />
           </g>
           <g *ngFor="let n of nodes()">
-            <circle [attr.cx]="n.x" [attr.cy]="n.y" r="20" [attr.fill]="activePath() === n.path ? '#EF4444' : '#3B82F6'" stroke="#1E40AF" stroke-width="2" />
+            <circle [attr.cx]="n.x" [attr.cy]="n.y" r="20" [attr.fill]="activePath() === n.path ? '#EF4444' : '#BC78F9'" stroke="#1E40AF" stroke-width="2" />
             <text [attr.x]="n.x" [attr.y]="n.y" text-anchor="middle" dy=".3em" fill="white" font-size="14" font-weight="bold">{{ n.value }}</text>
           </g>
         </svg>

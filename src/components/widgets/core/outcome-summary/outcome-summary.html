@@ -4,7 +4,7 @@
   [ngClass]="'mx-auto w-full max-w-4xl rounded-2xl border border-[#1f2937] bg-[#0e1318] shadow-sm'"
 >
   <!-- Celebration Header -->
-  <div *ngIf="variant === 'celebration'" class="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-[#60a5fa] to-[#3b82f6] p-6 text-center">
+  <div *ngIf="variant === 'celebration'" class="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-[#bc78f9] to-[#BC78F9] p-6 text-center">
     <div class="absolute inset-0 bg-black/20"></div>
     <div class="relative z-10">
       <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
@@ -28,7 +28,7 @@
 
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div *ngIf="completionPercent !== undefined" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
-          <div class="text-2xl font-bold text-[#60a5fa]">{{ completionPercent }}%</div>
+          <div class="text-2xl font-bold text-[#bc78f9]">{{ completionPercent }}%</div>
           <div class="text-sm text-[#a9b1bb]">Completion</div>
         </div>
 
@@ -69,7 +69,7 @@
             </div>
           </div>
           <div class="h-2 bg-[#1f2937] rounded-full overflow-hidden">
-            <div class="h-full bg-[#60a5fa] transition-all duration-500" [style.width.%]="(outcome.currentLevel / 5) * 100"></div>
+            <div class="h-full bg-[#bc78f9] transition-all duration-500" [style.width.%]="(outcome.currentLevel / 5) * 100"></div>
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@
             <p class="text-sm text-[#a9b1bb] mb-3">{{ suggestion.reason }}</p>
             <div class="flex items-center justify-between">
               <span class="text-xs text-[#6b7280]">{{ suggestion.estimatedMinutes }} min</span>
-              <button (click)="handleNextLabSelect(suggestion.id)" class="inline-flex items-center gap-1 rounded-lg bg-[#60a5fa] px-3 py-1.5 text-sm text-white hover:bg-[#3b82f6] transition-colors">
+              <button (click)="handleNextLabSelect(suggestion.id)" class="inline-flex items-center gap-1 rounded-lg bg-[#bc78f9] px-3 py-1.5 text-sm text-white hover:bg-[#BC78F9] transition-colors">
                 Start Lab
                 <ng-icon name="lucideChevronRight" class="h-4 w-4"></ng-icon>
               </button>
@@ -142,7 +142,7 @@
       <div *ngIf="recommendedReview.length > 0">
         <h4 class="mb-3 text-sm font-medium text-[#a9b1bb] uppercase tracking-wide">Recommended Review</h4>
         <div class="flex flex-wrap gap-2">
-          <button *ngFor="let topic of recommendedReview" (click)="handleReviewSelect(topic)" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:border-[#60a5fa] transition-colors">
+          <button *ngFor="let topic of recommendedReview" (click)="handleReviewSelect(topic)" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] px-3 py-2 text-sm text-[#a9b1bb] hover:bg-[#0e1318] hover:border-[#bc78f9] transition-colors">
             {{ topic }}
           </button>
         </div>

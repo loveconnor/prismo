@@ -256,7 +256,7 @@ export class RefactorPromptComponent extends WidgetBaseComponent implements OnIn
     const isActive = this.viewMode() === mode;
     return cn(
       'px-3 py-1.5 text-sm transition-colors',
-      isActive ? 'bg-[#60a5fa] text-white' : 'text-[#a9b1bb] hover:bg-[#0e1318]'
+      isActive ? 'bg-[#bc78f9] text-white' : 'text-[#a9b1bb] hover:bg-[#0e1318]'
     );
   }
 
@@ -264,7 +264,7 @@ export class RefactorPromptComponent extends WidgetBaseComponent implements OnIn
     const selected = this.selectedSuggestions().has(id);
     return cn(
       'rounded-lg border p-4 transition-colors',
-      selected ? 'border-[#60a5fa] bg-[#60a5fa]/5' : 'border-[#1f2937] bg-[#0b0f14] hover:bg-[#0e1318]'
+      selected ? 'border-[#bc78f9] bg-[#bc78f9]/5' : 'border-[#1f2937] bg-[#0b0f14] hover:bg-[#0e1318]'
     );
   }
 

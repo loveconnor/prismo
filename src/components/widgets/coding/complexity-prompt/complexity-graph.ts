@@ -38,7 +38,7 @@ export class ComplexityGraphComponent {
     const selected = this.selectedComplexity === c;
     return [
       base,
-      selected ? 'border-[#60a5fa] bg-[#60a5fa]/10 text-[#e5e7eb]' : 'border-[#1f2937] bg-[#0a0e12] text-[#a9b1bb] hover:bg-[#0e1318]'
+      selected ? 'border-[#bc78f9] bg-[#bc78f9]/10 text-[#e5e7eb]' : 'border-[#1f2937] bg-[#0a0e12] text-[#a9b1bb] hover:bg-[#0e1318]'
     ].join(' ');
   }
 

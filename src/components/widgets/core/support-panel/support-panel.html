@@ -4,16 +4,17 @@
 >
   <app-tabs [defaultValue]="defaultTabValue" [value]="value" (valueChange)="onValueChange($event)" className="flex flex-1 flex-col">
   <app-tabs-list className="flex h-auto w-full items-center gap-2 rounded-none border-b border-[#1f2937] bg-transparent p-0">
-      <app-tabs-trigger *ngIf="hasHints" value="hints" className="rounded-none border-none bg-transparent px-3 py-2 text-sm font-medium text-[#a9b1bb] focus-visible:ring-0 outline-none hover:text-[#e5e7eb] data-[state=active]:text-[#e5e7eb] data-[state=active]:shadow-[inset_0_-2px_0_0_#3b82f6]">
+      <app-tabs-trigger *ngIf="hasHints" value="hints" className="rounded-none border-none bg-transparent px-3 py-2 text-sm font-medium text-[#a9b1bb] focus-visible:ring-0 outline-none hover:text-[#e5e7eb] data-[state=active]:text-[#e5e7eb] data-[state=active]:shadow-[inset_0_-2px_0_0_#BC78F9]">
         Hints
       </app-tabs-trigger>
-      <app-tabs-trigger *ngIf="hasFeedback" value="feedback" className="rounded-none border-none bg-transparent px-3 py-2 text-sm font-medium text-[#a9b1bb] focus-visible:ring-0 outline-none hover:text-[#e5e7eb] data-[state=active]:text-[#e5e7eb] data-[state=active]:shadow-[inset_0_-2px_0_0_#3b82f6]">
+      <app-tabs-trigger *ngIf="hasFeedback" value="feedback" className="rounded-none border-none bg-transparent px-3 py-2 text-sm font-medium text-[#a9b1bb] focus-visible:ring-0 outline-none hover:text-[#e5e7eb] data-[state=active]:text-[#e5e7eb] data-[state=active]:shadow-[inset_0_-2px_0_0_#BC78F9]">
         Feedback
       </app-tabs-trigger>
     </app-tabs-list>
 
     <app-tabs-content *ngIf="hasHints" value="hints" className="flex-1 overflow-y-auto p-4">
       <app-hint-panel 
+        class="border-[#BC78F9]/30 bg-[#BC78F9]/15"
         *ngFor="let hintWidget of hints; trackBy: trackByHintWidget"
         [metadata]="hintWidget.metadata || { id: hintWidget.id, type: 'hint-panel' }"
         [config]="hintWidget.config"

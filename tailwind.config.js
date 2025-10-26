@@ -34,7 +34,7 @@ module.exports = {
           DEFAULT: 'var(--color-primary)',
           foreground: 'var(--color-primary-foreground)',
           light: '#1d4ed8',
-          dark: '#3b82f6',
+          dark: '#BC78F9',
         },
         secondary: {
           DEFAULT: 'var(--color-secondary)',
@@ -72,8 +72,8 @@ module.exports = {
         },
         ring: {
           DEFAULT: 'var(--color-ring)',
-          light: '#3b82f6',
-          dark: '#3b82f6',
+          light: '#BC78F9',
+          dark: '#BC78F9',
         },
         
         // Custom sandbox variables with light/dark variants
@@ -102,8 +102,8 @@ module.exports = {
         primary: {
           custom: {
             DEFAULT: 'var(--primary-custom)',
-            light: '#3b82f6',
-            dark: '#3b82f6',
+            light: '#BC78F9',
+            dark: '#BC78F9',
             strong: {
               DEFAULT: 'var(--primary-strong)',
               light: '#2563eb',
@@ -114,8 +114,8 @@ module.exports = {
         accent: {
           custom: {
             DEFAULT: 'var(--accent-custom)',
-            light: '#60a5fa',
-            dark: '#60a5fa',
+            light: '#bc78f9',
+            dark: '#bc78f9',
           },
         },
         

@@ -11,9 +11,9 @@
   <div class="flex items-center justify-between border-b border-[#1f2937] p-4">
     <div class="flex items-center gap-3">
       <div class="flex items-center gap-2">
-        <div *ngIf="isRunning; else idleIcon" class="h-4 w-4 animate-spin rounded-full border-2 border-[#60a5fa] border-t-transparent"></div>
+        <div *ngIf="isRunning; else idleIcon" class="h-4 w-4 animate-spin rounded-full border-2 border-[#bc78f9] border-t-transparent"></div>
         <ng-template #idleIcon>
-          <ng-icon name="lucideCode" class="h-5 w-5 text-[#60a5fa]"></ng-icon>
+          <ng-icon name="lucideCode" class="h-5 w-5 text-[#bc78f9]"></ng-icon>
         </ng-template>
         <h3 class="text-lg font-semibold text-[#e5e7eb]">{{ title }}</h3>
       </div>
@@ -45,7 +45,7 @@
       <div class="text-xs text-[#a9b1bb]">Failed</div>
     </div>
     <div class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 text-center">
-      <div class="text-xl font-bold text-[#60a5fa]">{{ (getOverallStats().passRate) | number:'1.0-0' }}%</div>
+      <div class="text-xl font-bold text-[#bc78f9]">{{ (getOverallStats().passRate) | number:'1.0-0' }}%</div>
       <div class="text-xs text-[#a9b1bb]">Pass Rate</div>
     </div>
   </div>

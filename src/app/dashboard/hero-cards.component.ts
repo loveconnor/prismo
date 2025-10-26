@@ -31,7 +31,7 @@ import { CreateLabModalComponent } from '../../components/utility/create-lab-mod
       <!-- Continue Learning Card -->
       <app-card className="h-full flex flex-col">
         <app-card-header>
-          <span class="text-xs font-semibold uppercase tracking-wider text-[#60a5fa]">Continue Learning</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-[#bc78f9]">Continue Learning</span>
           <app-card-title className="text-xl text-foreground">Continue Last Lab</app-card-title>
         </app-card-header>
         <app-card-content className="space-y-3">
@@ -64,7 +64,7 @@ import { CreateLabModalComponent } from '../../components/utility/create-lab-mod
 
       <!-- Create New Lab Card -->
       <app-card
-        className="group relative cursor-pointer transition-all hover:-translate-y-0.5 hover:bg-white/5 hover:shadow-md hover:shadow-black/20 dark:hover:bg-white/5 outline-none focus-within:ring-2 focus-within:ring-[#60a5fa]/40 py-4 h-full flex flex-col"
+        className="group relative cursor-pointer transition-all hover:-translate-y-0.5 hover:bg-white/5 hover:shadow-md hover:shadow-black/20 dark:hover:bg-white/5 outline-none focus-within:ring-2 focus-within:ring-[#bc78f9]/40 py-4 h-full flex flex-col"
         (click)="isModalOpen = true"
         role="button"
         tabindex="0"
@@ -73,14 +73,14 @@ import { CreateLabModalComponent } from '../../components/utility/create-lab-mod
       >
         <app-card-header className="pb-2">
           <div class="flex items-start gap-3">
-            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#60a5fa]">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#E978FA15] text-[#bc78f9]">
               <!-- Sparkles icon -->
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M5 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5zM19 11l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" />
               </svg>
             </div>
             <div>
-              <span class="text-xs font-semibold uppercase tracking-wider text-[#60a5fa]">Create New</span>
+              <span class="text-xs font-semibold uppercase tracking-wider text-[#bc78f9]">Create New</span>
               <app-card-title className="mt-1 text-xl text-foreground">Start New Lab</app-card-title>
             </div>
           </div>
@@ -90,7 +90,7 @@ import { CreateLabModalComponent } from '../../components/utility/create-lab-mod
             Choose a subject and generate a personalized lab based on your learning goals.
           </app-card-description>
           <!-- Decorative sparkles accent (non-interactive) -->
-          <span class="pointer-events-none absolute bottom-3 right-3 text-[#60a5fa]/40 group-hover:text-[#60a5fa]/70" aria-hidden="true">
+          <span class="pointer-events-none absolute bottom-3 right-3 text-[#bc78f9]/40 group-hover:text-[#bc78f9]/70" aria-hidden="true">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M5 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5z" />
             </svg>

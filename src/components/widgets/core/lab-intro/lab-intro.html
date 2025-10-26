@@ -48,7 +48,7 @@
       </button>
       <button
         (click)="handlePrereqAck()"
-        class="rounded-lg bg-[#3b82f6] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2563eb]"
+        class="rounded-lg bg-[#BC78F9] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2563eb]"
         type="button"
       >
         I understand, let's start
@@ -94,7 +94,7 @@
       <!-- Progress -->
       <div 
         *ngIf="progress && progress.percent > 0" 
-        class="flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-xs text-blue-400"
+        class="flex items-center gap-1 rounded-full border border-blue-500/20 bg-primary-strong/10 px-2 py-0.5 text-xs text-blue-400"
       >
         <ng-icon name="lucideCircleCheck" class="h-3 w-3"></ng-icon>
         <span>{{ progress.percent | number:'1.0-0' }}% complete</span>
@@ -206,7 +206,7 @@
     <!-- Last Step (if resuming) -->
     <div 
       *ngIf="progress && progress.lastStepTitle" 
-      class="rounded-lg border border-blue-500/20 bg-blue-500/10 p-3 text-sm text-blue-400"
+      class="rounded-lg border border-blue-500/20 bg-primary-strong/10 p-3 text-sm text-blue-400"
     >
       <p class="font-medium">Last step:</p>
       <p class="text-blue-300">{{ progress.lastStepTitle }}</p>
@@ -223,7 +223,7 @@
         'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
         labReadOnly || labIntroState() === 'readOnly'
           ? 'cursor-not-allowed bg-[#1f2937] text-[#6b7280]'
-          : 'bg-[#3b82f6] text-white hover:bg-[#2563eb]'
+          : 'bg-[#BC78F9] text-white hover:bg-[#2563eb]'
       )"
       type="button"
     >

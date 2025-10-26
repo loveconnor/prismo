@@ -154,8 +154,8 @@ export class ButtonComponent implements ControlValueAccessor {
     // Color-based classes similar to Catalyst UI
     const colorMap: Record<string, string[]> = {
       'blue': [
-        'bg-blue-600 text-white',
-        'hover:bg-blue-500',
+        'bg-primary-custom text-white',
+        'hover:bg-primary-strong',
         'focus-visible:ring-blue-500/50'
       ],
       'indigo': [
