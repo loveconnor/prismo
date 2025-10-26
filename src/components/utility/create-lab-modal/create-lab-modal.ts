@@ -245,29 +245,36 @@ export class CreateLabModalComponent {
       skills: this.skills
     });
 
-    // Start generating - use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(() => {
-      this.isGenerating = true;
-      this.loadingProgress = 10;
-      this.loadingProgressText = 'Analyzing your requirements...';
-    }, 0);
+    // Set loading state immediately (not in setTimeout) to show loading screen right away
+    this.isGenerating = true;
+    this.loadingProgress = 0;
+    this.loadingProgressText = 'Initializing...';
 
     try {
-      // Simulate progress updates
-      setTimeout(() => {
-        this.loadingProgress = 30;
-        this.loadingProgressText = 'Generating learning content...';
-      }, 1000);
-
-      setTimeout(() => {
-        this.loadingProgress = 60;
-        this.loadingProgressText = 'Creating interactive widgets...';
-      }, 2000);
-
-      setTimeout(() => {
-        this.loadingProgress = 80;
-        this.loadingProgressText = 'Finalizing your lab...';
-      }, 3000);
+      // Start smooth progress animation
+      const startTime = Date.now();
+      const progressInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        
+        // Smooth progress over 10 seconds (typical generation time)
+        // Progress slows down as it gets closer to 90% to avoid reaching 100% before completion
+        if (elapsed < 20) {
+          this.loadingProgress = Math.min(20, (elapsed / 20) * 20);
+          this.loadingProgressText = 'Analyzing your requirements...';
+        } else if (elapsed < 50) {
+          this.loadingProgress = Math.min(50, 20 + ((elapsed - 20) / 30) * 30);
+          this.loadingProgressText = 'Generating learning content...';
+        } else if (elapsed < 80) {
+          this.loadingProgress = Math.min(75, 50 + ((elapsed - 50) / 30) * 25);
+          this.loadingProgressText = 'Creating interactive widgets...';
+        } else {
+          this.loadingProgress = Math.min(90, 75 + ((elapsed - 80) / 20) * 15);
+          this.loadingProgressText = 'Finalizing your lab...';
+        }
+      }, 100);
+      
+      // Store interval ID so we can clear it when done
+      (this as any).progressInterval = progressInterval;
 
       // Generate the module
       console.log('[CreateLabModal] Sending to API:', {
@@ -290,6 +297,11 @@ export class CreateLabModalComponent {
         skills: this.skills,
         goal: this.goal
       }).toPromise();
+
+      // Clear the progress interval
+      if ((this as any).progressInterval) {
+        clearInterval((this as any).progressInterval);
+      }
 
       this.loadingProgress = 100;
       this.loadingProgressText = 'Complete!';
@@ -321,6 +333,11 @@ export class CreateLabModalComponent {
 
     } catch (error: any) {
       console.error('Failed to generate module:', error);
+      
+      // Clear the progress interval on error
+      if ((this as any).progressInterval) {
+        clearInterval((this as any).progressInterval);
+      }
       
       // Check if it's an auth error - handle different error structures
       const errorMessage = error?.error?.error || error?.error || error?.message || 'Unknown error';
