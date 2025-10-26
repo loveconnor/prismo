@@ -45,6 +45,7 @@ import { cn } from '../../../lib/utils';
 export class CreateLabModalComponent {
   @Input() open = false;
   @Output() openChange = new EventEmitter<boolean>();
+  @Output() labCreated = new EventEmitter<void>(); // New event for when lab is created
 
   subject = '';
   difficulty = '';
@@ -250,32 +251,9 @@ export class CreateLabModalComponent {
     this.loadingProgress = 0;
     this.loadingProgressText = 'Initializing...';
 
-    try {
-      // Start smooth progress animation
-      const startTime = Date.now();
-      const progressInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        
-        // Smooth progress over 10 seconds (typical generation time)
-        // Progress slows down as it gets closer to 90% to avoid reaching 100% before completion
-        if (elapsed < 20) {
-          this.loadingProgress = Math.min(20, (elapsed / 20) * 20);
-          this.loadingProgressText = 'Analyzing your requirements...';
-        } else if (elapsed < 50) {
-          this.loadingProgress = Math.min(50, 20 + ((elapsed - 20) / 30) * 30);
-          this.loadingProgressText = 'Generating learning content...';
-        } else if (elapsed < 80) {
-          this.loadingProgress = Math.min(75, 50 + ((elapsed - 50) / 30) * 25);
-          this.loadingProgressText = 'Creating interactive widgets...';
-        } else {
-          this.loadingProgress = Math.min(90, 75 + ((elapsed - 80) / 20) * 15);
-          this.loadingProgressText = 'Finalizing your lab...';
-        }
-      }, 100);
-      
-      // Store interval ID so we can clear it when done
-      (this as any).progressInterval = progressInterval;
+     try {
 
+      
       // Generate the module
       console.log('[CreateLabModal] Sending to API:', {
         topic: topic,
@@ -308,6 +286,9 @@ export class CreateLabModalComponent {
 
       // Wait a moment to show completion
       await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Emit event that lab was created so parent can refresh
+      this.labCreated.emit();
 
       // Navigate to the widget lab with the generated module
       if (response?.module_id) {
