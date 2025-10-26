@@ -44,6 +44,7 @@ export class SupportPanelComponent implements OnChanges {
   @Input() feedback: any[] = [];
   @Input() sessionId: string = '';
   @Input() aiReview: string = '';
+  @Input() refactorData: any = null; // New input for refactor feedback
 
   openHints: number[] = [];
 
@@ -62,6 +63,10 @@ export class SupportPanelComponent implements OnChanges {
     if (changes['aiReview'] && changes['aiReview'].currentValue && !changes['aiReview'].previousValue) {
       this.value = 'feedback';
     }
+    // Auto-switch to feedback tab when refactor data comes in
+    if (changes['refactorData'] && changes['refactorData'].currentValue && !changes['refactorData'].previousValue) {
+      this.value = 'feedback';
+    }
   }
 
   // Check if hints exist
@@ -73,12 +78,18 @@ export class SupportPanelComponent implements OnChanges {
 
   // Check if feedback exists
   get hasFeedback(): boolean {
-    return this.feedback && this.feedback.length > 0;
+    // Always return true to show the feedback tab even when empty
+    return true;
   }
 
   // Check if the panel should be visible at all
   get shouldShowPanel(): boolean {
     return this.hasHints || this.hasFeedback;
+  }
+  
+  // Check if there are actual feedback items to display
+  get hasActualFeedback(): boolean {
+    return this.feedback && this.feedback.length > 0;
   }
 
   // Get formatted hints from input

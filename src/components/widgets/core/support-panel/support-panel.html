@@ -23,18 +23,29 @@
       ></app-hint-panel>
     </app-tabs-content>
 
-    <app-tabs-content *ngIf="hasFeedback" value="feedback" className="flex-1 overflow-y-auto p-4">
-      <div *ngIf="feedback && feedback.length > 0" class="space-y-4">
-        <app-feedback-box 
-          *ngFor="let feedbackWidget of feedback; trackBy: trackByFeedback"
-          [type]="getFeedbackProps(feedbackWidget).type || 'info'"
-          [title]="getFeedbackProps(feedbackWidget).title || 'Feedback'"
-          [message]="getFeedbackProps(feedbackWidget).message || ''"
-          [explanation]="getFeedbackProps(feedbackWidget).explanation"
-          [nextSteps]="getFeedbackProps(feedbackWidget).nextSteps"
-          [showActions]="false"
-          [showMeta]="false"
-        ></app-feedback-box>
+    <app-tabs-content *ngIf="hasFeedback" value="feedback" className="flex-1 overflow-y-auto p-4 space-y-4">
+      
+      <!-- Code Refactor Feedback Section -->
+      <div *ngIf="refactorData" class="space-y-3">
+        <div class="text-sm font-semibold text-amber-400">Code Needs Improvement</div>
+        <div class="text-sm text-[#e5e7eb] leading-relaxed">{{ refactorData.feedback }}</div>
+        
+        <!-- Suggestions -->
+        <div *ngIf="refactorData.suggestions && refactorData.suggestions.length > 0" class="space-y-2">
+          <div class="text-xs font-semibold text-[#a9b1bb] uppercase tracking-wide">Suggestions</div>
+          <div *ngFor="let suggestion of refactorData.suggestions" class="text-sm text-[#e5e7eb] leading-relaxed pl-3 border-l-2 border-[#bc78f9]">
+            <div class="font-medium text-[#bc78f9]">{{ suggestion.title }}</div>
+            <div class="text-[#a9b1bb] mt-0.5">{{ suggestion.description }}</div>
+          </div>
+        </div>
+        
+        <!-- Refactored Code Preview -->
+        <div *ngIf="refactorData.refactoredCode" class="space-y-2">
+          <div class="text-xs font-semibold text-[#a9b1bb] uppercase tracking-wide">Suggested Code</div>
+          <div class="rounded bg-[#1e1e1e] p-3 border border-[#1f2937] overflow-x-auto">
+            <pre class="text-xs text-[#d4d4d4] font-mono leading-relaxed">{{ refactorData.refactoredCode }}</pre>
+          </div>
+        </div>
       </div>
       
       <!-- AI Review Section -->
@@ -54,7 +65,7 @@
       </div>
       
       <!-- Empty state -->
-      <div *ngIf="(!feedback || feedback.length === 0) && !aiReview" class="py-6 text-center text-sm text-[#9ca3af]">
+      <div *ngIf="!aiReview && !refactorData" class="py-6 text-center text-sm text-[#9ca3af]">
         Complete the exercises to see feedback here
       </div>
     </app-tabs-content>

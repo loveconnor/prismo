@@ -1,6 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import {
   Observable,
   BehaviorSubject,
@@ -92,6 +93,8 @@ export class AuthService {
   private jwtService = inject(JwtService);
   private tokenStorage = inject(TokenStorageService);
   private authHttp = inject(AuthHttpService);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
 
   // Cookie names (if you prefer localStorage, swap implementations below)
   private readonly ACCESS_TOKEN_COOKIE = 'access_token';
@@ -123,6 +126,14 @@ export class AuthService {
   }
 
   private initializeSessionCheck(): void {
+    // Only run session check in the browser, not during SSR
+    if (!this.isBrowser) {
+      console.log('Skipping session check - running on server');
+      this.sessionCheckComplete.set(true);
+      this.sessionCheckPromise = Promise.resolve(false);
+      return;
+    }
+    
     this.sessionCheckPromise = new Promise<boolean>((resolve) => {
       const checkComplete = () => {
         const isComplete = this.sessionCheckComplete();
@@ -338,7 +349,7 @@ export class AuthService {
     this.sessionCheckComplete.set(false);
 
     // Clear stored user data
-    if (typeof localStorage !== 'undefined') {
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
       localStorage.removeItem('current_user');
     }
 
@@ -491,7 +502,7 @@ export class AuthService {
       this.currentUserSubject.next(userData);
       this.currentUser.set(userData);
       // Store user data in localStorage for persistence
-      if (typeof localStorage !== 'undefined') {
+      if (this.isBrowser && typeof localStorage !== 'undefined') {
         localStorage.setItem('current_user', JSON.stringify(userData));
       }
       
@@ -544,6 +555,13 @@ export class AuthService {
   }
 
   private checkExistingSession(): void {
+    // Only check session in browser
+    if (!this.isBrowser) {
+      console.log('Skipping session check - not in browser');
+      this.sessionCheckComplete.set(true);
+      return;
+    }
+    
     console.log('Starting session check...');
     const token = this.getAccessToken();
     console.log('Token found:', !!token);
@@ -586,7 +604,7 @@ export class AuthService {
     console.log('Token is valid locally, skipping backend verification to avoid circular dependency');
     
     // Try to restore user data from localStorage
-    if (typeof localStorage !== 'undefined') {
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
       const storedUser = localStorage.getItem('current_user');
       if (storedUser) {
         try {
@@ -636,7 +654,7 @@ export class AuthService {
     this.tokenStorage.clearTokens();
     
     // Clear stored user data
-    if (typeof localStorage !== 'undefined') {
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
       localStorage.removeItem('current_user');
     }
   }
