@@ -193,6 +193,10 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
          (click)="handleFeedbackContinue()">
       <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
         <app-feedback-box
+          [metadata]="feedbackWidget.metadata || { id: feedbackWidget.id, type: 'feedback-box' }"
+          [config]="feedbackWidget.config"
+          [sessionId]="currentSession?.id || ''"
+          [moduleId]="feedbackWidget.moduleId || ''"
           [type]="feedbackWidget.config?.type || 'success'"
           [title]="feedbackWidget.config?.title || 'Great Job!'"
           [message]="feedbackWidget.config?.message || 'You completed the exercise!'"
@@ -211,6 +215,10 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
         <app-confidence-meter
+          [metadata]="confidenceWidget.metadata || { id: confidenceWidget.id, type: 'confidence-meter' }"
+          [config]="confidenceWidget.config"
+          [sessionId]="currentSession?.id || ''"
+          [moduleId]="confidenceWidget.moduleId || ''"
           [title]="confidenceWidget.config?.title || 'Rate Your Confidence'"
           [description]="confidenceWidget.config?.description || ''"
           [scaleLabels]="confidenceWidget.config?.scaleLabels || ['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
