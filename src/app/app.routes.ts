@@ -59,6 +59,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   { 
+    path: 'labs/test-fullstack-todo', 
+    loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
+    canActivate: [authGuard]
+  },
+  { 
     path: 'module-lab', 
     loadComponent: () => import('./labs/module-lab/module-lab').then(m => m.ModuleLabComponent),
     canActivate: [authGuard]

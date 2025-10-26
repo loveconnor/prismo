@@ -11,6 +11,10 @@ import { TestFeedbackComponent } from '../components/widgets/coding/test-feedbac
 import { EquationInputComponent } from '../components/widgets/math/equation-input/equation-input';
 import { TextEditorComponent } from '../components/widgets/writing/text-editor/text-editor';
 import { MultipleChoiceComponent } from '../components/widgets/core/multiple-choice/multiple-choice';
+import { LabIntroComponent } from '../components/widgets/core/lab-intro/lab-intro';
+import { ShortAnswerComponent } from '../components/widgets/core/short-answer/short-answer';
+import { CoachChatComponent } from '../components/widgets/core/coach-chat/coach-chat';
+import { ReflectionPromptComponent } from '../components/widgets/core/reflection-prompt/reflection-prompt';
 
 export interface WidgetType {
   type: string;
@@ -70,6 +74,38 @@ export class WidgetFactoryService {
       category: 'core',
       description: 'Multiple choice question widget',
       supportedConfigs: ['question', 'options', 'correctAnswer', 'explanation']
+    });
+
+    this.registerWidget({
+      type: 'lab-intro',
+      component: LabIntroComponent,
+      category: 'core',
+      description: 'Lab introduction and overview widget',
+      supportedConfigs: ['title', 'subtitle', 'objective', 'difficulty', 'estimatedMinutes', 'skills', 'prerequisites', 'requirements', 'miniSyllabus', 'progress', 'policy', 'ui', 'cta', 'integrations', 'telemetry', 'a11yLabel', 'labReadOnly']
+    });
+
+    this.registerWidget({
+      type: 'short-answer',
+      component: ShortAnswerComponent,
+      category: 'core',
+      description: 'Short answer text input widget',
+      supportedConfigs: ['question', 'placeholder', 'validation', 'maxLength', 'minLength', 'ui', 'showFeedback', 'correctFeedback', 'incorrectFeedback', 'value', 'defaultValue', 'a11yLabel']
+    });
+
+    this.registerWidget({
+      type: 'coach-chat',
+      component: CoachChatComponent,
+      category: 'core',
+      description: 'Interactive coach chat widget',
+      supportedConfigs: ['coachId', 'stepId', 'variant', 'maxTurns', 'policy', 'context', 'ui', 'rateLimits', 'integrations', 'coachTelemetry', 'a11yLabel', 'coachReadOnly']
+    });
+
+    this.registerWidget({
+      type: 'reflection-prompt',
+      component: ReflectionPromptComponent,
+      category: 'core',
+      description: 'Reflection and self-assessment prompt widget',
+      supportedConfigs: ['reflectionId', 'scope', 'scopeId', 'promptText', 'minChars', 'maxChars', 'placeholder', 'chips', 'allowMarkdownLite', 'requireBeforeNext', 'autosaveMs', 'ui', 'privacy', 'integrations', 'reflectionTelemetry', 'a11yLabel', 'reflectionReadOnly']
     });
 
     // Coding widgets
@@ -204,6 +240,10 @@ export class WidgetFactoryService {
       'feedback-box': ['type', 'title', 'message'],
       'confidence-meter': ['title'],
       'multiple-choice': ['question', 'options'],
+      'lab-intro': ['title', 'objective', 'difficulty', 'estimatedMinutes'],
+      'short-answer': ['question'],
+      'coach-chat': ['coachId', 'stepId', 'context'],
+      'reflection-prompt': ['reflectionId', 'scope', 'scopeId', 'promptText'],
       'code-editor': ['title'],
       'console-output': ['title'],
       'test-feedback': ['title'],
@@ -274,6 +314,58 @@ export class WidgetFactoryService {
         placeholder: 'Enter your text here...',
         maxLength: 1000,
         enableFormatting: true
+      },
+      'lab-intro': {
+        title: 'Lab Introduction',
+        objective: 'Complete this lab to learn new skills',
+        difficulty: 'medium',
+        estimatedMinutes: 30,
+        skills: [],
+        prerequisites: [],
+        requirements: [],
+        miniSyllabus: [],
+        policy: {},
+        ui: {},
+        cta: {},
+        integrations: {}
+      },
+      'short-answer': {
+        question: 'Please provide your answer',
+        placeholder: 'Enter your answer...',
+        maxLength: 500,
+        minLength: 1,
+        showFeedback: true,
+        correctFeedback: 'Correct!',
+        incorrectFeedback: 'Incorrect. Try again.'
+      },
+      'coach-chat': {
+        coachId: 'coach-1',
+        stepId: 'step-1',
+        variant: 'inline',
+        maxTurns: 12,
+        policy: {},
+        context: {
+          stepPromptMD: 'Complete this step',
+          visibleHints: [],
+          recentAttempts: 0,
+          domain: 'general',
+          skillTags: []
+        },
+        ui: {},
+        rateLimits: {},
+        integrations: {}
+      },
+      'reflection-prompt': {
+        reflectionId: 'reflection-1',
+        scope: 'step',
+        scopeId: 'step-1',
+        promptText: 'Reflect on what you learned',
+        minChars: 30,
+        maxChars: 450,
+        placeholder: 'Share your thoughts...',
+        ui: {},
+        privacy: {},
+        integrations: {}
       }
     };
 

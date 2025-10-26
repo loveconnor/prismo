@@ -173,6 +173,75 @@ export class ModuleToLabConverterService {
           explanation: props.explanation
         };
 
+      case 'lab-intro':
+        return {
+          title: props.title,
+          subtitle: props.subtitle,
+          objective: props.objective,
+          difficulty: props.difficulty,
+          estimatedMinutes: props.estimatedMinutes,
+          skills: props.skills || [],
+          prerequisites: props.prerequisites || [],
+          requirements: props.requirements || [],
+          miniSyllabus: props.miniSyllabus || [],
+          policy: props.policy || {},
+          ui: props.ui || {},
+          cta: props.cta || {},
+          integrations: props.integrations || {}
+        };
+
+      case 'short-answer':
+        return {
+          question: props.title || props.question,
+          placeholder: props.placeholder || 'Enter your answer...',
+          validation: props.validation,
+          maxLength: props.maxLength || 500,
+          minLength: props.minLength || 1,
+          ui: props.ui || {},
+          showFeedback: props.showFeedback !== false,
+          correctFeedback: props.correctFeedback || 'Correct!',
+          incorrectFeedback: props.incorrectFeedback || 'Incorrect. Try again.',
+          value: props.value,
+          defaultValue: props.defaultValue || ''
+        };
+
+      case 'coach-chat':
+        return {
+          coachId: props.coachId || 'coach-1',
+          stepId: props.stepId || 'step-1',
+          variant: props.variant || 'inline',
+          maxTurns: props.maxTurns || 12,
+          policy: props.policy || {},
+          context: props.context || {
+            stepPromptMD: props.prompt || 'Complete this step',
+            visibleHints: [],
+            recentAttempts: 0,
+            domain: 'general',
+            skillTags: []
+          },
+          ui: props.ui || {},
+          rateLimits: props.rateLimits || {},
+          integrations: props.integrations || {}
+        };
+
+      case 'reflection-prompt':
+        return {
+          reflectionId: props.reflectionId || 'reflection-1',
+          scope: props.scope || 'step',
+          scopeId: props.scopeId || 'step-1',
+          promptText: props.prompt || props.promptText || 'Reflect on what you learned',
+          minChars: props.minChars || 30,
+          maxChars: props.maxChars || 450,
+          placeholder: props.placeholder || 'Share your thoughts...',
+          chips: props.chips,
+          allowMarkdownLite: props.allowMarkdownLite || false,
+          requireBeforeNext: props.requireBeforeNext || false,
+          autosaveMs: props.autosaveMs || 1200,
+          ui: props.ui || {},
+          privacy: props.privacy || {},
+          integrations: props.integrations || {}
+        };
+
       default:
         // For unknown widget types, return all props as config
         return config;
