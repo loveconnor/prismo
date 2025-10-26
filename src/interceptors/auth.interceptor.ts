@@ -23,11 +23,15 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
         Authorization: `Bearer ${token}`
       }
     });
+  } else {
+    // If no token, don't even try the request - just fail fast
+    console.log('Interceptor: No token available, request requires authentication');
   }
 
   return next(authReq).pipe(
     catchError(error => {
       // If we get a 401 (Unauthorized), try to refresh the token
+      // But only if we actually have a token to refresh
       if (error.status === 401 && token) {
         return handle401Error(req, next, authService);
       }
@@ -42,39 +46,70 @@ function handle401Error(req: HttpRequest<any>, next: HttpHandlerFn, authService:
   
   // Don't try to refresh if this IS the refresh endpoint
   if (req.url.includes('/auth/refresh')) {
-    console.log('Interceptor: 401 on refresh endpoint, logging out');
-    authService.logout();
-    return throwError(() => new Error('Refresh token expired'));
+    console.log('Interceptor: 401 on refresh endpoint - refresh token is invalid');
+    // Don't logout immediately - let the auth service handle it
+    // This prevents double logout calls
+    return throwError(() => new Error('Refresh token expired or invalid'));
+  }
+  
+  // Check if we have a refresh token before attempting refresh
+  const refreshToken = authService.getRefreshToken();
+  console.log('Interceptor: Checking for refresh token:', !!refreshToken);
+  
+  if (!refreshToken) {
+    console.log('Interceptor: No refresh token available - user needs to log in');
+    // Don't logout here - the user might not be logged in at all
+    // Just return the error and let the component handle it
+    return throwError(() => ({
+      ...new Error('Authentication required'),
+      status: 401,
+      message: 'No valid authentication token. Please log in.'
+    }));
   }
   
   // Try to refresh the token
+  console.log('Interceptor: Attempting token refresh...');
   return authService.refreshToken().pipe(
     switchMap(() => {
       console.log('Interceptor: Token refresh successful, retrying request');
       // Retry the original request with the new token
       const newToken = authService.getAccessToken();
-      console.log('Interceptor: New access token (first 30 chars):', newToken?.substring(0, 30));
+      console.log('Interceptor: New access token available:', !!newToken);
       console.log('Interceptor: Retrying original request to:', req.url);
+      
       if (newToken) {
         const authReq = req.clone({
           setHeaders: {
             Authorization: `Bearer ${newToken}`
           }
         });
-        console.log('Interceptor: Authorization header set, sending retry request');
+        console.log('Interceptor: Sending retry request with new token');
         return next(authReq);
       }
       
-      // If no token after refresh, logout
-      console.log('Interceptor: No token after refresh, logging out');
-      authService.logout();
-      return throwError(() => new Error('Authentication failed'));
+      // If no token after refresh, something went wrong
+      console.error('Interceptor: No token after successful refresh - unexpected state');
+      return throwError(() => ({
+        ...new Error('Authentication failed'),
+        status: 401,
+        message: 'Unable to authenticate. Please log in again.'
+      }));
     }),
-    catchError(error => {
-      console.error('Interceptor: Token refresh failed, logging out');
-      // Refresh failed, logout user
-      authService.logout();
-      return throwError(() => error);
+    catchError(refreshError => {
+      console.error('Interceptor: Token refresh failed:', refreshError);
+      
+      // If refresh failed with 401, the refresh token is invalid
+      // Clear the session and require fresh login
+      if (refreshError.status === 401) {
+        console.log('Interceptor: Refresh token is invalid, clearing session');
+        authService.logout();
+      } else {
+        // For other errors (network, etc), just log them
+        console.error('Interceptor: Refresh failed with non-401 error:', refreshError.status);
+      }
+      
+      // Return the original error to let the component handle it
+      return throwError(() => refreshError);
     })
   );
 }

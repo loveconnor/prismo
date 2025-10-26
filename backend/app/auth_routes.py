@@ -155,17 +155,27 @@ def login():
 def refresh_token():
     """Refresh access token"""
     try:
+        print("\n" + "="*80)
+        print("TOKEN REFRESH REQUEST")
+        print("="*80)
+        
         data = request.get_json()
+        print(f"Request data keys: {data.keys() if data else 'None'}")
 
         if "refresh_token" not in data:
+            print("ERROR: No refresh_token in request")
             return jsonify({"error": "Refresh token required"}), 400
 
         # Optional: accept username to help with SECRET_HASH calculation
         username = data.get("username")
+        print(f"Username from request: {username}")
+        print(f"Refresh token (first 30 chars): {data['refresh_token'][:30]}...")
         
         result = auth_service.refresh_token(data["refresh_token"], username=username)
+        print(f"Refresh result success: {result.get('success')}")
 
         if result["success"]:
+            print("Token refresh successful, returning new tokens")
             return (
                 jsonify(
                     {
@@ -176,6 +186,7 @@ def refresh_token():
                 200,
             )
         else:
+            print(f"Token refresh failed: {result.get('error')}")
             status_code = 401
             response_data = {"error": result["error"]}
             
@@ -186,6 +197,9 @@ def refresh_token():
             return jsonify(response_data), status_code
 
     except Exception as e:
+        print(f"EXCEPTION in refresh_token: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": f"Token refresh failed: {e}"}), 500
 
 

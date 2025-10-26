@@ -229,24 +229,28 @@ export class AuthService {
     const username = this.tokenStorage.getUsername();
     
     if (!refreshToken) {
-      console.log('No refresh token available');
+      console.error('RefreshToken: No refresh token available');
       return throwError(() => new Error('No refresh token available'));
     }
     
-    console.log('Refreshing token with username:', username);
-    console.log('Refresh token (first 20 chars):', refreshToken.substring(0, 20));
+    if (!username) {
+      console.warn('RefreshToken: No username available for SECRET_HASH calculation');
+    }
+    
+    console.log('RefreshToken: Starting refresh with username:', username);
+    console.log('RefreshToken: Refresh token (first 20 chars):', refreshToken.substring(0, 20));
     
     return this.authHttp.refreshToken(refreshToken, username)
       .pipe(
         tap((res) => {
-          console.log('Token refresh successful:', res);
+          console.log('RefreshToken: Token refresh successful:', res);
           this.handleAuthSuccess(res);
         }),
         catchError((err) => {
-          console.error('Token refresh failed:', err);
-          console.error('Error status:', err.status);
-          console.error('Error message:', err.message);
-          console.error('Error details:', err.error);
+          console.error('RefreshToken: Token refresh failed:', err);
+          console.error('RefreshToken: Error status:', err.status);
+          console.error('RefreshToken: Error message:', err.message);
+          console.error('RefreshToken: Error details:', err.error);
           
           // Clear the invalid tokens
           this.clearSessionState();
