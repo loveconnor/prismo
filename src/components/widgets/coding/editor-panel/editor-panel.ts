@@ -327,7 +327,7 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     ];
     
     // Execute code on backend for supported languages
-    const supportedLanguages = ['javascript', 'js', 'python', 'py', 'cpp', 'c++'];
+    const supportedLanguages = ['javascript', 'js', 'python', 'py', 'cpp', 'c++', 'java'];
     if (supportedLanguages.includes(language.toLowerCase())) {
       this.executeCodeOnBackend(code, language);
     } else {

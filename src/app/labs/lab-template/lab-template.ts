@@ -1990,6 +1990,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       // If no feedback widget, go straight to confidence meter
       this.confidenceWidget = stepConfidence;
       this.showConfidenceMeter = true;
+    } else {
+      // No feedback or confidence widgets - check if this is the final step
+      if (this.currentStep === this.steps.length && this.completedSteps.includes(this.currentStep)) {
+        console.log('[handleCodePassed] Final step completed, no feedback/confidence widgets - showing outcome summary');
+        this.handleCompleteLab();
+      }
     }
     
     this.cdr.detectChanges();
@@ -2008,6 +2014,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     if (stepConfidence) {
       this.confidenceWidget = stepConfidence;
       this.showConfidenceMeter = true;
+    } else {
+      // No confidence widget - check if this is the final step
+      if (this.currentStep === this.steps.length && this.completedSteps.includes(this.currentStep)) {
+        console.log('[handleFeedbackContinue] Final step completed, no confidence widget - showing outcome summary');
+        this.handleCompleteLab();
+      }
     }
     
     this.cdr.detectChanges();
@@ -2016,6 +2028,13 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   handleConfidenceSubmit(): void {
     console.log('Confidence submitted');
     this.showConfidenceMeter = false;
+    
+    // Check if this was the final step - if so, show outcome summary
+    if (this.currentStep === this.steps.length && this.completedSteps.includes(this.currentStep)) {
+      console.log('[handleConfidenceSubmit] Final step completed - showing outcome summary');
+      this.handleCompleteLab();
+    }
+    
     this.cdr.detectChanges();
   }
 

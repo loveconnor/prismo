@@ -374,7 +374,7 @@ def execute_code():
         language = data.get("language", "javascript").lower()
         test_cases = data.get("testCases", [])
 
-        if language not in ["javascript", "js", "python", "py", "cpp", "c++"]:
+        if language not in ["javascript", "js", "python", "py", "cpp", "c++", "java"]:
             return (
                 jsonify(
                     {
@@ -395,6 +395,8 @@ def execute_code():
             output, error = execute_python_code(code)
         elif language in ["cpp", "c++"]:
             output, error = execute_cpp_code(code)
+        elif language == "java":
+            output, error = execute_java_code(code)
         else:  # javascript or js
             output, error = execute_javascript_code(code)
         
@@ -576,6 +578,78 @@ def execute_cpp_code(code):
         return None, f"Error executing C++ code: {str(e)}"
 
 
+def execute_java_code(code):
+    """Compile and execute Java code using javac and java in a subprocess with timeout"""
+    import subprocess
+    import tempfile
+    import os
+    import re
+    
+    try:
+        # Extract the class name from the code
+        # Look for "public class ClassName"
+        class_match = re.search(r'public\s+class\s+(\w+)', code)
+        if not class_match:
+            return None, "Error: No public class found in code. Java code must contain a public class."
+        
+        class_name = class_match.group(1)
+        
+        # Create a temporary directory for compilation
+        temp_dir = tempfile.mkdtemp()
+        source_file = os.path.join(temp_dir, f'{class_name}.java')
+        
+        # Write the Java code to a file
+        with open(source_file, 'w') as f:
+            f.write(code)
+        
+        try:
+            # Compile the Java code
+            compile_result = subprocess.run(
+                ['javac', source_file],
+                capture_output=True,
+                text=True,
+                timeout=10,  # 10 second compile timeout
+                cwd=temp_dir
+            )
+            
+            if compile_result.returncode != 0:
+                # Compilation failed
+                return None, f"Compilation Error:\n{compile_result.stderr}"
+            
+            # Execute the compiled program
+            run_result = subprocess.run(
+                ['java', class_name],
+                capture_output=True,
+                text=True,
+                timeout=5,  # 5 second execution timeout
+                cwd=temp_dir
+            )
+            
+            output = run_result.stdout
+            error = run_result.stderr if run_result.returncode != 0 else None
+            
+            return output, error
+            
+        finally:
+            # Clean up temp files
+            try:
+                if os.path.exists(source_file):
+                    os.unlink(source_file)
+                class_file = os.path.join(temp_dir, f'{class_name}.class')
+                if os.path.exists(class_file):
+                    os.unlink(class_file)
+                os.rmdir(temp_dir)
+            except:
+                pass
+                
+    except subprocess.TimeoutExpired:
+        return None, "Error: Code execution timed out"
+    except FileNotFoundError:
+        return None, "Error: Java compiler (javac) is not installed on the server"
+    except Exception as e:
+        return None, f"Error executing Java code: {str(e)}"
+
+
 def run_test_cases(code, language, test_cases):
     """Run test cases against the code"""
     results = []
@@ -596,6 +670,8 @@ def run_test_cases(code, language, test_cases):
             output, error = execute_python_code(test_code)
         elif language in ["cpp", "c++"]:
             output, error = execute_cpp_code(test_code)
+        elif language == "java":
+            output, error = execute_java_code(test_code)
         else:
             output, error = execute_javascript_code(test_code)
         

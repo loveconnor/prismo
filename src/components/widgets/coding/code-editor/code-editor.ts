@@ -32,6 +32,7 @@ import { javascript, javascriptLanguage } from '@codemirror/lang-javascript';
 import { python, pythonLanguage } from '@codemirror/lang-python';
 import { html, htmlLanguage } from '@codemirror/lang-html';
 import { css, cssLanguage } from '@codemirror/lang-css';
+import { java, javaLanguage } from '@codemirror/lang-java';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { autocompletion } from '@codemirror/autocomplete';
 import { keymap } from '@codemirror/view';
@@ -717,6 +718,8 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
         return useFullSupport ? html() : htmlLanguage;
       case 'css':
         return useFullSupport ? css() : cssLanguage;
+      case 'java':
+        return useFullSupport ? java() : javaLanguage;
       case 'cpp':
       case 'c++':
         // C++ uses JavaScript syntax highlighting for now (similar C-style syntax)
@@ -775,11 +778,12 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       hasTests: this.testCases.length > 0
     });
 
-    // For JavaScript, Python, and C++, execute on backend
+    // For JavaScript, Python, C++, and Java, execute on backend
     const lang = this.language.toLowerCase();
     if (lang === 'javascript' || lang === 'js' || 
         lang === 'python' || lang === 'py' ||
-        lang === 'cpp' || lang === 'c++') {
+        lang === 'cpp' || lang === 'c++' ||
+        lang === 'java') {
       console.log('🌐 Executing on backend for language:', lang);
       this.executeCodeOnBackend();
     } else {

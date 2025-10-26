@@ -1,0 +1,280 @@
+{
+  "name": "coding---java-a6c57111",
+  "title": "Java Fundamentals: Variables, Types, and Operations",
+  "description": "Master Java basics including variable declaration, primitive data types, and arithmetic operations through hands-on coding exercises.",
+  "skills": [
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Need Help?",
+        "description": "Progressive hint disclosure with multiple tiers to guide your Java learning",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Need Help?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "In Java, variables must be declared with a data type before use. The basic syntax is: type variableName; followed by assignment: variableName = value;",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "Primitive data types in Java include int (integers), double (decimal numbers), String (text), and boolean (true/false). Use int for whole numbers, double for numbers with decimals.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "To declare and initialize a variable: int age = 25; To perform arithmetic: int sum = age + 10; Use System.out.println() to print results to the console.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Exercise 1: Declare and Initialize Variables",
+        "description": "Write Java code to declare variables of different types and perform basic operations",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Declare Variables and Calculate Sum",
+        "language": "java",
+        "starterCode": "public class Main {\n  public static void main(String[] args) {\n    // Declare an integer variable named num1 with value 15\n    \n    // Declare an integer variable named num2 with value 8\n    \n    // Calculate the sum and store in a new variable\n    \n    // Print the result\n    System.out.println(\"The sum is: \" + sum);\n  }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "The sum is: 23",
+            "description": "Should correctly sum 15 and 8"
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You successfully declared variables and performed arithmetic operations.",
+        "explanation": "This exercise demonstrates your understanding of Java variable declaration syntax and basic arithmetic. You've correctly used the int data type and the addition operator.",
+        "nextSteps": [
+          "Review how Java handles variable scope",
+          "Try using different data types like double and String",
+          "Practice with more complex expressions"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with declaring and initializing variables?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Exercise 2: Working with Multiple Data Types",
+        "description": "Write Java code using int, double, and String data types in a single program",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Use Multiple Data Types",
+        "language": "java",
+        "starterCode": "public class DataTypes {\n  public static void main(String[] args) {\n    // Declare a String variable for a person's name\n    \n    // Declare an int variable for age\n    \n    // Declare a double variable for height in meters\n    \n    // Print all values using System.out.println()\n    \n  }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Name: John\nAge: 25\nHeight: 1.75",
+            "description": "Should correctly declare and print String, int, and double types"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You successfully used multiple data types in a single program.",
+        "explanation": "This demonstrates your ability to work with different Java data types: String for text, int for whole numbers, and double for decimal values. You've shown understanding of type-specific declaration and output.",
+        "nextSteps": [
+          "Explore arithmetic operations with double values",
+          "Learn about type casting between numeric types",
+          "Practice combining operations with multiple variables"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with using different data types in Java?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-26T13:35:58.812933",
+    "module_id": "72a7c426-94f0-481e-ae32-9b68bfc8c435",
+    "saved_to_filesystem": true
+  }
+}

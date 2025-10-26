@@ -1,0 +1,282 @@
+{
+  "name": "coding---c++-29f11718",
+  "title": "Mastering C++ For Loops",
+  "description": "Learn to write and understand for loops in C++, from basic syntax to practical applications. Build foundational coding skills through hands-on exercises.",
+  "skills": [
+    "for loops",
+    "coding",
+    "syntax",
+    "control flow"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Hint Panel",
+        "description": "Progressive hint disclosure with multiple tiers of guidance for C++ for loops",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Need Help?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "A for loop has three parts: initialization, condition, and increment. The initialization runs once, the condition is checked before each iteration, and the increment happens after each iteration.",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "The basic syntax is: for(int i = 0; i < limit; i++) { statements; }. The variable i starts at 0, loops while i is less than limit, and increases by 1 each time.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "To print numbers 1 to 5, write: for(int i = 1; i <= 5; i++) { cout << i << endl; }. Start i at 1, check i <= 5, and increment i each time.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Write Your First For Loop",
+        "description": "Write a C++ program that uses a for loop to print numbers from 1 to 10",
+        "skills": [
+          "programming",
+          "syntax",
+          "for loops"
+        ],
+        "difficulty": 2,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Print Numbers 1 to 10",
+        "language": "cpp",
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write a for loop that prints numbers 1 to 10\n    // Each number should be on a new line\n    \n    return 0;\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n"
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You successfully wrote a for loop that prints numbers 1 to 10.",
+        "explanation": "Your loop correctly initialized the counter at 1, checked the condition i <= 10, and incremented i after each iteration. This is the foundation for all loop-based programming.",
+        "nextSteps": [
+          "Try modifying the loop to print only even numbers",
+          "Challenge: Print numbers in reverse order",
+          "Learn about loop control with break and continue statements"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in writing a basic for loop?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Sum Numbers with a Loop",
+        "description": "Write a C++ program that uses a for loop to sum numbers from 1 to n",
+        "skills": [
+          "programming",
+          "arithmetic",
+          "for loops"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Calculate Sum of Numbers",
+        "language": "cpp",
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 5;\n    int sum = 0;\n    \n    // Write a for loop that adds numbers 1 to n\n    // Store the result in the sum variable\n    \n    cout << \"Sum of 1 to \" << n << \" is: \" << sum << endl;\n    return 0;\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Sum of 1 to 5 is: 15\n"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You correctly calculated the sum using a for loop!",
+        "explanation": "Your loop successfully accumulated values by adding each iteration to the sum variable. The formula 1+2+3+4+5=15 demonstrates how loops can solve mathematical problems efficiently.",
+        "nextSteps": [
+          "Try using a nested loop to create a multiplication table",
+          "Experiment with different loop ranges and patterns",
+          "Learn about the relationship between loops and arrays"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in using a for loop to accumulate values?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-26T13:29:27.533999",
+    "module_id": "2ca00e86-0a29-487c-8dc7-c1754a0198af",
+    "saved_to_filesystem": true
+  }
+}
