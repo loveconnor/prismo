@@ -36,7 +36,7 @@
           },
           "version": "1.0.0",
           "category": "coding",
-          "position": 1
+          "position": 2
         },
         "props": {
           "title": "Build a Todo List Component",
@@ -60,7 +60,7 @@
             "Use the map function to render each todo item"
           ]
         },
-        "position": 1,
+        "position": 2,
         "dependencies_met": true
       },
       {
@@ -87,13 +87,13 @@
           },
           "version": "1.0.0",
           "category": "coding",
-          "position": 2
+          "position": 3
         },
         "config": {
           "defaultAlgorithm": "bubble",
           "enabledAlgorithms": ["bubble"]
         },
-        "position": 2,
+        "position": 3,
         "dependencies_met": true
       },
       {
@@ -124,7 +124,7 @@
           "prompt": "In this module, you'll build a complete todo application using React for the frontend and Node.js/Express for the backend. We'll cover:\n\n- Frontend with React and modern state management\n- RESTful API design with Express\n- Database integration\n- User authentication\n- Routing and navigation\n\nBy the end, you'll have a production-ready full-stack application.",
           "estimatedTime": 30
         },
-        "position": 3,
+        "position": 4,
         "dependencies_met": true
       },
       {
@@ -153,7 +153,7 @@
           "min": 1,
           "max": 5
         },
-        "position": 4,
+        "position": 5,
         "dependencies_met": true
       },
       {
@@ -188,7 +188,7 @@
           ],
           "showContinueButton": true
         },
-        "position": 5,
+        "position": 6,
         "dependencies_met": true
       },
       {
@@ -211,7 +211,8 @@
             "difficulty_adjustment": true
           },
           "version": "1.0.0",
-          "category": "core"
+          "category": "core",
+          "position": 1
         },
         "props": {
           "question": "Which of the following is the correct way to set up routing in a React application?",
@@ -224,7 +225,7 @@
           "correctAnswer": 0,
           "explanation": "React Router requires wrapping your application with a Router component (like BrowserRouter or HashRouter) to enable routing functionality. The Router component provides the routing context that all navigation components (Link, Route, etc.) depend on."
         },
-        "position": 6,
+        "position": 1,
         "dependencies_met": true
       },
       {

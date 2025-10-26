@@ -186,7 +186,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
               <div class="flex items-center justify-between">
                 <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
                 <app-button 
-                  *ngIf="currentStep < (steps.length || 1)" 
+                  *ngIf="currentStep < (steps.length || 1) && completedSteps.includes(currentStep)" 
                   (click)="handleCompleteStep()"
                   className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
                   Continue to Step {{ currentStep + 1 }}

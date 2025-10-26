@@ -78,4 +78,16 @@
   </div>
 </main>
 
-
+<!-- Code Refactor Modal -->
+<app-code-refactor-modal
+  [isOpen]="showRefactorModal"
+  [language]="editorConfig?.language || 'javascript'"
+  [originalCode]="monacoEditor?.getValue() || ''"
+  [refactoredCode]="refactoredCode"
+  [feedback]="gradingFeedback"
+  [suggestions]="gradingSuggestions"
+  (closeModal)="closeRefactorModal()"
+  (acceptRefactor)="acceptRefactoredCode($event)"
+  (keepOriginalCode)="keepOriginalCode()"
+  (modifyOriginalCode)="modifyOriginalCode()"
+></app-code-refactor-modal>

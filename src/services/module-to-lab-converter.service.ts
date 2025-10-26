@@ -166,7 +166,12 @@ export class ModuleToLabConverterService {
           height: '300px',
           enableSyntaxHighlighting: true,
           enableAutoCompletion: true,
-          enableLineNumbers: true
+          enableLineNumbers: true,
+          // Grading properties
+          enableGrading: props.enableGrading ?? false,
+          gradingRequirements: props.gradingRequirements ?? '',
+          expectedOutput: props.expectedOutput ?? '',
+          gradingContext: props.gradingContext ?? ''
         };
 
       case 'hint-panel':
