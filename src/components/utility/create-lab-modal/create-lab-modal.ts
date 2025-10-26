@@ -324,10 +324,15 @@ export class CreateLabModalComponent {
       const errorMessage = error?.error?.error || error?.error || error?.message || 'Unknown error';
       const isAuthError = error?.status === 401 || 
                           (typeof errorMessage === 'string' && errorMessage.includes('401')) ||
-                          (typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('unauthorized'));
+                          (typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('unauthorized')) ||
+                          (typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('authentication'));
       
       if (isAuthError) {
-        alert('Authentication failed. Please log out and log back in, then try again.');
+        console.log('[CreateLabModal] Authentication error detected - closing modal and redirecting to login');
+        this.close();
+        alert('Your session has expired or you are not logged in. Please log in to generate a lab.');
+        // Optionally redirect to login page
+        this.router.navigate(['/login']);
       } else {
         const displayMessage = typeof errorMessage === 'string' ? errorMessage : 'Unknown error';
         alert(`Failed to generate lab: ${displayMessage}. Please try again.`);

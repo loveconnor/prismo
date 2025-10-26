@@ -24,6 +24,7 @@ export interface Lab {
   icon: 'tree' | 'react' | 'list' | 'monitor' | 'arrows';
   completedDate?: string;
   bookmarked?: boolean;
+  source?: 'lab' | 'module'; // Track if it's from labs or modules table
 }
 
 @Component({
@@ -136,7 +137,8 @@ export class LabsGridComponent implements OnInit, OnDestroy {
       progress,
       icon: this.getIconFromSkills(serviceLab.skills || []),
       completedDate,
-      bookmarked: Math.random() > 0.7 // Could be tracked in user preferences
+      bookmarked: Math.random() > 0.7, // Could be tracked in user preferences
+      source: serviceLab.source // Preserve the source from the service lab
     };
   }
 

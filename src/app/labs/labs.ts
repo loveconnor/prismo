@@ -10,6 +10,7 @@ import { LabsGridComponent, Lab as GridLab } from '../../components/labs/labs-gr
 import { CreateLabModalComponent } from '../../components/utility/create-lab-modal/create-lab-modal';
 import { LabsService } from '../../services/labs.service';
 import { UserProgressService } from '../../services/user-progress.service';
+import { ToastService } from '../../services/toast.service';
 import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -37,6 +38,7 @@ export class LabsComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private labsService = inject(LabsService);
   private userProgressService = inject(UserProgressService);
+  private toastService = inject(ToastService);
   private destroy$ = new Subject<void>();
   
   searchQuery = '';
@@ -138,6 +140,9 @@ export class LabsComponent implements OnInit, OnDestroy {
       case 'restart':
         this.onRestart(event.lab.id);
         break;
+      case 'delete':
+        this.onDelete(event.lab);
+        break;
       default:
         console.log(`Lab action "${event.action}" triggered for lab:`, event.lab.id);
     }
@@ -156,6 +161,29 @@ export class LabsComponent implements OnInit, OnDestroy {
   onRestart(labId: string) {
     console.log('Restarting lab:', labId);
     this.router.navigate(['/labs', labId]);
+  }
+
+  onDelete(lab: GridLab) {
+    console.log('Deleting lab:', lab.id);
+    
+    // Determine the source - we need to check if it's a lab or module
+    // If the lab object has a source property, use it, otherwise default to 'lab'
+    const source = (lab as any).source || 'lab';
+    
+    this.labsService.deleteLab(lab.id, source)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          console.log('Lab deleted successfully:', lab.id);
+          this.toastService.success('Lab deleted successfully');
+          // Reload stats after deletion
+          this.loadStats();
+        },
+        error: (error) => {
+          console.error('Error deleting lab:', error);
+          this.toastService.error('Failed to delete lab', error.error?.error || error.message);
+        }
+      });
   }
 
   onCreateLab() {

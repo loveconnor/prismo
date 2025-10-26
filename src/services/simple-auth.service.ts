@@ -1,6 +1,7 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID, afterNextRender } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
@@ -29,6 +30,8 @@ export interface AuthResponse {
 export class SimpleAuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
   
   // Simple state management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -43,11 +46,21 @@ export class SimpleAuthService {
   private readonly API_URL = 'http://localhost:5000/auth';
   
   constructor() {
-    this.initializeAuth();
+    // Use afterNextRender to ensure auth check runs after browser hydration
+    if (this.isBrowser) {
+      afterNextRender(() => {
+        console.log('Running auth initialization after hydration');
+        this.initializeAuth();
+      });
+    } else {
+      // On server, just mark as complete without auth
+      console.log('SSR: Skipping auth initialization');
+      this.sessionCheckComplete.set(true);
+    }
   }
   
   private initializeAuth(): void {
-    console.log('Initializing authentication...');
+    console.log('Initializing authentication in browser');
     const token = this.getStoredToken();
     
     if (!token) {
@@ -61,17 +74,17 @@ export class SimpleAuthService {
   }
   
   private getStoredToken(): string | null {
-    if (typeof localStorage === 'undefined') return null;
+    if (!this.isBrowser || typeof localStorage === 'undefined') return null;
     return localStorage.getItem('access_token');
   }
   
   private setStoredToken(token: string): void {
-    if (typeof localStorage === 'undefined') return;
+    if (!this.isBrowser || typeof localStorage === 'undefined') return;
     localStorage.setItem('access_token', token);
   }
   
   private removeStoredToken(): void {
-    if (typeof localStorage === 'undefined') return;
+    if (!this.isBrowser || typeof localStorage === 'undefined') return;
     localStorage.removeItem('access_token');
   }
   

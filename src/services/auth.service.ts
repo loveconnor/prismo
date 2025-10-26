@@ -1,6 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, PLATFORM_ID, afterNextRender } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import {
   Observable,
   BehaviorSubject,
@@ -92,6 +93,8 @@ export class AuthService {
   private jwtService = inject(JwtService);
   private tokenStorage = inject(TokenStorageService);
   private authHttp = inject(AuthHttpService);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
 
   // Cookie names (if you prefer localStorage, swap implementations below)
   private readonly ACCESS_TOKEN_COOKIE = 'access_token';
@@ -119,10 +122,23 @@ export class AuthService {
   private sessionCheckPromise: Promise<boolean> | null = null;
 
   constructor() {
-    this.initializeSessionCheck();
+    // Use afterNextRender to ensure session check runs after browser hydration
+    if (this.isBrowser) {
+      afterNextRender(() => {
+        console.log('Running session check after hydration');
+        this.initializeSessionCheck();
+      });
+    } else {
+      // On server, just mark as complete without auth
+      console.log('SSR: Skipping session check');
+      this.sessionCheckComplete.set(true);
+      this.sessionCheckPromise = Promise.resolve(false);
+    }
   }
 
   private initializeSessionCheck(): void {
+    console.log('Initializing session check in browser');
+    
     this.sessionCheckPromise = new Promise<boolean>((resolve) => {
       const checkComplete = () => {
         const isComplete = this.sessionCheckComplete();
@@ -213,19 +229,34 @@ export class AuthService {
     const username = this.tokenStorage.getUsername();
     
     if (!refreshToken) {
-      console.log('No refresh token available');
+      console.error('RefreshToken: No refresh token available');
       return throwError(() => new Error('No refresh token available'));
     }
     
-    console.log('Refreshing token with username:', username);
+    if (!username) {
+      console.warn('RefreshToken: No username available for SECRET_HASH calculation');
+    }
+    
+    console.log('RefreshToken: Starting refresh with username:', username);
+    console.log('RefreshToken: Refresh token (first 20 chars):', refreshToken.substring(0, 20));
     
     return this.authHttp.refreshToken(refreshToken, username)
       .pipe(
-        tap((res) => this.handleAuthSuccess(res)),
+        tap((res) => {
+          console.log('RefreshToken: Token refresh successful:', res);
+          this.handleAuthSuccess(res);
+        }),
         catchError((err) => {
-          console.log('Token refresh failed:', err);
-          // Don't call logout here to avoid circular dependency
-          return this.handleAuthError(err);
+          console.error('RefreshToken: Token refresh failed:', err);
+          console.error('RefreshToken: Error status:', err.status);
+          console.error('RefreshToken: Error message:', err.message);
+          console.error('RefreshToken: Error details:', err.error);
+          
+          // Clear the invalid tokens
+          this.clearSessionState();
+          
+          // Don't call logout here to avoid circular dependency during session check
+          return throwError(() => err);
         })
       );
   }
@@ -338,7 +369,7 @@ export class AuthService {
     this.sessionCheckComplete.set(false);
 
     // Clear stored user data
-    if (typeof localStorage !== 'undefined') {
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
       localStorage.removeItem('current_user');
     }
 
@@ -405,7 +436,7 @@ export class AuthService {
       email: 'demo@example.com',
       name: 'Demo User',
       username: 'demo',
-      avatar: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1473',
+      avatar: 'https://hacksu.com//staff-photos/beautiful_mason.png_1747039062046.png',
       is_active: true,
     };
 
@@ -491,7 +522,7 @@ export class AuthService {
       this.currentUserSubject.next(userData);
       this.currentUser.set(userData);
       // Store user data in localStorage for persistence
-      if (typeof localStorage !== 'undefined') {
+      if (this.isBrowser && typeof localStorage !== 'undefined') {
         localStorage.setItem('current_user', JSON.stringify(userData));
       }
       
@@ -503,7 +534,23 @@ export class AuthService {
       
       console.log('User data set successfully');
     } else {
-      console.warn('No user data found in response');
+      // If no user data in response (e.g., during token refresh), keep existing user
+      console.log('No user data in response, preserving existing user');
+      const existingUser = this.currentUser();
+      if (!existingUser && this.isBrowser && typeof localStorage !== 'undefined') {
+        // Try to restore from localStorage
+        const storedUser = localStorage.getItem('current_user');
+        if (storedUser) {
+          try {
+            const restoredUser = JSON.parse(storedUser);
+            console.log('Restored user from localStorage:', restoredUser);
+            this.currentUserSubject.next(restoredUser);
+            this.currentUser.set(restoredUser);
+          } catch (error) {
+            console.error('Error parsing stored user:', error);
+          }
+        }
+      }
     }
     
     this.isAuthenticated.set(true);
@@ -544,6 +591,13 @@ export class AuthService {
   }
 
   private checkExistingSession(): void {
+    // Only check session in browser
+    if (!this.isBrowser) {
+      console.log('Skipping session check - not in browser');
+      this.sessionCheckComplete.set(true);
+      return;
+    }
+    
     console.log('Starting session check...');
     const token = this.getAccessToken();
     console.log('Token found:', !!token);
@@ -586,7 +640,7 @@ export class AuthService {
     console.log('Token is valid locally, skipping backend verification to avoid circular dependency');
     
     // Try to restore user data from localStorage
-    if (typeof localStorage !== 'undefined') {
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
       const storedUser = localStorage.getItem('current_user');
       if (storedUser) {
         try {
@@ -636,7 +690,7 @@ export class AuthService {
     this.tokenStorage.clearTokens();
     
     // Clear stored user data
-    if (typeof localStorage !== 'undefined') {
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
       localStorage.removeItem('current_user');
     }
   }

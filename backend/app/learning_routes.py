@@ -154,6 +154,27 @@ def update_module(module_id):
     except Exception as e:
         return jsonify({"error": f"Failed to update module: {e}"}), 500
 
+@learning_bp.route("/modules/<module_id>", methods=["DELETE"])
+@require_auth
+def delete_module(module_id):
+    """Delete module"""
+    try:
+        # Get the module to verify ownership
+        module = orm.modules.get_by_id(module_id)
+        if not module:
+            return jsonify({"error": "Module not found"}), 404
+        
+        # Check if user owns this module
+        user_id = request.current_user.get("cognito_user_id")
+        if module.user_id != user_id:
+            return jsonify({"error": "Unauthorized"}), 403
+        
+        # Delete the module
+        orm.modules.delete_by_id(module_id)
+        return jsonify({"message": "Module deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to delete module: {e}"}), 500
+
 # ============================================================================
 # ATTEMPTS
 # ============================================================================

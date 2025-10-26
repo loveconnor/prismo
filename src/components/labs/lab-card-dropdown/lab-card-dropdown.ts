@@ -134,10 +134,11 @@ export class LabCardDropdownComponent implements OnChanges {
   }
 
   async confirmDelete(): Promise<void> {
-    await this.performActionWithToast('delete', 'Lab deleted successfully', 'Failed to delete lab', () => {
-      this.deleteDialogOpen = false;
-      this.action.emit('delete');
-    });
+    this.deleteDialogOpen = false;
+    this.loadingAction = 'delete';
+    this.action.emit('delete');
+    // Note: The actual deletion and success/error handling is done by the parent component
+    // The loading state will be reset by the parent or when the component is destroyed
   }
 
   onCollectionAdded(name: string): void {
