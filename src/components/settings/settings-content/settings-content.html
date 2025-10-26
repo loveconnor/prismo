@@ -52,6 +52,7 @@
         >
           <app-input
             [(ngModel)]="displayName"
+            (ngModelChange)="onDisplayNameChange($event)"
             placeholder="Enter name"
             [className]="controlInputClasses"
           ></app-input>

@@ -53,7 +53,7 @@
           @if (authService.currentUser(); as user) {
             <app-avatar-dropdown
               [user]="{
-                name: user.profile?.displayName || user.name || user.username || 'User',
+                name: userDisplayName() || user.profile?.displayName || user.name || user.username || 'User',
                 email: user.email,
                 role: 'User',
                 avatarUrl: userAvatarUrl() || user.avatar || 'https://hacksu.com//staff-photos/beautiful_mason.png_1747039062046.png'
