@@ -23,6 +23,7 @@ interface HintItem {
     TabsListComponent,
     TabsTriggerComponent,
     TabsContentComponent,
+
     HintPanelComponent,
     NgIconComponent
   ],
@@ -98,6 +99,7 @@ export class SupportPanelComponent {
   }
 
   trackByHintLevel = (_: number, item: HintItem) => item.level;
+
   trackByHintWidget = (_: number, item: any) => item.id;
 }
 

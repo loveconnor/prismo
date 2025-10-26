@@ -1,0 +1,325 @@
+{
+  "id": "coding-f56c0c4b",
+  "title": "Master Loops and Functions in Python",
+  "description": "Learn to write efficient code using loops and functions. Build practical coding skills through guided exercises and real-world examples.",
+  "skills": [
+    "loops",
+    "functions",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Loops and Functions",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Loops and Functions",
+        "prompt": "In this module, you will learn how to write cleaner, more efficient Python code using loops and functions. Loops help you repeat code without duplication, while functions let you organize code into reusable blocks. By the end, you'll write programs that are easier to read, maintain, and debug."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Module Introduction",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Let's Get Started",
+        "message": "You're about to explore two fundamental programming concepts that will make your code more powerful and professional.",
+        "explanation": "Loops and functions are essential building blocks in programming. Mastering them will significantly improve your coding efficiency.",
+        "nextSteps": [
+          "Learn about loop structures",
+          "Understand function basics",
+          "Practice with coding exercises"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Initial Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with loops and functions in Python?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Write Your First Loop",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "For Loop Exercise",
+        "language": "python",
+        "starterCode": "# Write a loop to print numbers 1 to 5\n# Complete the code below\nfor i in range(?):\n    print(i)",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "1\n2\n3\n4\n5",
+            "description": "Print numbers 1 to 5"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Loop Exercise Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Loop Work!",
+        "message": "You've successfully written a for loop that iterates through a range and prints values.",
+        "explanation": "The range(6) function generates numbers 0 through 5. Loops are powerful because they let you repeat code without writing it multiple times.",
+        "nextSteps": [
+          "Explore while loops",
+          "Learn about function definitions",
+          "Try nested loops"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Loop Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with for loops now?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Define and Use Functions",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Function Definition Exercise",
+        "language": "python",
+        "starterCode": "# Define a function that takes a name and greets them\ndef greet(?):\n    print(f\"Hello, {name}!\")\n\n# Call the function\ngreet(\"Alice\")",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Hello, Alice!",
+            "description": "Function should greet the provided name"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Function Exercise Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Function!",
+        "message": "You've created a working function that accepts parameters and produces output. Functions are the building blocks of professional code.",
+        "explanation": "Functions allow you to encapsulate logic and reuse it without rewriting. The parameter 'name' lets you pass different values each time you call the function.",
+        "nextSteps": [
+          "Combine loops and functions",
+          "Learn about return values",
+          "Practice with more complex examples"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Function Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with functions now?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 2700
+  },
+  "estimated_duration": 2700,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T05:35:49.244434",
+    "module_id": "199e748f-ebda-4ad3-8ad1-af50149fbb05",
+    "saved_to_filesystem": true
+  }
+}

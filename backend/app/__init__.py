@@ -39,6 +39,7 @@ def create_app(config_name="default"):
     from app.health_routes import health_bp
     from app.learning_routes import learning_bp
     from app.module_session_routes import module_session_bp
+    from app.module_generator_routes import module_generator_bp
     from app.oauth_routes import oauth_bp
     from app.routes import api_bp, main_bp
 
@@ -54,6 +55,7 @@ def create_app(config_name="default"):
     app.register_blueprint(analytics_bp)
     app.register_blueprint(learning_bp)
     app.register_blueprint(module_session_bp, url_prefix="/api")
+    app.register_blueprint(module_generator_bp)
     app.register_blueprint(gamification_bp)
     app.register_blueprint(advanced_bp)
     app.register_blueprint(oauth_bp)
