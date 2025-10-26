@@ -51,6 +51,13 @@ export interface LabData {
   description: string;
   difficulty: number;
   estimatedTime: number;
+  steps?: Array<{
+    id: number;
+    title: string;
+    description?: string;
+    instruction?: string;
+    example?: string;
+  }>;
   sections: LabSection[];
   metadata: {
     author?: string;

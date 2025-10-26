@@ -6,6 +6,13 @@ export interface ModuleData {
   title: string;
   description: string;
   skills: string[];
+  steps?: Array<{
+    id: number;
+    title: string;
+    description: string;
+    instruction: string;
+    example?: string;
+  }>;
   widgets: ModuleWidget[];
   completion_criteria?: {
     required_widgets: string[];
@@ -35,6 +42,7 @@ export interface ModuleWidget {
   };
   props: any;
   position?: number; // Optional position for step ordering
+  stepId?: number; // Optional stepId for associating widgets with steps
   dependencies_met: boolean;
 }
 
@@ -51,15 +59,22 @@ export class ModuleToLabConverterService {
     const avgDifficulty = this.calculateAverageDifficulty(moduleData.widgets);
     
     // Convert widgets to lab format
-    const labWidgets: LabWidget[] = moduleData.widgets.map(widget => ({
-      id: widget.id,
-      type: widget.id, // Use the widget ID as the type
-      config: this.convertPropsToConfig(widget.props, widget.id),
-      metadata: {
-        ...widget.metadata,
-        position: widget.position // Preserve position for step ordering
-      }
-    }));
+    const labWidgets: LabWidget[] = moduleData.widgets.map(widget => {
+      // Support both metadata.id and metadata.name for widget type
+      const widgetType = widget.metadata.id || (widget.metadata as any).name;
+      
+      return {
+        id: widget.id,
+        type: widgetType, // Use the metadata.id or metadata.name as the type (e.g., 'feedback-box', 'code-editor')
+        config: this.convertPropsToConfig(widget.props, widgetType), // Use widgetType for conversion logic
+        metadata: {
+          ...widget.metadata,
+          id: widgetType, // Normalize to use 'id' field
+          position: widget.position, // Preserve position for step ordering
+          stepId: widget.stepId // Preserve stepId for associating widgets with steps
+        }
+      };
+    });
 
     // Create a single section containing all widgets
     const section: LabSection = {
@@ -76,6 +91,7 @@ export class ModuleToLabConverterService {
       description: moduleData.description,
       difficulty: avgDifficulty,
       estimatedTime: Math.round(moduleData.estimated_duration / 60), // Convert seconds to minutes
+      steps: moduleData.steps, // Preserve steps if they exist
       sections: [section],
       metadata: {
         author: 'Prismo Labs',
@@ -135,19 +151,19 @@ export class ModuleToLabConverterService {
 
       case 'feedback-box':
         return {
-          type: props.type,
+          type: props.type || 'success',
           title: props.title,
-          message: props.message,
+          message: props.message || props.prompt, // Support both 'message' and 'prompt' fields
           explanation: props.explanation,
-          nextSteps: props.nextSteps,
-          showContinueButton: props.showContinueButton,
+          nextSteps: Array.isArray(props.nextSteps) ? props.nextSteps : (props.nextSteps ? [props.nextSteps] : []),
+          showContinueButton: props.showContinueButton ?? true,
           autoComplete: props.autoComplete
         };
 
       case 'confidence-meter':
         return {
-          title: props.title,
-          description: props.description,
+          title: props.title || props.question || 'Rate Your Confidence',
+          description: props.description || props.prompt,
           scaleLabels: props.scaleLabels,
           autoSubmit: props.autoSubmit
         };

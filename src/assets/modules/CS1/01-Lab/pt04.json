@@ -1,0 +1,220 @@
+{
+    "name": "building-a-full-stack-todo-application-fe250a8a",
+    "title": "Building a Full-Stack Todo Application with React, Node.js, and Express",
+    "description": "Create a complete full-stack todo application while learning essential concepts in frontend development with React, backend development with Node.js/Express, database integration, API design, authentication, and state management",
+    "skills": [
+      "javascript",
+      "react",
+      "nodejs",
+      "express",
+      "database",
+      "api-design",
+      "authentication",
+      "state-management",
+      "routing"
+    ],
+    "widgets": [
+      {
+        "name": "module-intro",
+        "metadata": {
+          "id": "step-prompt",
+          "title": "Introduction to Full-Stack Development",
+          "description": "Overview of the todo application architecture",
+          "skills": [
+            "javascript",
+            "react",
+            "nodejs"
+          ],
+          "difficulty": 2,
+          "estimated_time": 60,
+          "input_type": "text",
+          "output_type": "scaffold",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Building a Full-Stack Todo Application",
+          "prompt": "In this module, you'll build a complete todo application using React for the frontend and Node.js/Express for the backend. We'll cover:\n\n- Frontend with React and modern state management\n- RESTful API design with Express\n- Database integration\n- User authentication\n- Routing and navigation\n\nBy the end, you'll have a production-ready full-stack application.",
+          "estimatedTime": 30
+        },
+        "position": 1,
+        "dependencies_met": true
+      },
+      {
+        "name": "confidene-meter",
+        "metadata": {
+          "id": "confidence-meter",
+          "title": "Confidence Check",
+          "description": "Gauge understanding of introduction",
+          "skills": [
+            "self-assessment"
+          ],
+          "difficulty": 1,
+          "estimated_time": 20,
+          "input_type": "slider",
+          "output_type": "progress",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "How confident are you about the module objectives?",
+          "prompt": "Rate your confidence level",
+          "min": 1,
+          "max": 5
+        },
+        "position": 2,
+        "dependencies_met": true
+      },
+      {
+        "name": "intro-feedback",
+        "metadata": {
+          "id": "feedback-box",
+          "title": "Introduction Feedback",
+          "description": "Collect feedback on introduction",
+          "skills": [
+            "reflection"
+          ],
+          "difficulty": 1,
+          "estimated_time": 45,
+          "input_type": "text",
+          "output_type": "feedback",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "type": "info",
+          "title": "Introduction Complete",
+          "message": "You've learned about the full-stack architecture for building a todo application!",
+          "explanation": "Understanding the architecture is crucial before diving into code. You now know how React (frontend), Node.js/Express (backend), and databases work together to create a complete application.",
+          "nextSteps": [
+            "Set up the React frontend project",
+            "Configure the development environment",
+            "Learn about component structure"
+          ],
+          "showContinueButton": true
+        },
+        "position": 3,
+        "dependencies_met": true
+      },
+      {
+        "name": "frontend-setup",
+        "metadata": {
+          "id": "code-editor",
+          "title": "Frontend Project Setup",
+          "description": "Set up React project structure",
+          "skills": [
+            "react",
+            "javascript"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Setting up the React Frontend",
+          "prompt": "Create the initial React project structure with necessary dependencies. Include React Router and state management setup.",
+          "language": "javascript",
+          "template": "// Create src/App.js\nimport React from 'react';\nimport { BrowserRouter as Router } from 'react-router-dom';\n\nfunction App() {\n  return (\n    <Router>\n      {/* Add your router setup here */}\n    </Router>\n  );\n}\n\nexport default App;"
+        },
+        "position": 4,
+        "dependencies_met": true
+      },
+      {
+        "name": "frontend-confidence",
+        "metadata": {
+          "id": "confidence-meter",
+          "title": "Frontend Setup Confidence",
+          "description": "Assess frontend setup understanding",
+          "skills": [
+            "self-assessment"
+          ],
+          "difficulty": 1,
+          "estimated_time": 20,
+          "input_type": "slider",
+          "output_type": "progress",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Frontend Setup Confidence Check",
+          "prompt": "How confident are you with the frontend setup?",
+          "min": 1,
+          "max": 5
+        },
+        "position": 5,
+        "dependencies_met": true
+      },
+      {
+        "name": "frontend-feedback",
+        "metadata": {
+          "id": "feedback-box",
+          "title": "Frontend Setup Feedback",
+          "description": "Get feedback on frontend setup",
+          "skills": [
+            "reflection"
+          ],
+          "difficulty": 1,
+          "estimated_time": 45,
+          "input_type": "text",
+          "output_type": "feedback",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "type": "success",
+          "title": "Frontend Setup Complete!",
+          "message": "Excellent work setting up the React project structure!",
+          "explanation": "You've successfully configured React Router, organized your project files, and set up the foundation for state management. These are essential skills for building scalable React applications.",
+          "nextSteps": [
+            "Create reusable UI components",
+            "Implement routing and navigation",
+            "Set up API integration with the backend"
+          ],
+          "showContinueButton": true
+        },
+        "position": 6,
+        "dependencies_met": true
+      }
+    ],
+    "completion_criteria": {
+      "required_widgets": [
+        "module-intro",
+        "frontend-setup"
+      ],
+      "min_completion_percentage": 80,
+      "max_attempts": 3,
+      "time_limit": 5400
+    },
+    "estimated_duration": 5400,
+    "version": "1.0.0"
+  }
+  
