@@ -301,11 +301,8 @@ export class RegisterComponent {
    * Handle Google signup
    */
   onGoogleSignup(): void {
-    this.toastService.show({
-      title: 'Google Signup',
-      description: 'Google signup is not implemented yet. Please use email/password registration.',
-      type: 'info'
-    });
+    console.log('Google signup button clicked');
+    this.authService.loginWithGoogle();
   }
 
   /**

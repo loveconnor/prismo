@@ -1,0 +1,320 @@
+{
+  "name": "coding---java-c3daaeb5",
+  "title": "Mastering For Loops in Java",
+  "description": "Learn to write and understand for loops in Java through guided practice and coding exercises. Build foundational skills for iteration and control flow.",
+  "skills": [
+    "for loops",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Introduction to For Loops",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding For Loops",
+        "prompt": "For loops are used to repeat a block of code a specific number of times. In Java, a for loop has three parts: initialization, condition, and increment. For example:\n\nfor(int i = 0; i < 5; i++) {\n    System.out.println(i);\n}\n\nThis loop prints numbers 0 through 4. Let's explore how for loops work!"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You are starting your journey to master for loops in Java.",
+        "explanation": "For loops are essential for writing efficient code that performs repetitive tasks. Understanding them well will help you solve many programming problems.",
+        "nextSteps": [
+          "Complete the multiple choice question",
+          "Write your first for loop",
+          "Test your code"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with the concept of for loops?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "For Loop Syntax Check",
+        "question": "What will the following for loop print?\n\nfor(int i = 1; i <= 3; i++) {\n    System.out.println(i);\n}",
+        "options": [
+          "0 1 2 3",
+          "1 2 3",
+          "1 2 3 4",
+          "3 2 1"
+        ],
+        "correctAnswer": 1
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You understood the for loop syntax correctly!",
+        "explanation": "The loop starts at i=1 and increments i by 1 each iteration until i is no longer <= 3. So it prints: 1, 2, 3.",
+        "nextSteps": [
+          "Understand loop initialization",
+          "Write a for loop that counts down",
+          "Try a loop with different increments"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in reading for loop syntax?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Write Your First For Loop",
+        "language": "java",
+        "starterCode": "public class ForLoopExercise {\n    public static void main(String[] args) {\n        // Write a for loop that prints numbers from 1 to 5\n        // Replace the comment below with your code\n        \n    }\n}",
+        "testCases": [
+          {
+            "name": "Test Case 1",
+            "input": "",
+            "expectedOutput": "1\n2\n3\n4\n5\n"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You successfully wrote and executed a for loop!",
+        "explanation": "Your for loop correctly printed numbers 1 through 5. The loop initialized i to 1, continued while i was less than or equal to 5, and incremented i each iteration.",
+        "nextSteps": [
+          "Try a loop with different starting values",
+          "Write a loop that counts down",
+          "Modify the increment value"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in writing a for loop?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "multiple-choice",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:37:36.307436",
+    "module_id": "a0e29907-7e6b-481a-b4cd-139374ba4ac2",
+    "saved_to_filesystem": true
+  }
+}

@@ -1,0 +1,335 @@
+{
+  "name": "coding---java-89f30415",
+  "title": "Java Fundamentals: Variables and Data Types",
+  "description": "Learn how to declare variables, understand primitive data types, and write your first Java program with proper syntax and type safety.",
+  "skills": [
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Introduction to Java",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Java",
+        "prompt": "Java is a powerful programming language used worldwide. In this module, you'll learn about variables and data types. A variable is a named container that stores a value. Every variable in Java must have a data type, such as int for integers or String for text. Let's explore how to create and use variables in Java!"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Getting Started",
+        "message": "You're about to learn the building blocks of Java programming.",
+        "explanation": "Understanding variables and data types is essential for writing any Java program. These concepts form the foundation for managing data in your code.",
+        "nextSteps": [
+          "Learn about primitive data types",
+          "Practice declaring variables",
+          "Write your first Java program"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with Java basics?",
+        "minLabel": "Not at all",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding Data Types",
+        "question": "Which of the following are primitive data types in Java? (Select all that apply)",
+        "options": [
+          "int - for whole numbers",
+          "String - for text",
+          "double - for decimal numbers",
+          "boolean - for true/false values",
+          "Character - a class type"
+        ],
+        "correctAnswer": [
+          0,
+          2,
+          3
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent!",
+        "message": "You correctly identified the primitive data types in Java.",
+        "explanation": "Java has 8 primitive data types: byte, short, int, long, float, double, boolean, and char. String is a class type, not primitive. Understanding these types is crucial for declaring variables properly.",
+        "nextSteps": [
+          "Learn variable declaration syntax",
+          "Practice writing variable declarations",
+          "Complete the coding exercise"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How well do you understand primitive data types now?",
+        "minLabel": "Confused",
+        "maxLabel": "Very clear"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Declare Variables",
+        "language": "java",
+        "prompt": "Write a Java program that declares three variables: an integer age, a double salary, and a String name. Assign appropriate values and print them using System.out.println().",
+        "starterCode": "public class Variables {\n  public static void main(String[] args) {\n    // TODO: Declare variables here\n    \n    // TODO: Print the variables\n    \n  }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Age: ",
+            "description": "Program should print age variable"
+          },
+          {
+            "input": "",
+            "expectedOutput": "Salary: ",
+            "description": "Program should print salary variable"
+          },
+          {
+            "input": "",
+            "expectedOutput": "Name: ",
+            "description": "Program should print name variable"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You successfully declared and printed variables in Java!",
+        "explanation": "You demonstrated understanding of variable declaration syntax in Java. Each variable must have a type (int, double, String, etc.) and a name. The main() method is the entry point for Java programs.",
+        "nextSteps": [
+          "Review variable naming conventions",
+          "Practice type casting",
+          "Explore arithmetic operations with variables"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you in declaring and using variables in Java?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "multiple-choice",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:25:41.148311",
+    "module_id": "6a543bf7-6719-40ef-9101-80fd31978edb",
+    "saved_to_filesystem": true
+  }
+}
