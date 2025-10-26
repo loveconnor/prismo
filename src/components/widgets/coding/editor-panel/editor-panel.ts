@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ButtonComponent } from '../../../ui/button/button';
 import { CodeReviewCommentComponent } from '../code-review-comment/code-review-comment';
+import { CodeRefactorModalComponent } from '../code-refactor-modal/code-refactor-modal';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucidePlay, lucideTrash2, lucideChevronUp, lucideChevronDown, lucideSparkles, lucideInfo } from '@ng-icons/lucide';
 import { environment } from '../../../../environments/environment';
@@ -19,7 +20,7 @@ interface CodeReviewComment {
 @Component({
   selector: 'app-editor-panel',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, CodeReviewCommentComponent, NgIconComponent],
+  imports: [CommonModule, ButtonComponent, CodeReviewCommentComponent, CodeRefactorModalComponent, NgIconComponent],
   providers: [
     provideIcons({
       lucidePlay,
@@ -55,6 +56,14 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
   reviewComments: CodeReviewComment[] = [];
   overallReviewFeedback: string = '';
   showReviewComments = false;
+  
+  // Grading state
+  showRefactorModal = false;
+  refactoredCode = '';
+  gradingFeedback = '';
+  gradingSuggestions: any[] = [];
+  isGrading = false;
+  
   private decorationIds: string[] = [];
   private widgetIds: string[] = [];
   private activeWidgetIndex: number = -1; // Track which widget is currently visible
@@ -110,6 +119,9 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     // Reset passed state when currentStep or editorConfig changes (new step)
     if (changes['currentStep'] && !changes['currentStep'].firstChange) {
       this.passed = false;
+      this.showRefactorModal = false; // Hide feedback modal when changing steps
+      this.gradingFeedback = ''; // Clear previous feedback
+      this.gradingSuggestions = []; // Clear previous suggestions
       this.clearConsole();
       this.consoleOutput.push({ type: 'info', message: 'Ready to run your code...' });
     }
@@ -325,6 +337,10 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
   }
 
   private executeCodeOnBackend(code: string, language: string) {
+    console.log('🔧 executeCodeOnBackend() called in editor-panel');
+    console.log('🎯 editorConfig:', this.editorConfig);
+    console.log('🎯 enableGrading:', this.editorConfig?.enableGrading);
+    
     const apiUrl = `${environment.apiUrl}/api/claude/execute-code`;
     
     this.http.post<any>(apiUrl, {
@@ -346,8 +362,27 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
             { type: 'info', message: `\nExecution completed in ${response.executionTime}ms` }
           ];
           
-          this.passed = true;
-          this.codePassed.emit();
+          // Check if grading is enabled (default to true if not specified)
+          const enableGrading = this.editorConfig?.enableGrading !== false;
+          
+          console.log('✨ Checking grading status:');
+          console.log('   - editorConfig.enableGrading:', this.editorConfig?.enableGrading);
+          console.log('   - enableGrading (resolved):', enableGrading);
+          console.log('   - gradingRequirements:', this.editorConfig?.gradingRequirements);
+          
+          if (enableGrading && this.editorConfig?.gradingRequirements) {
+            console.log('✨ Grading is enabled - calling gradeCode()');
+            this.passed = false; // Don't set to true until grading passes
+            this.gradeCode(code, language);
+          } else {
+            if (!enableGrading) {
+              console.log('⏭️ Grading is explicitly disabled - emitting codePassed');
+            } else {
+              console.log('⏭️ No grading requirements specified - emitting codePassed');
+            }
+            this.passed = true; // Only set to true if grading is disabled
+            this.codePassed.emit();
+          }
         } else {
           this.consoleOutput = [
             { type: 'info', message: '> Running code...' },
@@ -797,6 +832,112 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     this.passed = false;
     this.completeStep.emit();
   }
+
+  private gradeCode(code: string, language: string): void {
+    if (this.isGrading) return;
+
+    console.log('🎯 GRADING CODE');
+    console.log('📝 Requirements:', this.editorConfig?.gradingRequirements);
+    console.log('💻 Code:', code);
+
+    this.isGrading = true;
+    const apiUrl = `${environment.apiUrl}/api/claude/grade-code`;
+
+    this.http.post<any>(apiUrl, {
+      code: code,
+      language: language,
+      requirements: this.editorConfig?.gradingRequirements || '',
+      expectedOutput: this.editorConfig?.expectedOutput || '',
+      context: this.editorConfig?.gradingContext || this.editorConfig?.title || ''
+    }).subscribe({
+      next: (response) => {
+        this.isGrading = false;
+        
+        console.log('✅ Grading response:', response);
+
+        if (response.success) {
+          if (response.passed) {
+            // Code passed grading
+            console.log('🎉 Code passed grading!');
+            this.passed = true; // Set passed flag to show Continue button
+            this.showRefactorModal = false; // Hide feedback modal on success
+            this.consoleOutput.push({ 
+              type: 'success', 
+              message: '\n✓ Code passed all requirements!' 
+            });
+            this.codePassed.emit();
+            this.cdr.detectChanges(); // Update UI to show Continue button
+          } else {
+            // Code failed grading - show refactor modal
+            console.log('⚠️ Code failed grading - showing refactor modal');
+            console.log('📝 Refactored code:', response.refactoredCode);
+            console.log('💬 Feedback:', response.feedback);
+            console.log('📋 Suggestions:', response.suggestions);
+            
+            this.refactoredCode = response.refactoredCode || '';
+            this.gradingFeedback = response.feedback || 'Your code needs improvement.';
+            this.gradingSuggestions = response.suggestions || [];
+            this.showRefactorModal = true;
+            
+            console.log('🎨 showRefactorModal is now:', this.showRefactorModal);
+            
+            // Force change detection
+            this.cdr.detectChanges();
+            
+            console.log('✅ Change detection triggered');
+            
+            this.consoleOutput.push({ 
+              type: 'error', 
+              message: '\n✗ Code needs improvement. Check the feedback panel for details.' 
+            });
+          }
+        } else {
+          console.error('❌ Grading failed:', response.feedback);
+          this.consoleOutput.push({ 
+            type: 'error', 
+            message: '\nGrading error - please try again.' 
+          });
+          this.codePassed.emit();
+        }
+      },
+      error: (error) => {
+        this.isGrading = false;
+        console.error('❌ Grading request failed:', error);
+        this.consoleOutput.push({ 
+          type: 'error', 
+          message: '\nGrading request failed: ' + error.message 
+        });
+        this.codePassed.emit();
+      }
+    });
+  }
+
+  closeRefactorModal(): void {
+    this.showRefactorModal = false;
+  }
+
+  acceptRefactoredCode(refactoredCode: string): void {
+    if (this.monacoEditor) {
+      this.monacoEditor.setValue(refactoredCode);
+    }
+    this.showRefactorModal = false;
+    
+    // Re-run the code with the refactored version
+    this.runCode();
+  }
+
+  keepOriginalCode(): void {
+    this.showRefactorModal = false;
+  }
+
+  modifyOriginalCode(): void {
+    // Don't close the modal - let it minimize instead
+    // this.showRefactorModal = false;
+    // Modal will handle its own minimize state
+    console.log('📝 Modify code clicked - modal will minimize');
+    // Focus stays on editor
+  }
 }
+
 
 

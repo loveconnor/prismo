@@ -11,6 +11,7 @@ import { CardContentComponent } from '../../../ui/card/card-content';
 import { CardHeaderComponent } from '../../../ui/card/card-header';
 import { SwitchComponent } from '../../../ui/switch/switch';
 import { CodeReviewCommentComponent } from '../code-review-comment/code-review-comment';
+import { CodeRefactorModalComponent } from '../code-refactor-modal/code-refactor-modal';
 import { PanelComponent } from '../../../ui/panel/panel';
 import { PanelHeaderComponent } from '../../../ui/panel/panel-header';
 import { PanelGroupComponent, ResizablePanelComponent, PanelResizeHandleComponent } from '../../../ui/resizable-panels';
@@ -71,6 +72,7 @@ interface CodeReviewComment {
     ButtonComponent,
     SwitchComponent,
     CodeReviewCommentComponent,
+    CodeRefactorModalComponent,
     PanelComponent,
     PanelHeaderComponent,
     PanelGroupComponent,
@@ -390,6 +392,20 @@ interface CodeReviewComment {
         </div>
       </div>
     </app-card>
+
+    <!-- Code Refactor Modal -->
+    <app-code-refactor-modal
+      [isOpen]="showRefactorModal"
+      [language]="language"
+      [originalCode]="code"
+      [refactoredCode]="refactoredCode"
+      [feedback]="gradingFeedback"
+      [suggestions]="gradingSuggestions"
+      (closeModal)="closeRefactorModal()"
+      (acceptRefactor)="acceptRefactoredCode($event)"
+      (keepOriginalCode)="keepOriginalCode()"
+      (modifyOriginalCode)="modifyOriginalCode()"
+    ></app-code-refactor-modal>
   `,
   styles: [`
     .code-editor-layout {
@@ -412,6 +428,12 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   @Input() override width: string = '100%';
   @Input() override height: string = '400px';
   @Input() override minHeight: string = '300px';
+  
+  // Grading Configuration
+  @Input() enableGrading: boolean = false;
+  @Input() gradingRequirements: string = '';
+  @Input() expectedOutput: string = '';
+  @Input() gradingContext: string = '';
   
   // Editor Settings
   @Input() enableSyntaxHighlighting: boolean = true;
@@ -443,6 +465,13 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   public isGettingReview = false;
   public reviewComments: CodeReviewComment[] = [];
   public overallReviewFeedback: string = '';
+  
+  // Grading state
+  public showRefactorModal = false;
+  public refactoredCode = '';
+  public gradingFeedback = '';
+  public gradingSuggestions: any[] = [];
+  public isGrading = false;
   
   // User Settings State
   public userSettings = {
@@ -711,7 +740,21 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   }
 
   runCode(): void {
-    if (!this.hasCode || this.isRunning) return;
+    console.log('▶️ RUN CODE BUTTON PRESSED');
+    console.log('📊 enableGrading:', this.enableGrading);
+    console.log('📝 gradingRequirements:', this.gradingRequirements);
+    
+    // TEMPORARY: Alert to verify this method is called
+    if (this.enableGrading) {
+      alert('🎯 GRADING IS ENABLED! enableGrading=' + this.enableGrading + ', requirements=' + this.gradingRequirements);
+    } else {
+      alert('❌ GRADING IS DISABLED! enableGrading=' + this.enableGrading);
+    }
+    
+    if (!this.hasCode || this.isRunning) {
+      console.log('⚠️ Cannot run: hasCode =', this.hasCode, ', isRunning =', this.isRunning);
+      return;
+    }
 
     this.isRunning = true;
     this.outputStatus = 'running';
@@ -722,6 +765,8 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     this.setDataValue('runs_count', this.runsCount);
     this.setDataValue('last_run_at', new Date());
 
+    console.log('🔍 Language:', this.language);
+    
     // Emit state change for interaction tracking
     this.emitStateChange('code_executed', {
       runsCount: this.runsCount,
@@ -735,6 +780,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     if (lang === 'javascript' || lang === 'js' || 
         lang === 'python' || lang === 'py' ||
         lang === 'cpp' || lang === 'c++') {
+      console.log('🌐 Executing on backend for language:', lang);
       this.executeCodeOnBackend();
     } else {
       // For other languages, fall back to simulation
@@ -775,7 +821,12 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   }
 
   private executeCodeOnBackend(): void {
+    console.log('🔧 executeCodeOnBackend() called');
+    console.log('🎯 Current enableGrading value:', this.enableGrading);
+    
     const apiUrl = `${environment.apiUrl}/api/claude/execute-code`;
+    
+    console.log('📡 Sending request to:', apiUrl);
     
     this.http.post<any>(apiUrl, {
       code: this.code,
@@ -783,6 +834,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       testCases: this.testCases
     }).subscribe({
       next: (response) => {
+        console.log('📥 Received response from execute-code:', response);
         this.isRunning = false;
         
         if (response.success) {
@@ -804,9 +856,18 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
           this.setDataValue('last_execution_time', this.lastExecutionTime);
           this.setDataValue('execution_success', true);
           
-          // Check if all tests pass
-          if (this.testCases.length > 0 && this.allTestsPass) {
-            this.completeWidget();
+          console.log('🚀 Code executed successfully. Checking if grading is enabled:', this.enableGrading);
+          
+          // Call grading if enabled
+          if (this.enableGrading) {
+            console.log('✨ Grading is enabled - calling gradeCode()');
+            this.gradeCode();
+          } else {
+            console.log('⏭️ Grading is disabled - checking test results');
+            // Check if all tests pass (original behavior)
+            if (this.testCases.length > 0 && this.allTestsPass) {
+              this.completeWidget();
+            }
           }
         } else {
           this.output = response.error || 'Execution failed';
@@ -822,6 +883,86 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
         console.error('Code execution failed:', error);
       }
     });
+  }
+
+  private gradeCode(): void {
+    if (this.isGrading) return;
+
+    console.log('🎯 GRADING CODE - enableGrading:', this.enableGrading);
+    console.log('📝 Requirements:', this.gradingRequirements);
+    console.log('💻 Code:', this.code);
+
+    this.isGrading = true;
+    const apiUrl = `${environment.apiUrl}/api/claude/grade-code`;
+
+    this.http.post<any>(apiUrl, {
+      code: this.code,
+      language: this.language,
+      requirements: this.gradingRequirements,
+      expectedOutput: this.expectedOutput,
+      context: this.gradingContext || this.title
+    }).subscribe({
+      next: (response) => {
+        this.isGrading = false;
+        
+        console.log('✅ Grading response:', response);
+
+        if (response.success) {
+          if (response.passed) {
+            // Code passed grading - complete the widget
+            console.log('🎉 Code passed grading!');
+            this.completeWidget();
+            this.setDataValue('grading_passed', true);
+            this.setDataValue('grading_feedback', response.feedback);
+          } else {
+            // Code failed grading - show refactor modal
+            console.log('⚠️ Code failed grading - showing refactor modal');
+            this.refactoredCode = response.refactoredCode || '';
+            this.gradingFeedback = response.feedback || 'Your code needs improvement.';
+            this.gradingSuggestions = response.suggestions || [];
+            this.showRefactorModal = true;
+            
+            this.setDataValue('grading_passed', false);
+            this.setDataValue('grading_feedback', response.feedback);
+            this.setDataValue('grading_suggestions', response.suggestions);
+          }
+        } else {
+          console.error('❌ Grading failed:', response.feedback);
+          // Don't block the user - just log the error
+          this.completeWidget();
+        }
+      },
+      error: (error) => {
+        this.isGrading = false;
+        console.error('❌ Grading request failed:', error);
+        // Don't block the user - just log the error
+        this.completeWidget();
+      }
+    });
+  }
+
+  closeRefactorModal(): void {
+    this.showRefactorModal = false;
+  }
+
+  acceptRefactoredCode(refactoredCode: string): void {
+    this.code = refactoredCode;
+    this.onCodeChange();
+    this.showRefactorModal = false;
+    
+    // Re-run the code with the refactored version
+    this.runCode();
+  }
+
+  keepOriginalCode(): void {
+    this.showRefactorModal = false;
+    // User chose to keep their original code - don't complete widget
+  }
+
+  modifyOriginalCode(): void {
+    this.showRefactorModal = false;
+    // User wants to modify their code - focus on the editor
+    this.focusEditor();
   }
 
   resetCode(): void {
@@ -974,7 +1115,20 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   }
 
   protected initializeWidgetData(): void {
-    this.code = this.starterCode || this.getConfigValue('starterCode', '');
+    console.log('🔧 CODE EDITOR - initializeWidgetData() called');
+    console.log('📦 Config object:', this.config);
+    
+    // Load ALL config values from the config object
+    this.title = this.getConfigValue('title', this.title);
+    this.language = this.getConfigValue('language', this.language);
+    this.placeholder = this.getConfigValue('placeholder', this.placeholder);
+    this.starterCode = this.getConfigValue('starterCode', this.starterCode);
+    this.testCases = this.getConfigValue('testCases', this.testCases);
+    this.showOutput = this.getConfigValue('showOutput', this.showOutput);
+    this.showFooter = this.getConfigValue('showFooter', this.showFooter);
+    this.autoRun = this.getConfigValue('autoRun', this.autoRun);
+    
+    this.code = this.starterCode;
     
     // Allow height configuration through metadata
     const metadataHeight = this.getConfigValue('editorHeight', '');
@@ -987,9 +1141,22 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       this.minHeight = metadataMinHeight;
     }
     
+    // Load grading configuration from config
+    this.enableGrading = this.getConfigValue('enableGrading', this.enableGrading);
+    this.gradingRequirements = this.getConfigValue('gradingRequirements', this.gradingRequirements);
+    this.expectedOutput = this.getConfigValue('expectedOutput', this.expectedOutput);
+    this.gradingContext = this.getConfigValue('gradingContext', this.gradingContext);
+    
+    console.log('✅ Grading config loaded:');
+    console.log('   - enableGrading:', this.enableGrading);
+    console.log('   - gradingRequirements:', this.gradingRequirements);
+    console.log('   - expectedOutput:', this.expectedOutput);
+    console.log('   - gradingContext:', this.gradingContext);
+    
     this.setDataValue('language', this.language);
     this.setDataValue('code', this.code);
     this.setDataValue('runs_count', 0);
+    this.setDataValue('grading_enabled', this.enableGrading);
   }
 
   protected validateInput(): boolean {

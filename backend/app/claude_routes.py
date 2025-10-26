@@ -610,3 +610,161 @@ def run_test_cases(code, language, test_cases):
         })
     
     return results
+
+
+@claude_bp.route("/claude/grade-code", methods=["POST"])
+def grade_code():
+    """
+    Grade user's code using AI to determine if it meets the requirements
+    
+    Request body:
+    {
+        "code": "User's code to grade",
+        "language": "javascript|python|cpp",
+        "requirements": "What the code should accomplish",
+        "expectedOutput": "Optional expected output",
+        "context": "Optional additional context"
+    }
+    
+    Returns:
+    {
+        "success": true,
+        "passed": true|false,
+        "feedback": "AI feedback on the code",
+        "refactoredCode": "Suggested improved version (if failed)",
+        "suggestions": [
+            {
+                "type": "readability|performance|maintainability|correctness|simplicity",
+                "title": "Suggestion title",
+                "description": "Detailed description",
+                "priority": "high|medium|low"
+            }
+        ]
+    }
+    """
+    try:
+        data = request.get_json()
+
+        if not data or "code" not in data:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "passed": False,
+                        "feedback": "Missing required field: code",
+                        "refactoredCode": None,
+                        "suggestions": []
+                    }
+                ),
+                400,
+            )
+
+        code = data["code"]
+        language = data.get("language", "javascript").lower()
+        requirements = data.get("requirements", "")
+        expected_output = data.get("expectedOutput", "")
+        context = data.get("context", "")
+
+        # Build the grading prompt for Claude
+        grading_prompt = f"""You are a code grading assistant. Evaluate the following {language} code based on these criteria:
+
+**Requirements**: {requirements if requirements else "General best practices"}
+**Expected Output**: {expected_output if expected_output else "Not specified"}
+**Context**: {context if context else "Educational coding exercise"}
+
+**Code to Grade**:
+```{language}
+{code}
+```
+
+Evaluate the code and respond with a JSON object in this exact format:
+{{
+    "passed": true or false,
+    "feedback": "One brief sentence (15 words max) summarizing the main issue or achievement.",
+    "suggestions": [
+        {{
+            "type": "readability|performance|maintainability|correctness|simplicity",
+            "title": "Brief title (e.g., 'Add return statement')",
+            "description": "One clear sentence explaining what to fix. Max 20 words.",
+            "priority": "high|medium|low"
+        }}
+    ]
+}}
+
+IMPORTANT: 
+- Do NOT include a "refactoredCode" field
+- Do NOT provide the solution code
+- Feedback must be ONE sentence, max 15 words
+- Each suggestion description must be ONE sentence, max 20 words
+- Be direct and actionable
+
+Grade the code as "passed": true if:
+- It accomplishes the stated requirements
+- It produces the expected output (if specified)
+- It follows basic best practices for {language}
+- It has no critical errors or bugs
+
+Grade as "passed": false if:
+- It doesn't meet the requirements
+- It has bugs or errors
+- It has serious performance or readability issues
+- The logic is fundamentally flawed
+
+In your suggestions, be specific about WHAT needs to be fixed but don't write the code for the student. Guide them to the solution."""
+
+        # Call Claude for grading
+        response = get_claude_response(
+            message=grading_prompt,
+            system_prompt="You are an expert code reviewer and educator. Provide helpful, constructive feedback in valid JSON format only.",
+            max_tokens=2000
+        )
+
+        if not response:
+            return jsonify({
+                "success": False,
+                "passed": False,
+                "feedback": "Failed to get AI grading response",
+                "refactoredCode": None,
+                "suggestions": []
+            }), 500
+
+        # Parse the AI response
+        try:
+            # Extract JSON from the response (in case there's markdown formatting)
+            import re
+            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            if json_match:
+                grade_data = json.loads(json_match.group())
+            else:
+                grade_data = json.loads(response)
+            
+            return jsonify({
+                "success": True,
+                "passed": grade_data.get("passed", False),
+                "feedback": grade_data.get("feedback", ""),
+                "refactoredCode": grade_data.get("refactoredCode", None),
+                "suggestions": grade_data.get("suggestions", [])
+            })
+
+        except json.JSONDecodeError as e:
+            print(f"Failed to parse AI response as JSON: {str(e)}")
+            print(f"Response was: {response}")
+            return jsonify({
+                "success": False,
+                "passed": False,
+                "feedback": f"AI response could not be parsed: {response[:200]}...",
+                "refactoredCode": None,
+                "suggestions": []
+            }), 500
+
+    except Exception as e:
+        print(f"ERROR in grade_code: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "success": False,
+            "passed": False,
+            "feedback": f"Error grading code: {str(e)}",
+            "refactoredCode": None,
+            "suggestions": []
+        }), 500
