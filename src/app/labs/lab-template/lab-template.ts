@@ -260,8 +260,9 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
                     [question]="(codeEditorWidget.config?.question || codeEditorWidget.props?.question || '')"
                     [options]="getMultipleChoiceOptions(codeEditorWidget)"
                     [correctAnswers]="getMultipleChoiceCorrectAnswers(codeEditorWidget)"
+                    [selectionMode]="getMultipleChoiceSelectionMode(codeEditorWidget)"
                     [showRationale]="true"
-                    (answerSubmitted)="handleCodePassed()"
+                    (answerSubmitted)="handleMultipleChoiceSubmitted($event)"
                   ></app-multiple-choice>
                 </ng-container>
               </div>
@@ -298,7 +299,6 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
                 <app-step-prompt
                   [title]="getStepPromptTitle()"
                   [prompt]="getStepPromptText()"
-                  [difficulty]="getStepPromptDifficulty()"
                   [estimatedTime]="getStepPromptEstimatedTime()"
                   [showFooter]="true"
                 ></app-step-prompt>
@@ -308,29 +308,16 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             <!-- Footer with Continue Button -->
             <div class="border-t border-border bg-muted/50 px-6 py-4">
               <!-- Continue button for non-final steps -->
-          
-
-          <!-- Step Prompt Widget (for step-prompt widgets) -->
-          <app-editor-panel
-            *ngIf="codeEditorWidget?.type === 'step-prompt' || codeEditorWidget?.metadata?.id === 'step-prompt'"
-            [currentStep]="currentStep"
-            [totalSteps]="steps.length || 1"
-            [shiftHeader]="leftPanelCollapsed || !hasSteps"
-            [editorConfig]="null"
-            (completeStep)="handleCompleteStep()"
-            (codePassed)="handleCodePassed()"
-          >
-            <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
               <button
-                *ngIf="currentStep < steps.length && completedSteps.includes(currentStep)"
-                (click)="handleCompleteStep()"
+                *ngIf="currentStep < steps.length"
+                (click)="handleCodePassed()"
                 class="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Continue to Step {{ currentStep + 1 }}
               </button>
               <!-- Complete Lab button for final step -->
               <button
-                *ngIf="currentStep === steps.length && completedSteps.includes(currentStep)"
+                *ngIf="currentStep === steps.length"
                 (click)="handleCompleteLab()"
                 class="w-full rounded-md bg-[#bc78f9] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#a865e0] transition-colors"
               >
@@ -338,6 +325,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
               </button>
             </div>
           </div>
+
         </div>
 
         <!-- Right: Support -->
@@ -578,6 +566,10 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private feedbackByStep = new Map<number, any>();
   private confidenceByStep = new Map<number, any>();
   private shownFeedbackForSteps = new Set<number>();
+  
+  // Quiz scoring tracking
+  private quizResults = new Map<number, { correct: boolean; attempts: number }>();
+  private totalQuizQuestions = 0;
   
   // Check if support panel should be shown
   get shouldShowSupportPanel(): boolean {
@@ -1770,8 +1762,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const currentStepData = this.steps[this.currentStep - 1];
     const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
     
-    // Check if this step has a code editor widget
+    // Check if this step has a code editor or multiple-choice widget
     const hasCodeEditor = this.allCodeEditorWidgets.some(w => w.metadata?.position === widgetPosition);
+    const hasMultipleChoice = this.allMultipleChoiceWidgets.some(w => w.metadata?.position === widgetPosition);
     
     // Check if this step has feedback or confidence widgets
     const hasFeedback = this.feedbackByStep.has(widgetPosition);
@@ -1780,14 +1773,16 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log(`checkAndShowFeedbackForNonCodingStep - Step ${this.currentStep}:`);
     console.log(`  widgetPosition: ${widgetPosition}`);
     console.log(`  hasCodeEditor: ${hasCodeEditor}`);
+    console.log(`  hasMultipleChoice: ${hasMultipleChoice}`);
     console.log(`  hasFeedback: ${hasFeedback}`);
     console.log(`  hasConfidence: ${hasConfidence}`);
     console.log(`  feedbackByStep map:`, this.feedbackByStep);
     console.log(`  confidenceByStep map:`, this.confidenceByStep);
     console.log(`  already shown:`, this.shownFeedbackForSteps.has(widgetPosition));
     
-    // If it's a non-coding step with feedback/confidence, auto-trigger after a short delay
-    if (!hasCodeEditor && (hasFeedback || hasConfidence)) {
+    // If it's a non-coding/non-quiz step with feedback/confidence, auto-trigger after a short delay
+    // Exclude code editors AND multiple-choice since they need user interaction
+    if (!hasCodeEditor && !hasMultipleChoice && (hasFeedback || hasConfidence)) {
       // Don't show again if we've already shown for this step
       if (!this.shownFeedbackForSteps.has(widgetPosition)) {
         console.log(`Auto-triggering feedback for non-coding step ${this.currentStep}`);
@@ -1799,7 +1794,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(`Feedback already shown for step ${this.currentStep}, skipping`);
       }
     } else {
-      console.log(`Step ${this.currentStep} is a coding step or has no feedback/confidence widgets`);
+      console.log(`Step ${this.currentStep} is a coding/quiz step or has no feedback/confidence widgets`);
     }
   }
 
@@ -1993,11 +1988,47 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Get lab score (for now, based on completion percentage)
+   * Get lab score (based on completion and quiz performance)
    */
   getLabScore(): number {
-    // Return as 0-1 normalized score
-    return this.getCompletionPercent() / 100;
+    const completionScore = this.getCompletionPercent() / 100;
+    
+    // If there are no quiz questions, just return completion score
+    if (this.quizResults.size === 0) {
+      return completionScore;
+    }
+    
+    // Calculate quiz score based on correct answers and attempts
+    let quizScore = 0;
+    let totalQuizWeight = 0;
+    
+    this.quizResults.forEach((result, stepNumber) => {
+      totalQuizWeight += 1;
+      
+      if (result.correct) {
+        // Award full points for first attempt, reduce for multiple attempts
+        if (result.attempts === 1) {
+          quizScore += 1.0;
+        } else if (result.attempts === 2) {
+          quizScore += 0.75;
+        } else if (result.attempts === 3) {
+          quizScore += 0.5;
+        } else {
+          quizScore += 0.25;
+        }
+      }
+      // No points if incorrect
+    });
+    
+    // Average the quiz score
+    const averageQuizScore = totalQuizWeight > 0 ? quizScore / totalQuizWeight : 1;
+    
+    // Weighted average: 50% completion, 50% quiz performance
+    const finalScore = (completionScore * 0.5) + (averageQuizScore * 0.5);
+    
+    console.log('[getLabScore] Completion:', completionScore, 'Quiz:', averageQuizScore, 'Final:', finalScore);
+    
+    return finalScore;
   }
 
   /**
@@ -2085,31 +2116,167 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     const options = config.options;
-    const correctAnswer = config.correctAnswer;
     const explanation = config.explanation || '';
     
-    return options.map((option: string, index: number) => ({
-      id: `option-${index}`,
-      label: option,
-      value: `option-${index}`,
-      rationale: index === correctAnswer ? explanation : undefined,
-      isCorrect: index === correctAnswer
-    }));
+    // Determine which answers are correct
+    let correctIndices: number[] = [];
+    let correctIds: string[] = [];
+    
+    // Handle correctAnswers as array of indices
+    if (Array.isArray(config.correctAnswers)) {
+      if (typeof config.correctAnswers[0] === 'number') {
+        correctIndices = config.correctAnswers;
+      } else {
+        correctIds = config.correctAnswers;
+      }
+    }
+    // Handle correctAnswer (single or array)
+    else if (config.correctAnswer !== undefined) {
+      if (Array.isArray(config.correctAnswer)) {
+        if (typeof config.correctAnswer[0] === 'number') {
+          correctIndices = config.correctAnswer;
+        } else {
+          correctIds = config.correctAnswer;
+        }
+      } else if (typeof config.correctAnswer === 'number') {
+        correctIndices = [config.correctAnswer];
+      } else {
+        correctIds = [config.correctAnswer];
+      }
+    }
+    
+    console.log('[getMultipleChoiceOptions] Correct indices:', correctIndices);
+    console.log('[getMultipleChoiceOptions] Correct IDs:', correctIds);
+    
+    // Handle two different option formats:
+    // 1. Array of strings: ["option1", "option2", "option3"]
+    // 2. Array of objects: [{id: "a", text: "option1"}, ...]
+    
+    if (typeof options[0] === 'string') {
+      // Format 1: Simple string array
+      return options.map((option: string, index: number) => {
+        const isCorrect = correctIndices.includes(index);
+        return {
+          id: `option-${index}`,
+          label: option,
+          value: `option-${index}`,
+          rationale: isCorrect ? explanation : undefined,
+          isCorrect: isCorrect
+        };
+      });
+    } else {
+      // Format 2: Object array with id and text
+      return options.map((option: any, index: number) => {
+        const optionId = option.id || `option-${index}`;
+        const optionText = option.text || option.label || option.value || '';
+        const isCorrect = correctIds.includes(optionId) || correctIndices.includes(index);
+        
+        return {
+          id: optionId,
+          label: optionText,
+          value: optionId,
+          rationale: isCorrect ? explanation : undefined,
+          isCorrect: isCorrect
+        };
+      });
+    }
   }
 
   /**
-   * Transform module-format correct answer (index) to component format (array of IDs)
+   * Transform module-format correct answer (index or array or IDs) to component format (array of IDs)
    */
   getMultipleChoiceCorrectAnswers(configOrWidget: any): string[] {
     // Handle both widget object and direct config object
     const config = configOrWidget?.config || configOrWidget?.props || configOrWidget;
     
-    if (!config || config.correctAnswer === undefined) {
-      console.warn('No correctAnswer found in multiple choice config:', configOrWidget);
+    if (!config) {
+      console.warn('No config found in multiple choice config:', configOrWidget);
       return [];
     }
     
-    const correctIndex = config.correctAnswer;
-    return [`option-${correctIndex}`];
+    // Handle array of correct answers
+    if (Array.isArray(config.correctAnswers)) {
+      // If they're numbers (indices), convert to option-N format
+      if (typeof config.correctAnswers[0] === 'number') {
+        return config.correctAnswers.map((index: number) => `option-${index}`);
+      }
+      // If they're strings (IDs), return as-is
+      return config.correctAnswers;
+    }
+    
+    // Handle single or array in correctAnswer field
+    if (config.correctAnswer !== undefined) {
+      if (Array.isArray(config.correctAnswer)) {
+        // Array of answers
+        if (typeof config.correctAnswer[0] === 'number') {
+          return config.correctAnswer.map((index: number) => `option-${index}`);
+        }
+        return config.correctAnswer;
+      } else {
+        // Single answer
+        if (typeof config.correctAnswer === 'number') {
+          return [`option-${config.correctAnswer}`];
+        }
+        return [config.correctAnswer];
+      }
+    }
+    
+    console.warn('No correctAnswer or correctAnswers found in config:', config);
+    return [];
+  }
+
+  /**
+   * Get selection mode for multiple choice (single or multiple)
+   */
+  getMultipleChoiceSelectionMode(configOrWidget: any): 'single' | 'multiple' {
+    const config = configOrWidget?.config || configOrWidget?.props || configOrWidget;
+    
+    console.log('[getMultipleChoiceSelectionMode] Config:', config);
+    
+    // Check if multiple correct answers exist in correctAnswers array
+    if (config?.correctAnswers && Array.isArray(config.correctAnswers) && config.correctAnswers.length > 1) {
+      console.log('[getMultipleChoiceSelectionMode] Multiple correct answers detected:', config.correctAnswers);
+      return 'multiple';
+    }
+    
+    // Check if correctAnswer is an array with multiple items
+    if (config?.correctAnswer && Array.isArray(config.correctAnswer) && config.correctAnswer.length > 1) {
+      console.log('[getMultipleChoiceSelectionMode] Multiple correct answers in correctAnswer array:', config.correctAnswer);
+      return 'multiple';
+    }
+    
+    // Check explicit allowMultiple flag
+    if (config?.allowMultiple === true || config?.selectionMode === 'multiple') {
+      console.log('[getMultipleChoiceSelectionMode] Explicit multiple selection mode');
+      return 'multiple';
+    }
+    
+    console.log('[getMultipleChoiceSelectionMode] Single selection mode');
+    return 'single';
+  }
+
+  /**
+   * Handle multiple choice submission with scoring
+   */
+  handleMultipleChoiceSubmitted(event: { selected: string[]; correct: boolean }): void {
+    console.log('[handleMultipleChoiceSubmitted] Event:', event);
+    
+    // Track the result for this step
+    const existingResult = this.quizResults.get(this.currentStep);
+    const attempts = existingResult ? existingResult.attempts + 1 : 1;
+    
+    this.quizResults.set(this.currentStep, {
+      correct: event.correct,
+      attempts: attempts
+    });
+    
+    console.log('[handleMultipleChoiceSubmitted] Quiz results:', Array.from(this.quizResults.entries()));
+    
+    // Only mark step as complete if answer is correct
+    if (event.correct) {
+      this.handleCodePassed();
+    } else {
+      console.log('[handleMultipleChoiceSubmitted] Incorrect answer, not marking step complete');
+    }
   }
 }

@@ -200,6 +200,14 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
       this.correctAnswers = this.options.filter(o => o.isCorrect).map(o => o.value);
     }
 
+    console.log('[MultipleChoice] Initialized with:', {
+      question: this.question,
+      options: this.options,
+      correctAnswers: this.correctAnswers,
+      selectionMode: this.selectionMode,
+      required: this.required
+    });
+
     // Initial value
     const initialValue = this.value ?? this.defaultValue ?? [];
     this.selectedValues.set(initialValue);
@@ -257,6 +265,13 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
 
     const correct = this.isCorrect();
 
+    console.log('[MultipleChoice] handleSubmit called:', {
+      selectedValues: this.selectedValues(),
+      correctAnswers: this.correctAnswers,
+      correct: correct,
+      attempts: this.attempts()
+    });
+
     // Emit state change for interaction tracking
     this.emitStateChange('answer_submitted', {
       selectedValues: this.selectedValues(),
@@ -272,6 +287,7 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
     });
 
     // Legacy submit bridge
+    console.log('[MultipleChoice] Emitting answerSubmitted event:', { selected: this.selectedValues(), correct });
     this.answerSubmitted.emit({ selected: this.selectedValues(), correct });
 
     if (correct) {

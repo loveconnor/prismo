@@ -1,0 +1,543 @@
+{
+  "name": "coding---i-want-to-do-some-js-specific-quesitons-and-some-multiple-choice-7cae20e3",
+  "title": "JavaScript Mastery: Coding Challenges & Multiple Choice",
+  "description": "Master JavaScript fundamentals through interactive coding challenges and multiple-choice questions covering recursion, loops, variables, and core programming concepts.",
+  "skills": [
+    "javascript",
+    "recursion",
+    "loops",
+    "variables",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to JavaScript Challenges",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to JavaScript Mastery",
+        "prompt": "In this module, you'll solve JavaScript-specific challenges covering loops, recursion, variables, and core programming concepts. You'll work through code problems and answer multiple-choice questions to reinforce your understanding."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You're about to begin a comprehensive JavaScript learning experience.",
+        "explanation": "This module combines practical coding challenges with conceptual multiple-choice questions to build your JavaScript expertise.",
+        "nextSteps": [
+          "Complete the first code challenge",
+          "Answer multiple-choice questions",
+          "Review your solutions and explanations"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident do you feel about your JavaScript skills?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Challenge 1: Loop Through Array",
+        "language": "javascript",
+        "prompt": "Write a function that takes an array of numbers and returns the sum of all elements using a for loop.",
+        "starterCode": "function sumArray(arr) {\n  // Write your code here\n}\n\n// Test your function\nconsole.log(sumArray([1, 2, 3, 4, 5])); // Expected: 15",
+        "testCases": [
+          {
+            "input": "[1, 2, 3, 4, 5]",
+            "expected": "15"
+          },
+          {
+            "input": "[10, 20, 30]",
+            "expected": "60"
+          },
+          {
+            "input": "[]",
+            "expected": "0"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Work on Loop Challenge!",
+        "message": "You've successfully implemented a loop-based solution.",
+        "explanation": "Using a for loop to iterate through an array is a fundamental JavaScript pattern. This approach is efficient and commonly used in real-world applications.",
+        "nextSteps": [
+          "Try the next recursion challenge",
+          "Review alternative loop methods",
+          "Practice with different data types"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you about using loops in JavaScript?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 4,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Challenge 2: Recursive Factorial",
+        "language": "javascript",
+        "prompt": "Write a recursive function that calculates the factorial of a number. Remember: factorial(n) = n * factorial(n-1), and factorial(0) = 1.",
+        "starterCode": "function factorial(n) {\n  // Write your recursive solution here\n}\n\n// Test your function\nconsole.log(factorial(5)); // Expected: 120\nconsole.log(factorial(0)); // Expected: 1",
+        "testCases": [
+          {
+            "input": "5",
+            "expected": "120"
+          },
+          {
+            "input": "0",
+            "expected": "1"
+          },
+          {
+            "input": "3",
+            "expected": "6"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Recursion Solution!",
+        "message": "You've successfully implemented a recursive factorial function.",
+        "explanation": "Recursion is a powerful technique where a function calls itself with modified parameters. The key is defining a base case (factorial(0) = 1) to prevent infinite loops.",
+        "nextSteps": [
+          "Move to the multiple-choice section",
+          "Explore iterative vs recursive solutions",
+          "Try more complex recursion problems"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you about recursion in JavaScript?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 3,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Question 1: Variable Scope",
+        "question": "What will be logged to the console? Select all that apply.\n\nvar x = 10;\nfunction test() {\n  var x = 20;\n  console.log(x);\n}\ntest();\nconsole.log(x);",
+        "options": [
+          "20 and then 10",
+          "10 and then 20",
+          "20 and then 20",
+          "10 and then 10"
+        ],
+        "correctAnswer": 0
+      },
+      "position": 4,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Correct! Variable Scope Mastered",
+        "message": "You understand JavaScript variable scope correctly.",
+        "explanation": "The function has its own scope, so the local variable x = 20 is logged first. Outside the function, the global x = 10 is logged. This demonstrates function-level scope in JavaScript.",
+        "nextSteps": [
+          "Answer the next multiple-choice question",
+          "Review closure concepts",
+          "Practice with block scope (let/const)"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you about variable scope in JavaScript?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 3,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Question 2: Array Methods",
+        "question": "Which of the following correctly filters an array to get only even numbers?",
+        "options": [
+          "arr.filter(x => x % 2 === 0)",
+          "arr.map(x => x % 2 === 0)",
+          "arr.reduce((acc, x) => x % 2 === 0)",
+          "arr.forEach(x => x % 2 === 0)"
+        ],
+        "correctAnswer": 0
+      },
+      "position": 5,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Perfect! Array Methods Understood",
+        "message": "You correctly identified the filter method for this use case.",
+        "explanation": "The filter() method creates a new array with elements that pass a test. The callback returns true for even numbers (x % 2 === 0). Map returns transformed values, reduce combines values, and forEach has no return value.",
+        "nextSteps": [
+          "Complete the final challenge",
+          "Review map, reduce, and forEach methods",
+          "Practice combining multiple array methods"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you about JavaScript array methods?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor",
+      "code-editor",
+      "multiple-choice",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "difficulty": "challenge",
+  "_metadata": {
+    "generated_at": "2025-10-26T10:47:05.556437",
+    "module_id": "8c456dfb-ba3a-4947-9c30-c72c0756f397",
+    "saved_to_filesystem": true
+  }
+}

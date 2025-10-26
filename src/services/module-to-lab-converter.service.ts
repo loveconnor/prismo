@@ -57,8 +57,23 @@ export class ModuleToLabConverterService {
    * Convert module data to lab data format
    */
   convertModuleToLab(moduleData: ModuleData): LabData {
-    // Calculate difficulty based on widget difficulties
-    const avgDifficulty = this.calculateAverageDifficulty(moduleData.widgets);
+    // Use module's difficulty if available, otherwise calculate from widgets
+    let labDifficulty: number;
+    if ((moduleData as any).difficulty) {
+      // Map difficulty string to number
+      const difficultyMap: {[key: string]: number} = {
+        'beginner': 1,
+        'practice': 3,
+        'intermediate': 3,
+        'challenge': 5,
+        'advanced': 5
+      };
+      const diffStr = (moduleData as any).difficulty.toLowerCase();
+      labDifficulty = difficultyMap[diffStr] ?? this.calculateAverageDifficulty(moduleData.widgets);
+    } else {
+      // Calculate difficulty based on widget difficulties
+      labDifficulty = this.calculateAverageDifficulty(moduleData.widgets);
+    }
 
     // Convert steps (normalized to lab steps)
     const labSteps = (moduleData.steps ?? []).map(step => ({
@@ -118,7 +133,7 @@ export class ModuleToLabConverterService {
       id: moduleData.id,
       title: moduleData.title,
       description: moduleData.description,
-      difficulty: avgDifficulty,
+      difficulty: labDifficulty,
       estimatedTime: Math.round(moduleData.estimated_duration / 60), // seconds → minutes
       sections,
       steps: labSteps,

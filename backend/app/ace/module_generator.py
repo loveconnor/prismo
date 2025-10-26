@@ -230,7 +230,7 @@ OTHER AVAILABLE WIDGETS (copy structure, adapt props):
         """Use AWS Bedrock API to generate a module with strict JSON output"""
         
         # Widget difficulty mapping - reduced to fit in token limit
-        widget_counts = {"beginner": 2, "intermediate": 3, "advanced": 5}
+        widget_counts = {"beginner": 2, "practice": 3, "intermediate": 3, "challenge": 5, "advanced": 5}
         num_learning_widgets = widget_counts.get(difficulty, 2)
         
         # Create the streamlined prompt
@@ -276,7 +276,7 @@ CRITICAL JSON RULES:
        "title": "<Widget Title>",  // REQUIRED
        "description": "<What this widget does>",  // REQUIRED - DO NOT OMIT
        "skills": ["skill1", "skill2"],  // REQUIRED
-       "difficulty": 2,  // REQUIRED
+       "difficulty": 4,  // REQUIRED
        "estimated_time": 30,  // REQUIRED
        "input_type": "text",  // REQUIRED
        "output_type": "scaffold",  // REQUIRED
@@ -292,7 +292,8 @@ CRITICAL JSON RULES:
    
    CRITICAL: Root "id" MUST equal metadata "id"
    Example: Both should be "step-prompt" or "confidence-meter", NOT unique names like "intro-step-prompt-001"
-   
+   EACH EXAMPLE SHOULD HAVE AT least 3 different widgets
+
    REQUIRED METADATA FIELDS (12 total):
    id, title, description, skills, difficulty, estimated_time,
    input_type, output_type, dependencies, adaptive_hooks, version, category
@@ -525,7 +526,7 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
                         "title": "Step Prompt",
                         "description": "Displays task or question text with optional formatting",
                         "skills": ["comprehension", "reading"],
-                        "difficulty": 2,
+                        "difficulty": 4,
                         "estimated_time": 30,
                         "input_type": "text",
                         "output_type": "scaffold",

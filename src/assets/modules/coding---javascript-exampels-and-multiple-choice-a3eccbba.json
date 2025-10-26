@@ -1,0 +1,349 @@
+{
+  "name": "coding---javascript-exampels-and-multiple-choice-a3eccbba",
+  "title": "JavaScript Mastery: Loops, Recursion & Code Challenges",
+  "description": "Master JavaScript fundamentals through interactive coding challenges and conceptual multiple-choice questions. Learn loops, recursion, and best practices with hands-on examples.",
+  "skills": [
+    "loops",
+    "recursion",
+    "javascript",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to JavaScript Mastery",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to JavaScript Mastery",
+        "prompt": "In this module, you'll explore JavaScript loops and recursion through interactive coding challenges. You'll write functions, debug code, and answer conceptual questions to deepen your understanding of these fundamental programming patterns.",
+        "estimatedTime": 30
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Module Overview",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "What You'll Learn",
+        "message": "This module covers JavaScript loops (for, while, do-while) and recursion patterns with practical coding exercises.",
+        "explanation": "Understanding loops and recursion is essential for writing efficient algorithms and solving complex problems in JavaScript.",
+        "nextSteps": [
+          "Complete the first coding challenge",
+          "Test your loop understanding",
+          "Apply recursion concepts"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Initial Confidence Assessment",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with JavaScript loops and recursion?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Loop Fundamentals Challenge",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Write a Function Using Loops",
+        "language": "javascript",
+        "starterCode": "// Write a function that sums all numbers from 1 to n\n// Example: sumToN(5) should return 15 (1+2+3+4+5)\n\nfunction sumToN(n) {\n  // Your code here\n}\n\n// Test your function\nconsole.log(sumToN(5));  // Expected: 15\nconsole.log(sumToN(10)); // Expected: 55",
+        "testCases": [
+          {
+            "input": "sumToN(5)",
+            "expected": "15",
+            "description": "Sum of numbers 1 to 5"
+          },
+          {
+            "input": "sumToN(10)",
+            "expected": "55",
+            "description": "Sum of numbers 1 to 10"
+          },
+          {
+            "input": "sumToN(0)",
+            "expected": "0",
+            "description": "Edge case: zero"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Loop Challenge Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job on the Loop Challenge!",
+        "message": "You've successfully written a function that uses loops to solve a problem. This demonstrates understanding of iteration and accumulation patterns.",
+        "explanation": "Using a for loop to iterate and accumulate values is a fundamental pattern in programming. This approach is efficient and easy to understand.",
+        "nextSteps": [
+          "Try solving the same problem with a while loop",
+          "Move on to recursion concepts",
+          "Test edge cases thoroughly"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence After Loop Challenge",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Need Review",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with using loops in JavaScript?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Recursion Concepts Quiz",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Understanding Recursion",
+        "question": "Which of the following are TRUE about recursion in JavaScript? (Select all that apply)",
+        "options": [
+          {
+            "id": "a",
+            "text": "A recursive function must call itself"
+          },
+          {
+            "id": "b",
+            "text": "Recursion always requires a base case to prevent infinite loops"
+          },
+          {
+            "id": "c",
+            "text": "Recursive solutions are always more efficient than loops"
+          },
+          {
+            "id": "d",
+            "text": "Each recursive call adds a new frame to the call stack"
+          }
+        ],
+        "correctAnswer": [
+          "a",
+          "b",
+          "d"
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Recursion Concepts Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Recursion Understanding!",
+        "message": "You correctly identified the key properties of recursive functions. You understand base cases, call stacks, and function behavior.",
+        "explanation": "Recursion is a powerful technique where a function solves a problem by breaking it into smaller subproblems. The base case prevents infinite recursion, and each call creates a new stack frame.",
+        "nextSteps": [
+          "Practice writing recursive functions",
+          "Compare recursive vs iterative solutions",
+          "Explore tail recursion optimization"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence with Recursion Concepts",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Confused",
+        "maxLabel": "Fully Confident",
+        "question": "How well do you understand recursion principles?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T10:25:59.560122",
+    "module_id": "e4158475-6a23-43fb-830f-fca1f4ca1616",
+    "saved_to_filesystem": true
+  }
+}

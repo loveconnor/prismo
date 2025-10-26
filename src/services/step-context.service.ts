@@ -288,8 +288,8 @@ Return ONLY this JSON:
   private mapDifficulty(difficulty?: string): 'easy' | 'medium' | 'hard' {
     if (!difficulty) return 'medium';
     const lower = difficulty.toLowerCase();
-    if (lower === 'beginner' || lower === 'easy') return 'easy';
-    if (lower === 'advanced' || lower === 'hard') return 'hard';
+    if (lower.includes('beginner') || lower.includes('easy')) return 'easy';
+    if (lower.includes('challenge') || lower.includes('challenging') || lower.includes('advanced') || lower.includes('hard') || lower.includes('expert') || lower.includes('master')) return 'hard';
     return 'medium';
   }
 }

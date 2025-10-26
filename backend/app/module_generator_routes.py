@@ -247,6 +247,9 @@ def generate_module():
         finally:
             loop.close()
         
+        # Add the difficulty to the module for frontend use
+        module['difficulty'] = difficulty
+        
         # Save to database
         module_id = ace_engine.save_generated_module(module, user_id)
         
