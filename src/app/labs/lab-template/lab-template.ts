@@ -870,12 +870,39 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       const storedData = localStorage.getItem(progressKey);
       if (storedData) {
         const progressData = JSON.parse(storedData);
-        this.currentStep = progressData.currentStep || 1;
         this.completedSteps = progressData.completedSteps || [];
         console.log('[LabTemplate] Loaded progress from localStorage:', progressData);
+        
+        // Smart step restoration: jump to the first incomplete step
+        // This ensures when refreshing, the user sees the next step they need to work on
+        if (this.completedSteps.length > 0 && this.steps.length > 0) {
+          // Find the first step that's not completed
+          const firstIncompleteStep = this.steps.findIndex((step, index) => 
+            !this.completedSteps.includes(index + 1)
+          );
+          
+          if (firstIncompleteStep !== -1) {
+            // Found an incomplete step, go to it
+            this.currentStep = firstIncompleteStep + 1;
+            console.log(`[LabTemplate] Jumping to first incomplete step: ${this.currentStep}`);
+          } else {
+            // All steps completed, stay on the last step
+            this.currentStep = this.steps.length;
+            console.log(`[LabTemplate] All steps completed, staying on final step: ${this.currentStep}`);
+          }
+        } else {
+          // No completed steps or no steps, start at step 1
+          this.currentStep = 1;
+          console.log(`[LabTemplate] No progress, starting at step 1`);
+        }
+      } else {
+        // No stored progress, start at step 1
+        this.currentStep = 1;
+        console.log('[LabTemplate] No stored progress found, starting at step 1');
       }
     } catch (e) {
       console.warn('[LabTemplate] Failed to load progress from localStorage:', e);
+      this.currentStep = 1;
     }
   }
 
@@ -1029,6 +1056,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     // Load progress from localStorage if it exists
     this.loadProgressFromLocalStorage();
     
+    // IMPORTANT: After loading progress, update the UI to show the current step's widget
+    // This ensures the widget is displayed when the lab is refreshed
+    this.updateCurrentCodeEditor();
+    this.updateCurrentFeedbackWidgets();
+    
     // Start session tracking for this module
     this.startModuleSession(this.currentModuleId);
     
@@ -1098,9 +1130,21 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
           console.log(`Extracted lab data:`, labData);
           const labFromResponse = this.labDataService.convertLabToLabData(labData);
           this.labData = labFromResponse;
+          this.currentModuleId = labId; // Save module ID for progress tracking
           this.extractWidgetsFromLabData();
           this.loading = false;
           this.error = null;
+          
+          // Load progress from localStorage if it exists
+          this.loadProgressFromLocalStorage();
+          
+          // IMPORTANT: After loading progress, update the UI to show the current step's widget
+          // This ensures the widget is displayed when the lab is refreshed
+          this.updateCurrentCodeEditor();
+          this.updateCurrentFeedbackWidgets();
+          
+          // Start session tracking for this module
+          this.startModuleSession(this.currentModuleId);
           
           this.cdr.detectChanges();
         },
