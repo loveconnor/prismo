@@ -1,8 +1,8 @@
 {
   "id": "example-coding-module",
-  "title": "Introduction to C++ Printing",
-  "description": "Learn the basics of C++ through printing to the console.",
-  "skills": ["programming", "C++", "functions", "problem-solving", "printing"],
+"title": "Introduction to C++ Printing",
+"description": "Learn the basics of C++ through printing to the console.",
+"skills": ["programming", "C++", "functions", "problem-solving", "printing"],
   "widgets": [
     {
       "id": "step-prompt",
@@ -24,9 +24,9 @@
         "category": "core"
       },
       "props": {
-        "title": "Welcome to C++ Printing!",
-        "prompt": "In this module, you'll learn how to create your first C++ program! It will print out text into the console.",
-        "estimatedTime": 30
+"title": "Welcome to C++ Printing!",
+"prompt": "In this module, you'll learn how to create your first C++ program! It will print out text into the console.",
+"estimatedTime": 30
       },
       "position": 1,
       "dependencies_met": true
@@ -52,16 +52,16 @@
         "category": "coding"
       },
       "props": {
-        "title": "Create Your First Program",
-        "language": "cpp",
-        "starterCode": "// Create an int main function that prints out \"Hello, human! How are you?\"",
+"title": "Create Your First Program",
+"language": "cpp",
+"starterCode": "// Create an int main function that prints out \"Hello, human! How are you?\"",
         "placeholder": "Write your code here...",
         "testCases": [
           {
-            "id": "test-1",
-            "input": "main()",
-            "expectedOutput": "Hello, human! How are you?",
-            "description": "Function should print \"Hello, human! How are you?\""
+"id": "test-1",
+"input": "main()",
+"expectedOutput": "Hello, human! How are you?",
+"description": "Function should print \"Hello, human! How are you?\""
           }
         ]
       },
@@ -89,24 +89,24 @@
       },
       "props": {
         "hints": [
-          {
-            "id": "hint-1",
-            "tier": 1,
-            "text": "Remember to include <iostream> at the top.",
-            "revealed": false
-          },
-          {
-            "id": "hint-2",
-            "tier": 2,
-            "text": "Put your code inside the main function",
-            "revealed": false
-          },
-          {
-            "id": "hint-3",
-            "tier": 3,
-            "text": "Make sure to use cout at the start and endl at the end.",
-            "revealed": false
-          }
+{
+"id": "hint-1",
+"tier": 1,
+"text": "Remember to include <iostream> at the top.",
+"revealed": false
+},
+{
+"id": "hint-2",
+"tier": 2,
+"text": "Put your code inside the main function",
+"revealed": false
+},
+{
+"id": "hint-3",
+"tier": 3,
+"text": "Make sure to use cout at the start and endl at the end.",
+"revealed": false
+}
         ],
         "maxHintsPerTier": 1
       },
@@ -134,13 +134,13 @@
       "props": {
         "type": "success",
         "title": "Great Job!",
-        "message": "You've successfully completed the C++ printing module!",
-        "explanation": "You've learned how to create your first C++ program and print output to the console. This is the foundation of C++ programming that you'll build upon throughout your coding journey.",
-        "nextSteps": [
-          "Try printing different messages",
-          "Learn about variables in C++",
-          "Explore more complex C++ features"
-        ],
+"message": "You've successfully completed the C++ printing module!",
+"explanation": "You've learned how to create your first C++ program and print output to the console. This is the foundation of C++ programming that you'll build upon throughout your coding journey.",
+"nextSteps": [
+"Try printing different messages",
+"Learn about variables in C++",
+"Explore more complex C++ features"
+],
         "showContinueButton": true,
         "autoComplete": true
       },
