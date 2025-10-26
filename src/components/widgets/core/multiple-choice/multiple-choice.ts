@@ -147,6 +147,7 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
   readOnly = signal<boolean>(false);
   shuffled = signal<ChoiceOption[]>([]);
   isValid = signal<boolean>(true);
+  incorrectAttempts = signal<string[]>([]); // Track previously incorrect options
 
   /** ==================== COMPUTED ==================== */
   get variant() { return this.ui.variant ?? 'default'; }
@@ -261,6 +262,12 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
       // mark completion when correct
       this.processCompletion();
     } else {
+      // Track which options were incorrect
+      const incorrectOnes = this.selectedValues().filter(v => 
+        !this.correctAnswers.includes(v)
+      );
+      this.incorrectAttempts.update(prev => [...new Set([...prev, ...incorrectOnes])]);
+      
       // If user wants feedback, expose hook
       if (this.showFeedback) {
         this.feedbackRequested.emit(this.selectedValues());
@@ -270,7 +277,7 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
         this.readOnly.set(true);
         this.maxAttemptsReached.emit();
       } else {
-        // allow another try
+        // allow another try - reset submitted immediately to avoid showing correct answer
         this.submitted.set(false);
       }
     }
@@ -339,9 +346,15 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
         : this.options.filter(o => o.isCorrect).map(o => o.value);
 
       const isOptionCorrect = (answers?.length ? answers.includes(option.value) : !!option.isCorrect);
-      if (isOptionCorrect) return 'correct';
-      if (isSelected) return 'incorrect';
+      // Only show correct status if the user selected this correct option
+      if (isOptionCorrect && isSelected) return 'correct';
+      if (isSelected && !isOptionCorrect) return 'incorrect';
       return 'idle';
+    }
+
+    // Show previously incorrect attempts even when not currently submitted
+    if (this.incorrectAttempts().includes(option.value)) {
+      return 'incorrect';
     }
 
     return isSelected ? 'selected' : 'idle';
