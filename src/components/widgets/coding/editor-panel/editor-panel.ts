@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, AfterViewInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, AfterViewInit, Output, PLATFORM_ID, ViewChild, SimpleChanges, OnChanges } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ButtonComponent } from '../../../ui/button/button';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -21,7 +21,7 @@ type ConsoleLine = { type: 'info' | 'success' | 'error'; message: string };
   templateUrl: './editor-panel.html',
   styleUrls: ['./editor-panel.css']
 })
-export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy {
+export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() currentStep = 1;
   @Input() totalSteps = 1;
   @Input() shiftHeader = false;
@@ -65,6 +65,23 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     // Component initialization
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Reset passed state when currentStep or editorConfig changes (new step)
+    if (changes['currentStep'] && !changes['currentStep'].firstChange) {
+      this.passed = false;
+      this.clearConsole();
+      this.consoleOutput.push({ type: 'info', message: 'Ready to run your code...' });
+    }
+    
+    // Update editor content when editorConfig changes
+    if (changes['editorConfig'] && !changes['editorConfig'].firstChange && this.monacoEditor) {
+      const newCode = this.editorConfig?.initialCode || '';
+      if (newCode && this.monacoEditor.getValue() !== newCode) {
+        this.monacoEditor.setValue(newCode);
+      }
+    }
   }
 
   ngAfterViewInit(): void {

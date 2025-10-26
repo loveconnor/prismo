@@ -38,11 +38,37 @@ export class SupportPanelComponent {
   @Input() collapsed = false;
   @Input() onToggleCollapse?: () => void;
   @Input() hints: any[] = [];
+  @Input() feedback: any[] = [];
 
-  value = 'hints';
   openHints: number[] = [];
 
-  // Get formatted hints from input or use defaults
+  // Get the default tab value based on what content is available
+  get defaultTabValue(): string {
+    if (this.hasHints) return 'hints';
+    if (this.hasFeedback) return 'feedback';
+    return 'hints';
+  }
+
+  value = this.defaultTabValue;
+
+  // Check if hints exist
+  get hasHints(): boolean {
+    if (!this.hints || this.hints.length === 0) return false;
+    if (this.hints[0]?.config?.hints && this.hints[0].config.hints.length > 0) return true;
+    return false;
+  }
+
+  // Check if feedback exists
+  get hasFeedback(): boolean {
+    return this.feedback && this.feedback.length > 0;
+  }
+
+  // Check if the panel should be visible at all
+  get shouldShowPanel(): boolean {
+    return this.hasHints || this.hasFeedback;
+  }
+
+  // Get formatted hints from input
   get formattedHints(): HintItem[] {
     if (this.hints && this.hints.length > 0 && this.hints[0]?.config?.hints) {
       // Convert from widget hints format
@@ -53,24 +79,8 @@ export class SupportPanelComponent {
       }));
     }
     
-    // Default hints
-    return [
-      {
-        level: 1,
-        title: 'Basic Hint',
-        content: 'Start by initializing a variable before the loop. Think about what value you want to start with.'
-      },
-      {
-        level: 2,
-        title: 'Intermediate Hint',
-        content: "Use 'for num in nums:' to iterate over the list. This gives you each element one at a time."
-      },
-      {
-        level: 3,
-        title: 'Detailed Hint',
-        content: 'Inside the loop, add each number to your total variable. Remember to update the accumulator with each iteration.'
-      }
-    ];
+    // Return empty array if no hints
+    return [];
   }
 
   onValueChange(v: string) {

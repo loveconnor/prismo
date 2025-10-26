@@ -15,8 +15,9 @@
       <app-progress [value]="progress" className="h-1.5"></app-progress>
     </div>
 
-    <div class="flex-1 flex flex-col">
-      <div class="p-4 space-y-2">
+    <div class="flex-1 flex flex-col min-h-0">
+      <!-- Scrollable Steps List -->
+      <div #stepsContainer class="overflow-y-auto p-4 space-y-2" style="max-height: 50vh;">
         <button
           *ngFor="let step of steps; trackBy: trackByStepId"
           type="button"
@@ -33,24 +34,25 @@
             <ng-icon *ngIf="isCompleted(step.id)" name="lucideCheck" class="h-3 w-3"></ng-icon>
             <span *ngIf="!isCompleted(step.id)">{{ step.id }}</span>
           </div>
-          <span class="text-sm font-medium text-[#e5e7eb]">{{ step.title }}</span>
+          <span class="text-sm font-medium text-[#e5e7eb] truncate">{{ step.title }}</span>
         </button>
       </div>
 
+      <!-- Current Step Instructions (Always Visible) -->
       @if (currentStepData) {
-        <div class="border-t border-[#1f2937] bg-[#0e1318] p-4 flex-1 overflow-y-auto">
+        <div class="border-t border-[#1f2937] bg-[#0e1318] p-4 overflow-y-auto" style="max-height: 40vh;">
           <div class="mb-3 flex items-center gap-2">
             <div class="flex h-6 w-6 items-center justify-center rounded-full bg-[#2563eb] text-white text-xs font-semibold">
               {{ currentStep }}
             </div>
-            <h3 class="text-sm font-semibold text-[#e5e7eb]">Current Step Instructions</h3>
+            <h3 class="text-sm font-semibold text-[#e5e7eb]">Current Step</h3>
           </div>
 
           <div class="space-y-3">
             <h4 class="text-sm font-semibold text-[#e5e7eb]">{{ currentStepData.title }}</h4>
-            <div *ngIf="currentStepData.instruction" class="prose prose-sm dark:prose-invert" [innerHTML]="currentStepData.instruction | safeHtml"></div>
-            <div *ngIf="currentStepData.example" class="pl-3 border-l-2 border-[#16a34a]">
-              <div class="prose prose-sm dark:prose-invert" [innerHTML]="toExampleHtml(currentStepData.example) | safeHtml"></div>
+            <div *ngIf="currentStepData.instruction" class="text-sm text-[#a9b1bb] leading-relaxed" [innerHTML]="currentStepData.instruction | safeHtml"></div>
+            <div *ngIf="currentStepData.example" class="mt-3 pl-3 border-l-2 border-[#16a34a]">
+              <div class="text-xs text-[#9ca3af]" [innerHTML]="toExampleHtml(currentStepData.example) | safeHtml"></div>
             </div>
           </div>
         </div>
