@@ -351,13 +351,6 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
   
-  // Current step widget properties
-  public currentStepWidget: any = null;
-  public currentStepWidgetType: string | null = null;
-  public currentStepMultipleChoiceOptions: ChoiceOption[] = [];
-  public algorithmSimulatorDefaultAlgorithm: Algorithm = 'bubble';
-  public algorithmSimulatorEnabledAlgorithms: Algorithm[] = ['bubble', 'quick', 'recursion'];
-  
   // Session tracking
   public currentSession: ModuleSession | null = null;
   public sessionStartTime: number = 0;
@@ -1167,7 +1160,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   private updateCurrentCodeEditor(): void {
-    // Find the widget for the current step - could be code editor or step-prompt
+    // Find the widget for the current step - could be code editor, step-prompt, or multiple-choice
     
     // Get the current step data to find the widget position
     const currentStepData = this.steps[this.currentStep - 1];
@@ -1198,64 +1191,6 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     this.codeEditorWidget = widgetForStep || this.allCodeEditorWidgets[0] || null;
-    
-    // Update the widget instance key to force recreation of the component
-    this.widgetInstanceKey = `widget-${this.currentStep}-${Date.now()}`;
-    // Update current step widget and type
-    this.currentStepWidget = widgetForStep;
-    this.currentStepWidgetType = widgetForStep?.type || widgetForStep?.metadata?.id || widgetForStep?.id || null;
-    
-    // Update multiple choice options if applicable
-    if (this.currentStepWidgetType === 'multiple-choice') {
-      const options = widgetForStep?.config?.options || widgetForStep?.props?.options || [];
-      // Convert to ChoiceOption[] format
-      if (Array.isArray(options)) {
-        this.currentStepMultipleChoiceOptions = options.map((opt: any, index: number) => {
-          // If already in ChoiceOption format
-          if (typeof opt === 'object' && opt.id && opt.label) {
-            return opt as ChoiceOption;
-          }
-          // If it's a string, convert it
-          if (typeof opt === 'string') {
-            return {
-              id: `option-${index}`,
-              label: opt,
-              value: opt
-            } as ChoiceOption;
-          }
-          // Fallback
-          return {
-            id: opt.id || `option-${index}`,
-            label: opt.text || opt.label || String(opt),
-            value: opt.value || opt.id || String(opt)
-          } as ChoiceOption;
-        });
-      } else {
-        this.currentStepMultipleChoiceOptions = [];
-      }
-    } else {
-      this.currentStepMultipleChoiceOptions = [];
-    }
-    
-    // Update algorithm simulator settings if applicable
-    if (this.currentStepWidgetType === 'algorithm-simulator') {
-      const defaultAlg = widgetForStep?.config?.defaultAlgorithm || 
-                        widgetForStep?.props?.defaultAlgorithm || 
-                        'bubble';
-      // Validate it's a valid Algorithm type
-      this.algorithmSimulatorDefaultAlgorithm = (['bubble', 'quick', 'recursion'].includes(defaultAlg)) 
-        ? defaultAlg as Algorithm 
-        : 'bubble';
-      
-      const enabledAlgs = widgetForStep?.config?.enabledAlgorithms || 
-                         widgetForStep?.props?.enabledAlgorithms || 
-                         ['bubble', 'quick', 'recursion'];
-      // Filter to only valid Algorithm types
-      this.algorithmSimulatorEnabledAlgorithms = (Array.isArray(enabledAlgs) 
-        ? enabledAlgs.filter((alg: string) => ['bubble', 'quick', 'recursion'].includes(alg))
-        : ['bubble', 'quick', 'recursion']) as Algorithm[];
-    }
-    
     console.log(`Current widget for step ${this.currentStep} (widgetPosition: ${widgetPosition}):`, this.codeEditorWidget);
   }
   
