@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 import { LabDataService, LabData } from '../../../services/lab-data.service';
+import { ModuleSessionService, ModuleSession } from '../../../services/module-session.service';
 
 // Import all available widgets
 import { StepPromptComponent } from '../../../components/widgets/core/step-prompt/step-prompt';
@@ -222,6 +223,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private labDataService = inject(LabDataService);
+  private moduleSessionService = inject(ModuleSessionService);
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
@@ -247,6 +249,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
+  
+  // Session tracking
+  public currentSession: ModuleSession | null = null;
+  public sessionStartTime: number = 0;
+  private sessionUpdateInterval: any = null;
   
   // Step-specific widgets (indexed by stepId)
   private feedbackByStep = new Map<number, any>();
@@ -308,6 +315,110 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.cleanupSession();
+  }
+
+  // ===== Session Tracking Methods =====
+  
+  private async startModuleSession(moduleId: string): Promise<void> {
+    try {
+      const totalSteps = this.steps.length || 1;
+      this.currentSession = await this.moduleSessionService.startSession({
+        module_id: moduleId,
+        total_steps: totalSteps
+      }).toPromise() || null;
+      
+      if (this.currentSession) {
+        this.sessionStartTime = Date.now();
+        this.startSessionUpdateInterval();
+        console.log('Module session started:', this.currentSession);
+      }
+    } catch (error) {
+      console.error('Failed to start module session:', error);
+      // Don't block the user experience if session tracking fails
+    }
+  }
+
+  private async updateModuleSession(updates: {
+    status?: 'started' | 'in_progress' | 'completed' | 'abandoned';
+    current_step?: number;
+    progress?: number;
+    time_spent?: number;
+    completed?: boolean;
+  }): Promise<void> {
+    if (!this.currentSession) return;
+
+    try {
+      // Calculate time spent if not provided
+      if (updates.time_spent === undefined && this.sessionStartTime > 0) {
+        updates.time_spent = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+      }
+
+      // Calculate progress if not provided
+      if (updates.progress === undefined && this.steps.length > 0) {
+        updates.progress = Math.min(1.0, (this.currentStep - 1) / this.steps.length);
+      }
+
+      this.currentSession = await this.moduleSessionService.updateSession(
+        this.currentSession.id, 
+        updates
+      ).toPromise() || null;
+      
+      console.log('Module session updated:', this.currentSession);
+    } catch (error) {
+      console.error('Failed to update module session:', error);
+    }
+  }
+
+  private async completeModuleSession(): Promise<void> {
+    if (!this.currentSession) return;
+
+    try {
+      const finalTimeSpent = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+      
+      this.currentSession = await this.moduleSessionService.completeSession(
+        this.currentSession.id,
+        { final_time_spent: finalTimeSpent }
+      ).toPromise() || null;
+      
+      console.log('Module session completed:', this.currentSession);
+    } catch (error) {
+      console.error('Failed to complete module session:', error);
+    }
+  }
+
+  private async abandonModuleSession(): Promise<void> {
+    if (!this.currentSession) return;
+
+    try {
+      this.currentSession = await this.moduleSessionService.abandonSession(
+        this.currentSession.id
+      ).toPromise() || null;
+      
+      console.log('Module session abandoned:', this.currentSession);
+    } catch (error) {
+      console.error('Failed to abandon module session:', error);
+    }
+  }
+
+  private startSessionUpdateInterval(): void {
+    // Update session every 30 seconds with current progress
+    this.sessionUpdateInterval = setInterval(() => {
+      if (this.currentSession && this.currentSession.status !== 'completed') {
+        this.updateModuleSession({
+          status: 'in_progress',
+          current_step: this.currentStep,
+          progress: this.steps.length > 0 ? Math.min(1.0, (this.currentStep - 1) / this.steps.length) : 0
+        });
+      }
+    }, 30000); // 30 seconds
+  }
+
+  private cleanupSession(): void {
+    if (this.sessionUpdateInterval) {
+      clearInterval(this.sessionUpdateInterval);
+      this.sessionUpdateInterval = null;
+    }
   }
 
   private loadLab(): void {
@@ -319,7 +430,6 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-<<<<<<< HEAD
     // Check if ID is numerical
     const isNumerical = /^\d+$/.test(labId);
     
@@ -374,45 +484,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log(`Searching: ${currentPath}`);
 
       this.http.get<any>(currentPath)
-||||||| 31e22f5
-    // Handle specific routes: strictly load from module JSON for pt01
-    let actualLabId = labId;
-    if (currentUrl.includes('pt01')) {
-      // Load the CS1 pt01 module JSON and convert to lab using HttpClient (triggers CD in zoneless mode)
-      this.http.get<any>('/assets/modules/CS1/01-Lab/pt03.json')
-=======
-    // Handle specific routes: strictly load from module JSON for pt01
-    let actualLabId = labId;
-    if (currentUrl.includes('pt01')) {
-      // Load the CS1 pt01 module JSON and convert to lab using HttpClient (triggers CD in zoneless mode)
-      this.http.get<any>('/assets/modules/CS1/01-Lab/pt05.json')
->>>>>>> 7e0e23d62c4a695aa3a94ab65fb65ccbe14c8d9a
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {
-<<<<<<< HEAD
             console.log(`Found module at: ${currentPath}`);
             this.handleModuleLoad(json);
-||||||| 31e22f5
-            console.log('Loaded pt01.json:', json);
-            const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
-            this.labData = labFromModule;
-            this.extractWidgetsFromLabData();
-            this.loading = false;
-            this.error = null;
-            this.cdr.detectChanges();
-=======
-            console.log('Loaded pt01.json:', json);
-            const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
-            this.labData = labFromModule;
-            this.extractWidgetsFromLabData();
-            this.loading = false;
-            this.error = null;
-            
-            this.cdr.detectChanges();
->>>>>>> 7e0e23d62c4a695aa3a94ab65fb65ccbe14c8d9a
           },
           error: (err) => {
             currentPathIndex++;
@@ -471,6 +547,10 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     this.extractWidgetsFromLabData();
     this.loading = false;
     this.error = null;
+    
+    // Start session tracking for this module
+    this.startModuleSession(json.id || json.name || 'unknown');
+    
     this.cdr.detectChanges();
   }
 
@@ -685,64 +765,31 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     this.feedbackWidgets = allWidgets.filter(w => w.type === 'feedback-panel' || w.id === 'feedback-panel');
     console.log('Found feedback widgets for panel:', this.feedbackWidgets);
     
-    // Extract steps - prefer explicit steps from labData, otherwise derive from widgets
-    if (this.labData.steps && this.labData.steps.length > 0) {
-      // Use explicit steps from the lab data
-      this.steps = this.labData.steps.map(step => ({
-        id: step.id,
-        title: step.title,
-        instruction: step.instruction || step.description,
-        example: step.example
-      }));
-      console.log('Using explicit steps from labData:', this.steps);
+    // Find confidence widget
+    this.confidenceWidget = allWidgets.find(w => w.type === 'confidence-meter' || w.id === 'confidence-meter');
+    console.log('Found confidence widget:', this.confidenceWidget);
+    
+    // Extract steps from widgets - use widgets with position field as steps
+    // Only create steps if there are multiple positioned widgets
+    const positionedWidgets = allWidgets.filter(w => w.metadata?.position !== undefined);
+    console.log('Positioned widgets:', positionedWidgets);
+    
+    if (positionedWidgets.length > 1) {
+      this.steps = positionedWidgets
+        .sort((a, b) => (a.metadata?.position || 0) - (b.metadata?.position || 0))
+        .map((w, index) => ({
+          id: w.metadata?.position || index + 1,
+          title: w.config?.title || w.metadata?.title || `Step ${index + 1}`,
+          instruction: w.config?.prompt || w.metadata?.description,
+          example: undefined
+        }));
     } else {
-<<<<<<< HEAD
       // Fallback to labData.steps if no positioned widgets
       this.steps = this.labData.steps || [];
-||||||| 31e22f5
-      this.steps = [];
-=======
-      // Derive steps from content widgets only (exclude feedback/confidence/hint widgets)
-      const contentWidgets = allWidgets.filter(w => {
-        const widgetType = w.type || w.metadata?.id || w.id;
-        const isContentWidget = widgetType !== 'feedback-box' && 
-                               widgetType !== 'confidence-meter' && 
-                               widgetType !== 'hint-panel';
-        const hasPosition = w.metadata?.position !== undefined;
-        console.log(`Widget ${w.id}: type=${widgetType}, hasPosition=${hasPosition}, isContent=${isContentWidget}, position=${w.metadata?.position}`);
-        return hasPosition && isContentWidget;
-      });
-      console.log('Content widgets for steps:', contentWidgets);
-      console.log('Content widget count:', contentWidgets.length);
-      
-      if (contentWidgets.length >= 1) {
-        this.steps = contentWidgets
-          .sort((a, b) => (a.metadata?.position || 0) - (b.metadata?.position || 0))
-          .map((w, index) => {
-            const step = {
-              id: index + 1, // Use sequential step IDs (1, 2, 3...) instead of widget positions
-              widgetPosition: w.metadata?.position, // Store original widget position for lookup
-              title: w.config?.title || w.metadata?.title || `Step ${index + 1}`,
-              instruction: w.config?.prompt || w.metadata?.description,
-              example: undefined
-            };
-            console.log(`Created step ${step.id} from widget at position ${step.widgetPosition}:`, step);
-            return step;
-          });
-      } else {
-        this.steps = [];
-      }
-      console.log('Derived steps from content widgets:', this.steps);
->>>>>>> 7e0e23d62c4a695aa3a94ab65fb65ccbe14c8d9a
     }
     this.hasSteps = this.steps.length > 0;
     console.log('Has steps:', this.hasSteps);
-<<<<<<< HEAD
     console.log('Steps:', this.steps);
-||||||| 31e22f5
-=======
-    console.log('Total steps:', this.steps.length);
->>>>>>> 7e0e23d62c4a695aa3a94ab65fb65ccbe14c8d9a
     
     console.log('Extracted widgets summary:', { 
       codeEditorWidget: this.codeEditorWidget, 
@@ -873,6 +920,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       this.updateCurrentCodeEditor();
       this.updateCurrentFeedbackWidgets();
       
+      // Update session with new step
+      this.updateModuleSession({
+        current_step: step,
+        status: 'in_progress'
+      });
+      
       this.cdr.detectChanges();
     }
   }
@@ -971,11 +1024,29 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.completedSteps.includes(this.currentStep)) {
       this.completedSteps = [...this.completedSteps, this.currentStep];
     }
+    
+    // Check if all steps are completed
+    const allStepsCompleted = this.completedSteps.length === this.steps.length;
+    
     if (this.currentStep < this.steps.length) {
       this.currentStep += 1;
       this.updateCurrentCodeEditor();
       this.updateCurrentFeedbackWidgets();
     }
+    
+    // Update session progress
+    this.updateModuleSession({
+      current_step: this.currentStep,
+      progress: this.steps.length > 0 ? this.completedSteps.length / this.steps.length : 0,
+      status: allStepsCompleted ? 'completed' : 'in_progress',
+      completed: allStepsCompleted
+    });
+    
+    // Complete session if all steps are done
+    if (allStepsCompleted) {
+      this.completeModuleSession();
+    }
+    
     this.cdr.detectChanges();
   }
 
@@ -1041,6 +1112,10 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   goBack(): void {
+    // Abandon session if user navigates away
+    if (this.currentSession && this.currentSession.status !== 'completed') {
+      this.abandonModuleSession();
+    }
     this.router.navigate(['/labs']);
   }
 

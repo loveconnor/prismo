@@ -8,7 +8,8 @@ Routes to serve the Angular frontend and handle SPA routing.
 import os
 from functools import wraps
 
-from flask import Blueprint, jsonify, render_template, request, send_from_directory
+from flask import (Blueprint, jsonify, render_template, request,
+                   send_from_directory)
 
 
 # Frontend routes blueprint

@@ -937,6 +937,48 @@ def setup_tables():
         ],
     )
 
+    # Module Sessions table (tracks when users start and work on modules)
+    module_sessions_table = f"{table_prefix}-module-sessions"
+    create_table(
+        table_name=module_sessions_table,
+        key_schema=[{"AttributeName": "id", "KeyType": "HASH"}],
+        attribute_definitions=[
+            {"AttributeName": "id", "AttributeType": "S"},
+            {"AttributeName": "user_id", "AttributeType": "S"},
+            {"AttributeName": "module_id", "AttributeType": "S"},
+            {"AttributeName": "status", "AttributeType": "S"},
+            {"AttributeName": "started_at", "AttributeType": "S"},
+        ],
+        global_secondary_indexes=[
+            {
+                "IndexName": "user-id-index",
+                "KeySchema": [{"AttributeName": "user_id", "KeyType": "HASH"}],
+                "Projection": {"ProjectionType": "ALL"},
+            },
+            {
+                "IndexName": "module-id-index",
+                "KeySchema": [{"AttributeName": "module_id", "KeyType": "HASH"}],
+                "Projection": {"ProjectionType": "ALL"},
+            },
+            {
+                "IndexName": "user-status-index",
+                "KeySchema": [
+                    {"AttributeName": "user_id", "KeyType": "HASH"},
+                    {"AttributeName": "status", "KeyType": "RANGE"},
+                ],
+                "Projection": {"ProjectionType": "ALL"},
+            },
+            {
+                "IndexName": "user-started-index",
+                "KeySchema": [
+                    {"AttributeName": "user_id", "KeyType": "HASH"},
+                    {"AttributeName": "started_at", "KeyType": "RANGE"},
+                ],
+                "Projection": {"ProjectionType": "ALL"},
+            },
+        ],
+    )
+
     print("All tables setup completed!")
 
 

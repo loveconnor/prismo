@@ -6,7 +6,7 @@ while leveraging the new ORM system for improved functionality.
 """
 
 from typing import Dict, List, Optional, Any
-from app.orm import orm, User, Lab, Widget, Collection, Module, Attempt, Mastery, Feedback
+from app.orm import orm, User, Lab, Widget, Collection, Module, Attempt, Mastery, Feedback, ModuleSession
 
 class BaseModel:
     """Base model class for backward compatibility"""

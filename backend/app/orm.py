@@ -414,6 +414,23 @@ class Feedback(BaseModel):
     attempts_taken: int
     created_at: str
 
+@dataclass
+class ModuleSession(BaseModel):
+    """Module session model - tracks when users start and work on modules"""
+    id: str
+    user_id: str
+    module_id: str
+    status: str  # 'started', 'in_progress', 'completed', 'abandoned'
+    started_at: str
+    last_activity_at: str
+    completed_at: Optional[str] = None
+    time_spent: int = 0  # in seconds
+    progress: float = 0.0  # 0.0 to 1.0
+    current_step: int = 1
+    total_steps: int = 1
+    created_at: str = ""
+    updated_at: str = ""
+
 # ORM Instances
 class PrismoORM:
     """Main ORM class with all model instances"""
@@ -430,6 +447,7 @@ class PrismoORM:
         self.attempts = DynamoDBORM("attempts", Attempt)
         self.mastery = DynamoDBORM("mastery", Mastery)
         self.feedback = DynamoDBORM("feedback", Feedback)
+        self.module_sessions = DynamoDBORM("module-sessions", ModuleSession)
         
         # Analytics models
         self.widget_selection = DynamoDBORM("widget-selection", BaseModel)
