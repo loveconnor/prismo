@@ -55,22 +55,36 @@ export interface SessionsResponse {
 })
 export class ModuleSessionService {
   private http = inject(HttpClient);
-  private baseUrl = '/api/module-sessions';
+  private baseUrl = 'http://localhost:5000/api/module-sessions';
 
   /**
    * Start a new module session
    */
   startSession(request: StartSessionRequest): Observable<ModuleSession> {
+    console.log('[ModuleSessionService] Starting session for module:', request.module_id);
+    console.log('[ModuleSessionService] Request details:', request);
+    
     return this.http.post<SessionResponse>(`${this.baseUrl}/start`, request)
       .pipe(
         map(response => {
           if (response.success && response.session) {
+            console.log('[ModuleSessionService] Session started successfully:', {
+              sessionId: response.session.id,
+              moduleId: response.session.module_id,
+              status: response.session.status,
+              totalSteps: response.session.total_steps
+            });
             return response.session;
           }
+          console.error('[ModuleSessionService] Failed to start session:', response.error);
           throw new Error(response.error || 'Failed to start session');
         }),
         catchError(error => {
-          console.error('Error starting module session:', error);
+          console.error('[ModuleSessionService] Error starting module session:', {
+            error: error.message || error,
+            request: request,
+            timestamp: new Date().toISOString()
+          });
           return throwError(() => error);
         })
       );
@@ -80,16 +94,32 @@ export class ModuleSessionService {
    * Update an existing module session
    */
   updateSession(sessionId: string, request: UpdateSessionRequest): Observable<ModuleSession> {
+    console.log('[ModuleSessionService] Updating session:', sessionId);
+    console.log('[ModuleSessionService] Update details:', request);
+    
     return this.http.put<SessionResponse>(`${this.baseUrl}/${sessionId}/update`, request)
       .pipe(
         map(response => {
           if (response.success && response.session) {
+            console.log('[ModuleSessionService] Session updated successfully:', {
+              sessionId: response.session.id,
+              status: response.session.status,
+              currentStep: response.session.current_step,
+              progress: response.session.progress,
+              timeSpent: response.session.time_spent
+            });
             return response.session;
           }
+          console.error('[ModuleSessionService] Failed to update session:', response.error);
           throw new Error(response.error || 'Failed to update session');
         }),
         catchError(error => {
-          console.error('Error updating module session:', error);
+          console.error('[ModuleSessionService] Error updating module session:', {
+            error: error.message || error,
+            sessionId: sessionId,
+            request: request,
+            timestamp: new Date().toISOString()
+          });
           return throwError(() => error);
         })
       );
@@ -157,16 +187,32 @@ export class ModuleSessionService {
    * Complete a module session
    */
   completeSession(sessionId: string, request: CompleteSessionRequest = {}): Observable<ModuleSession> {
+    console.log('[ModuleSessionService] Completing session:', sessionId);
+    console.log('[ModuleSessionService] Completion details:', request);
+    
     return this.http.post<SessionResponse>(`${this.baseUrl}/${sessionId}/complete`, request)
       .pipe(
         map(response => {
           if (response.success && response.session) {
+            console.log('[ModuleSessionService] Session completed successfully:', {
+              sessionId: response.session.id,
+              status: response.session.status,
+              finalProgress: response.session.progress,
+              finalTimeSpent: response.session.time_spent,
+              completedAt: response.session.completed_at
+            });
             return response.session;
           }
+          console.error('[ModuleSessionService] Failed to complete session:', response.error);
           throw new Error(response.error || 'Failed to complete session');
         }),
         catchError(error => {
-          console.error('Error completing module session:', error);
+          console.error('[ModuleSessionService] Error completing module session:', {
+            error: error.message || error,
+            sessionId: sessionId,
+            request: request,
+            timestamp: new Date().toISOString()
+          });
           return throwError(() => error);
         })
       );
@@ -176,16 +222,28 @@ export class ModuleSessionService {
    * Abandon a module session
    */
   abandonSession(sessionId: string): Observable<ModuleSession> {
+    console.log('[ModuleSessionService] Abandoning session:', sessionId);
+    
     return this.http.post<SessionResponse>(`${this.baseUrl}/${sessionId}/abandon`, {})
       .pipe(
         map(response => {
           if (response.success && response.session) {
+            console.log('[ModuleSessionService] Session abandoned successfully:', {
+              sessionId: response.session.id,
+              status: response.session.status,
+              lastActivity: response.session.last_activity_at
+            });
             return response.session;
           }
+          console.error('[ModuleSessionService] Failed to abandon session:', response.error);
           throw new Error(response.error || 'Failed to abandon session');
         }),
         catchError(error => {
-          console.error('Error abandoning module session:', error);
+          console.error('[ModuleSessionService] Error abandoning module session:', {
+            error: error.message || error,
+            sessionId: sessionId,
+            timestamp: new Date().toISOString()
+          });
           return throwError(() => error);
         })
       );

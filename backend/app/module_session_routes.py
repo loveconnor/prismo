@@ -7,6 +7,7 @@ Handles tracking of when users start, progress through, and complete modules.
 from datetime import datetime
 from flask import Blueprint, request, jsonify
 from typing import Dict, Any, Optional
+from decimal import Decimal
 from app.orm import orm, ModuleSession
 from app.auth_service import CognitoAuthService
 
@@ -28,7 +29,7 @@ def get_user_id_from_token() -> Optional[str]:
         # Verify token and get user info
         user_info = auth_service.verify_token(token)
         if user_info and 'success' in user_info and user_info['success']:
-            return user_info.get('user_id')
+            return user_info.get('user_id') or user_info.get('cognito_user', {}).get('Username')
     except Exception as e:
         print(f"Error verifying token: {e}")
     
@@ -80,11 +81,12 @@ def start_module_session():
         total_steps = data.get('total_steps', 1)
         
         # Check if user already has an active session for this module
-        existing_sessions = orm.module_sessions.query(
+        existing_sessions = orm.module_sessions.query_by_user_id(
             user_id=user_id,
-            module_id=module_id,
-            status__in=['started', 'in_progress']
+            module_id=module_id
         )
+        # Filter for active sessions
+        existing_sessions = [s for s in existing_sessions if s.status in ['started', 'in_progress']]
         
         if existing_sessions:
             # Return existing session
@@ -103,7 +105,7 @@ def start_module_session():
             "started_at": now,
             "last_activity_at": now,
             "time_spent": 0,
-            "progress": 0.0,
+            "progress": Decimal('0.0'),
             "current_step": 1,
             "total_steps": total_steps
         }
@@ -184,7 +186,7 @@ def update_module_session(session_id: str):
             updates['current_step'] = data['current_step']
         
         if 'progress' in data:
-            updates['progress'] = min(1.0, max(0.0, data['progress']))
+            updates['progress'] = Decimal(str(min(1.0, max(0.0, data['progress']))))
         
         if 'time_spent' in data:
             updates['time_spent'] = data['time_spent']
@@ -192,7 +194,7 @@ def update_module_session(session_id: str):
         if data.get('completed', False):
             updates['status'] = 'completed'
             updates['completed_at'] = now
-            updates['progress'] = 1.0
+            updates['progress'] = Decimal('1.0')
         
         # Always update last activity
         updates['last_activity_at'] = now
@@ -308,7 +310,12 @@ def get_user_module_sessions(user_id: str):
             query_params['module_id'] = module_id
         
         # Query sessions
-        sessions = orm.module_sessions.query(**query_params)
+        sessions = orm.module_sessions.query_by_user_id(
+            user_id=user_id,
+            status=status,
+            module_id=module_id,
+            limit=limit
+        )
         
         # Apply pagination
         total = len(sessions)
@@ -375,7 +382,7 @@ def complete_module_session(session_id: str):
         updates = {
             'status': 'completed',
             'completed_at': now,
-            'progress': 1.0,
+            'progress': Decimal('1.0'),
             'last_activity_at': now,
             'updated_at': now
         }

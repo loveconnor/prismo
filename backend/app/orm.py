@@ -12,6 +12,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, Type, TypeVar, Generic
 from dataclasses import dataclass, asdict, field
 from enum import Enum
+from decimal import Decimal
 import boto3
 from botocore.exceptions import ClientError
 from app.aws_config import aws_config
@@ -136,17 +137,39 @@ class DynamoDBORM:
         """Update record by ID"""
         updates['updated_at'] = datetime.utcnow().isoformat()
         
-        # Build update expression
-        update_expression = "SET " + ", ".join([f"{k} = :{k}" for k in updates.keys()])
-        expression_values = {f":{k}": v for k, v in updates.items()}
+        # Handle reserved keywords by using ExpressionAttributeNames
+        reserved_keywords = {'status', 'name', 'type', 'key', 'value', 'data', 'id', 'time', 'date'}
+        expression_names = {}
+        expression_values = {}
+        
+        # Build expression attribute names for reserved keywords
+        for key in updates.keys():
+            if key in reserved_keywords:
+                expression_names[f"#{key}"] = key
+            expression_values[f":{key}"] = updates[key]
+        
+        # Build update expression with proper attribute names
+        update_parts = []
+        for key in updates.keys():
+            if key in reserved_keywords:
+                update_parts.append(f"#{key} = :{key}")
+            else:
+                update_parts.append(f"{key} = :{key}")
+        
+        update_expression = "SET " + ", ".join(update_parts)
         
         try:
-            response = self.table.update_item(
-                Key={'id': id},
-                UpdateExpression=update_expression,
-                ExpressionAttributeValues=expression_values,
-                ReturnValues="ALL_NEW"
-            )
+            update_params = {
+                'Key': {'id': id},
+                'UpdateExpression': update_expression,
+                'ExpressionAttributeValues': expression_values,
+                'ReturnValues': "ALL_NEW"
+            }
+            
+            if expression_names:
+                update_params['ExpressionAttributeNames'] = expression_names
+            
+            response = self.table.update_item(**update_params)
             return self.model_class.from_dict(response['Attributes'])
         except ClientError as e:
             raise Exception(f"Failed to update record: {e}")
@@ -210,6 +233,46 @@ class DynamoDBORM:
         except ClientError as e:
             raise Exception(f"Failed to query records: {e}")
     
+    def query_by_user_id(self, user_id: str, status: Optional[str] = None, 
+                        module_id: Optional[str] = None, limit: int = 50) -> List[BaseModel]:
+        """Query sessions by user_id with optional status and module_id filters"""
+        try:
+            # Use the user-id-index (only supports user_id as key condition)
+            key_condition = "user_id = :user_id"
+            expression_values = {":user_id": user_id}
+            expression_names = {}
+            
+            # Build filter expression for additional conditions
+            filter_parts = []
+            
+            if status:
+                filter_parts.append("#status = :status")
+                expression_values[":status"] = status
+                expression_names["#status"] = "status"
+            
+            if module_id:
+                filter_parts.append("module_id = :module_id")
+                expression_values[":module_id"] = module_id
+            
+            query_params = {
+                'IndexName': 'user-id-index',
+                'KeyConditionExpression': key_condition,
+                'ExpressionAttributeValues': expression_values,
+                'Limit': limit
+            }
+            
+            if filter_parts:
+                query_params['FilterExpression'] = " AND ".join(filter_parts)
+            
+            if expression_names:
+                query_params['ExpressionAttributeNames'] = expression_names
+            
+            response = self.table.query(**query_params)
+            return [self.model_class.from_dict(item) for item in response.get('Items', [])]
+            
+        except ClientError as e:
+            raise Exception(f"Failed to query by user_id: {e}")
+
     def scan(self,
              filter_expression: Optional[str] = None,
              expression_values: Optional[Dict[str, Any]] = None,
@@ -425,7 +488,7 @@ class ModuleSession(BaseModel):
     last_activity_at: str
     completed_at: Optional[str] = None
     time_spent: int = 0  # in seconds
-    progress: float = 0.0  # 0.0 to 1.0
+    progress: Decimal = Decimal('0.0')  # 0.0 to 1.0
     current_step: int = 1
     total_steps: int = 1
     created_at: str = ""

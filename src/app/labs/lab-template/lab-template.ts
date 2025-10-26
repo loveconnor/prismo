@@ -321,8 +321,18 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   // ===== Session Tracking Methods =====
   
   private async startModuleSession(moduleId: string): Promise<void> {
+    console.log('[LabTemplate] Starting module session tracking for:', moduleId);
+    console.log('[LabTemplate] Module details:', {
+      moduleId: moduleId,
+      totalSteps: this.steps.length || 1,
+      hasSteps: this.steps.length > 0,
+      labData: this.labData ? { id: this.labData.id, title: this.labData.title } : null
+    });
+    
     try {
       const totalSteps = this.steps.length || 1;
+      console.log('[LabTemplate] Calling ModuleSessionService.startSession...');
+      
       this.currentSession = await this.moduleSessionService.startSession({
         module_id: moduleId,
         total_steps: totalSteps
@@ -331,11 +341,24 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.currentSession) {
         this.sessionStartTime = Date.now();
         this.startSessionUpdateInterval();
-        console.log('Module session started:', this.currentSession);
+        console.log('[LabTemplate] Module session started successfully:', {
+          sessionId: this.currentSession.id,
+          moduleId: this.currentSession.module_id,
+          status: this.currentSession.status,
+          totalSteps: this.currentSession.total_steps,
+          startTime: new Date(this.sessionStartTime).toISOString()
+        });
+      } else {
+        console.warn('[LabTemplate] Session creation returned null - session tracking may not be active');
       }
     } catch (error) {
-      console.error('Failed to start module session:', error);
+      console.error('[LabTemplate] Failed to start module session:', {
+        error: error.message || error,
+        moduleId: moduleId,
+        timestamp: new Date().toISOString()
+      });
       // Don't block the user experience if session tracking fails
+      console.log('[LabTemplate] Continuing without session tracking...');
     }
   }
 
@@ -346,65 +369,134 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     time_spent?: number;
     completed?: boolean;
   }): Promise<void> {
-    if (!this.currentSession) return;
+    if (!this.currentSession) {
+      console.log('[LabTemplate] No active session to update');
+      return;
+    }
+
+    console.log('[LabTemplate] Updating module session:', {
+      sessionId: this.currentSession.id,
+      currentStep: this.currentStep,
+      totalSteps: this.steps.length,
+      updates: updates
+    });
 
     try {
       // Calculate time spent if not provided
       if (updates.time_spent === undefined && this.sessionStartTime > 0) {
-        updates.time_spent = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+        const calculatedTimeSpent = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+        updates.time_spent = calculatedTimeSpent;
+        console.log('[LabTemplate] Calculated time spent:', calculatedTimeSpent, 'seconds');
       }
 
       // Calculate progress if not provided
       if (updates.progress === undefined && this.steps.length > 0) {
-        updates.progress = Math.min(1.0, (this.currentStep - 1) / this.steps.length);
+        const calculatedProgress = Math.min(1.0, (this.currentStep - 1) / this.steps.length);
+        updates.progress = calculatedProgress;
+        console.log('[LabTemplate] Calculated progress:', calculatedProgress, `(${this.currentStep - 1}/${this.steps.length})`);
       }
 
+      console.log('[LabTemplate] Sending update to ModuleSessionService...');
       this.currentSession = await this.moduleSessionService.updateSession(
         this.currentSession.id, 
         updates
       ).toPromise() || null;
       
-      console.log('Module session updated:', this.currentSession);
+      if (this.currentSession) {
+        console.log('[LabTemplate] Module session updated successfully:', {
+          sessionId: this.currentSession.id,
+          status: this.currentSession.status,
+          currentStep: this.currentSession.current_step,
+          progress: this.currentSession.progress,
+          timeSpent: this.currentSession.time_spent,
+          lastActivity: this.currentSession.last_activity_at
+        });
+      } else {
+        console.warn('[LabTemplate] Session update returned null');
+      }
     } catch (error) {
-      console.error('Failed to update module session:', error);
+      console.error('[LabTemplate] Failed to update module session:', {
+        error: error.message || error,
+        sessionId: this.currentSession.id,
+        updates: updates,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
   private async completeModuleSession(): Promise<void> {
-    if (!this.currentSession) return;
+    if (!this.currentSession) {
+      console.log('[LabTemplate] No active session to complete');
+      return;
+    }
+
+    console.log('[LabTemplate] Completing module session:', {
+      sessionId: this.currentSession.id,
+      currentStep: this.currentStep,
+      totalSteps: this.steps.length,
+      completedSteps: this.completedSteps.length
+    });
 
     try {
       const finalTimeSpent = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+      console.log('[LabTemplate] Final time spent:', finalTimeSpent, 'seconds');
       
+      console.log('[LabTemplate] Sending completion to ModuleSessionService...');
       this.currentSession = await this.moduleSessionService.completeSession(
         this.currentSession.id,
         { final_time_spent: finalTimeSpent }
       ).toPromise() || null;
       
-      console.log('Module session completed:', this.currentSession);
+      if (this.currentSession) {
+        console.log('[LabTemplate] Module session completed successfully:', {
+          sessionId: this.currentSession.id,
+          status: this.currentSession.status,
+          finalProgress: this.currentSession.progress,
+          finalTimeSpent: this.currentSession.time_spent,
+          completedAt: this.currentSession.completed_at,
+          totalSteps: this.currentSession.total_steps
+        });
+      } else {
+        console.warn('[LabTemplate] Session completion returned null');
+      }
     } catch (error) {
-      console.error('Failed to complete module session:', error);
+      console.error('[LabTemplate] Failed to complete module session:', {
+        error: error.message || error,
+        sessionId: this.currentSession.id,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
   private async abandonModuleSession(): Promise<void> {
-    if (!this.currentSession) return;
+    if (!this.currentSession) {
+      console.log('[LabTemplate] No active session to abandon');
+      return;
+    }
+
+    console.log('[LabTemplate] Abandoning module session:', this.currentSession.id);
 
     try {
       this.currentSession = await this.moduleSessionService.abandonSession(
         this.currentSession.id
       ).toPromise() || null;
       
-      console.log('Module session abandoned:', this.currentSession);
+      console.log('[LabTemplate] Module session abandoned successfully:', this.currentSession);
     } catch (error) {
-      console.error('Failed to abandon module session:', error);
+      console.error('[LabTemplate] Failed to abandon module session:', {
+        error: error.message || error,
+        sessionId: this.currentSession.id,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
   private startSessionUpdateInterval(): void {
+    console.log('[LabTemplate] Starting session update interval (30 seconds)');
     // Update session every 30 seconds with current progress
     this.sessionUpdateInterval = setInterval(() => {
       if (this.currentSession && this.currentSession.status !== 'completed') {
+        console.log('[LabTemplate] Periodic session update triggered');
         this.updateModuleSession({
           status: 'in_progress',
           current_step: this.currentStep,
@@ -415,9 +507,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private cleanupSession(): void {
+    console.log('[LabTemplate] Cleaning up session tracking');
     if (this.sessionUpdateInterval) {
       clearInterval(this.sessionUpdateInterval);
       this.sessionUpdateInterval = null;
+      console.log('[LabTemplate] Session update interval cleared');
     }
   }
 

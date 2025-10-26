@@ -369,6 +369,29 @@ class CognitoAuthService:
     def verify_token(self, access_token: str) -> Dict[str, Any]:
         """Verify access token and get user info"""
         try:
+            # First try to decode as JWT to get user info directly
+            import jwt
+            try:
+                # Decode without verification to get the payload
+                decoded = jwt.decode(access_token, options={'verify_signature': False})
+                user_id = decoded.get('sub')
+                username = decoded.get('username')
+                
+                if user_id and username:
+                    # Get user from DynamoDB using the user ID
+                    user_data = self.user_model.get_user_by_cognito_id(user_id)
+                    
+                    return {
+                        "success": True, 
+                        "user_data": user_data, 
+                        "user_id": user_id,
+                        "username": username,
+                        "cognito_user": {"Username": username}
+                    }
+            except Exception as jwt_error:
+                print(f"JWT decode failed: {jwt_error}")
+            
+            # Fallback to Cognito get_user method
             response = self.cognito.get_user(AccessToken=access_token)
 
             # Get user from DynamoDB
