@@ -1,0 +1,320 @@
+{
+  "name": "coding---java-9add9cf4",
+  "title": "Java Fundamentals: Writing Your First Program",
+  "description": "Learn Java basics by writing and executing simple programs. Master variables, data types, and basic output to build a foundation for Java development.",
+  "skills": [
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Java Programming",
+        "description": "Introduction to Java fundamentals and learning objectives for this module",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Java Programming",
+        "prompt": "In this module, you'll learn the fundamentals of Java programming. We'll start with basic syntax, variables, and how to print output to the console. By the end, you'll understand how to write a simple Java program, declare variables, and work with different data types. Let's begin!"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Module Overview",
+        "description": "Provides feedback, explanation, and next steps for learning objectives",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "What You'll Learn",
+        "message": "This module covers Java programming fundamentals including syntax, variables, and data types.",
+        "explanation": "Understanding these core concepts is essential for all Java development. You'll apply these skills in every program you write.",
+        "nextSteps": [
+          "Understand Java program structure",
+          "Learn about variables and data types",
+          "Write your first Java program"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Initial Confidence Assessment",
+        "description": "Self-rating slider for confidence assessment before starting",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with Java programming basics?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Write Your First Java Program",
+        "description": "Interactive code editor for writing and executing Java programs",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Complete the Java Program",
+        "language": "java",
+        "starterCode": "public class HelloWorld {\n  public static void main(String[] args) {\n    // TODO: Declare an integer variable named 'age' and assign it the value 25\n    \n    // TODO: Declare a String variable named 'name' and assign it the value \"Alice\"\n    \n    // TODO: Print the name and age using System.out.println()\n    \n  }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Alice\n25",
+            "description": "Program should declare variables and print name and age"
+          }
+        ],
+        "prompt": "Complete the Java program by:\n1. Declaring an integer variable 'age' with value 25\n2. Declaring a String variable 'name' with value \"Alice\"\n3. Printing both variables to the console\n\nExample output:\nAlice\n25"
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Code Exercise Feedback",
+        "description": "Provides feedback on code completion and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You've successfully written a Java program that declares variables and prints output.",
+        "explanation": "You've demonstrated understanding of Java syntax, variable declaration, and the print statement. These are fundamental skills for Java programming.",
+        "nextSteps": [
+          "Learn about different data types",
+          "Practice working with operators",
+          "Explore control flow statements"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check After Exercise",
+        "description": "Self-rating slider to assess confidence after completing the exercise",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you now with writing Java programs?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Java Data Types Quiz",
+        "description": "Multiple choice question to assess understanding of Java data types",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding Java Data Types",
+        "question": "Which of the following is the correct way to declare and initialize a String variable in Java?",
+        "options": [
+          "String name = 'Alice';",
+          "String name = \"Alice\";",
+          "string name = \"Alice\";",
+          "var name = 'Alice';"
+        ],
+        "correctAnswer": 1,
+        "explanation": "In Java, String literals must be enclosed in double quotes, and the type keyword is 'String' with a capital S."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Quiz Feedback",
+        "description": "Provides feedback on quiz performance and reinforcement",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Understanding!",
+        "message": "You correctly identified the proper String declaration syntax in Java.",
+        "explanation": "String variables in Java use double quotes and the type must be capitalized. This is a critical distinction from some other languages.",
+        "nextSteps": [
+          "Review primitive data types (int, double, boolean)",
+          "Practice variable naming conventions",
+          "Explore type casting in Java"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Final Confidence Assessment",
+        "description": "Self-rating slider for final confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with Java fundamentals now?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:29:58.667755",
+    "module_id": "3d31ced7-4c6e-4c3a-b069-482d8dbe247b",
+    "saved_to_filesystem": true
+  }
+}

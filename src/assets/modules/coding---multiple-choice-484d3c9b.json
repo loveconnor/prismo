@@ -1,0 +1,318 @@
+{
+  "name": "coding---multiple-choice-484d3c9b",
+  "title": "Functions and Coding Fundamentals",
+  "description": "Master the basics of coding with a focus on functions, control flow, and logical reasoning through interactive multiple-choice challenges.",
+  "skills": [
+    "functions",
+    "coding",
+    "comprehension",
+    "reasoning"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Introduction to Functions in Code",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Introduction to Functions in Code",
+        "prompt": "Functions are reusable blocks of code that perform specific tasks. They help organize code, reduce repetition, and make programs easier to understand. In this module, you'll learn how functions work and practice identifying correct function behavior through interactive challenges."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Ready to Begin",
+        "message": "You're about to start learning about functions and their behavior in code.",
+        "explanation": "Functions are fundamental building blocks in programming. Understanding how they work will help you write better code.",
+        "nextSteps": [
+          "Complete the first challenge",
+          "Test your knowledge",
+          "Review key concepts"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with basic coding functions?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding Function Parameters",
+        "question": "What do parameters in a function do?",
+        "options": [
+          "They store the function's name",
+          "They are inputs that allow functions to receive data and customize behavior",
+          "They control the file where the function is stored",
+          "They determine the color of the code editor"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Parameters are variables that functions accept as input. They allow the same function to work with different data, making code more flexible and reusable."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Understanding!",
+        "message": "You've correctly identified the purpose of function parameters.",
+        "explanation": "Parameters make functions dynamic and reusable. Instead of writing separate functions for different inputs, one function with parameters can handle many cases.",
+        "nextSteps": [
+          "Move to the next challenge",
+          "Review function syntax",
+          "Practice with more examples"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you about function parameters now?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Function Return Values",
+        "question": "What does a function return statement do?",
+        "options": [
+          "It prints output to the screen automatically",
+          "It sends data back to the code that called the function, allowing that data to be used in further computations",
+          "It closes the function permanently",
+          "It declares a new variable in the program"
+        ],
+        "correctAnswer": 1,
+        "explanation": "The return statement allows a function to send a value back to the caller. This value can then be stored in a variable, printed, or used in calculations, making functions powerful tools for data processing."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Progress!",
+        "message": "You've mastered the concept of return values in functions.",
+        "explanation": "Return values are what make functions composable. By returning values, functions can pass data to other functions or calculations, enabling complex program logic.",
+        "nextSteps": [
+          "Review key function concepts",
+          "Practice writing functions",
+          "Take the final challenge"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you about function return values?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:07:53.321926",
+    "module_id": "eedab99a-e459-4807-9fb0-7e09d2c1f9cd",
+    "saved_to_filesystem": true
+  }
+}

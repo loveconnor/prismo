@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Prism.js syntax highlighting theme (VS Code Dark+) */
+@import "prismjs/themes/prism-tomorrow.css";
+
 /* Custom math rendering styles */
 .math-fraction {
   display: inline-block;

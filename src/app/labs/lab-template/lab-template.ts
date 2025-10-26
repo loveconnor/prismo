@@ -24,10 +24,15 @@ import { LabIntroComponent } from '../../../components/widgets/core/lab-intro/la
 import { ShortAnswerComponent } from '../../../components/widgets/core/short-answer/short-answer';
 import { CoachChatComponent } from '../../../components/widgets/core/coach-chat/coach-chat';
 import { ReflectionPromptComponent } from '../../../components/widgets/core/reflection-prompt/reflection-prompt';
+import { AlgorithmSimulatorComponent, Algorithm } from '../../../components/widgets/coding/algorithm-simulator/algorithm-simulator';
+import { StepPromptInteractiveComponent, StepPromptConfig } from '../../../components/widgets/core/step-prompt/step-prompt-interactive';
 // Tri-panel components
 import { StepsPanelComponent } from '../../../components/widgets/core/steps-panel/steps-panel';
 import { EditorPanelComponent } from '../../../components/widgets/coding/editor-panel/editor-panel';
 import { SupportPanelComponent } from '../../../components/widgets/core/support-panel/support-panel';
+
+// Services
+import { StepContextService, StepContext } from '../../../services/step-context.service';
 
 // UI Components
 import { CardComponent } from '../../../components/ui/card/card';
@@ -47,6 +52,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     CommonModule,
     // Widget imports
     StepPromptComponent,
+    StepPromptInteractiveComponent,
     HintPanelComponent,
     FeedbackBoxComponent,
     ConfidenceMeterComponent,
@@ -154,7 +160,26 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
         </div>
 
         <!-- Center: Editor fills remaining space -->
-        <div class="min-w-0 overflow-hidden">
+        <div class="min-w-0 overflow-hidden flex flex-col">
+          <!-- Lab Background Condensed Card (shown after initial modal is closed) -->
+          <div *ngIf="labBackgroundContext && !showStepContext && hasShownLabBackground" 
+               class="bg-[#0e1318] border-b border-[#1f2937] p-3 cursor-pointer hover:bg-[#151a20] transition-colors"
+               (click)="reopenLabBackground()">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <ng-icon name="lucideBookOpen" class="h-4 w-4 text-blue-400"></ng-icon>
+                <div>
+                  <p class="text-sm font-medium text-[#e5e7eb]">Lab Background</p>
+                  <p class="text-xs text-[#6b7280]">Click to review lab overview and key concepts</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-[#6b7280]">
+                <span class="px-2 py-1 rounded bg-[#1f2937]">{{ labBackgroundContext.keyConcepts?.length || 0 }} concepts</span>
+                <span class="px-2 py-1 rounded bg-[#1f2937]">{{ labBackgroundContext.estimatedTime }} min</span>
+              </div>
+            </div>
+          </div>
+
           <app-editor-panel
             [currentStep]="currentStep"
             [totalSteps]="steps.length || 1"
@@ -259,16 +284,82 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
       </div>
     </div>
 
-    <!-- Confidence Meter Modal (appears after feedback) -->
-    <div *ngIf="showConfidenceMeter && confidenceWidget" 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
-        <app-confidence-meter
-          [title]="(confidenceWidget.props || confidenceWidget.config)?.title || 'Rate Your Confidence'"
-          [description]="(confidenceWidget.props || confidenceWidget.config)?.description || ''"
-          [scaleLabels]="(confidenceWidget.props || confidenceWidget.config)?.scaleLabels || ['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
-          (submit)="handleConfidenceSubmit()"
-        ></app-confidence-meter>
+    <!-- Step Context Modal (shows AI-generated background for each step) -->
+    <div *ngIf="showStepContext" 
+         class="fixed inset-0 z-[9998] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+         style="margin: 0; top: 0; left: 0; right: 0; bottom: 0; position: fixed;"
+         (click)="closeStepContext()">
+      <div class="max-w-3xl w-full mx-auto flex flex-col" 
+           style="position: relative; z-index: 10000; max-height: calc(100vh - 4rem);" 
+           (click)="$event.stopPropagation()">
+        <!-- Loading State -->
+        <div *ngIf="stepContextLoading" class="bg-[#12161b] border border-[#1f2937] rounded-lg p-8 text-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p class="text-[#a9b1bb] text-lg">Generating lab overview...</p>
+          <p class="text-[#6b7280] text-sm mt-2">AI is preparing your learning context</p>
+        </div>
+        
+        <!-- Content with Pagination -->
+        <div *ngIf="!stepContextLoading && stepContextConfig && stepContextMetadata" class="flex flex-col bg-[#12161b] border border-[#1f2937] rounded-lg overflow-hidden" style="max-height: calc(100vh - 4rem);">
+          <!-- Page Indicator Dots -->
+          <div class="flex justify-center gap-2 pt-4 pb-3 bg-[#0e1318]" *ngIf="totalModalPages > 1">
+            <button
+              *ngFor="let page of modalPages; let i = index"
+              (click)="goToModalPage(i)"
+              [attr.aria-label]="'Go to page ' + (i + 1)"
+              class="transition-all duration-200"
+              [class.w-8]="i === currentModalPage"
+              [class.w-2]="i !== currentModalPage"
+              [class.bg-[#bc78f9]]="i === currentModalPage"
+              [class.bg-[#374151]]="i !== currentModalPage"
+              [class.hover:bg-[#bc78f9]/60]="i !== currentModalPage"
+              style="height: 8px; border-radius: 4px;"
+            ></button>
+          </div>
+
+          <!-- Modal Content (scrollable) -->
+          <div class="flex-1 overflow-y-auto">
+            <app-step-prompt-interactive
+              [metadata]="stepContextMetadata"
+              [promptConfig]="stepContextConfig"
+              (primaryAction)="handleStepContextContinue()"
+              (stepViewComplete)="onStepContextViewed()"
+            ></app-step-prompt-interactive>
+          </div>
+
+          <!-- Navigation Footer -->
+          <div class="flex items-center justify-between px-6 py-3 bg-[#0e1318] border-t border-[#1f2937]" *ngIf="totalModalPages > 1">
+            <button
+              (click)="previousModalPage()"
+              [disabled]="currentModalPage === 0"
+              [class.opacity-40]="currentModalPage === 0"
+              [class.cursor-not-allowed]="currentModalPage === 0"
+              class="flex items-center gap-2 text-sm text-[#a9b1bb] hover:text-[#e5e7eb] transition-colors disabled:hover:text-[#a9b1bb]"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+              Previous
+            </button>
+            
+            <span class="text-xs text-[#6b7280]">
+              {{ currentModalPage + 1 }} / {{ totalModalPages }}
+            </span>
+            
+            <button
+              (click)="nextModalPage()"
+              [disabled]="currentModalPage === totalModalPages - 1"
+              [class.opacity-40]="currentModalPage === totalModalPages - 1"
+              [class.cursor-not-allowed]="currentModalPage === totalModalPages - 1"
+              class="flex items-center gap-2 text-sm text-[#a9b1bb] hover:text-[#e5e7eb] transition-colors disabled:hover:text-[#a9b1bb]"
+            >
+              Next
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -282,6 +373,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private widgetInteractionService = inject(WidgetInteractionService);
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private stepContextService = inject(StepContextService);
 
   public labData: LabData | null = null;
   public loading = true;
@@ -297,6 +389,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codeEditorWidget: any = null;
   public allCodeEditorWidgets: any[] = [];
   public allStepPromptWidgets: any[] = [];
+  public allMultipleChoiceWidgets: any[] = [];
   public hintWidgets: any[] = [];
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
@@ -307,6 +400,23 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
+  
+  // Step context modal
+  public showStepContext = false;
+  public stepContextConfig: StepPromptConfig | null = null;
+  public stepContextMetadata: any = null;
+  public stepContextLoading = false;
+  public labBackgroundContext: StepContext | null = null; // Store lab background for later access
+  public hasShownLabBackground = false; // Track if we've shown the lab background
+  public currentModalPage = 0; // Track current page in multi-page modal
+  public totalModalPages = 0; // Total pages in modal
+  public modalPages: Array<{title: string, content: string}> = []; // Store paginated content
+  private stepContextCache = new Map<number, StepContext>();
+  
+  // Current step widget properties
+  public currentStepWidget: any = null;
+  public currentStepWidgetType: string | null = null;
+  public currentStepMultipleChoiceOptions: ChoiceOption[] = [];
   
   // Session tracking
   public currentSession: ModuleSession | null = null;
@@ -730,6 +840,15 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     // Start session tracking for this module
     this.startModuleSession(json.id || json.name || 'unknown');
     
+    // Show lab background modal once before starting
+    if (!this.hasShownLabBackground && this.labData) {
+      console.log('[LabTemplate] Lab loaded, showing lab background overview');
+      // Use setTimeout to ensure the view is fully initialized
+      setTimeout(() => {
+        this.showLabBackground();
+      }, 500);
+    }
+    
     this.cdr.detectChanges();
   }
 
@@ -1102,9 +1221,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const highest = this.completedSteps.length ? Math.max(...this.completedSteps) : 0;
     const nextUnlock = highest + 1;
     if (step <= nextUnlock) {
+      const previousStep = this.currentStep;
       this.currentStep = step;
       this.updateCurrentCodeEditor();
       this.updateCurrentFeedbackWidgets();
+      
+      // Don't show step context modal anymore - only show lab background once at start
       
       // Update session with new step
       this.updateModuleSession({
@@ -1114,6 +1236,275 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       
       this.cdr.detectChanges();
     }
+  }
+  
+  // ===== Lab Background Modal Methods =====
+  
+  private showLabBackground(): void {
+    // Only show once
+    if (this.hasShownLabBackground) {
+      return;
+    }
+    
+    // Show loading state
+    this.stepContextLoading = true;
+    this.showStepContext = true;
+    
+    console.log('[LabTemplate] Generating lab background overview');
+    
+    // Extract skills/tags from metadata to use as topic
+    const skills = this.labData?.metadata?.tags || [];
+    const topicFromSkills = skills.length > 0 ? skills.join(', ') : this.labData?.title;
+    
+    // Generate comprehensive lab background using AI
+    this.stepContextService.generateLabBackground({
+      labTitle: this.labData?.title || 'Lab',
+      labDescription: this.labData?.description || '',
+      totalSteps: this.steps.length,
+      difficulty: this.getDifficultyLabel(this.labData?.difficulty),
+      topic: topicFromSkills || this.labData?.title,
+      estimatedTime: this.labData?.estimatedTime
+    }).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (context) => {
+        console.log('[LabTemplate] Lab background received:', context);
+        this.stepContextLoading = false;
+        console.log('[LabTemplate] Loading set to false, about to display background');
+        this.labBackgroundContext = context; // Store for later access
+        this.displayLabBackground(context);
+        this.hasShownLabBackground = true;
+        this.cdr.detectChanges(); // Ensure view updates
+      },
+      error: (error) => {
+        console.error('[LabTemplate] Error loading lab background:', error);
+        this.stepContextLoading = false;
+        // Still show the modal with fallback content
+        const fallbackContext: StepContext = {
+          stepNumber: 1,
+          background: this.labData?.description || 'Welcome to this learning lab. Follow the steps to complete the exercises.',
+          keyConcepts: [],
+          estimatedTime: this.labData?.estimatedTime || 30,
+          difficulty: 'medium'
+        };
+        this.labBackgroundContext = fallbackContext; // Store for later access
+        this.displayLabBackground(fallbackContext);
+        this.hasShownLabBackground = true;
+      }
+    });
+  }
+  
+  private displayLabBackground(context: StepContext): void {
+    // Split content into pages first to analyze it
+    this.splitContentIntoPages(context);
+    
+    // Create metadata for the widget
+    this.stepContextMetadata = {
+      id: 'step-prompt-interactive',
+      title: 'Lab Overview',
+      description: 'AI-generated background information for this lab',
+      skills: ['comprehension', 'reading', 'context-building'],
+      difficulty: context.difficulty === 'easy' ? 2 : context.difficulty === 'hard' ? 4 : 3,
+      estimated_time: context.estimatedTime * 60, // convert to seconds
+      input_type: 'text' as const,
+      output_type: 'scaffold' as const,
+      dependencies: [],
+      adaptive_hooks: {
+        difficulty_adjustment: false,
+        hint_progression: false
+      },
+      version: '1.0.0',
+      category: 'core'
+    };
+    
+    // Create config for step-prompt-interactive
+    this.stepContextConfig = {
+      title: undefined, // Don't show title - content will have its own headers
+      stepNumber: undefined,
+      totalSteps: undefined,
+      promptType: 'instruction',
+      bodyMD: this.formatLabBackgroundBody(context),
+      difficulty: context.difficulty,
+      estimatedMinutes: context.estimatedTime,
+      ctaPrimary: {
+        label: this.currentModalPage === this.totalModalPages - 1 ? 'Begin Lab' : 'Next',
+        action: this.currentModalPage === this.totalModalPages - 1 ? 'start' : 'next'
+      },
+      variant: 'default',
+      allowMarkdownHtml: true
+    };
+    
+    console.log('[LabTemplate] Displaying lab background:', {
+      metadata: this.stepContextMetadata,
+      config: this.stepContextConfig,
+      showStepContext: this.showStepContext
+    });
+    
+    this.showStepContext = true;
+    console.log('[LabTemplate] Modal should now be visible. showStepContext =', this.showStepContext);
+    this.cdr.detectChanges(); // Force change detection
+  }
+  
+  private formatLabBackgroundBody(context: StepContext): string {
+    // The AI now generates properly formatted markdown in the background field
+    // We'll split this into pages for better UX
+    this.splitContentIntoPages(context);
+    
+    // Return the current page's content
+    if (this.modalPages.length > 0 && this.currentModalPage < this.modalPages.length) {
+      return this.modalPages[this.currentModalPage].content;
+    }
+    
+    // Fallback: return everything if pagination fails
+    return context.background || '';
+  }
+  
+  private splitContentIntoPages(context: StepContext): void {
+    this.modalPages = [];
+    this.currentModalPage = 0;
+    
+    const background = context.background || '';
+    
+    // Split by markdown headers (### for h3)
+    const sections = background.split(/(?=^###\s)/m);
+    
+    if (sections.length <= 1) {
+      // No clear sections, try splitting by h2 as fallback
+      const h2Sections = background.split(/(?=^##\s)/m);
+      if (h2Sections.length <= 1) {
+        // No headers at all, use whole content as one page
+        this.modalPages = [{
+          title: 'Overview',
+          content: background
+        }];
+      } else {
+        // Has h2 headers
+        h2Sections.forEach((section, index) => {
+          const trimmed = section.trim();
+          if (!trimmed) return;
+          
+          const headerMatch = trimmed.match(/^##\s+(.+)$/m);
+          const title = headerMatch ? headerMatch[1] : `Section ${index + 1}`;
+          
+          this.modalPages.push({
+            title: title,
+            content: trimmed
+          });
+        });
+      }
+    } else {
+      // Create pages from h3 sections
+      sections.forEach((section, index) => {
+        const trimmed = section.trim();
+        if (!trimmed) return;
+        
+        // Extract title from h3 header
+        const headerMatch = trimmed.match(/^###\s+(.+)$/m);
+        const title = headerMatch ? headerMatch[1] : `Section ${index + 1}`;
+        
+        this.modalPages.push({
+          title: title,
+          content: trimmed
+        });
+      });
+    }
+    
+    // Add key concepts as final page if not already included
+    const hasKeyConceptsPage = this.modalPages.some(page => 
+      page.title.toLowerCase().includes('key concept') || 
+      page.content.toLowerCase().includes('### key concept') ||
+      page.content.toLowerCase().includes('## key concept')
+    );
+    
+    if (!hasKeyConceptsPage && context.keyConcepts && context.keyConcepts.length > 0) {
+      let conceptsContent = '### Key Concepts\n\n';
+      conceptsContent += 'Master these essential concepts:\n\n';
+      context.keyConcepts.forEach(concept => {
+        conceptsContent += `- **${concept}**\n`;
+      });
+      
+      this.modalPages.push({
+        title: 'Key Concepts',
+        content: conceptsContent
+      });
+    }
+    
+    this.totalModalPages = this.modalPages.length;
+  }
+  
+  nextModalPage(): void {
+    if (this.currentModalPage < this.totalModalPages - 1) {
+      this.currentModalPage++;
+      this.updateModalContent();
+    }
+  }
+  
+  previousModalPage(): void {
+    if (this.currentModalPage > 0) {
+      this.currentModalPage--;
+      this.updateModalContent();
+    }
+  }
+  
+  goToModalPage(pageIndex: number): void {
+    if (pageIndex >= 0 && pageIndex < this.totalModalPages) {
+      this.currentModalPage = pageIndex;
+      this.updateModalContent();
+    }
+  }
+  
+  private updateModalContent(): void {
+    if (this.labBackgroundContext && this.modalPages.length > 0) {
+      // Update the body content for current page
+      if (this.stepContextConfig) {
+        this.stepContextConfig.bodyMD = this.modalPages[this.currentModalPage].content;
+        
+        // Update CTA based on page position
+        if (this.currentModalPage === this.totalModalPages - 1) {
+          this.stepContextConfig.ctaPrimary = {
+            label: 'Begin Lab',
+            action: 'start'
+          };
+        } else {
+          this.stepContextConfig.ctaPrimary = {
+            label: 'Next',
+            action: 'next'
+          };
+        }
+        
+        this.cdr.detectChanges();
+      }
+    }
+  }
+  
+  handleStepContextContinue(): void {
+    // If there are more pages, go to next page
+    if (this.currentModalPage < this.totalModalPages - 1) {
+      this.nextModalPage();
+    } else {
+      // On last page, close the modal
+      this.closeStepContext();
+    }
+  }
+  
+  closeStepContext(): void {
+    this.showStepContext = false;
+    this.stepContextConfig = null;
+    this.stepContextMetadata = null;
+    this.currentModalPage = 0; // Reset to first page
+    // Don't clear labBackgroundContext - we want to keep it for the condensed card
+  }
+  
+  reopenLabBackground(): void {
+    if (this.labBackgroundContext) {
+      console.log('[LabTemplate] Reopening lab background modal');
+      this.displayLabBackground(this.labBackgroundContext);
+    }
+  }
+  
+  onStepContextViewed(): void {
+    // Track that the user viewed the step context
+    console.log('Step context viewed for step', this.currentStep);
   }
   
   private updateCurrentCodeEditor(): void {

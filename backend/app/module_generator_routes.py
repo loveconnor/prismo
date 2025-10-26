@@ -85,17 +85,35 @@ def get_user_id_from_token():
     
     print(f"DEBUG: Token verification result: {result}")
     
+    # Check if result is None first
+    if result is None:
+        print(f"DEBUG: Token verification returned None")
+        return None
+    
     if not result.get("success"):
         print(f"DEBUG: Token verification failed: {result.get('error')}")
         return None
     
     # Try multiple possible user ID fields
+    user_data = result.get("user_data") or {}
     user_id = (
         result.get("user_id") or 
         result.get("cognito_user_id") or
-        result.get("user_data", {}).get("cognito_user_id") or
-        result.get("user_data", {}).get("id")
+        user_data.get("cognito_user_id") or
+        user_data.get("id")
     )
+    
+    # If no user_id found, try to extract from cognito_user attributes
+    if not user_id:
+        cognito_user = result.get("cognito_user")
+        if cognito_user and isinstance(cognito_user, dict):
+            # Extract 'sub' from UserAttributes
+            user_attributes = cognito_user.get("UserAttributes", [])
+            for attr in user_attributes:
+                if attr.get("Name") == "sub":
+                    user_id = attr.get("Value")
+                    print(f"DEBUG: Extracted user ID from cognito_user attributes: {user_id}")
+                    break
     
     if user_id:
         print(f"DEBUG: Extracted user ID: {user_id}")

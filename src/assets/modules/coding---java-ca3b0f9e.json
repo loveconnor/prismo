@@ -1,0 +1,327 @@
+{
+  "name": "coding---java-ca3b0f9e",
+  "title": "Mastering For Loops in Java",
+  "description": "Learn to write and understand for loops in Java with hands-on coding exercises and practical examples.",
+  "skills": [
+    "for loops",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Introduction to For Loops",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "What is a For Loop?",
+        "prompt": "A for loop is used to repeat a block of code a specific number of times. In Java, the syntax is: for(int i = 0; i < n; i++) { ... }\n\nThe loop has three parts:\n1. Initialization: int i = 0 (start value)\n2. Condition: i < n (continue while true)\n3. Increment: i++ (increase i by 1 each iteration)\n\nLet's practice writing your first for loop!"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Understanding For Loops",
+        "message": "You've learned the basic structure of a for loop. Now you'll apply this knowledge in coding exercises.",
+        "explanation": "For loops are fundamental to programming. They help us avoid writing repetitive code by automating the process of executing statements multiple times.",
+        "nextSteps": [
+          "Complete the first coding challenge",
+          "Practice with different loop ranges",
+          "Learn about nested loops"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with understanding for loop syntax?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Write Your First For Loop",
+        "language": "java",
+        "starterCode": "public class ForLoopExample {\n  public static void main(String[] args) {\n    // Write a for loop that prints numbers 1 to 5\n    // Replace the comment below with your code\n    \n  }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "1\n2\n3\n4\n5\n",
+            "description": "Loop should print numbers 1 through 5"
+          }
+        ],
+        "prompt": "Write a for loop that prints the numbers 1 through 5, each on a new line. Use a for loop starting at 1 and incrementing until it reaches 5."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You successfully wrote your first for loop! Your code correctly prints numbers 1 through 5.",
+        "explanation": "Your loop initialization (i=1), condition (i<=5), and increment (i++) work together to execute the print statement exactly 5 times. This is the core pattern used in for loops.",
+        "nextSteps": [
+          "Try looping with different ranges",
+          "Practice using loop variables in calculations",
+          "Learn about nested for loops"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with writing basic for loops?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Loop with Calculations",
+        "language": "java",
+        "starterCode": "public class LoopCalculations {\n  public static void main(String[] args) {\n    // Write a for loop that prints the first 5 even numbers\n    // (2, 4, 6, 8, 10)\n    \n  }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "2\n4\n6\n8\n10\n",
+            "description": "Loop should print first 5 even numbers"
+          }
+        ],
+        "prompt": "Write a for loop that prints the first 5 even numbers (2, 4, 6, 8, 10). Hint: Use i*2 inside the loop to calculate even numbers."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You've mastered using loop variables in calculations! Your code correctly computes and prints the first 5 even numbers.",
+        "explanation": "By using the loop variable i in a calculation (i*2), you transformed the loop counter into meaningful output. This technique is essential for solving many programming problems.",
+        "nextSteps": [
+          "Practice with different mathematical operations",
+          "Learn about nested for loops",
+          "Apply loops to real-world problems"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with using loop variables in calculations?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:37:12.331773",
+    "module_id": "3aaa8139-0253-40e2-9aef-be1a9328b76d",
+    "saved_to_filesystem": true
+  }
+}
