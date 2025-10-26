@@ -43,12 +43,29 @@
         className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
         Continue to Step {{ currentStep + 1 }}
       </app-button>
+      
+      <!-- For coding steps: show Complete Lab on final step after code passes -->
+      <app-button 
+        *ngIf="editorConfig?.language && passed && currentStep === totalSteps" 
+        (click)="completeLabClick()"
+        className="bg-[#bc78f9] hover:bg-[#a865e0] text-white border-[#bc78f9] font-medium shadow-sm">
+        Complete Lab
+      </app-button>
+      
       <!-- For step-prompt (no editor): show Continue button immediately (user must acknowledge reading) -->
       <app-button 
         *ngIf="!editorConfig?.language && currentStep < totalSteps" 
         (click)="continueStep()"
         className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
         Continue to Step {{ currentStep + 1 }}
+      </app-button>
+      
+      <!-- For step-prompt (no editor): show Complete Lab on final step -->
+      <app-button 
+        *ngIf="!editorConfig?.language && currentStep === totalSteps" 
+        (click)="completeLabClick()"
+        className="bg-[#bc78f9] hover:bg-[#a865e0] text-white border-[#bc78f9] font-medium shadow-sm">
+        Complete Lab
       </app-button>
     </div>
   </div>

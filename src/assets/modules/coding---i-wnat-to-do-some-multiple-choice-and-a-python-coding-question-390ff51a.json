@@ -1,0 +1,330 @@
+{
+  "name": "coding---i-wnat-to-do-some-multiple-choice-and-a-python-coding-question-390ff51a",
+  "title": "Python Coding Fundamentals: Loops & Logic",
+  "description": "Master Python loops and coding concepts through interactive multiple-choice questions and hands-on coding exercises.",
+  "skills": [
+    "loops",
+    "java",
+    "python",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Python Coding",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Python Coding Fundamentals",
+        "prompt": "In this module, you'll test your understanding of Python loops and coding concepts through multiple-choice questions, then apply your knowledge by writing actual Python code. Let's get started!",
+        "estimatedTime": 30
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Module Intro Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Ready to Begin",
+        "message": "You're about to explore Python loops and coding best practices.",
+        "explanation": "This module combines conceptual understanding with practical application.",
+        "nextSteps": [
+          "Answer the multiple-choice questions about loops",
+          "Complete the Python coding challenge"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Starting Confidence",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with Python loops and coding concepts?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Loop Concepts Quiz",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding Python Loops",
+        "question": "Which of the following correctly describes a 'for' loop in Python?",
+        "options": [
+          "A for loop iterates over a sequence (list, tuple, string) and executes code for each item",
+          "A for loop requires explicit increment like i++ in each iteration",
+          "A for loop can only iterate over numbers",
+          "A for loop will run infinitely unless stopped with a break statement"
+        ],
+        "correctAnswer": [
+          0
+        ],
+        "explanation": "In Python, a for loop automatically iterates through sequences without requiring manual incrementing. It can work with any iterable (lists, tuples, strings, etc.) and terminates when the sequence ends."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Loop Concepts Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Understanding!",
+        "message": "You've demonstrated solid knowledge of Python loop concepts.",
+        "explanation": "For loops in Python are designed for iteration over sequences with automatic termination, making them ideal for most looping tasks.",
+        "nextSteps": [
+          "Try the next multiple-choice question about loop usage",
+          "Prepare for the coding challenge"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence After Quiz",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with writing Python loops now?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Python Loop Challenge",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Write a Python Program Using Loops",
+        "language": "python",
+        "prompt": "Write a Python program that uses a for loop to calculate the sum of all numbers from 1 to 10 and print the result. Your output should be: 'The sum is: 55'",
+        "starterCode": "# Write your code here\n# Use a for loop to sum numbers 1 to 10\n# Print the result\n\ntotal = 0\nfor i in range(1, 11):\n    # Add each number to total\n    pass\n\nprint(f'The sum is: {total}')",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "The sum is: 55",
+            "description": "Sum of 1 to 10 should equal 55"
+          }
+        ],
+        "hints": [
+          "Use range(1, 11) to iterate from 1 to 10",
+          "Inside the loop, add each number i to the total variable",
+          "Make sure to print the result with the correct format"
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Coding Challenge Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Coding Work!",
+        "message": "You successfully implemented a loop to solve the problem.",
+        "explanation": "Your solution demonstrates understanding of for loops, range(), and variable accumulation—all fundamental Python concepts.",
+        "nextSteps": [
+          "Review your code logic",
+          "Try adding more complex loop patterns",
+          "Explore nested loops for advanced challenges"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Final Confidence",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with Python loops and coding fundamentals now?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "multiple-choice",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:45:06.164670",
+    "module_id": "dab86d15-32cf-495d-b820-afa0ec1d002a",
+    "saved_to_filesystem": true
+  }
+}

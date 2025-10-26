@@ -24,6 +24,7 @@ import { LabIntroComponent } from '../../../components/widgets/core/lab-intro/la
 import { ShortAnswerComponent } from '../../../components/widgets/core/short-answer/short-answer';
 import { CoachChatComponent } from '../../../components/widgets/core/coach-chat/coach-chat';
 import { ReflectionPromptComponent } from '../../../components/widgets/core/reflection-prompt/reflection-prompt';
+import { OutcomeSummaryComponent } from '../../../components/widgets/core/outcome-summary/outcome-summary';
 // Tri-panel components
 import { StepsPanelComponent } from '../../../components/widgets/core/steps-panel/steps-panel';
 import { EditorPanelComponent } from '../../../components/widgets/coding/editor-panel/editor-panel';
@@ -60,6 +61,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     ShortAnswerComponent,
     CoachChatComponent,
     ReflectionPromptComponent,
+    OutcomeSummaryComponent,
     StepsPanelComponent,
     EditorPanelComponent,
     SupportPanelComponent,
@@ -155,12 +157,15 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
 
         <!-- Center: Editor fills remaining space -->
         <div class="min-w-0 overflow-hidden">
+          <!-- Code Editor Panel (for code-editor widgets) -->
           <app-editor-panel
+            *ngIf="currentStepWidgetType === 'code-editor'"
             [currentStep]="currentStep"
             [totalSteps]="steps.length || 1"
             [shiftHeader]="leftPanelCollapsed || !hasSteps"
             [editorConfig]="codeEditorWidget?.config"
             (completeStep)="handleCompleteStep()"
+            (completeLab)="handleCompleteLab()"
             (codePassed)="handleCodePassed()"
             (aiReviewComplete)="handleAIReviewComplete($event)"
             (refactorFeedback)="handleRefactorFeedback($event)"
@@ -177,9 +182,83 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
           </app-editor-panel>
 
           <!-- Multiple Choice -->
-          <div *ngIf="currentStepWidgetType === 'multiple-choice'" class="flex h-full flex-col bg-[#12161b]">
-            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
-              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+          <ng-container *ngIf="currentStepWidgetType === 'multiple-choice'">
+            <div class="flex h-full flex-col bg-[#12161b]" [attr.data-step]="currentStep">
+              <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3 flex items-center justify-between" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                  <button
+                    (click)="leftPanelCollapsed = false"
+                    class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                    aria-label="Expand steps panel"
+                  >
+                    <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                  </button>
+                </div>
+
+                <div class="flex items-center gap-3 text-sm text-[#a9b1bb]">
+                  <div class="flex items-center gap-1.5 rounded-md border border-[#BC78F9]/30 bg-[#BC78F9]/15 px-2 py-1 text-xs font-semibold text-[#bc78f9]">
+                    Multiple Choice
+                  </div>
+                  <span>Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+                  <!-- Debug info -->
+                  <span class="text-xs text-gray-500">
+                    [Debug: completed={{ completedSteps.includes(currentStep) }}, isFinal={{ currentStep === steps.length }}, completedSteps={{ completedSteps.join(',') }}]
+                  </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <!-- Continue button for non-final steps -->
+                  <app-button 
+                    *ngIf="currentStep < steps.length && completedSteps.includes(currentStep)" 
+                    (click)="handleCompleteStep()"
+                    className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
+                    Continue to Step {{ currentStep + 1 }}
+                  </app-button>
+                  <!-- Complete Lab button for final step -->
+                  <app-button 
+                    *ngIf="currentStep === steps.length && completedSteps.includes(currentStep)" 
+                    (click)="handleCompleteLab()"
+                    className="bg-[#bc78f9] hover:bg-[#a865e0] text-white border-[#bc78f9] font-medium shadow-sm">
+                    Complete Lab
+                  </app-button>
+                </div>
+              </div>
+
+              <!-- Multiple Choice Content -->
+              <div class="flex-1 overflow-y-auto p-6">
+                <!-- Force component recreation by using ngFor with trackBy on currentStep -->
+                <ng-container *ngFor="let step of [currentStep]; trackBy: trackByStep">
+                  <app-multiple-choice
+                    [id]="'mc-step-' + step + '-' + (codeEditorWidget?.id || '')"
+                    [metadata]="codeEditorWidget.metadata"
+                    [config]="codeEditorWidget.config"
+                    [sessionId]="currentSession?.id || ''"
+                    [moduleId]="labData?.id || ''"
+                    [question]="(codeEditorWidget.config?.question || codeEditorWidget.props?.question || '')"
+                    [options]="getMultipleChoiceOptions(codeEditorWidget)"
+                    [correctAnswers]="getMultipleChoiceCorrectAnswers(codeEditorWidget)"
+                    [showRationale]="true"
+                    (answerSubmitted)="handleCodePassed()"
+                  ></app-multiple-choice>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Step Prompt Widget (for step-prompt widgets) -->
+          <div 
+            *ngIf="currentStepWidgetType === 'step-prompt'"
+            class="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card"
+          >
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-3">
+              <div class="flex items-center gap-3">
+                <ng-icon name="lucideBookOpen" class="h-5 w-5 text-primary"></ng-icon>
+                <span class="text-sm font-medium text-foreground">
+                  Step {{ currentStep }} of {{ steps.length || 1 }}
+                </span>
+              </div>
+              <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
                 <button
                   (click)="leftPanelCollapsed = false"
                   class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
@@ -188,60 +267,41 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
                   <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
                 </button>
               </div>
-
-              <div class="flex items-center gap-3 text-sm text-[#a9b1bb]">
-                <div class="flex items-center gap-1.5 rounded-md border border-[#BC78F9]/30 bg-[#BC78F9]/15 px-2 py-1 text-xs font-semibold text-[#bc78f9]">
-                  Multiple Choice
-                </div>
-                <span>Step {{ currentStep }} of {{ steps.length || 1 }}</span>
-              </div>
-
-              <div class="flex items-center gap-2">
-                <app-button 
-                  *ngIf="currentStep < (steps.length || 1) && completedSteps.includes(currentStep)" 
-                  (click)="handleCompleteStep()"
-                  className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
-                  Continue to Step {{ currentStep + 1 }}
-                </app-button>
-              </div>
             </div>
-
-            <!-- Multiple Choice Content -->
+            
+            <!-- Content -->
             <div class="flex-1 overflow-y-auto p-6">
-              <app-multiple-choice
-                [metadata]="codeEditorWidget.metadata"
-                [config]="codeEditorWidget.config"
-                [sessionId]="currentSession?.id || ''"
-                [moduleId]="labData?.id || ''"
-                [question]="codeEditorWidget.config?.question || ''"
-                [options]="getMultipleChoiceOptions(codeEditorWidget.config)"
-                [correctAnswers]="getMultipleChoiceCorrectAnswers(codeEditorWidget.config)"
-                [showRationale]="true"
-                (answerSubmitted)="handleCodePassed()"
-              ></app-multiple-choice>
+              <ng-container *ngFor="let step of [currentStep]; trackBy: trackByStep">
+                <app-step-prompt
+                  [title]="getStepPromptTitle()"
+                  [prompt]="getStepPromptText()"
+                  [difficulty]="getStepPromptDifficulty()"
+                  [estimatedTime]="getStepPromptEstimatedTime()"
+                  [showFooter]="true"
+                ></app-step-prompt>
+              </ng-container>
             </div>
-          </div>
-
-          <!-- Step Prompt Widget (for step-prompt widgets) -->
-          <app-editor-panel
-            *ngIf="codeEditorWidget?.type === 'step-prompt' || codeEditorWidget?.metadata?.id === 'step-prompt'"
-            [currentStep]="currentStep"
-            [totalSteps]="steps.length || 1"
-            [shiftHeader]="leftPanelCollapsed || !hasSteps"
-            [editorConfig]="null"
-            (completeStep)="handleCompleteStep()"
-            (codePassed)="handleCodePassed()"
-          >
-            <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
+            
+            <!-- Footer with Continue Button -->
+            <div class="border-t border-border bg-muted/50 px-6 py-4">
+              <!-- Continue button for non-final steps -->
               <button
-                (click)="leftPanelCollapsed = false"
-                class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
-                aria-label="Expand steps panel"
+                *ngIf="currentStep < steps.length && completedSteps.includes(currentStep)"
+                (click)="handleCompleteStep()"
+                class="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                Continue to Step {{ currentStep + 1 }}
+              </button>
+              <!-- Complete Lab button for final step -->
+              <button
+                *ngIf="currentStep === steps.length && completedSteps.includes(currentStep)"
+                (click)="handleCompleteLab()"
+                class="w-full rounded-md bg-[#bc78f9] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#a865e0] transition-colors"
+              >
+                Complete Lab
               </button>
             </div>
-          </app-editor-panel>
+          </div>
         </div>
 
         <!-- Right: Support -->
@@ -314,6 +374,42 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
         ></app-confidence-meter>
       </div>
     </div>
+
+    <!-- Completion Summary Modal -->
+    <div *ngIf="showCompletionSummary && labData" 
+         class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+         style="margin: 0; top: 0; left: 0; right: 0; bottom: 0; position: fixed;">
+      <div class="max-w-4xl w-full mx-auto max-h-[90vh] overflow-y-auto" style="position: relative; z-index: 10001;" (click)="$event.stopPropagation()">
+        <app-outcome-summary
+          [id]="'completion-' + labData.id"
+          [labId]="labData.id"
+          [labTitle]="labData.title"
+          [outcomeType]="'completion'"
+          [completionPercent]="getCompletionPercent()"
+          [labTimeSpent]="getLabTimeSpent()"
+          [score]="getLabScore()"
+          [keyTakeaways]="labData.metadata?.tags || []"
+          [ui]="{ variant: 'celebration', showSkillProgress: false, showNextSteps: true }"
+          (nextLabSelect)="handleNextLabSelect($event)"
+          (share)="handleShareAchievement()"
+        ></app-outcome-summary>
+        
+        <!-- Close button and Back to Labs button -->
+        <div class="flex justify-center gap-3 mt-6 pb-6">
+          <app-button 
+            variant="outline" 
+            (click)="showCompletionSummary = false"
+            className="border-[#1f2937] text-[#a9b1bb] hover:bg-[#0e1318]">
+            Close
+          </app-button>
+          <app-button 
+            (click)="goBack()"
+            className="bg-[#bc78f9] hover:bg-[#BC78F9] text-white border-[#bc78f9]">
+            Back to Labs
+          </app-button>
+        </div>
+      </div>
+    </div>
   `,
 })
 export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -351,6 +447,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
+  public showCompletionSummary = false;
   
   // Current step widget properties
   public currentStepWidget: any = null;
@@ -868,6 +965,14 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     );
     console.log('Found step-prompt widgets:', this.allStepPromptWidgets);
     
+    // Find all multiple-choice widgets
+    this.allMultipleChoiceWidgets = allWidgets.filter(w => 
+      w.type === 'multiple-choice' || 
+      w.id === 'multiple-choice' || 
+      w.metadata?.id === 'multiple-choice'
+    );
+    console.log('Found multiple-choice widgets:', this.allMultipleChoiceWidgets);
+    
     // Set the initial code editor widget (will be updated based on current step)
     this.updateCurrentCodeEditor();
     
@@ -1151,17 +1256,27 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const highest = this.completedSteps.length ? Math.max(...this.completedSteps) : 0;
     const nextUnlock = highest + 1;
     if (step <= nextUnlock) {
-      this.currentStep = step;
-      this.updateCurrentCodeEditor();
-      this.updateCurrentFeedbackWidgets();
-      
-      // Update session with new step
-      this.updateModuleSession({
-        current_step: step,
-        status: 'in_progress'
-      });
-      
+      // Clear the current widget type to force re-render
+      this.currentStepWidgetType = null;
+      this.codeEditorWidget = null;
       this.cdr.detectChanges();
+      
+      this.currentStep = step;
+      
+      // Use setTimeout to ensure the widget update happens in the next tick
+      setTimeout(() => {
+        // Now update with the new step's widgets
+        this.updateCurrentCodeEditor();
+        this.updateCurrentFeedbackWidgets();
+        
+        // Update session with new step
+        this.updateModuleSession({
+          current_step: step,
+          status: 'in_progress'
+        });
+        
+        this.cdr.detectChanges();
+      }, 0);
     }
   }
   
@@ -1172,8 +1287,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const currentStepData = this.steps[this.currentStep - 1];
     const widgetPosition = currentStepData?.widgetPosition || this.currentStep;
     
+    console.log(`[updateCurrentCodeEditor] Looking for widget for step ${this.currentStep}, widgetPosition: ${widgetPosition}`);
+    
     // First try to find a code editor for this step
     let widgetForStep = null;
+    let widgetType: string | null = null;
     
     if (this.allCodeEditorWidgets.length > 0) {
       // Try to match by stepId first, then widgetPosition, then currentStep
@@ -1181,23 +1299,47 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
                       this.allCodeEditorWidgets.find(w => w.metadata?.position === widgetPosition) ||
                       this.allCodeEditorWidgets.find(w => w.metadata?.position === this.currentStep);
       
-      // If no specific match, use index-based fallback
-      if (!widgetForStep && this.allCodeEditorWidgets.length === 1) {
-        widgetForStep = this.allCodeEditorWidgets[0];
-      } else if (!widgetForStep && this.currentStep <= this.allCodeEditorWidgets.length) {
-        widgetForStep = this.allCodeEditorWidgets[this.currentStep - 1];
+      if (widgetForStep) {
+        widgetType = 'code-editor';
+        console.log(`[updateCurrentCodeEditor] Found code-editor widget:`, widgetForStep);
       }
     }
     
-    // If no code editor found, try step-prompt widgets (like congratulations screens)
+    // If no code editor found, try multiple-choice widgets
+    if (!widgetForStep && this.allMultipleChoiceWidgets.length > 0) {
+      widgetForStep = this.allMultipleChoiceWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
+                      this.allMultipleChoiceWidgets.find(w => w.metadata?.position === widgetPosition) ||
+                      this.allMultipleChoiceWidgets.find(w => w.metadata?.position === this.currentStep);
+      
+      if (widgetForStep) {
+        widgetType = 'multiple-choice';
+        console.log(`[updateCurrentCodeEditor] Found multiple-choice widget:`, widgetForStep);
+      }
+    }
+    
+    // If no code editor or multiple-choice found, try step-prompt widgets (like congratulations screens)
     if (!widgetForStep && this.allStepPromptWidgets.length > 0) {
       widgetForStep = this.allStepPromptWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
                       this.allStepPromptWidgets.find(w => w.metadata?.position === widgetPosition) ||
                       this.allStepPromptWidgets.find(w => w.metadata?.position === this.currentStep);
+      
+      if (widgetForStep) {
+        widgetType = 'step-prompt';
+        console.log(`[updateCurrentCodeEditor] Found step-prompt widget:`, widgetForStep);
+      }
     }
     
-    this.codeEditorWidget = widgetForStep || this.allCodeEditorWidgets[0] || null;
-    console.log(`Current widget for step ${this.currentStep} (widgetPosition: ${widgetPosition}):`, this.codeEditorWidget);
+    this.codeEditorWidget = widgetForStep;
+    this.currentStepWidgetType = widgetType;
+    console.log(`[updateCurrentCodeEditor] Final result - widgetType: ${this.currentStepWidgetType}, widget:`, this.codeEditorWidget);
+    
+    // Auto-complete step-prompt widgets since they're just informational
+    if (widgetType === 'step-prompt' && !this.completedSteps.includes(this.currentStep)) {
+      setTimeout(() => {
+        this.completedSteps = [...this.completedSteps, this.currentStep];
+        this.cdr.detectChanges();
+      }, 100);
+    }
   }
   
   private updateCurrentFeedbackWidgets(): void {
@@ -1264,9 +1406,21 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const allStepsCompleted = this.completedSteps.length === this.steps.length;
     
     if (this.currentStep < this.steps.length) {
+      // Clear the current widget type to force re-render
+      this.currentStepWidgetType = null;
+      this.codeEditorWidget = null;
+      this.cdr.detectChanges();
+      
+      // Increment step
       this.currentStep += 1;
-      this.updateCurrentCodeEditor();
-      this.updateCurrentFeedbackWidgets();
+      
+      // Use setTimeout to ensure the widget update happens in the next tick
+      setTimeout(() => {
+        // Now update with the new step's widgets
+        this.updateCurrentCodeEditor();
+        this.updateCurrentFeedbackWidgets();
+        this.cdr.detectChanges();
+      }, 0);
     }
     
     // Update session progress
@@ -1281,13 +1435,21 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     if (allStepsCompleted) {
       this.completeModuleSession();
     }
-    
-    this.cdr.detectChanges();
   }
 
   handleCodePassed(): void {
     console.log('Code passed! Showing feedback widgets for step', this.currentStep);
     this.codePassed = true;
+    
+    // Mark the current step as completed so the Continue button shows up
+    if (!this.completedSteps.includes(this.currentStep)) {
+      this.completedSteps = [...this.completedSteps, this.currentStep];
+      console.log('[handleCodePassed] Marked step as complete. CompletedSteps:', this.completedSteps);
+      console.log('[handleCodePassed] Current step:', this.currentStep, 'Total steps:', this.steps.length);
+      console.log('[handleCodePassed] Is final step?', this.currentStep === this.steps.length);
+      // Force UI update immediately so button appears
+      this.cdr.detectChanges();
+    }
     
     // Get the actual step data to find its widget position
     const currentStepData = this.steps[this.currentStep - 1];
@@ -1295,7 +1457,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // Check if we've already shown feedback for this step
     if (this.shownFeedbackForSteps.has(widgetPosition)) {
-      console.log('Feedback already shown for this step, skipping');
+      console.log('Feedback already shown for this step, skipping feedback modals but step is marked complete');
       return;
     }
     
@@ -1385,11 +1547,136 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     // Reset any lab state if needed
     this.loadLab();
   }
+
+  /**
+   * Handle lab completion - show summary with analytics
+   */
+  handleCompleteLab(): void {
+    console.log('[LabTemplate] Lab completion triggered');
+    console.log('[LabTemplate] Current session:', this.currentSession);
+    console.log('[LabTemplate] Completed steps:', this.completedSteps);
+    console.log('[LabTemplate] Total steps:', this.steps.length);
+    console.log('[LabTemplate] Lab data:', this.labData);
+    
+    // Complete the module session
+    this.completeModuleSession();
+    
+    // Show the completion summary
+    this.showCompletionSummary = true;
+    console.log('[LabTemplate] showCompletionSummary set to:', this.showCompletionSummary);
+    
+    this.cdr.detectChanges();
+    console.log('[LabTemplate] Change detection triggered');
+  }
+
+  /**
+   * Calculate completion percentage based on completed steps
+   */
+  getCompletionPercent(): number {
+    if (!this.steps.length) return 100;
+    return Math.round((this.completedSteps.length / this.steps.length) * 100);
+  }
+
+  /**
+   * Get lab time spent in minutes
+   */
+  getLabTimeSpent(): number {
+    if (!this.sessionStartTime) return 0;
+    const timeSpentSeconds = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+    return Math.round(timeSpentSeconds / 60);
+  }
+
+  /**
+   * Get lab score (for now, based on completion percentage)
+   */
+  getLabScore(): number {
+    // Return as 0-1 normalized score
+    return this.getCompletionPercent() / 100;
+  }
+
+  /**
+   * Handle next lab selection from summary
+   */
+  handleNextLabSelect(labId: string): void {
+    console.log('[LabTemplate] Next lab selected:', labId);
+    this.showCompletionSummary = false;
+    this.router.navigate(['/labs', labId]);
+  }
+
+  /**
+   * Handle share achievement
+   */
+  handleShareAchievement(): void {
+    console.log('[LabTemplate] Share achievement clicked');
+    // TODO: Implement sharing functionality
+    alert('Share functionality coming soon!');
+  }
+
+  /**
+   * TrackBy function to force component recreation when step changes
+   */
+  trackByStep(index: number, step: number): number {
+    return step; // Return the step number as the unique identifier
+  }
+
+  /**
+   * Get step prompt widget for current step
+   */
+  getStepPromptWidget(): any {
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    
+    return this.allStepPromptWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
+           this.allStepPromptWidgets.find(w => w.metadata?.position === widgetPosition) ||
+           this.allStepPromptWidgets.find(w => w.metadata?.position === this.currentStep);
+  }
+
+  /**
+   * Get step prompt title
+   */
+  getStepPromptTitle(): string {
+    const widget = this.getStepPromptWidget();
+    const config = widget?.config || widget?.props || {};
+    return config.title || '';
+  }
+
+  /**
+   * Get step prompt text
+   */
+  getStepPromptText(): string {
+    const widget = this.getStepPromptWidget();
+    const config = widget?.config || widget?.props || {};
+    return config.prompt || config.text || '';
+  }
+
+  /**
+   * Get step prompt difficulty
+   */
+  getStepPromptDifficulty(): number {
+    const widget = this.getStepPromptWidget();
+    return widget?.metadata?.difficulty || 2;
+  }
+
+  /**
+   * Get step prompt estimated time
+   */
+  getStepPromptEstimatedTime(): number | undefined {
+    const widget = this.getStepPromptWidget();
+    const config = widget?.config || widget?.props || {};
+    return config.estimatedTime;
+  }
+
    /**
    * Transform module-format multiple choice options to component format
    */
-  getMultipleChoiceOptions(config: any): any[] {
-    if (!config || !config.options) return [];
+  getMultipleChoiceOptions(configOrWidget: any): any[] {
+    // Handle both widget object and direct config object
+    const config = configOrWidget?.config || configOrWidget?.props || configOrWidget;
+    
+    if (!config || !config.options) {
+      console.warn('No options found in multiple choice config:', configOrWidget);
+      return [];
+    }
     
     const options = config.options;
     const correctAnswer = config.correctAnswer;
@@ -1407,8 +1694,14 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Transform module-format correct answer (index) to component format (array of IDs)
    */
-  getMultipleChoiceCorrectAnswers(config: any): string[] {
-    if (!config || config.correctAnswer === undefined) return [];
+  getMultipleChoiceCorrectAnswers(configOrWidget: any): string[] {
+    // Handle both widget object and direct config object
+    const config = configOrWidget?.config || configOrWidget?.props || configOrWidget;
+    
+    if (!config || config.correctAnswer === undefined) {
+      console.warn('No correctAnswer found in multiple choice config:', configOrWidget);
+      return [];
+    }
     
     const correctIndex = config.correctAnswer;
     return [`option-${correctIndex}`];

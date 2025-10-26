@@ -39,6 +39,7 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
   @Input() shiftHeader = false;
   @Input() editorConfig: any = null;
   @Output() completeStep = new EventEmitter<void>();
+  @Output() completeLab = new EventEmitter<void>();
   @Output() codePassed = new EventEmitter<void>();
   @Output() aiReviewComplete = new EventEmitter<string>(); // Emit summary to parent
   @Output() refactorFeedback = new EventEmitter<any>(); // Emit refactor feedback to parent
@@ -833,6 +834,11 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     }
     this.passed = false;
     this.completeStep.emit();
+  }
+
+  completeLabClick() {
+    console.log('[EditorPanel] Complete Lab clicked');
+    this.completeLab.emit();
   }
 
   private gradeCode(code: string, language: string): void {
