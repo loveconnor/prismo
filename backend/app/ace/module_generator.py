@@ -166,46 +166,66 @@ OTHER AVAILABLE WIDGETS (copy structure, adapt props):
 {json.dumps(abbreviated, indent=2)}"""
     
     def _fix_json_string(self, text: str) -> str:
-        """Attempt to fix common JSON formatting issues"""
+        """Attempt to fix common JSON formatting issues by escaping unescaped newlines in string values"""
         import re
         
-        # Strategy: Find string values and escape newlines/quotes within them
-        # This is a simplified approach - matches "key": "value" patterns
+        # This function fixes strings that contain literal newlines instead of \n
+        # Strategy: Find string values (content between quotes) and escape special chars
         
-        def escape_string_content(match):
-            """Escape the content of a JSON string value"""
-            key = match.group(1)
-            value = match.group(2)
+        result = []
+        in_string = False
+        escape_next = False
+        i = 0
+        
+        while i < len(text):
+            char = text[i]
             
-            # Escape backslashes first
-            value = value.replace('\\', '\\\\')
-            # Escape quotes that aren't already escaped
-            value = re.sub(r'(?<!\\)"', r'\\"', value)
-            # Escape newlines
-            value = value.replace('\n', '\\n')
-            # Escape tabs
-            value = value.replace('\t', '\\t')
-            # Escape carriage returns
-            value = value.replace('\r', '\\r')
+            # Handle escape sequences
+            if escape_next:
+                result.append(char)
+                escape_next = False
+                i += 1
+                continue
             
-            return f'"{key}": "{value}"'
+            # Check for backslash (escape character)
+            if char == '\\':
+                result.append(char)
+                escape_next = True
+                i += 1
+                continue
+            
+            # Toggle string mode when we hit a quote
+            if char == '"':
+                result.append(char)
+                in_string = not in_string
+                i += 1
+                continue
+            
+            # If we're inside a string, escape special characters
+            if in_string:
+                if char == '\n':
+                    result.append('\\n')
+                elif char == '\r':
+                    result.append('\\r')
+                elif char == '\t':
+                    result.append('\\t')
+                else:
+                    result.append(char)
+            else:
+                # Outside strings, keep everything as-is
+                result.append(char)
+            
+            i += 1
         
-        # Pattern to match JSON string key-value pairs
-        # This looks for "key": "value" where value might contain unescaped characters
-        pattern = r'"([^"]+)":\s*"([^"]*(?:[^"\\]|\\.)*)(?="(?:,|\s*[}\]]))'
-        
-        # Try a simpler approach: just escape all literal newlines in the text
-        fixed = text.replace('\r\n', '\\n').replace('\n', '\\n').replace('\r', '\\r')
-        
-        return fixed
+        return ''.join(result)
     
     async def _generate_module_with_bedrock(self, module_name: str, topic: str, target_skills: List[str],
                                             difficulty: str, estimated_time: int, context: str) -> Dict[str, Any]:
         """Use AWS Bedrock API to generate a module with strict JSON output"""
         
-        # Widget difficulty mapping
-        widget_counts = {"beginner": 3, "intermediate": 5, "advanced": 7}
-        num_learning_widgets = widget_counts.get(difficulty, 3)
+        # Widget difficulty mapping - reduced to fit in token limit
+        widget_counts = {"beginner": 2, "intermediate": 3, "advanced": 5}
+        num_learning_widgets = widget_counts.get(difficulty, 2)
         
         # Create the streamlined prompt
         prompt = f"""Generate a learning module for "{topic}" as valid JSON only (no markdown, no explanations).
@@ -214,7 +234,8 @@ CRITICAL JSON RULES:
 1. All strings MUST be on ONE line - replace actual newlines with \\n
 2. Escape quotes inside strings: use \\" not "
 3. For code in "starterCode" field: replace newlines with \\n, NOT actual line breaks
-4. Example: "starterCode": "line1\\nline2\\nline3" NOT "starterCode": "line1
+4. Keep "prompt" and "starterCode" content CONCISE (under 500 chars each)
+5. Example: "starterCode": "line1\\nline2\\nline3" NOT "starterCode": "line1
    line2"
 
 === OUTPUT FORMAT ===
@@ -282,7 +303,7 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
             loop = asyncio.get_event_loop()
             generated_text = await loop.run_in_executor(
                 None,
-                lambda: get_claude_response(prompt, system_prompt, max_tokens=8000)
+                lambda: get_claude_response(prompt, system_prompt, max_tokens=30000)
             )
             
             if generated_text:
