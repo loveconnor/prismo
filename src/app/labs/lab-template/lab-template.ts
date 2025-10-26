@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { LabDataService, LabData } from '../../../services/lab-data.service';
 
-// Import all available widgets
+// Widgets
 import { StepPromptComponent } from '../../../components/widgets/core/step-prompt/step-prompt';
 import { HintPanelComponent } from '../../../components/widgets/core/hint-panel/hint-panel';
 import { FeedbackBoxComponent } from '../../../components/widgets/core/feedback-box/feedback-box';
@@ -17,14 +17,14 @@ import { TestFeedbackComponent } from '../../../components/widgets/coding/test-f
 import { EquationInputComponent } from '../../../components/widgets/math/equation-input/equation-input';
 import { TextEditorComponent } from '../../../components/widgets/writing/text-editor/text-editor';
 import { MultipleChoiceComponent } from '../../../components/widgets/core/multiple-choice/multiple-choice';
-import { LabIntroComponent } from '../../../components/widgets/core/lab-intro/lab-intro';
-import { ShortAnswerComponent } from '../../../components/widgets/core/short-answer/short-answer';
-import { CoachChatComponent } from '../../../components/widgets/core/coach-chat/coach-chat';
-import { ReflectionPromptComponent } from '../../../components/widgets/core/reflection-prompt/reflection-prompt';
+import { AlgorithmSimulatorComponent } from '../../../components/widgets/coding/algorithm-simulator/algorithm-simulator';
+import type { Algorithm } from '../../../components/widgets/coding/algorithm-simulator/algorithm-simulator';
+
 // Tri-panel components
 import { StepsPanelComponent } from '../../../components/widgets/core/steps-panel/steps-panel';
 import { EditorPanelComponent } from '../../../components/widgets/coding/editor-panel/editor-panel';
 import { SupportPanelComponent } from '../../../components/widgets/core/support-panel/support-panel';
+import { OutcomeSummaryComponent } from '../../../components/widgets/core/outcome-summary/outcome-summary';
 
 // UI Components
 import { CardComponent } from '../../../components/ui/card/card';
@@ -35,14 +35,12 @@ import { ButtonComponent } from '../../../components/ui/button/button';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCode, lucideCircle, lucideClock, lucideX, lucideChevronRight } from '@ng-icons/lucide';
 
-// Types are now imported from the service
-
 @Component({
   selector: 'app-lab-template',
   standalone: true,
   imports: [
     CommonModule,
-    // Widget imports
+    // Widgets
     StepPromptComponent,
     HintPanelComponent,
     FeedbackBoxComponent,
@@ -53,14 +51,13 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     EquationInputComponent,
     TextEditorComponent,
     MultipleChoiceComponent,
-    LabIntroComponent,
-    ShortAnswerComponent,
-    CoachChatComponent,
-    ReflectionPromptComponent,
+    AlgorithmSimulatorComponent,
+    // Panels
     StepsPanelComponent,
     EditorPanelComponent,
     SupportPanelComponent,
-    // UI imports
+    OutcomeSummaryComponent,
+    // UI
     CardComponent,
     CardHeaderComponent,
     CardContentComponent,
@@ -137,7 +134,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
       <!-- Three-panel layout (CSS Grid) -->
       <div class="grid flex-1 overflow-hidden min-w-0"
            [style.gridTemplateColumns]="gridTemplateColumns">
-        <!-- Left: Steps (only if steps exist) -->
+        <!-- Left: Steps -->
         <div class="min-w-0 overflow-hidden" *ngIf="hasSteps">
           <app-steps-panel
             [steps]="steps"
@@ -150,13 +147,15 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
           ></app-steps-panel>
         </div>
 
-        <!-- Center: Editor fills remaining space -->
+        <!-- Center -->
         <div class="min-w-0 overflow-hidden">
+          <!-- Code Editor / Step Prompt default -->
           <app-editor-panel
+            *ngIf="currentStepWidgetType === 'code-editor' || currentStepWidgetType === 'step-prompt' || !currentStepWidgetType"
             [currentStep]="currentStep"
             [totalSteps]="steps.length || 1"
             [shiftHeader]="leftPanelCollapsed || !hasSteps"
-            [editorConfig]="codeEditorWidget?.config"
+            [editorConfig]="codeEditorWidget?.config || codeEditorWidget?.props"
             (completeStep)="handleCompleteStep()"
             (codePassed)="handleCodePassed()"
           >
@@ -170,6 +169,125 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
               </button>
             </div>
           </app-editor-panel>
+
+          <!-- Multiple Choice -->
+          <div *ngIf="currentStepWidgetType === 'multiple-choice'" class="flex h-full flex-col bg-[#12161b]">
+            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+                <app-button 
+                  *ngIf="currentStep < (steps.length || 1)" 
+                  (click)="handleCompleteStep()"
+                  className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
+                  Continue to Step {{ currentStep + 1 }}
+                </app-button>
+              </div>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+              <app-multiple-choice
+                [id]="currentStepWidget?.id || 'mc-' + currentStep"
+                [question]="currentStepWidget?.config?.question || currentStepWidget?.props?.question || ''"
+                [options]="currentStepMultipleChoiceOptions"
+                [correctAnswers]="(currentStepWidget?.config?.correctAnswer !== undefined ? [currentStepWidget.config.correctAnswer.toString()] : (currentStepWidget?.props?.correctAnswer !== undefined ? [currentStepWidget.props.correctAnswer.toString()] : []))"
+                [showFeedback]="true"
+                [maxAttempts]="3"
+                (choiceSubmit)="handleMultipleChoiceSubmit($event)"
+              ></app-multiple-choice>
+            </div>
+          </div>
+
+          <!-- Text Editor -->
+          <div *ngIf="currentStepWidgetType === 'text-editor'" class="flex h-full flex-col bg-[#12161b]">
+            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+              </div>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+              <app-text-editor
+                [title]="codeEditorWidget?.config?.title || 'Text Editor'"
+                [placeholder]="codeEditorWidget?.config?.placeholder || 'Start writing...'"
+                [maxLength]="codeEditorWidget?.config?.maxLength || 5000"
+                (stateChanged)="handleWidgetComplete($event)"
+              ></app-text-editor>
+            </div>
+          </div>
+
+          <!-- Equation Input -->
+          <div *ngIf="currentStepWidgetType === 'equation-input'" class="flex h-full flex-col bg-[#12161b]">
+            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+              </div>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+              <app-equation-input
+                [title]="codeEditorWidget?.config?.title || 'Mathematical Expression'"
+                [placeholder]="codeEditorWidget?.config?.placeholder || 'e.g., x^2 + 2x + 1'"
+                [formatHint]="codeEditorWidget?.config?.formatHint"
+                [expectedFormat]="codeEditorWidget?.config?.expectedFormat"
+                (stateChanged)="handleWidgetComplete($event)"
+              ></app-equation-input>
+            </div>
+          </div>
+
+          <!-- Algorithm Simulator -->
+          <div *ngIf="currentStepWidgetType === 'algorithm-simulator'" class="flex h-full flex-col bg-[#12161b]">
+            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+                <app-button 
+                  *ngIf="currentStep < (steps.length || 1)" 
+                  (click)="handleCompleteStep()"
+                  className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
+                  I Understand - Continue to Step {{ currentStep + 1 }}
+                </app-button>
+              </div>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+              <app-algorithm-simulator
+                [metadata]="currentStepWidget?.metadata"
+                [defaultAlgorithm]="algorithmSimulatorDefaultAlgorithm"
+                [enabledAlgorithms]="algorithmSimulatorEnabledAlgorithms"
+              ></app-algorithm-simulator>
+            </div>
+          </div>
         </div>
 
         <!-- Right: Support -->
@@ -184,7 +302,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
 
     </div>
 
-    <!-- Feedback Modal (appears first as overlay) -->
+    <!-- Feedback Modal -->
     <div *ngIf="showFeedbackModal" 
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
          (click)="handleFeedbackContinue()">
@@ -203,7 +321,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
       </div>
     </div>
 
-    <!-- Confidence Meter Modal (appears after feedback) -->
+    <!-- Confidence Meter Modal -->
     <div *ngIf="showConfidenceMeter" 
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
@@ -213,6 +331,38 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
           [scaleLabels]="confidenceWidget.config?.scaleLabels || ['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
           (submit)="handleConfidenceSubmit()"
         ></app-confidence-meter>
+      </div>
+    </div>
+
+    <!-- Outcome Summary Modal -->
+    <div *ngIf="showOutcomeSummary" 
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div class="max-w-4xl w-full max-h-[90vh] overflow-auto" (click)="$event.stopPropagation()">
+        <app-outcome-summary
+          [id]="'outcome-' + (labData?.id || 'lab')"
+          [labId]="labData?.id || ''"
+          [labTitle]="labData?.title || 'Lab Complete'"
+          [outcomeType]="'completion'"
+          [completionPercent]="completionPercentage"
+          [timeSpent]="labTimeSpent"
+          [score]="completionPercentage / 100"
+          [keyTakeaways]="labData?.metadata?.tags || []"
+          [strengths]="getLabStrengths()"
+          [ui]="{ variant: 'celebration', showConfetti: true, showSkillProgress: true, showNextSteps: true }"
+        ></app-outcome-summary>
+        <div class="mt-4 flex justify-center gap-3 pb-6">
+          <app-button 
+            variant="outline"
+            (click)="restartLab()"
+            className="px-6 py-2">
+            Restart Lab
+          </app-button>
+          <app-button 
+            (click)="handleOutcomeSummaryContinue()"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2">
+            Continue to Labs
+          </app-button>
+        </div>
       </div>
     </div>
   `,
@@ -228,16 +378,20 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public labData: LabData | null = null;
   public loading = true;
   public error: string | null = null;
+
   // Tri-panel state
   public leftPanelCollapsed = false;
   public rightPanelCollapsed = false;
   public currentStep = 1;
   public completedSteps: number[] = [];
-  public steps: { id: number; title: string; instruction?: string; example?: string }[] = [];
+  public steps: { id: number; title: string; instruction?: string; example?: string; widgetPosition?: number; widgetType?: string }[] = [];
   
-  // Extracted widgets from labData
+  // Widgets
   public codeEditorWidget: any = null;
+  public allWidgets: any[] = [];
   public allCodeEditorWidgets: any[] = [];
+  public allStepPromptWidgets: any[] = [];
+  public allMultipleChoiceWidgets: any[] = [];
   public hintWidgets: any[] = [];
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
@@ -246,24 +400,24 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
+  public showOutcomeSummary = false;
   
-  // Check if support panel should be shown
+  private feedbackByStep = new Map<number, any>();
+  private confidenceByStep = new Map<number, any>();
+  private shownFeedbackForSteps = new Set<number>();
+  
   get shouldShowSupportPanel(): boolean {
     return this.hasHints || this.hasFeedbackContent;
   }
-  
   get hasHints(): boolean {
     return this.hintWidgets && this.hintWidgets.length > 0 && 
            this.hintWidgets[0]?.config?.hints && 
            this.hintWidgets[0].config.hints.length > 0;
   }
-  
   get hasFeedbackContent(): boolean {
     return this.feedbackWidgets && this.feedbackWidgets.length > 0;
   }
-  
   get gridTemplateColumns(): string {
-    // If no support panel content, don't allocate space for it
     if (!this.shouldShowSupportPanel) {
       if (!this.hasSteps) {
         return '1fr';
@@ -271,33 +425,24 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       const left = this.leftPanelCollapsed ? '0px' : 'minmax(260px, 18vw)';
       return `${left} 1fr`;
     }
-    
-    // If no steps, only use 2 columns (center + right)
     if (!this.hasSteps) {
       const right = this.rightPanelCollapsed ? '0px' : 'minmax(260px, 19vw)';
       return `1fr ${right}`;
     }
-    
-    // If steps exist, use 3 columns (left + center + right)
     const left = this.leftPanelCollapsed ? '0px' : 'minmax(260px, 18vw)';
     const right = this.rightPanelCollapsed ? '0px' : 'minmax(260px, 19vw)';
     return `${left} 1fr ${right}`;
   }
   
-  // Track widget completion states for conditional rendering
   private widgetStates = new Map<string, { completed: boolean; submitted: boolean }>();
 
-  constructor() {
-    // Component initialization
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.loadLab();
   }
 
-  ngAfterViewInit(): void {
-    // Component initialized
-  }
+  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -307,7 +452,6 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private loadLab(): void {
     const labId = this.route.snapshot.paramMap.get('id');
     const currentUrl = this.router.url;
-
 
     if (
       !labId && !currentUrl.includes('pt01') && 
@@ -320,17 +464,13 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // Handle specific routes: strictly load from module JSON for pt01
     let actualLabId = labId;
     if (currentUrl.includes('pt01')) {
-      // Load the CS1 pt01 module JSON and convert to lab using HttpClient (triggers CD in zoneless mode)
-      this.http.get<any>('/assets/modules/CS1/01-Lab/pt03.json')
+      this.http.get<any>('/assets/modules/CS1/01-Lab/pt04.json')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {
-            console.log('Loaded pt01.json:', json);
             const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
             this.labData = labFromModule;
             this.extractWidgetsFromLabData();
             this.loading = false;
@@ -351,9 +491,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {
-            console.log('Loaded binary-search-tree.json:', json);
             const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
             this.labData = labFromModule;
             this.extractWidgetsFromLabData();
             this.loading = false;
@@ -368,14 +506,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       return;
     } else if (currentUrl.includes('test-fullstack-todo')) {
-      // Load the test fullstack todo module JSON and convert to lab
       this.http.get<any>('/assets/modules/test-fullstack-todo.json')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {
-            console.log('Loaded test-fullstack-todo.json:', json);
             const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
             this.labData = labFromModule;
             this.extractWidgetsFromLabData();
             this.loading = false;
@@ -390,14 +525,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       return;
     } else if (currentUrl.includes('fullstack-todo-with-steps')) {
-      // Load the fullstack todo with steps module JSON and convert to lab
       this.http.get<any>('/assets/modules/fullstack-todo-with-steps.json')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {
-            console.log('Loaded fullstack-todo-with-steps.json:', json);
             const labFromModule = this.labDataService.convertModuleToLab(json);
-            console.log('Converted to lab:', labFromModule);
             this.labData = labFromModule;
             this.extractWidgetsFromLabData();
             this.loading = false;
@@ -432,207 +564,200 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getDifficultyLabel(difficulty: number): string {
-    const labels = [
-      'Beginner',       // 1
-      'Easy',           // 2
-      'Moderate',       // 3
-      'Medium',         // 4
-      'Challenging',    // 5
-      'Hard',           // 6
-      'Very Hard',      // 7
-      'Advanced',       // 8
-      'Expert',         // 9
-      'Master'          // 10
-    ];
+    const labels = ['Beginner','Easy','Moderate','Medium','Challenging','Hard','Very Hard','Advanced','Expert','Master'];
     return labels[difficulty - 1] || 'Unknown';
   }
 
   getDifficultyColor(difficulty: number): string {
     const colors = [
-      'text-green-600',    // 1: Beginner
-      'text-green-500',    // 2: Easy
-      'text-blue-600',     // 3: Moderate
-      'text-blue-500',     // 4: Medium
-      'text-yellow-600',   // 5: Challenging
-      'text-yellow-500',   // 6: Hard
-      'text-orange-600',   // 7: Very Hard
-      'text-orange-500',   // 8: Advanced
-      'text-red-600',      // 9: Expert
-      'text-red-500'       // 10: Master
+      'text-green-600','text-green-500','text-blue-600','text-blue-500',
+      'text-yellow-600','text-yellow-500','text-orange-600','text-orange-500',
+      'text-red-600','text-red-500'
     ];
     return colors[difficulty - 1] || 'text-gray-600';
   }
 
-  /**
-   * Extract widgets from labData for the tri-panel layout
-   */
   private extractWidgetsFromLabData(): void {
     if (!this.labData || !this.labData.sections || this.labData.sections.length === 0) {
       console.warn('No labData or sections found');
       return;
     }
 
-    // Get all widgets from all sections
     const allWidgets = this.labData.sections.flatMap(section => section.widgets || []);
-    console.log('All widgets:', allWidgets);
-    
-    // Find all code editor widgets
-    this.allCodeEditorWidgets = allWidgets.filter(w => w.type === 'code-editor' || w.id === 'code-editor');
-    console.log('Found code editor widgets:', this.allCodeEditorWidgets);
-    
-    // Set the initial code editor widget (will be updated based on current step)
+    this.allWidgets = allWidgets;
+
+    this.allCodeEditorWidgets = allWidgets.filter(w => 
+      w.type === 'code-editor' || w.id === 'code-editor' || w.metadata?.id === 'code-editor'
+    );
+    this.allStepPromptWidgets = allWidgets.filter(w => 
+      w.type === 'step-prompt' || w.id === 'step-prompt' || w.metadata?.id === 'step-prompt'
+    );
+    this.allMultipleChoiceWidgets = allWidgets.filter(w => 
+      w.type === 'multiple-choice' || w.id === 'multiple-choice' || w.metadata?.id === 'multiple-choice'
+    );
+
     this.updateCurrentCodeEditor();
-    
-    // Find hint widgets
-    this.hintWidgets = allWidgets.filter(w => w.type === 'hint-panel' || w.id === 'hint-panel');
-    console.log('Found hint widgets:', this.hintWidgets);
-    
-    // Find feedback widget (for modal)
-    this.feedbackWidget = allWidgets.find(w => w.type === 'feedback-box' || w.id === 'feedback-box');
-    console.log('Found feedback widget:', this.feedbackWidget);
-    
-    // Find feedback widgets for support panel (different from modal feedback)
+
+    this.hintWidgets = allWidgets.filter(w => 
+      w.type === 'hint-panel' || w.id === 'hint-panel' || w.metadata?.id === 'hint-panel'
+    );
+
+    const allFeedbackWidgets = allWidgets.filter(w => 
+      w.type === 'feedback-box' || w.id === 'feedback-box' || w.metadata?.id === 'feedback-box'
+    );
+
+    allFeedbackWidgets.forEach(feedback => {
+      let stepKey: number | undefined;
+      if (feedback.metadata?.stepId !== undefined) {
+        stepKey = feedback.metadata.stepId;
+      } else if (feedback.metadata?.position !== undefined) {
+        const feedbackPosition = feedback.metadata.position;
+        const sortedWidgets = [...allWidgets].sort((a, b) => 
+          (a.metadata?.position || 0) - (b.metadata?.position || 0)
+        );
+        for (let i = sortedWidgets.length - 1; i >= 0; i--) {
+          const widget = sortedWidgets[i];
+          const widgetPosition = widget.metadata?.position || 0;
+          const widgetType = widget.type || widget.metadata?.id || widget.id;
+          const isContentWidget = widgetType !== 'feedback-box' && widgetType !== 'confidence-meter' && widgetType !== 'hint-panel';
+          if (widgetPosition < feedbackPosition && isContentWidget) {
+            stepKey = widget.metadata?.position;
+            break;
+          }
+        }
+      }
+      if (stepKey !== undefined) {
+        this.feedbackByStep.set(stepKey, feedback);
+      }
+    });
+
+    const allConfidenceWidgets = allWidgets.filter(w => 
+      w.type === 'confidence-meter' || w.id === 'confidence-meter' || w.metadata?.id === 'confidence-meter'
+    );
+    allConfidenceWidgets.forEach(confidence => {
+      let stepKey: number | undefined;
+      if (confidence.metadata?.stepId !== undefined) {
+        stepKey = confidence.metadata.stepId;
+      } else if (confidence.metadata?.position !== undefined) {
+        const confidencePosition = confidence.metadata.position;
+        const sortedWidgets = [...allWidgets].sort((a, b) => 
+          (a.metadata?.position || 0) - (b.metadata?.position || 0)
+        );
+        for (let i = sortedWidgets.length - 1; i >= 0; i--) {
+          const widget = sortedWidgets[i];
+          const widgetPosition = widget.metadata?.position || 0;
+          const widgetType = widget.type || widget.metadata?.id || widget.id;
+          const isContentWidget = widgetType !== 'feedback-box' && widgetType !== 'confidence-meter' && widgetType !== 'hint-panel';
+          if (widgetPosition < confidencePosition && isContentWidget) {
+            stepKey = widget.metadata?.position;
+            break;
+          }
+        }
+      }
+      if (stepKey !== undefined) {
+        this.confidenceByStep.set(stepKey, confidence);
+      }
+    });
+
+    this.updateCurrentFeedbackWidgets();
+
     this.feedbackWidgets = allWidgets.filter(w => w.type === 'feedback-panel' || w.id === 'feedback-panel');
-    console.log('Found feedback widgets for panel:', this.feedbackWidgets);
-    
-    // Find confidence widget
-    this.confidenceWidget = allWidgets.find(w => w.type === 'confidence-meter' || w.id === 'confidence-meter');
-    console.log('Found confidence widget:', this.confidenceWidget);
-    
-    // Extract steps from widgets - use widgets with position field as steps
-    // Only create steps if there are multiple positioned widgets
-    const positionedWidgets = allWidgets.filter(w => w.metadata?.position !== undefined);
-    console.log('Positioned widgets:', positionedWidgets);
-    
-    if (positionedWidgets.length > 1) {
-      this.steps = positionedWidgets
-        .sort((a, b) => (a.metadata?.position || 0) - (b.metadata?.position || 0))
-        .map((w, index) => ({
-          id: w.metadata?.position || index + 1,
-          title: w.config?.title || w.metadata?.title || `Step ${index + 1}`,
-          instruction: w.config?.prompt || w.metadata?.description,
-          example: undefined
-        }));
+
+    if (this.labData.steps && this.labData.steps.length > 0) {
+      this.steps = this.labData.steps.map(step => ({
+        id: step.id,
+        title: step.title,
+        instruction: step.instruction || step.description,
+        example: step.example
+      }));
     } else {
-      // Fallback to labData.steps if no positioned widgets
-      this.steps = this.labData.steps || [];
+      const contentWidgets = allWidgets.filter(w => {
+        const widgetType = w.type || w.metadata?.id || w.id;
+        const isContentWidget = widgetType !== 'feedback-box' && widgetType !== 'confidence-meter' && widgetType !== 'hint-panel';
+        const hasPosition = w.metadata?.position !== undefined;
+        return hasPosition && isContentWidget;
+      });
+      if (contentWidgets.length >= 1) {
+        this.steps = contentWidgets
+          .sort((a, b) => (a.metadata?.position || 0) - (b.metadata?.position || 0))
+          .map((w, index) => {
+            const widgetType = w.type || w.metadata?.id || w.id;
+            return {
+              id: index + 1,
+              widgetPosition: w.metadata?.position,
+              widgetType: widgetType,
+              title: w.config?.title || w.metadata?.title || `Step ${index + 1}`,
+              instruction: w.config?.prompt || w.metadata?.description,
+              example: undefined
+            };
+          });
+      } else {
+        this.steps = [];
+      }
     }
     this.hasSteps = this.steps.length > 0;
-    console.log('Extracted steps:', this.steps);
-    console.log('Has steps:', this.hasSteps);
-    console.log('Steps:', this.steps);
-    
-    console.log('Extracted widgets summary:', { 
-      codeEditorWidget: this.codeEditorWidget, 
-      codeEditorConfig: this.codeEditorWidget?.config,
-      hintWidgets: this.hintWidgets,
-      feedbackWidget: this.feedbackWidget,
-      confidenceWidget: this.confidenceWidget,
-      hasSteps: this.hasSteps 
-    });
+
+    // Optional: auto-show for non-coding steps
+    this.checkAndShowFeedbackForNonCodingStep();
   }
 
   getSectionLayoutClass(layout?: string): string {
     switch (layout) {
-      case 'dynamic':
-        return 'layout-dynamic gap-md';
-      case 'grid':
-        return 'layout-grid gap-md';
-      case 'stack':
-        return 'layout-stack gap-md';
-      case 'custom':
-        return 'layout-dynamic gap-md';
-      default:
-        return 'layout-stack gap-md';
+      case 'dynamic': return 'layout-dynamic gap-md';
+      case 'grid': return 'layout-grid gap-md';
+      case 'stack': return 'layout-stack gap-md';
+      case 'custom': return 'layout-dynamic gap-md';
+      default: return 'layout-stack gap-md';
     }
   }
 
   getWidgetClasses(widget: any): string {
     const classes: string[] = [];
-    
-    // Add size class
     const size = widget.layout?.size || 'auto';
     classes.push(`size-${size}`);
-    
-    // Add widget type class for specific styling
     const widgetType = widget.type.replace(/([A-Z])/g, '-$1').toLowerCase();
     classes.push(`widget-type-${widgetType}`);
-    
     return classes.join(' ');
   }
 
   isWidgetVisible(widget: any): boolean {
-    // Always visible if no condition
-    if (!widget.condition) {
-      return true;
-    }
-
+    if (!widget.condition) return true;
     const condition = widget.condition;
     const visibility = condition.visibility || 'always';
-
-    // Check visibility type
     switch (visibility) {
       case 'always':
         return true;
-      
       case 'after-submission':
-        // Check if any required dependencies have been submitted
-        if (condition.requiresSubmission) {
-          return this.hasSubmittedAnyWidget();
-        }
-        if (condition.dependsOn && condition.dependsOn.length > 0) {
-          return condition.dependsOn.some(depId => {
-            const state = this.widgetStates.get(depId);
-            return state?.submitted || false;
-          });
+        if (condition.requiresSubmission) return this.hasSubmittedAnyWidget();
+        if (condition.dependsOn?.length) {
+          return condition.dependsOn.some((depId: string) => this.widgetStates.get(depId)?.submitted || false);
         }
         return true;
-      
       case 'on-complete':
-        // Check if dependencies are completed
-        if (condition.dependsOn && condition.dependsOn.length > 0) {
-          return condition.dependsOn.every(depId => {
-            const state = this.widgetStates.get(depId);
-            return state?.completed || false;
-          });
+        if (condition.dependsOn?.length) {
+          return condition.dependsOn.every((depId: string) => this.widgetStates.get(depId)?.completed || false);
         }
         return false;
-      
       case 'conditional':
-        // Check specific conditions
-        if (condition.dependsOn && condition.dependsOn.length > 0) {
-          return condition.dependsOn.every(depId => {
-            const state = this.widgetStates.get(depId);
-            return state?.completed || false;
-          });
+        if (condition.dependsOn?.length) {
+          return condition.dependsOn.every((depId: string) => this.widgetStates.get(depId)?.completed || false);
         }
         return true;
-      
       default:
         return true;
     }
   }
 
   onWidgetStateChange(event: any, widget: any): void {
-    // Update widget state tracking
     const currentState = this.widgetStates.get(widget.id) || { completed: false, submitted: false };
-    
-    if (event.type === 'completion' || event.data?.is_completed) {
-      currentState.completed = true;
-    }
-    
-    if (event.type === 'submission' || event.data?.submitted) {
-      currentState.submitted = true;
-    }
-    
+    if (event.type === 'completion' || event.data?.is_completed) currentState.completed = true;
+    if (event.type === 'submission' || event.data?.submitted) currentState.submitted = true;
     this.widgetStates.set(widget.id, currentState);
   }
 
   private hasSubmittedAnyWidget(): boolean {
     for (const [, state] of this.widgetStates) {
-      if (state.submitted) {
-        return true;
-      }
+      if (state.submitted) return true;
     }
     return false;
   }
@@ -642,29 +767,118 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.steps.length ? (this.completedSteps.length / this.steps.length) * 100 : 0;
   }
 
+  get currentStepWidgetType(): string | null {
+    const currentStepData = this.steps[this.currentStep - 1];
+    return (currentStepData as any)?.widgetType || null;
+  }
+
+  get currentStepWidget(): any {
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition;
+    const widgetType = currentStepData?.widgetType;
+    if (!widgetPosition || !widgetType) return null;
+    const widget = this.allWidgets.find(w => {
+      const wType = w.type || w.metadata?.id || w.id;
+      const wPosition = w.metadata?.position;
+      return wType === widgetType && wPosition === widgetPosition;
+    }) || null;
+    return widget;
+  }
+
+  get currentStepMultipleChoiceOptions(): any[] {
+    const widget = this.currentStepWidget;
+    if (!widget) return [];
+    const rawOptions = widget.config?.options || widget.props?.options || [];
+    if (rawOptions.length > 0 && typeof rawOptions[0] === 'object' && rawOptions[0].id) {
+      return rawOptions;
+    }
+    if (rawOptions.length > 0 && typeof rawOptions[0] === 'string') {
+      return rawOptions.map((option: string, index: number) => ({
+        id: `option-${index}`,
+        label: option,
+        value: `${index}`,
+        isCorrect: false
+      }));
+    }
+    return [];
+  }
+
+  get algorithmSimulatorDefaultAlgorithm(): Algorithm {
+    const widget = this.currentStepWidget;
+    const value = widget?.config?.defaultAlgorithm || widget?.props?.defaultAlgorithm || 'bubble';
+    return value as Algorithm;
+  }
+
+  get algorithmSimulatorEnabledAlgorithms(): Algorithm[] {
+    const widget = this.currentStepWidget;
+    const value = widget?.config?.enabledAlgorithms || widget?.props?.enabledAlgorithms || ['bubble', 'quick', 'recursion'];
+    return value as Algorithm[];
+  }
+
+  handleMultipleChoiceSubmit(event: any): void {
+    if (event.correct) this.handleCodePassed();
+  }
+
+  handleWidgetComplete(event: any): void {
+    this.handleCodePassed();
+  }
+
   onStepClick(step: number): void {
-    // example rule: allow back, allow next if previous completed
     const highest = this.completedSteps.length ? Math.max(...this.completedSteps) : 0;
     const nextUnlock = highest + 1;
     if (step <= nextUnlock) {
       this.currentStep = step;
       this.updateCurrentCodeEditor();
+      this.updateCurrentFeedbackWidgets();
       this.cdr.detectChanges();
     }
   }
   
   private updateCurrentCodeEditor(): void {
-    // Find the code editor widget for the current step
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || this.currentStep;
+    let widgetForStep = null;
+
     if (this.allCodeEditorWidgets.length > 0) {
-      // If there are multiple code editors, find the one matching current step position
-      if (this.allCodeEditorWidgets.length > 1) {
-        const editorForStep = this.allCodeEditorWidgets.find(w => w.metadata?.position === this.currentStep);
-        this.codeEditorWidget = editorForStep || this.allCodeEditorWidgets[this.currentStep - 1] || this.allCodeEditorWidgets[0];
-      } else {
-        // Only one code editor, use it for all steps
-        this.codeEditorWidget = this.allCodeEditorWidgets[0];
+      widgetForStep = this.allCodeEditorWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
+                      this.allCodeEditorWidgets.find(w => w.metadata?.position === widgetPosition) ||
+                      this.allCodeEditorWidgets.find(w => w.metadata?.position === this.currentStep);
+      if (!widgetForStep && this.allCodeEditorWidgets.length === 1) {
+        widgetForStep = this.allCodeEditorWidgets[0];
+      } else if (!widgetForStep && this.currentStep <= this.allCodeEditorWidgets.length) {
+        widgetForStep = this.allCodeEditorWidgets[this.currentStep - 1];
       }
-      console.log('Current code editor widget for step', this.currentStep, ':', this.codeEditorWidget);
+    }
+
+    if (!widgetForStep && this.allStepPromptWidgets.length > 0) {
+      widgetForStep = this.allStepPromptWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
+                      this.allStepPromptWidgets.find(w => w.metadata?.position === widgetPosition) ||
+                      this.allStepPromptWidgets.find(w => w.metadata?.position === this.currentStep);
+    }
+
+    this.codeEditorWidget = widgetForStep || this.allCodeEditorWidgets[0] || null;
+  }
+  
+  private updateCurrentFeedbackWidgets(): void {
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    this.feedbackWidget = this.feedbackByStep.get(widgetPosition) || null;
+    this.confidenceWidget = this.confidenceByStep.get(widgetPosition) || null;
+  }
+
+  private checkAndShowFeedbackForNonCodingStep(): void {
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    const hasCodeEditor = this.allCodeEditorWidgets.some(w => w.metadata?.position === widgetPosition);
+    const hasFeedback = this.feedbackByStep.has(widgetPosition);
+    const hasConfidence = this.confidenceByStep.has(widgetPosition);
+    if (!hasCodeEditor && (hasFeedback || hasConfidence)) {
+      if (!this.shownFeedbackForSteps.has(widgetPosition)) {
+        setTimeout(() => {
+          this.handleCodePassed();
+          this.cdr.detectChanges();
+        }, 500);
+      }
     }
   }
 
@@ -675,43 +889,79 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.currentStep < this.steps.length) {
       this.currentStep += 1;
       this.updateCurrentCodeEditor();
+      this.updateCurrentFeedbackWidgets();
     }
     this.cdr.detectChanges();
   }
 
   handleCodePassed(): void {
-    console.log('Code passed! Showing feedback widgets...');
-    console.log('Feedback widget config:', this.feedbackWidget?.config);
-    console.log('Confidence widget config:', this.confidenceWidget?.config);
     this.codePassed = true;
-    
-    // Show feedback modal first if it exists
-    if (this.feedbackWidget) {
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    if (this.shownFeedbackForSteps.has(widgetPosition)) return;
+    this.shownFeedbackForSteps.add(widgetPosition);
+
+    const stepFeedback = this.feedbackByStep.get(widgetPosition);
+    const stepConfidence = this.confidenceByStep.get(widgetPosition);
+    if (stepFeedback) {
+      this.feedbackWidget = stepFeedback;
       this.showFeedbackModal = true;
-    } else if (this.confidenceWidget) {
-      // If no feedback widget, go straight to confidence meter
+    } else if (stepConfidence) {
+      this.confidenceWidget = stepConfidence;
       this.showConfidenceMeter = true;
     }
-    
     this.cdr.detectChanges();
   }
 
   handleFeedbackContinue(): void {
-    console.log('Feedback dismissed, showing confidence meter...');
     this.showFeedbackModal = false;
-    
-    // Show confidence meter after feedback is dismissed
-    if (this.confidenceWidget) {
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    const stepConfidence = this.confidenceByStep.get(widgetPosition);
+    if (stepConfidence) {
+      this.confidenceWidget = stepConfidence;
       this.showConfidenceMeter = true;
+    } else {
+      this.checkIfLabCompleted();
     }
-    
     this.cdr.detectChanges();
   }
 
   handleConfidenceSubmit(): void {
-    console.log('Confidence submitted');
     this.showConfidenceMeter = false;
+    this.checkIfLabCompleted();
     this.cdr.detectChanges();
+  }
+
+  private checkIfLabCompleted(): void {
+    if (!this.completedSteps.includes(this.currentStep)) {
+      this.completedSteps = [...this.completedSteps, this.currentStep];
+    }
+    const isLastStep = this.currentStep >= this.steps.length;
+    if (isLastStep) {
+      this.showOutcomeSummary = true;
+    }
+  }
+
+  handleOutcomeSummaryContinue(): void {
+    this.showOutcomeSummary = false;
+    this.goBack();
+  }
+
+  get completionPercentage(): number {
+    return this.steps.length ? Math.round((this.completedSteps.length / this.steps.length) * 100) : 100;
+  }
+
+  get labTimeSpent(): number {
+    return this.labData?.estimatedTime || 30;
+  }
+
+  getLabStrengths(): string[] {
+    const strengths: string[] = [];
+    if (this.completionPercentage === 100) strengths.push('Completed all exercises');
+    if (this.completedSteps.length > 0) strengths.push(`Completed ${this.completedSteps.length} out of ${this.steps.length} steps`);
+    if (this.labData?.metadata?.tags?.length) strengths.push(`Practiced ${this.labData.metadata.tags.slice(0, 3).join(', ')}`);
+    return strengths;
   }
 
   goBack(): void {
@@ -719,7 +969,6 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   restartLab(): void {
-    // Reset any lab state if needed
     this.loadLab();
   }
 }

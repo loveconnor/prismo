@@ -1,0 +1,307 @@
+{
+    "name": "building-a-full-stack-todo-application-fe250a8a",
+    "title": "Building a Full-Stack Todo Application with React, Node.js, and Express",
+    "description": "Create a complete full-stack todo application while learning essential concepts in frontend development with React, backend development with Node.js/Express, database integration, API design, authentication, and state management",
+    "skills": [
+      "javascript",
+      "react",
+      "nodejs",
+      "express",
+      "database",
+      "api-design",
+      "authentication",
+      "state-management",
+      "routing"
+    ],
+    "widgets": [
+      {
+        "name": "setup-react-component",
+        "metadata": {
+          "id": "code-editor",
+          "title": "Create Your First React Component",
+          "description": "Build a simple React component for the todo list",
+          "skills": [
+            "react",
+            "javascript",
+            "jsx"
+          ],
+          "difficulty": 2,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "execution",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding",
+          "position": 1
+        },
+        "props": {
+          "title": "Build a Todo List Component",
+          "language": "javascript",
+          "initialCode": "import React, { useState } from 'react';\n\nfunction TodoList() {\n  const [todos, setTodos] = useState([]);\n  const [input, setInput] = useState('');\n\n  const addTodo = () => {\n    // TODO: Add logic to add a new todo\n  };\n\n  return (\n    <div className=\"todo-list\">\n      <h2>My Todo List</h2>\n      <input \n        value={input}\n        onChange={(e) => setInput(e.target.value)}\n        placeholder=\"Enter a todo\"\n      />\n      <button onClick={addTodo}>Add Todo</button>\n      <ul>\n        {/* TODO: Map over todos and display them */}\n      </ul>\n    </div>\n  );\n}\n\nexport default TodoList;",
+          "testCases": [
+            {
+              "name": "Component renders",
+              "input": "TodoList component",
+              "expected": "Component renders with heading and input"
+            },
+            {
+              "name": "Add todo functionality",
+              "input": "addTodo function called",
+              "expected": "New todo is added to state"
+            }
+          ],
+          "hints": [
+            "Use the spread operator to add new todos to the array",
+            "Remember to clear the input field after adding a todo",
+            "Use the map function to render each todo item"
+          ]
+        },
+        "position": 1,
+        "dependencies_met": true
+      },
+      {
+        "name": "algorithm-visualization",
+        "metadata": {
+          "id": "algorithm-simulator",
+          "title": "Algorithm Simulator",
+          "description": "Interactive visualizations for bubble sort, quick sort, and recursion tree",
+          "skills": [
+            "sorting",
+            "recursion",
+            "visualization",
+            "algorithms"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "text",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false,
+            "hint_progression": false,
+            "time_extension": false
+          },
+          "version": "1.0.0",
+          "category": "coding",
+          "position": 2
+        },
+        "config": {
+          "defaultAlgorithm": "bubble",
+          "enabledAlgorithms": ["bubble"]
+        },
+        "position": 2,
+        "dependencies_met": true
+      },
+      {
+        "name": "module-intro",
+        "metadata": {
+          "id": "step-prompt",
+          "title": "Introduction to Full-Stack Development",
+          "description": "Overview of the todo application architecture",
+          "skills": [
+            "javascript",
+            "react",
+            "nodejs"
+          ],
+          "difficulty": 2,
+          "estimated_time": 60,
+          "input_type": "text",
+          "output_type": "scaffold",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Building a Full-Stack Todo Application",
+          "prompt": "In this module, you'll build a complete todo application using React for the frontend and Node.js/Express for the backend. We'll cover:\n\n- Frontend with React and modern state management\n- RESTful API design with Express\n- Database integration\n- User authentication\n- Routing and navigation\n\nBy the end, you'll have a production-ready full-stack application.",
+          "estimatedTime": 30
+        },
+        "position": 3,
+        "dependencies_met": true
+      },
+      {
+        "name": "confidene-meter",
+        "metadata": {
+          "id": "confidence-meter",
+          "title": "Confidence Check",
+          "description": "Gauge understanding of introduction",
+          "skills": [
+            "self-assessment"
+          ],
+          "difficulty": 1,
+          "estimated_time": 20,
+          "input_type": "slider",
+          "output_type": "progress",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "How confident are you about the module objectives?",
+          "prompt": "Rate your confidence level",
+          "min": 1,
+          "max": 5
+        },
+        "position": 4,
+        "dependencies_met": true
+      },
+      {
+        "name": "intro-feedback",
+        "metadata": {
+          "id": "feedback-box",
+          "title": "Introduction Feedback",
+          "description": "Collect feedback on introduction",
+          "skills": [
+            "reflection"
+          ],
+          "difficulty": 1,
+          "estimated_time": 45,
+          "input_type": "text",
+          "output_type": "feedback",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "type": "info",
+          "title": "Introduction Complete",
+          "message": "You've learned about the full-stack architecture for building a todo application!",
+          "explanation": "Understanding the architecture is crucial before diving into code. You now know how React (frontend), Node.js/Express (backend), and databases work together to create a complete application.",
+          "nextSteps": [
+            "Set up the React frontend project",
+            "Configure the development environment",
+            "Learn about component structure"
+          ],
+          "showContinueButton": true
+        },
+        "position": 5,
+        "dependencies_met": true
+      },
+      {
+        "name": "frontend-setup",
+        "metadata": {
+          "id": "multiple-choice",
+          "title": "React Architecture Quiz",
+          "description": "Test your understanding of React architecture",
+          "skills": [
+            "react",
+            "javascript",
+            "architecture"
+          ],
+          "difficulty": 2,
+          "estimated_time": 120,
+          "input_type": "selection",
+          "output_type": "validation",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "question": "Which of the following is the correct way to set up routing in a React application?",
+          "options": [
+            "Use <Router> component from 'react-router-dom' and wrap your app",
+            "Use <Link> components directly without a Router wrapper",
+            "Import routing from 'react' core library",
+            "Use window.location.href for navigation"
+          ],
+          "correctAnswer": 0,
+          "explanation": "React Router requires wrapping your application with a Router component (like BrowserRouter or HashRouter) to enable routing functionality. The Router component provides the routing context that all navigation components (Link, Route, etc.) depend on."
+        },
+        "position": 6,
+        "dependencies_met": true
+      },
+      {
+        "name": "frontend-confidence",
+        "metadata": {
+          "id": "confidence-meter",
+          "title": "Frontend Setup Confidence",
+          "description": "Assess frontend setup understanding",
+          "skills": [
+            "self-assessment"
+          ],
+          "difficulty": 1,
+          "estimated_time": 20,
+          "input_type": "slider",
+          "output_type": "progress",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Frontend Setup Confidence Check",
+          "prompt": "How confident are you with the frontend setup?",
+          "min": 1,
+          "max": 5
+        },
+        "position": 7,
+        "dependencies_met": true
+      },
+      {
+        "name": "frontend-feedback",
+        "metadata": {
+          "id": "feedback-box",
+          "title": "Frontend Setup Feedback",
+          "description": "Get feedback on frontend setup",
+          "skills": [
+            "reflection"
+          ],
+          "difficulty": 1,
+          "estimated_time": 45,
+          "input_type": "text",
+          "output_type": "feedback",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "type": "success",
+          "title": "Frontend Setup Complete!",
+          "message": "Excellent work setting up the React project structure!",
+          "explanation": "You've successfully configured React Router, organized your project files, and set up the foundation for state management. These are essential skills for building scalable React applications.",
+          "nextSteps": [
+            "Create reusable UI components",
+            "Implement routing and navigation",
+            "Set up API integration with the backend"
+          ],
+          "showContinueButton": true
+        },
+        "position": 8,
+        "dependencies_met": true
+      }
+    ],
+    "completion_criteria": {
+      "required_widgets": [
+        "module-intro",
+        "frontend-setup"
+      ],
+      "min_completion_percentage": 80,
+      "max_attempts": 3,
+      "time_limit": 5400
+    },
+    "estimated_duration": 5400,
+    "version": "1.0.0"
+  }
+  

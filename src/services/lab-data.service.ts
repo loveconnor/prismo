@@ -29,7 +29,7 @@ export interface LabWidget {
   type: string;
   config: any;
   metadata: any;
-  stepId?: number;
+  stepId?: number; // optional link to a step when applicable
   layout?: WidgetLayout;
   condition?: WidgetCondition;
   position?: { x: number; y: number };  // Legacy, kept for compatibility
@@ -46,6 +46,14 @@ export interface LabSection {
   gap?: string;  // e.g., '1rem', '24px'
 }
 
+export interface LabStep {
+  id: number;
+  title: string;
+  description?: string;
+  instruction?: string;
+  example?: string;
+}
+
 export interface LabData {
   id: string;
   title: string;
@@ -53,7 +61,7 @@ export interface LabData {
   difficulty: number;
   estimatedTime: number;
   sections: LabSection[];
-  steps?: { id: number; title: string; instruction?: string; example?: string }[];
+  steps?: LabStep[];
   metadata: {
     author?: string;
     version?: string;
@@ -644,7 +652,7 @@ export class LabDataService {
   getLab(labId: string): Observable<LabData> {
     // In production, this would be: return this.http.get<LabData>(`/api/labs/${labId}`)
     const lab = this.sampleLabs[labId];
-    
+
     if (lab) {
       return of(lab);
     } else {
@@ -672,6 +680,7 @@ export class LabDataService {
       difficulty: jsonData.difficulty || 1,
       estimatedTime: jsonData.estimatedTime || 30,
       sections: jsonData.sections || [],
+      steps: jsonData.steps || [],
       metadata: {
         author: jsonData.metadata?.author || 'Custom Author',
         version: jsonData.metadata?.version || '1.0.0',
@@ -696,11 +705,8 @@ export class LabDataService {
     // For now, we'll return the example-coding-module lab as an example
     if (moduleId === 'pt01' || moduleId === 'example-coding-module') {
       return this.getLab('example-coding-module');
-    } else if (moduleId === 'binary-search-tree') {
-      return this.getLab('binary-search-tree');
     }
-    
-    
+
     return throwError(() => new Error(`Module with ID "${moduleId}" not found`));
   }
 
