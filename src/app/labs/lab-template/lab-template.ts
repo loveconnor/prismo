@@ -340,6 +340,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codeEditorWidget: any = null;
   public allCodeEditorWidgets: any[] = [];
   public allStepPromptWidgets: any[] = [];
+  public allMultipleChoiceWidgets: any[] = [];
   public hintWidgets: any[] = [];
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
@@ -350,6 +351,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
+  
+  // Current step widget properties
+  public currentStepWidget: any = null;
+  public currentStepWidgetType: string | null = null;
+  public currentStepMultipleChoiceOptions: ChoiceOption[] = [];
   
   // Session tracking
   public currentSession: ModuleSession | null = null;

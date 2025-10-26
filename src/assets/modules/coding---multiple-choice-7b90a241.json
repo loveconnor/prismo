@@ -1,0 +1,318 @@
+{
+  "name": "coding---multiple-choice-7b90a241",
+  "title": "Master Coding Concepts: Multiple Choice Challenge",
+  "description": "Strengthen your understanding of loops, functions, and debugging through targeted multiple-choice questions and code analysis.",
+  "skills": [
+    "loops",
+    "functions",
+    "debugging",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Coding Concepts Challenge Introduction",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Coding Concepts Challenge",
+        "prompt": "In this module, you'll test your understanding of fundamental coding concepts including loops, functions, and debugging. Each question will help you identify strengths and areas for improvement. Read carefully and select the best answer for each scenario."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You're about to explore coding fundamentals through interactive multiple-choice questions.",
+        "explanation": "This approach helps consolidate your knowledge through practical scenarios.",
+        "nextSteps": [
+          "Complete the first multiple-choice question",
+          "Review each explanation carefully",
+          "Assess your confidence after each question"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you about your coding fundamentals?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Loop Control Flow Question",
+        "question": "What will be the output of the following code?\n\nfor i in range(3):\n    print(i)\nelse:\n    print('Done')",
+        "options": [
+          "0\n1\n2",
+          "0\n1\n2\nDone",
+          "1\n2\n3\nDone",
+          "Done"
+        ],
+        "correctAnswer": 1,
+        "explanation": "The for-else construct executes the else block after the loop completes normally. This code prints 0, 1, 2 from the loop, then 'Done' from the else block."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Loop Understanding Solid",
+        "message": "You've demonstrated understanding of loop control flow with the for-else construct.",
+        "explanation": "The for-else pattern is a Python feature that executes the else block when a loop completes without encountering a break statement.",
+        "nextSteps": [
+          "Move to the function scope question",
+          "Consider edge cases with break statements",
+          "Practice with nested loops next"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you about for-else loops?",
+        "minLabel": "Uncertain",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 3,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Function Scope and Debugging Question",
+        "question": "What will this code output and why is it important for debugging?\n\ndef modify(lst):\n    lst.append(4)\n    lst = [5, 6]\n\noriginal = [1, 2, 3]\nmodify(original)\nprint(original)",
+        "options": [
+          "[1, 2, 3, 4, 5, 6]",
+          "[1, 2, 3, 4]",
+          "[5, 6]",
+          "Error: cannot reassign parameter"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Lists are mutable and passed by reference. The append() modifies the original list, but reassigning lst = [5,6] only changes the local variable, not the original. Understanding this distinction is crucial for debugging unexpected behavior."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Function Scope Mastery",
+        "message": "Excellent! You understand mutable object behavior and variable scope in functions.",
+        "explanation": "This is a critical debugging concept. Mutable objects like lists are passed by reference, so modifications inside functions affect the original object. Reassignment creates a new local variable without affecting the original.",
+        "nextSteps": [
+          "Review immutable vs mutable objects",
+          "Practice debugging similar scope issues",
+          "Consider how this applies to dictionaries and sets"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you about function scope and mutable objects?",
+        "minLabel": "Needs work",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:04:32.662815",
+    "module_id": "fd319ec9-3379-4d95-bc0a-5ed019a5a36d",
+    "saved_to_filesystem": true
+  }
+}
