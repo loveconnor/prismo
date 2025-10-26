@@ -141,12 +141,17 @@ SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={
         abbreviated = []
         
         for widget in self.widget_registry:
-            if widget.get("name") in critical_widgets:
-                full_schemas.append(widget)
+            # Convert 'name' to 'id' for metadata
+            widget_copy = widget.copy()
+            if "name" in widget_copy:
+                widget_copy["id"] = widget_copy.pop("name")
+            
+            if widget.get("name") in critical_widgets or widget.get("id") in critical_widgets:
+                full_schemas.append(widget_copy)
             else:
                 # Keep essential fields only
                 abbreviated.append({
-                    "name": widget.get("name"),
+                    "id": widget.get("name"),
                     "title": widget.get("title"),
                     "skills": widget.get("skills", []),
                     "category": widget.get("category"),
@@ -159,7 +164,7 @@ SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={
                     "version": widget.get("version", "1.0.0")
                 })
         
-        return f"""CRITICAL WIDGETS (use exact schemas):
+        return f"""CRITICAL WIDGETS (use exact schemas, copy metadata exactly):
 {json.dumps(full_schemas, indent=2)}
 
 OTHER AVAILABLE WIDGETS (copy structure, adapt props):
@@ -264,12 +269,19 @@ CRITICAL JSON RULES:
 
 2. WIDGET STRUCTURE:
    {{
-     "name": "<unique-instance-id>",
-     "metadata": <EXACT_COPY_FROM_REGISTRY>,
+     "name": "<unique-instance-id>",  // This is the INSTANCE name (e.g., "intro-step-prompt-001")
+     "metadata": {{
+       "id": "<widget-type>",  // This is the TYPE (e.g., "step-prompt", "confidence-meter")
+       <COPY_REST_FROM_REGISTRY>
+     }},
      "props": {{<custom_content_per_props_hint>}},
      "position": <number>,
      "dependencies_met": true
    }}
+   
+   IMPORTANT: Widget has TWO identifiers:
+   - "name" at root level = unique instance name
+   - "id" in metadata = widget type from registry
 
 3. metadata.id MUST BE: step-prompt | confidence-meter | feedback-box | multiple-choice | code-editor | short-answer | etc.
 
@@ -303,7 +315,7 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
             loop = asyncio.get_event_loop()
             generated_text = await loop.run_in_executor(
                 None,
-                lambda: get_claude_response(prompt, system_prompt, max_tokens=30000)
+                lambda: get_claude_response(prompt, system_prompt, max_tokens=200000)
             )
             
             if generated_text:
