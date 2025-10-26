@@ -24,6 +24,7 @@ import { LabIntroComponent } from '../../../components/widgets/core/lab-intro/la
 import { ShortAnswerComponent } from '../../../components/widgets/core/short-answer/short-answer';
 import { CoachChatComponent } from '../../../components/widgets/core/coach-chat/coach-chat';
 import { ReflectionPromptComponent } from '../../../components/widgets/core/reflection-prompt/reflection-prompt';
+import { OutcomeSummaryComponent } from '../../../components/widgets/core/outcome-summary/outcome-summary';
 // Tri-panel components
 import { StepsPanelComponent } from '../../../components/widgets/core/steps-panel/steps-panel';
 import { EditorPanelComponent } from '../../../components/widgets/coding/editor-panel/editor-panel';
@@ -36,7 +37,7 @@ import { CardContentComponent } from '../../../components/ui/card/card-content';
 import { CardFooterComponent } from '../../../components/ui/card/card-footer';
 import { ButtonComponent } from '../../../components/ui/button/button';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCode, lucideCircle, lucideClock, lucideX, lucideChevronRight } from '@ng-icons/lucide';
+import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCode, lucideCircle, lucideClock, lucideX, lucideChevronRight, lucideCircleCheck } from '@ng-icons/lucide';
 
 // Types are now imported from the service
 
@@ -60,6 +61,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     ShortAnswerComponent,
     CoachChatComponent,
     ReflectionPromptComponent,
+    OutcomeSummaryComponent,
     StepsPanelComponent,
     EditorPanelComponent,
     SupportPanelComponent,
@@ -81,7 +83,8 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
       lucideCircle,
       lucideClock,
       lucideX,
-      lucideChevronRight
+      lucideChevronRight,
+      lucideCircleCheck
     })
   ],
   styleUrls: ['./lab-layout.css'],
@@ -199,6 +202,68 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
               </div>
 
               <div class="flex items-center gap-2">
+                <!-- Continue button for non-final steps -->
+                <app-button 
+                  *ngIf="currentStep < (steps.length || 1)" 
+                  (click)="handleCompleteStep()"
+                  className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
+                  Continue to Step {{ currentStep + 1 }}
+                </app-button>
+                
+                <!-- Finish button for final step -->
+                <app-button 
+                  *ngIf="currentStep === (steps.length || 1)" 
+                  (click)="handleCompleteStep()"
+                  className="bg-[#3b82f6] hover:bg-[#2563eb] text-white border-[#3b82f6] font-medium shadow-sm">
+                  <ng-icon name="lucideCircleCheck" class="h-4 w-4 mr-2"></ng-icon>
+                  Finish Lab
+                </app-button>
+              </div>
+            </div>
+
+            <!-- Multiple Choice Content -->
+            <div class="flex-1 overflow-y-auto p-6">
+              <!-- Use showWidget to force component recreation when step changes -->
+              <app-multiple-choice
+                *ngIf="showWidget && codeEditorWidget"
+                [id]="widgetInstanceKey"
+                [metadata]="codeEditorWidget.metadata"
+                [config]="codeEditorWidget.config"
+                [sessionId]="currentSession?.id || ''"
+                [moduleId]="labData?.id || ''"
+                [question]="codeEditorWidget.config?.question || ''"
+                [options]="getMultipleChoiceOptions(codeEditorWidget.config)"
+                [correctAnswers]="getMultipleChoiceCorrectAnswers(codeEditorWidget.config)"
+                [selectionMode]="getSelectionMode(codeEditorWidget)"
+                [showRationale]="true"
+                (answerSubmitted)="handleCodePassed()"
+              ></app-multiple-choice>
+            </div>
+          </div>
+
+          <!-- Step Prompt Widget (for step-prompt widgets) -->
+          <div *ngIf="codeEditorWidget?.type === 'step-prompt' || codeEditorWidget?.metadata?.id === 'step-prompt'" 
+               class="flex flex-col h-full bg-[#12161b] overflow-hidden">
+            <!-- Header -->
+            <div class="relative flex items-center justify-between border-b border-[#1f2937] bg-[#151a20] px-4 py-3 flex-shrink-0" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+
+              <div class="flex items-center gap-3 text-sm text-[#a9b1bb]">
+                <div class="flex items-center gap-1.5 rounded-md border border-[#BC78F9]/30 bg-[#BC78F9]/15 px-2 py-1 text-xs font-semibold text-[#bc78f9]">
+                  Introduction
+                </div>
+                <span>Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+              </div>
+
+              <div class="flex items-center gap-2">
                 <app-button 
                   *ngIf="currentStep < (steps.length || 1)" 
                   (click)="handleCompleteStep()"
@@ -208,42 +273,16 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
               </div>
             </div>
 
-            <!-- Multiple Choice Content -->
-            <div class="flex-1 overflow-y-auto p-6">
-              <app-multiple-choice
-                [metadata]="codeEditorWidget.metadata"
-                [config]="codeEditorWidget.config"
-                [sessionId]="currentSession?.id || ''"
-                [moduleId]="labData?.id || ''"
-                [question]="codeEditorWidget.config?.question || ''"
-                [options]="getMultipleChoiceOptions(codeEditorWidget.config)"
-                [correctAnswers]="getMultipleChoiceCorrectAnswers(codeEditorWidget.config)"
-                [showRationale]="true"
-                (answerSubmitted)="handleCodePassed()"
-              ></app-multiple-choice>
+            <!-- Step Prompt Content -->
+            <div class="flex-1 overflow-y-auto p-8">
+              <div class="max-w-3xl mx-auto space-y-6">
+                <h2 class="text-3xl font-bold text-[#e5e7eb]">{{ codeEditorWidget.config?.title || codeEditorWidget.props?.title }}</h2>
+                <div class="prose prose-invert max-w-none">
+                  <p class="text-lg text-[#a9b1bb] leading-relaxed whitespace-pre-wrap">{{ codeEditorWidget.config?.prompt || codeEditorWidget.props?.prompt }}</p>
+                </div>
+              </div>
             </div>
           </div>
-
-          <!-- Step Prompt Widget (for step-prompt widgets) -->
-          <app-editor-panel
-            *ngIf="codeEditorWidget?.type === 'step-prompt' || codeEditorWidget?.metadata?.id === 'step-prompt'"
-            [currentStep]="currentStep"
-            [totalSteps]="steps.length || 1"
-            [shiftHeader]="leftPanelCollapsed || !hasSteps"
-            [editorConfig]="null"
-            (completeStep)="handleCompleteStep()"
-            (codePassed)="handleCodePassed()"
-          >
-            <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
-              <button
-                (click)="leftPanelCollapsed = false"
-                class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
-                aria-label="Expand steps panel"
-              >
-                <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
-              </button>
-            </div>
-          </app-editor-panel>
         </div>
 
         <!-- Right: Support -->
@@ -312,6 +351,36 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
         ></app-confidence-meter>
       </div>
     </div>
+
+    <!-- Outcome Summary (appears when all steps are completed) -->
+    <div *ngIf="showOutcomeSummary" 
+         class="fixed inset-0 z-50 flex items-center justify-center bg-[#0b0f14] p-4 overflow-y-auto">
+      <div class="w-full max-w-5xl">
+        <app-outcome-summary
+          [id]="'outcome-' + (labData?.id || 'lab')"
+          [labId]="labData?.id || ''"
+          [labTitle]="labData?.title || 'Lab Complete'"
+          [outcomeType]="'completion'"
+          [completionPercent]="getCompletionPercent()"
+          [labTimeSpent]="getLabTimeSpent()"
+          [score]="getLabScore()"
+          [skillImprovements]="getSkillImprovements()"
+          [keyTakeaways]="getKeyTakeaways()"
+          (nextLabSelect)="handleNextLab($event)"
+          (share)="handleShareResults()"
+        ></app-outcome-summary>
+        
+        <div class="mt-6 flex justify-center">
+          <app-button 
+            variant="outline" 
+            (click)="goBack()"
+            className="bg-[#151a20] hover:bg-[#1f2937] text-[#e5e7eb] border-[#1f2937]">
+            <ng-icon name="lucideArrowLeft" class="w-4 h-4 mr-2"></ng-icon>
+            Back to Labs
+          </app-button>
+        </div>
+      </div>
+    </div>
   `,
 })
 export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -347,6 +416,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
+  public widgetInstanceKey: string = 'widget-0'; // Used to force recreation of widgets
+  public showWidget: boolean = true; // Used to temporarily hide/show widget for recreation
+  public showOutcomeSummary: boolean = false; // Show outcome summary when lab is complete
   
   // Session tracking
   public currentSession: ModuleSession | null = null;
@@ -1175,6 +1247,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private updateCurrentCodeEditor(): void {
     // Find the widget for the current step - could be code editor, step-prompt, or multiple-choice
     
+    // Temporarily hide the widget to force recreation
+    this.showWidget = false;
+    
     // Get the current step data to find the widget position
     const currentStepData = this.steps[this.currentStep - 1];
     const widgetPosition = currentStepData?.widgetPosition || this.currentStep;
@@ -1211,7 +1286,17 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     this.codeEditorWidget = widgetForStep || this.allCodeEditorWidgets[0] || null;
+    
+    // Update the widget instance key to force recreation of the component
+    this.widgetInstanceKey = `widget-${this.currentStep}-${Date.now()}`;
+    
     console.log(`Current widget for step ${this.currentStep} (widgetPosition: ${widgetPosition}):`, this.codeEditorWidget);
+    
+    // Show the widget again on the next change detection cycle
+    setTimeout(() => {
+      this.showWidget = true;
+      this.cdr.detectChanges();
+    }, 0);
   }
   
   private updateCurrentFeedbackWidgets(): void {
@@ -1294,6 +1379,8 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     // Complete session if all steps are done
     if (allStepsCompleted) {
       this.completeModuleSession();
+      // Show outcome summary
+      this.showOutcomeSummary = true;
     }
     
     this.cdr.detectChanges();
@@ -1383,22 +1470,100 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const correctAnswer = config.correctAnswer;
     const explanation = config.explanation || '';
     
-    return options.map((option: string, index: number) => ({
-      id: `option-${index}`,
-      label: option,
-      value: `option-${index}`,
-      rationale: index === correctAnswer ? explanation : undefined,
-      isCorrect: index === correctAnswer
-    }));
+    // Handle both single answer (number) and multiple answers (array)
+    const correctIndices = Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer];
+    
+    return options.map((option: string, index: number) => {
+      const isCorrect = correctIndices.includes(index);
+      return {
+        id: `option-${index}`,
+        label: option,
+        value: `option-${index}`,
+        rationale: isCorrect ? explanation : undefined,
+        isCorrect: isCorrect
+      };
+    });
   }
 
   /**
-   * Transform module-format correct answer (index) to component format (array of IDs)
+   * Transform module-format correct answer (index or array of indices) to component format (array of IDs)
    */
   getMultipleChoiceCorrectAnswers(config: any): string[] {
     if (!config || config.correctAnswer === undefined) return [];
     
-    const correctIndex = config.correctAnswer;
-    return [`option-${correctIndex}`];
+    const correctAnswer = config.correctAnswer;
+    
+    // Handle both single answer (number) and multiple answers (array)
+    if (Array.isArray(correctAnswer)) {
+      return correctAnswer.map((index: number) => `option-${index}`);
+    } else {
+      return [`option-${correctAnswer}`];
+    }
+  }
+
+  /**
+   * Determine selection mode based on widget metadata and correct answers
+   */
+  getSelectionMode(widget: any): 'single' | 'multiple' {
+    // Check metadata input_type
+    if (widget?.metadata?.input_type === 'checkbox') {
+      return 'multiple';
+    }
+    
+    // Check if correctAnswer is an array (multiple correct answers)
+    if (widget?.config?.correctAnswer && Array.isArray(widget.config.correctAnswer)) {
+      return 'multiple';
+    }
+    
+    // Default to single selection
+    return 'single';
+  }
+
+  // ===== Outcome Summary Helpers =====
+  
+  getCompletionPercent(): number {
+    if (!this.steps.length) return 100;
+    return Math.round((this.completedSteps.length / this.steps.length) * 100);
+  }
+
+  getLabTimeSpent(): number {
+    // Return time in minutes
+    if (!this.sessionStartTime) return 0;
+    return Math.round((Date.now() - this.sessionStartTime) / 60000);
+  }
+
+  getLabScore(): number {
+    // Return normalized score 0-1
+    // For now, completion percentage is the score
+    return this.getCompletionPercent() / 100;
+  }
+
+  getSkillImprovements(): any[] {
+    // Extract skills from labData and show improvement
+    const skills = this.labData?.metadata?.tags || [];
+    return skills.map((skill: string) => ({
+      skill: skill,
+      previousLevel: 0,
+      currentLevel: 1,
+      improvement: 1
+    }));
+  }
+
+  getKeyTakeaways(): string[] {
+    // Extract key takeaways from the lab
+    return [
+      `Completed ${this.completedSteps.length} of ${this.steps.length} exercises`,
+      `Mastered ${this.labData?.metadata?.tags?.join(', ') || 'key concepts'}`,
+      `Total time: ${this.getLabTimeSpent()} minutes`
+    ];
+  }
+
+  handleNextLab(labId: string): void {
+    this.router.navigate(['/labs', labId]);
+  }
+
+  handleShareResults(): void {
+    console.log('Share results clicked');
+    // Implement share functionality
   }
 }
