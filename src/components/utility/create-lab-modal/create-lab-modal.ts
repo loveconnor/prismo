@@ -47,7 +47,7 @@ export class CreateLabModalComponent {
   @Output() openChange = new EventEmitter<boolean>();
   @Output() labCreated = new EventEmitter<void>(); // New event for when lab is created
 
-  subject = '';
+  subject = 'coding';
   difficulty = '';
   skillInput = '';
   skills: string[] = [];
@@ -59,9 +59,7 @@ export class CreateLabModalComponent {
   loadingProgressText = 'Initializing...';
 
   readonly subjects = [
-    { value: 'coding', label: 'Coding' },
-    { value: 'math', label: 'Math' },
-    { value: 'writing', label: 'Writing' }
+    { value: 'coding', label: 'Coding' }
   ];
 
   readonly difficulties = [
@@ -131,7 +129,7 @@ export class CreateLabModalComponent {
 
   get selectContentClasses(): string {
     return cn(
-      'border',
+      'border w-full',
       this.isDark
         ? 'bg-[#161b22] border-[#30363d]'
         : 'bg-white border-zinc-200'

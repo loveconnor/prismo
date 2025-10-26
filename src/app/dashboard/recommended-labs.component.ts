@@ -43,9 +43,9 @@ import { LabsService, Lab } from '../../services/labs.service';
       </div>
       
       <!-- Loading State -->
-      <div *ngIf="loading" class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch auto-rows-fr">
+      <div *ngIf="loading" class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <ng-container *ngFor="let i of [1,2,3,4]">
-          <app-card className="group relative grid grid-rows-[auto_1fr_auto] h-full shadow-none">
+          <app-card className="group relative flex flex-col shadow-none">
             <app-card-header className="pb-0">
               <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-gray-200 animate-pulse"></div>
             </app-card-header>
@@ -57,7 +57,7 @@ import { LabsService, Lab } from '../../services/labs.service';
                 <div class="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
               </div>
             </app-card-content>
-            <app-card-footer>
+            <app-card-footer className="mt-auto">
               <div class="h-9 bg-gray-200 rounded w-full animate-pulse"></div>
             </app-card-footer>
           </app-card>
@@ -71,10 +71,10 @@ import { LabsService, Lab } from '../../services/labs.service';
       </div>
 
       <!-- Labs Grid -->
-      <div *ngIf="!loading && !error && labs.length > 0" class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch auto-rows-fr">
+      <div *ngIf="!loading && !error && labs.length > 0" class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <ng-container *ngFor="let lab of labs; let i = index">
           <app-card
-            className="group relative grid grid-rows-[auto_1fr_auto] h-full shadow-none hover:shadow-sm transition-colors hover:bg-white/5 focus-within:ring-1 focus-within:ring-[#bc78f9]/30"
+            className="group relative flex flex-col shadow-none hover:shadow-sm transition-colors hover:bg-white/5 focus-within:ring-1 focus-within:ring-[#bc78f9]/30"
           >
             <app-card-header className="pb-0">
               <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#E978FA15] text-[#bc78f9]">
@@ -99,7 +99,7 @@ import { LabsService, Lab } from '../../services/labs.service';
                 </span>
               </div>
             </app-card-content>
-            <app-card-footer>
+            <app-card-footer className="mt-auto">
               <app-button className="w-full" (click)="navigateToLab(lab.id)">Start Lab</app-button>
             </app-card-footer>
           </app-card>
