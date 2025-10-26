@@ -72,7 +72,7 @@ import { CreateLabModalComponent } from '../../components/utility/create-lab-mod
       >
         <app-card-header className="pb-2">
           <div class="flex items-start gap-3">
-            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#bc78f9]">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#E978FA15] text-[#bc78f9]">
               <!-- Sparkles icon -->
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M5 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5zM19 11l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" />

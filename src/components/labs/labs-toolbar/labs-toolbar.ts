@@ -87,7 +87,7 @@ export class LabsToolbarComponent {
   getFilterButtonClasses(option: LabFilter): string {
     const baseClasses = 'h-8 whitespace-nowrap px-4 text-sm';
     return this.filter === option
-      ? `${baseClasses} bg-blue-600 hover:bg-blue-700 text-white`
+      ? `${baseClasses} bg-primary-custom hover:bg-primary-strong text-white`
       : `${baseClasses} text-muted-foreground hover:bg-muted`;
   }
 

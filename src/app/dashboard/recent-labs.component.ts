@@ -38,7 +38,7 @@ type RecentLab = {
           >
             <!-- Title with icon -->
             <div class="flex min-w-0 flex-1 items-center gap-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[rgba(96,165,250,0.15)] text-[#bc78f9]" aria-hidden="true">
+              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#E978FA15] text-[#bc78f9]" aria-hidden="true">
                 <ng-icon [name]="getLabIcon(lab.title)" class="h-5 w-5"></ng-icon>
               </div>
               <h3 class="truncate text-base font-medium text-foreground">{{ lab.title }}</h3>

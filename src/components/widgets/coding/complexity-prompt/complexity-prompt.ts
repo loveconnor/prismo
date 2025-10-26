@@ -232,7 +232,7 @@ export class ComplexityPromptComponent extends WidgetBaseComponent implements On
   getComplexityColor(level: ComplexityLevel): string {
     switch (level) {
       case 'constant': return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20';
-      case 'logarithmic': return 'text-blue-500 bg-blue-500/10 border-blue-500/20';
+      case 'logarithmic': return 'text-blue-500 bg-primary-strong/10 border-blue-500/20';
       case 'linear': return 'text-amber-500 bg-amber-500/10 border-amber-500/20';
       case 'quadratic': return 'text-orange-500 bg-orange-500/10 border-orange-500/20';
       case 'cubic': return 'text-red-500 bg-red-500/10 border-red-500/20';

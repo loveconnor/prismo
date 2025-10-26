@@ -21,7 +21,7 @@ import { LabData } from '../../../services/lab-data.service';
         <div class="space-y-4">
           <button 
             (click)="loadCppLab()"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            class="px-4 py-2 bg-primary-custom text-white rounded hover:bg-primary-strong"
           >
             Load C++ Printing Lab
           </button>

@@ -286,7 +286,7 @@ export class AvatarDropdownComponent implements OnInit, AfterViewInit {
   }
 
   get badgeClasses(): string {
-    return 'inline-flex items-center rounded-full bg-blue-500/15 px-2.5 py-0.5 text-[11px] font-medium text-blue-500';
+    return 'inline-flex items-center rounded-full bg-primary-strong/15 px-2.5 py-0.5 text-[11px] font-medium text-blue-500';
   }
 
   get dividerClasses(): string {
