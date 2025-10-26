@@ -117,7 +117,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
           </app-button>
           <div class="h-6 w-px bg-[#1f2937]"></div>
           <div class="flex items-center gap-3">
-            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-primary-custom/20 dark:text-primary-custom">
               <ng-icon name="lucideCode" class="h-4 w-4"></ng-icon>
             </div>
             <h1 class="text-lg font-semibold text-[#e5e7eb]">{{ labData.title }}</h1>
