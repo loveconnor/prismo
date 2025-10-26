@@ -76,10 +76,20 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     }
     
     // Update editor content when editorConfig changes
-    if (changes['editorConfig'] && !changes['editorConfig'].firstChange && this.monacoEditor) {
-      const newCode = this.editorConfig?.initialCode || '';
-      if (newCode && this.monacoEditor.getValue() !== newCode) {
-        this.monacoEditor.setValue(newCode);
+    if (changes['editorConfig']) {
+      if (!changes['editorConfig'].firstChange && this.monacoEditor) {
+        const newCode = this.editorConfig?.initialCode || '';
+        if (newCode && this.monacoEditor.getValue() !== newCode) {
+          this.monacoEditor.setValue(newCode);
+        }
+      }
+      
+      // Auto-pass non-coding steps (steps without editor config)
+      if (!this.editorConfig || !this.editorConfig.language) {
+        this.passed = true;
+        this.consoleOutput = [
+          { type: 'info', message: 'Review the content above and click Continue when ready.' }
+        ];
       }
     }
   }
