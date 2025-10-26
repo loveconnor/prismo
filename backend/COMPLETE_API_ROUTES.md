@@ -263,6 +263,7 @@
 
 ### **Public routes** (no authentication required):
 - All `/health` routes
+- All `/api/claude/*` routes (AI services)
 - `/auth/register`, `/auth/confirm`, `/auth/login`, `/auth/refresh`
 - `/auth/forgot-password`, `/auth/confirm-forgot-password`
 - `/auth/verify`
@@ -272,6 +273,31 @@
 - `GET /api/widgets/<widget_id>` (public widgets only)
 
 ---
+
+## **CLAUDE AI ROUTES (`/api/claude`)**
+
+### **Chat with Claude**
+- `POST /api/claude/chat` - Send message to Claude AI
+  - Request: `{ "message": "string", "system_prompt": "string", "max_tokens": number }`
+  - Response: `{ "success": boolean, "response": "string", "error": string }`
+
+### **Code Review**
+- `POST /api/claude/review-code` - Get AI code review
+  - Request: `{ "code": "string", "language": "string", "context": "string" }`
+  - Response: `{ "success": boolean, "comments": [...], "overallFeedback": "string", "error": string }`
+
+### **Code Execution**
+- `POST /api/claude/execute-code` - Execute JavaScript or Python code
+  - Request: `{ "code": "string", "language": "javascript|python", "testCases": [...] }`
+  - Response: `{ "success": boolean, "output": "string", "error": string, "executionTime": number, "testResults": [...] }`
+
+### **Health Check**
+- `GET /api/claude/health` - Check Claude AI service availability
+  - Response: `{ "status": "healthy|unhealthy", "service": "string", "available": boolean }`
+
+---
+
+## **AUTHENTICATION REQUIREMENTS**
 
 ## **QUERY PARAMETERS**
 

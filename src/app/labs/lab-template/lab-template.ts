@@ -470,7 +470,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let actualLabId = labId;
     if (currentUrl.includes('pt01')) {
-      this.http.get<any>('/assets/modules/CS1/01-Lab/pt04.json')
+      this.http.get<any>('/assets/modules/CS1/01-Lab/pt01.json')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {

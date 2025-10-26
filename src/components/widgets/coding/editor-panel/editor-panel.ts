@@ -295,16 +295,75 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
 
   runCode() {
     const code = this.monacoEditor?.getValue?.() || '';
-    // Here we simulate success output same as Next.js example
-    this.consoleOutput = [
-      { type: 'info', message: '> Running code...' },
-      { type: 'success', message: 'The sum of numbers from 1 to 10 is: 55' },
-      { type: 'info', message: '\nExecution completed successfully!' }
-    ];
-    this.passed = true;
     
-    // Emit the codePassed event to parent component
-    this.codePassed.emit();
+    if (!code.trim()) {
+      this.consoleOutput = [
+        { type: 'error', message: 'Error: No code to execute' }
+      ];
+      return;
+    }
+    
+    const language = this.editorConfig?.language || 'javascript';
+    
+    // Add initial running message
+    this.consoleOutput = [
+      { type: 'info', message: '> Running code...' }
+    ];
+    
+    // Execute code on backend for supported languages
+    const supportedLanguages = ['javascript', 'js', 'python', 'py', 'cpp', 'c++'];
+    if (supportedLanguages.includes(language.toLowerCase())) {
+      this.executeCodeOnBackend(code, language);
+    } else {
+      // Fallback for unsupported languages
+      this.consoleOutput = [
+        { type: 'info', message: '> Running code...' },
+        { type: 'error', message: `Language "${language}" is not yet supported for execution` }
+      ];
+    }
+  }
+
+  private executeCodeOnBackend(code: string, language: string) {
+    const apiUrl = `${environment.apiUrl}/api/claude/execute-code`;
+    
+    this.http.post<any>(apiUrl, {
+      code: code,
+      language: language,
+      testCases: []
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const output = response.output || 'No output';
+          const lines = output.split('\n');
+          
+          this.consoleOutput = [
+            { type: 'info', message: '> Running code...' },
+            ...lines.map((line: string) => ({ 
+              type: 'success' as const, 
+              message: line 
+            })),
+            { type: 'info', message: `\nExecution completed in ${response.executionTime}ms` }
+          ];
+          
+          this.passed = true;
+          this.codePassed.emit();
+        } else {
+          this.consoleOutput = [
+            { type: 'info', message: '> Running code...' },
+            { type: 'error', message: response.error || 'Execution failed' }
+          ];
+          this.passed = false;
+        }
+      },
+      error: (error) => {
+        this.consoleOutput = [
+          { type: 'info', message: '> Running code...' },
+          { type: 'error', message: `Error: ${error.message || 'Failed to execute code'}` }
+        ];
+        this.passed = false;
+        console.error('Code execution failed:', error);
+      }
+    });
   }
 
   getAIReview() {

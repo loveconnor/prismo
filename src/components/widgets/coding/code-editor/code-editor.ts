@@ -11,6 +11,9 @@ import { CardContentComponent } from '../../../ui/card/card-content';
 import { CardHeaderComponent } from '../../../ui/card/card-header';
 import { SwitchComponent } from '../../../ui/switch/switch';
 import { CodeReviewCommentComponent } from '../code-review-comment/code-review-comment';
+import { PanelComponent } from '../../../ui/panel/panel';
+import { PanelHeaderComponent } from '../../../ui/panel/panel-header';
+import { PanelGroupComponent, ResizablePanelComponent, PanelResizeHandleComponent } from '../../../ui/resizable-panels';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { 
   lucidePlay, 
@@ -68,6 +71,11 @@ interface CodeReviewComment {
     ButtonComponent,
     SwitchComponent,
     CodeReviewCommentComponent,
+    PanelComponent,
+    PanelHeaderComponent,
+    PanelGroupComponent,
+    ResizablePanelComponent,
+    PanelResizeHandleComponent,
     NgIconComponent
   ],
   providers: [
@@ -193,120 +201,184 @@ interface CodeReviewComment {
       </app-card-header>
       
       <app-card-content>
-        <div class="space-y-4">
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-foreground">Your Code:</span>
-              <span class="text-xs text-muted-foreground">{{ lineCount }} lines</span>
-            </div>
-            
-             <div 
-               #editorContainer
-               class="w-full overflow-hidden"
-               [style.height]="height"
-               [style.min-height]="minHeight"
-               (click)="focusEditor()"
-               tabindex="-1"
-               data-code-editor="true"
-             ></div>
-             
-             <!-- AI Review Comments -->
-             <div *ngIf="reviewComments.length > 0" class="mt-4 space-y-3">
-               <div class="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
-                 <ng-icon name="lucideSparkles" class="w-4 h-4 text-sky-500"></ng-icon>
-                 <span>AI Code Review</span>
-               </div>
-               <div *ngFor="let comment of reviewComments" class="animate-in fade-in slide-in-from-top-2 duration-300">
-                 <app-code-review-comment
-                   [lineNumber]="comment.lineNumber"
-                   [commentType]="comment.type"
-                   [title]="comment.title"
-                   [message]="comment.message"
-                   [author]="'AI Assistant'"
-                   [showLineHighlight]="false"
-                 ></app-code-review-comment>
-               </div>
-               <div *ngIf="overallReviewFeedback" class="p-4 rounded-lg border border-[#1f2937] bg-[#12161b]">
-                 <div class="flex items-start gap-3">
-                   <ng-icon name="lucideInfo" class="w-5 h-5 text-sky-500 flex-shrink-0 mt-0.5"></ng-icon>
-                   <div>
-                     <div class="text-sm font-medium text-[#e5e7eb] mb-1">Overall Assessment</div>
-                     <div class="text-sm text-[#a9b1bb]">{{ overallReviewFeedback }}</div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-          </div>
-          
-          <div class="space-y-2" *ngIf="showOutput">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-foreground">Output:</span>
-              <span class="text-xs px-2 py-1 rounded-full" 
-                    [class]="outputStatus === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
-                             outputStatus === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
-                             'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'">
-                {{ getStatusLabel() }}
-              </span>
-            </div>
-            
-            <div class="p-3 bg-muted rounded-lg min-h-[60px]">
-              <pre class="text-sm text-foreground whitespace-pre-wrap" *ngIf="output">{{ output }}</pre>
-              <div class="text-sm text-muted-foreground" *ngIf="!output">
-                Click "Run" to see output
-              </div>
-            </div>
-          </div>
-         </div>
-       </app-card-content>
-       
-       <div class="mt-4" *ngIf="testCases.length > 0 && hasRunCode">
-        <div class="flex items-center justify-between mb-3">
-          <h4 class="text-sm font-semibold text-foreground">Test Results</h4>
-          <span class="text-xs text-muted-foreground">
-            {{ passedTests }}/{{ testCases.length }} tests passed
-          </span>
-        </div>
-        
-        <div class="space-y-2">
-          <div 
-            *ngFor="let test of testCases; trackBy: trackByTestId" 
-            class="p-3 border rounded-lg transition-colors"
-            [class.bg-green-50]="test.passed === true"
-            [class.border-green-200]="test.passed === true"
-            [class.bg-red-50]="test.passed === false"
-            [class.border-red-200]="test.passed === false"
-            [class.bg-muted]="test.passed === undefined"
+        <!-- Resizable Layout: Horizontal split (Editor | Feedback) -->
+        <div class="code-editor-layout" [style.height]="totalLayoutHeight">
+          <app-panel-group 
+            direction="horizontal" 
+            [storageKey]="'codeEditorMainLayout'"
+            [onLayout]="handleMainLayoutChange.bind(this)"
           >
-            <div class="flex items-center gap-2">
-              <ng-icon 
-                *ngIf="test.passed === true" 
-                name="lucideCheck" 
-                class="w-4 h-4 text-green-600"
-              ></ng-icon>
-              <ng-icon 
-                *ngIf="test.passed === false" 
-                name="lucideX" 
-                class="w-4 h-4 text-red-600"
-              ></ng-icon>
-              <ng-icon 
-                *ngIf="test.passed === undefined" 
-                name="lucideClock" 
-                class="w-4 h-4 text-muted-foreground"
-              ></ng-icon>
-              <span class="text-sm font-medium text-foreground">{{ test.description || 'Test Case' }}</span>
-            </div>
+            <!-- Left Panel: Code Editor -->
+            <app-resizable-panel [defaultSize]="50" [minSize]="20" [maxSize]="80" className="min-w-0">
+              <app-panel class="h-full flex flex-col">
+                <app-panel-header>
+                  <span>Code Editor</span>
+                  <span class="text-xs text-muted-foreground normal-case font-normal">{{ lineCount }} lines</span>
+                </app-panel-header>
+                
+                <div class="flex-1 overflow-hidden p-3">
+                  <div 
+                    #editorContainer
+                    class="w-full h-full overflow-hidden rounded border border-border/50"
+                    (click)="focusEditor()"
+                    tabindex="-1"
+                    data-code-editor="true"
+                  ></div>
+                </div>
+              </app-panel>
+            </app-resizable-panel>
             
-            <div class="mt-2 space-y-1" *ngIf="test.passed === false">
-              <div class="text-xs text-muted-foreground">
-                <strong>Expected:</strong> {{ test.expectedOutput }}
-              </div>
-              <div class="text-xs text-muted-foreground">
-                <strong>Got:</strong> {{ test.actualOutput || 'No output' }}
-              </div>
-            </div>
-          </div>
+            <!-- Resize Handle (Vertical bar between Editor and Feedback) -->
+            <app-panel-resize-handle></app-panel-resize-handle>
+            
+            <!-- Right Panel: Feedback & Results with nested vertical split -->
+            <app-resizable-panel [defaultSize]="50" [minSize]="20" [maxSize]="80" className="min-w-0">
+              <!-- Nested Vertical Panel Group for Step/Output (top) and Tests (bottom) -->
+              <app-panel-group 
+                direction="vertical"
+                [storageKey]="'codeEditorFeedbackLayout'"
+                [onLayout]="handleFeedbackLayoutChange.bind(this)"
+              >
+                <!-- Top: Step Panel / Output & AI Review -->
+                <app-resizable-panel [defaultSize]="50" [minSize]="20" [maxSize]="80" className="min-h-0">
+                  <app-panel class="h-full flex flex-col">
+                    <app-panel-header>
+                      <span>Output & AI Review</span>
+                    </app-panel-header>
+                    
+                    <div class="flex-1 overflow-y-auto p-3 space-y-4 bg-background/50">
+                        <!-- AI Review Comments -->
+                        <div *ngIf="reviewComments.length > 0" class="space-y-3">
+                          <div class="flex items-center gap-2 text-sm font-medium text-foreground">
+                            <ng-icon name="lucideSparkles" class="w-4 h-4 text-sky-500"></ng-icon>
+                            <span>AI Code Review</span>
+                          </div>
+                          <div *ngFor="let comment of reviewComments" class="animate-in fade-in slide-in-from-top-2 duration-300">
+                            <app-code-review-comment
+                              [lineNumber]="comment.lineNumber"
+                              [commentType]="comment.type"
+                              [title]="comment.title"
+                              [message]="comment.message"
+                              [author]="'AI Assistant'"
+                              [showLineHighlight]="false"
+                            ></app-code-review-comment>
+                          </div>
+                          <div *ngIf="overallReviewFeedback" class="p-4 rounded-lg border border-border/60 bg-muted/50">
+                            <div class="flex items-start gap-3">
+                              <ng-icon name="lucideInfo" class="w-5 h-5 text-sky-500 flex-shrink-0 mt-0.5"></ng-icon>
+                              <div>
+                                <div class="text-sm font-medium text-foreground mb-1">Overall Assessment</div>
+                                <div class="text-sm text-muted-foreground">{{ overallReviewFeedback }}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <!-- Output Section -->
+                        <div class="space-y-2" *ngIf="showOutput">
+                          <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-foreground">Console Output:</span>
+                            <span class="text-xs px-2 py-1 rounded-full" 
+                                  [class]="outputStatus === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                                           outputStatus === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
+                                           'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'">
+                              {{ getStatusLabel() }}
+                            </span>
+                          </div>
+                          
+                          <div class="p-3 bg-muted rounded-lg min-h-[60px] font-mono text-xs">
+                            <pre class="text-foreground whitespace-pre-wrap" *ngIf="output">{{ output }}</pre>
+                            <div class="text-sm text-muted-foreground" *ngIf="!output">
+                              Click "Run" to see output
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <!-- Empty state if no output or reviews -->
+                        <div *ngIf="!showOutput && reviewComments.length === 0" class="flex items-center justify-center h-full text-muted-foreground text-sm">
+                          <div class="text-center space-y-2">
+                            <ng-icon name="lucideInfo" class="w-8 h-8 mx-auto opacity-50"></ng-icon>
+                            <p>Run your code or request an AI review to see feedback here</p>
+                          </div>
+                        </div>
+                      </div>
+                    </app-panel>
+                  </app-resizable-panel>
+                    
+                    <!-- Resize Handle (Horizontal bar between Output and Tests) -->
+                    <app-panel-resize-handle></app-panel-resize-handle>
+                    
+                    <!-- Bottom: Test Results Panel -->
+                    <app-resizable-panel [defaultSize]="50" [minSize]="20" [maxSize]="80" className="min-h-0">
+                      <app-panel class="h-full flex flex-col">
+                        <app-panel-header>
+                          <span>Test Results</span>
+                          <span class="text-xs text-muted-foreground normal-case font-normal" *ngIf="testCases.length > 0 && hasRunCode">
+                            {{ passedTests }}/{{ testCases.length }} passed
+                          </span>
+                        </app-panel-header>
+                        
+                        <div class="flex-1 overflow-y-auto p-3 bg-background/30">
+                          <div *ngIf="testCases.length > 0 && hasRunCode" class="space-y-2">
+                            <div 
+                              *ngFor="let test of testCases; trackBy: trackByTestId" 
+                              class="p-3 border rounded-lg transition-colors"
+                              [class.bg-green-50]="test.passed === true"
+                              [class.border-green-200]="test.passed === true"
+                              [class.dark:bg-green-900/10]="test.passed === true"
+                              [class.dark:border-green-800/50]="test.passed === true"
+                              [class.bg-red-50]="test.passed === false"
+                              [class.border-red-200]="test.passed === false"
+                              [class.dark:bg-red-900/10]="test.passed === false"
+                              [class.dark:border-red-800/50]="test.passed === false"
+                              [class.bg-muted]="test.passed === undefined"
+                            >
+                              <div class="flex items-center gap-2">
+                                <ng-icon 
+                                  *ngIf="test.passed === true" 
+                                  name="lucideCheck" 
+                                  class="w-4 h-4 text-green-600 dark:text-green-400"
+                                ></ng-icon>
+                                <ng-icon 
+                                  *ngIf="test.passed === false" 
+                                  name="lucideX" 
+                                  class="w-4 h-4 text-red-600 dark:text-red-400"
+                                ></ng-icon>
+                                <ng-icon 
+                                  *ngIf="test.passed === undefined" 
+                                  name="lucideClock" 
+                                  class="w-4 h-4 text-muted-foreground"
+                                ></ng-icon>
+                                <span class="text-sm font-medium text-foreground">{{ test.description || 'Test Case' }}</span>
+                              </div>
+                              
+                              <div class="mt-2 space-y-1" *ngIf="test.passed === false">
+                                <div class="text-xs text-muted-foreground">
+                                  <strong>Expected:</strong> {{ test.expectedOutput }}
+                                </div>
+                                <div class="text-xs text-muted-foreground">
+                                  <strong>Got:</strong> {{ test.actualOutput || 'No output' }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <!-- Empty state for tests -->
+                          <div *ngIf="testCases.length === 0 || !hasRunCode" class="flex items-center justify-center h-full text-muted-foreground text-sm">
+                            <div class="text-center space-y-2">
+                              <ng-icon name="lucideClock" class="w-8 h-8 mx-auto opacity-50"></ng-icon>
+                              <p *ngIf="testCases.length === 0">No test cases available</p>
+                              <p *ngIf="testCases.length > 0 && !hasRunCode">Run your code to see test results</p>
+                            </div>
+                          </div>
+                        </div>
+                      </app-panel>
+                    </app-resizable-panel>
+                  </app-panel-group>
+                </app-resizable-panel>
+          </app-panel-group>
         </div>
-      </div>
+       </app-card-content>
       
       <div class="mt-4 pt-3 border-t" *ngIf="showFooter">
         <div class="flex items-center gap-4 text-xs text-muted-foreground">
@@ -319,6 +391,14 @@ interface CodeReviewComment {
       </div>
     </app-card>
   `,
+  styles: [`
+    .code-editor-layout {
+      width: 100%;
+      min-height: 600px;
+      height: 800px;
+      max-height: 90vh;
+    }
+  `]
 })
 export class CodeEditorComponent extends WidgetBaseComponent implements AfterViewInit, OnDestroy {
   @Input() title: string = 'Code Editor';
@@ -374,6 +454,13 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
   };
   
   public isSettingsOpen = false;
+  
+  // Resizable panel state
+  public editorPanelHeight: number = 400;
+  public feedbackPanelHeight: number = 400;
+  public outputPanelHeight: number = 200;
+  public testResultsPanelHeight: number = 200;
+  public totalLayoutHeight: string = '800px';
   
   private editorView?: EditorView;
   private eventListenerCleanup: (() => void)[] = [];
@@ -477,6 +564,7 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     
     // Clean up event listeners
     this.eventListenerCleanup.forEach(cleanup => cleanup());
+    this.eventListenerCleanup = [];
   }
 
   private initializeEditor(): void {
@@ -600,6 +688,11 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
         return useFullSupport ? html() : htmlLanguage;
       case 'css':
         return useFullSupport ? css() : cssLanguage;
+      case 'cpp':
+      case 'c++':
+        // C++ uses JavaScript syntax highlighting for now (similar C-style syntax)
+        // TODO: Install @codemirror/lang-cpp package for proper C++ support
+        return useFullSupport ? javascript() : javascriptLanguage;
       default:
         return useFullSupport ? javascript() : javascriptLanguage;
     }
@@ -624,31 +717,89 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     this.outputStatus = 'running';
     this.runsCount++;
     this.hasRunCode = true;
+    this.output = '';  // Clear previous output
 
-    const startTime = Date.now();
     this.setDataValue('runs_count', this.runsCount);
     this.setDataValue('last_run_at', new Date());
 
-    // Execute code immediately
-    try {
-      // Simple code execution simulation
-      this.executeCode();
-      this.outputStatus = 'success';
-      this.lastExecutionTime = Date.now() - startTime;
-      this.setDataValue('last_execution_time', this.lastExecutionTime);
-      this.setDataValue('execution_success', true);
-    } catch (error) {
-      this.output = `Error: ${error}`;
-      this.outputStatus = 'error';
-      this.setDataValue('execution_error', error);
+    // For JavaScript, Python, and C++, execute on backend
+    const lang = this.language.toLowerCase();
+    if (lang === 'javascript' || lang === 'js' || 
+        lang === 'python' || lang === 'py' ||
+        lang === 'cpp' || lang === 'c++') {
+      this.executeCodeOnBackend();
+    } else {
+      // For other languages, fall back to simulation
+      const startTime = Date.now();
+      try {
+        this.executeCode();
+        this.outputStatus = 'success';
+        this.lastExecutionTime = Date.now() - startTime;
+        this.setDataValue('last_execution_time', this.lastExecutionTime);
+        this.setDataValue('execution_success', true);
+      } catch (error) {
+        this.output = `Error: ${error}`;
+        this.outputStatus = 'error';
+        this.setDataValue('execution_error', error);
+      }
+      
+      this.isRunning = false;
+      
+      // Check if all tests pass
+      if (this.testCases.length > 0 && this.allTestsPass) {
+        this.completeWidget();
+      }
     }
+  }
+
+  private executeCodeOnBackend(): void {
+    const apiUrl = `${environment.apiUrl}/api/claude/execute-code`;
     
-    this.isRunning = false;
-    
-    // Check if all tests pass
-    if (this.testCases.length > 0 && this.allTestsPass) {
-      this.completeWidget();
-    }
+    this.http.post<any>(apiUrl, {
+      code: this.code,
+      language: this.language,
+      testCases: this.testCases
+    }).subscribe({
+      next: (response) => {
+        this.isRunning = false;
+        
+        if (response.success) {
+          this.output = response.output || 'No output';
+          this.outputStatus = 'success';
+          this.lastExecutionTime = response.executionTime;
+          
+          // Update test results
+          if (response.testResults && response.testResults.length > 0) {
+            response.testResults.forEach((result: any) => {
+              const test = this.testCases.find(t => t.id === result.id);
+              if (test) {
+                test.passed = result.passed;
+                test.actualOutput = result.actualOutput;
+              }
+            });
+          }
+          
+          this.setDataValue('last_execution_time', this.lastExecutionTime);
+          this.setDataValue('execution_success', true);
+          
+          // Check if all tests pass
+          if (this.testCases.length > 0 && this.allTestsPass) {
+            this.completeWidget();
+          }
+        } else {
+          this.output = response.error || 'Execution failed';
+          this.outputStatus = 'error';
+          this.setDataValue('execution_error', response.error);
+        }
+      },
+      error: (error) => {
+        this.isRunning = false;
+        this.outputStatus = 'error';
+        this.output = `Error: ${error.message || 'Failed to execute code'}`;
+        this.setDataValue('execution_error', error);
+        console.error('Code execution failed:', error);
+      }
+    });
   }
 
   resetCode(): void {
@@ -882,6 +1033,15 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
       this.editorView.destroy();
     }
     this.initializeEditor();
+  }
+
+  // Layout change handlers for resizable panels
+  handleMainLayoutChange(sizes: number[]): void {
+    console.log('Main layout changed:', sizes);
+  }
+
+  handleFeedbackLayoutChange(sizes: number[]): void {
+    console.log('Feedback layout changed:', sizes);
   }
 }
 
