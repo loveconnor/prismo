@@ -344,7 +344,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
           [labTitle]="labData?.title || 'Lab Complete'"
           [outcomeType]="'completion'"
           [completionPercent]="completionPercentage"
-          [timeSpent]="labTimeSpent"
+          [labTimeSpent]="labTimeSpent"
           [score]="completionPercentage / 100"
           [keyTakeaways]="labData?.metadata?.tags || []"
           [strengths]="getLabStrengths()"
