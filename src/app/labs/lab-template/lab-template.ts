@@ -142,9 +142,11 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
           ></app-steps-panel>
         </div>
 
-        <!-- Center: Editor fills remaining space -->
+        <!-- Center: Editor or Interactive Widget fills remaining space -->
         <div class="min-w-0 overflow-hidden">
+          <!-- Code Editor Panel -->
           <app-editor-panel
+            *ngIf="currentStepWidgetType === 'code-editor' || currentStepWidgetType === 'step-prompt' || !currentStepWidgetType"
             [currentStep]="currentStep"
             [totalSteps]="steps.length || 1"
             [shiftHeader]="leftPanelCollapsed || !hasSteps"
@@ -162,6 +164,90 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
               </button>
             </div>
           </app-editor-panel>
+
+          <!-- Multiple Choice Widget -->
+          <div *ngIf="currentStepWidgetType === 'multiple-choice'" class="flex h-full flex-col bg-[#12161b]">
+            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+              </div>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+              <app-multiple-choice
+                [metadata]="codeEditorWidget?.metadata"
+                [question]="codeEditorWidget?.config?.question"
+                [options]="codeEditorWidget?.config?.options"
+                [correctAnswer]="codeEditorWidget?.config?.correctAnswer"
+                [explanation]="codeEditorWidget?.config?.explanation"
+                (answered)="handleWidgetComplete($event)"
+              ></app-multiple-choice>
+            </div>
+          </div>
+
+          <!-- Text Editor Widget -->
+          <div *ngIf="currentStepWidgetType === 'text-editor'" class="flex h-full flex-col bg-[#12161b]">
+            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+              </div>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+              <app-text-editor
+                [metadata]="codeEditorWidget?.metadata"
+                [title]="codeEditorWidget?.config?.title"
+                [placeholder]="codeEditorWidget?.config?.placeholder"
+                [maxLength]="codeEditorWidget?.config?.maxLength"
+                [enableFormatting]="codeEditorWidget?.config?.enableFormatting"
+                (completed)="handleWidgetComplete($event)"
+              ></app-text-editor>
+            </div>
+          </div>
+
+          <!-- Equation Input Widget -->
+          <div *ngIf="currentStepWidgetType === 'equation-input'" class="flex h-full flex-col bg-[#12161b]">
+            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+              </div>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+              <app-equation-input
+                [metadata]="codeEditorWidget?.metadata"
+                [title]="codeEditorWidget?.config?.title"
+                [placeholder]="codeEditorWidget?.config?.placeholder"
+                [allowVariables]="codeEditorWidget?.config?.allowVariables"
+                [showSteps]="codeEditorWidget?.config?.showSteps"
+                (completed)="handleWidgetComplete($event)"
+              ></app-equation-input>
+            </div>
+          </div>
         </div>
 
         <!-- Right: Support -->
@@ -713,6 +799,17 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   // ===== Tri-panel helpers =====
   get progress(): number {
     return this.steps.length ? (this.completedSteps.length / this.steps.length) * 100 : 0;
+  }
+
+  get currentStepWidgetType(): string | null {
+    const currentStepData = this.steps[this.currentStep - 1];
+    return (currentStepData as any)?.widgetType || null;
+  }
+
+  handleWidgetComplete(event: any): void {
+    console.log('Widget completed:', event);
+    // Trigger the same flow as code passing
+    this.handleCodePassed();
   }
 
   onStepClick(step: number): void {
