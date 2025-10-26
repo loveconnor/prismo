@@ -147,6 +147,7 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
   readOnly = signal<boolean>(false);
   shuffled = signal<ChoiceOption[]>([]);
   isValid = signal<boolean>(true);
+  incorrectAttempts = signal<string[]>([]); // Track previously incorrect options
 
   /** ==================== COMPUTED ==================== */
   get variant() { return this.ui.variant ?? 'default'; }
@@ -232,6 +233,14 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
     this.selectedValues.set(newSelected);
     this.updateValidity();
 
+    // Emit state change for interaction tracking
+    this.emitStateChange('selection_made', {
+      selectedValues: newSelected,
+      optionValue: optionValue,
+      selectionMode: this.selectionMode,
+      isValid: this.isValid()
+    });
+
     // Modern change event
     this.emitChange();
 
@@ -248,6 +257,14 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
 
     const correct = this.isCorrect();
 
+    // Emit state change for interaction tracking
+    this.emitStateChange('answer_submitted', {
+      selectedValues: this.selectedValues(),
+      correct: correct,
+      attempts: this.attempts(),
+      maxAttempts: this.maxAttempts
+    });
+
     // Modern submit event
     this.choiceSubmit.emit({
       value: this.selectedValues(),
@@ -261,6 +278,12 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
       // mark completion when correct
       this.processCompletion();
     } else {
+      // Track which options were incorrect
+      const incorrectOnes = this.selectedValues().filter(v => 
+        !this.correctAnswers.includes(v)
+      );
+      this.incorrectAttempts.update(prev => [...new Set([...prev, ...incorrectOnes])]);
+      
       // If user wants feedback, expose hook
       if (this.showFeedback) {
         this.feedbackRequested.emit(this.selectedValues());
@@ -270,7 +293,7 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
         this.readOnly.set(true);
         this.maxAttemptsReached.emit();
       } else {
-        // allow another try
+        // allow another try - reset submitted immediately to avoid showing correct answer
         this.submitted.set(false);
       }
     }
@@ -339,9 +362,15 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
         : this.options.filter(o => o.isCorrect).map(o => o.value);
 
       const isOptionCorrect = (answers?.length ? answers.includes(option.value) : !!option.isCorrect);
-      if (isOptionCorrect) return 'correct';
-      if (isSelected) return 'incorrect';
+      // Only show correct status if the user selected this correct option
+      if (isOptionCorrect && isSelected) return 'correct';
+      if (isSelected && !isOptionCorrect) return 'incorrect';
       return 'idle';
+    }
+
+    // Show previously incorrect attempts even when not currently submitted
+    if (this.incorrectAttempts().includes(option.value)) {
+      return 'incorrect';
     }
 
     return isSelected ? 'selected' : 'idle';
@@ -363,11 +392,11 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
   getOptionClasses(status: ChoiceStatus, isSelected: boolean): string {
     return cn(
       'w-full rounded-lg border p-4 text-left transition-all',
-      status === 'selected' && 'border-[#60a5fa] bg-[#60a5fa]/10',
+      status === 'selected' && 'border-[#bc78f9] bg-[#bc78f9]/10',
       status === 'correct' && this.emphasizeCorrect && 'border-emerald-500 bg-emerald-500/10',
       status === 'incorrect' && 'border-red-500 bg-red-500/10',
       status === 'readOnly' && 'opacity-70 cursor-not-allowed',
-      !isSelected && !this.submitted() && !this.readOnly() && 'border-[#1f2937] hover:border-[#60a5fa]/50 hover:bg-[#60a5fa]/5',
+      !isSelected && !this.submitted() && !this.readOnly() && 'border-[#1f2937] hover:border-[#bc78f9]/50 hover:bg-[#bc78f9]/5',
       (this.submitted() || this.readOnly()) && 'cursor-default'
     );
   }
@@ -376,14 +405,14 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
     if (this.selectionMode === 'single') {
       return cn(
         'h-4 w-4 rounded-full border-2 transition-colors',
-        isSelected ? 'border-[#60a5fa] bg-[#60a5fa]' : 'border-[#6b7280]',
+        isSelected ? 'border-[#bc78f9] bg-[#bc78f9]' : 'border-[#6b7280]',
         status === 'correct' && this.emphasizeCorrect && 'border-emerald-500 bg-emerald-500',
         status === 'incorrect' && 'border-red-500 bg-red-500'
       );
     } else {
       return cn(
         'h-4 w-4 rounded border-2 transition-colors',
-        isSelected ? 'border-[#60a5fa] bg-[#60a5fa]' : 'border-[#6b7280]',
+        isSelected ? 'border-[#bc78f9] bg-[#bc78f9]' : 'border-[#6b7280]',
         status === 'correct' && this.emphasizeCorrect && 'border-emerald-500 bg-emerald-500',
         status === 'incorrect' && 'border-red-500 bg-red-500'
       );

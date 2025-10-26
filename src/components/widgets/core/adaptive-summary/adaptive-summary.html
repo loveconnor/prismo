@@ -7,7 +7,7 @@
     <!-- Header -->
     <div class="mb-6">
       <div class="flex items-center gap-3 mb-4">
-        <div class="flex items-center gap-2 text-[#60a5fa]">
+        <div class="flex items-center gap-2 text-[#bc78f9]">
           <ng-icon name="lucideTrendingUp" class="h-6 w-6"></ng-icon>
           <h2 class="text-xl font-semibold text-[#e5e7eb]">Adaptive Summary</h2>
         </div>
@@ -24,7 +24,7 @@
 
       <div *ngIf="expandedSections.has('overview')" class="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div *ngIf="sessionTimeSpent" class="rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4">
-          <div class="text-2xl font-bold text-[#60a5fa]">{{ sessionTimeSpent }}</div>
+          <div class="text-2xl font-bold text-[#bc78f9]">{{ sessionTimeSpent }}</div>
           <div class="text-sm text-[#a9b1bb]">Minutes Spent</div>
         </div>
 
@@ -68,7 +68,7 @@
               <div class="text-xs text-[#a9b1bb]">Current</div>
             </div>
             <div class="text-center">
-              <div class="text-lg font-semibold text-[#60a5fa]">{{ skill.targetLevel.toFixed(1) }}</div>
+              <div class="text-lg font-semibold text-[#bc78f9]">{{ skill.targetLevel.toFixed(1) }}</div>
               <div class="text-xs text-[#a9b1bb]">Target</div>
             </div>
             <div class="text-center">
@@ -79,7 +79,7 @@
 
           <div *ngIf="showCharts && skill.recentPerformance.length > 0" class="h-8 bg-[#1f2937] rounded overflow-hidden">
             <div class="flex h-full items-end gap-0.5 px-1">
-              <div *ngFor="let perf of (skill.recentPerformance | slice:-5); let i = index" class="flex-1 bg-[#60a5fa] rounded-sm" [style.height.%]="perf * 100"></div>
+              <div *ngFor="let perf of (skill.recentPerformance | slice:-5); let i = index" class="flex-1 bg-[#bc78f9] rounded-sm" [style.height.%]="perf * 100"></div>
             </div>
           </div>
         </div>
@@ -109,7 +109,7 @@
                   [ngClass]="{
                     'text-red-500 bg-red-500/10 border-red-500/20': adaptation.impact === 'high',
                     'text-amber-500 bg-amber-500/10 border-amber-500/20': adaptation.impact === 'medium',
-                    'text-blue-500 bg-blue-500/10 border-blue-500/20': adaptation.impact === 'low'
+                    'text-blue-500 bg-primary-strong/10 border-blue-500/20': adaptation.impact === 'low'
                   }"
                 >
                   {{ adaptation.impact }} impact
@@ -147,7 +147,7 @@
           <div *ngIf="recommendedFocus.length > 0">
             <div class="text-sm font-medium text-[#a9b1bb] mb-1">Focus Areas</div>
             <div class="flex flex-wrap gap-1">
-              <span *ngFor="let focus of (recommendedFocus | slice:0:3)" class="rounded border border-[#60a5fa]/20 bg-[#60a5fa]/10 px-2 py-0.5 text-xs text-[#60a5fa]">
+              <span *ngFor="let focus of (recommendedFocus | slice:0:3)" class="rounded border border-[#bc78f9]/20 bg-[#bc78f9]/10 px-2 py-0.5 text-xs text-[#bc78f9]">
                 {{ focus }}
               </span>
             </div>
@@ -162,7 +162,7 @@
         Customize Adaptations
       </button>
 
-      <button *ngIf="onAcceptAdaptations && adaptations.length > 0" (click)="handleAccept()" class="rounded-lg bg-[#60a5fa] px-4 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] transition-colors">
+      <button *ngIf="onAcceptAdaptations && adaptations.length > 0" (click)="handleAccept()" class="rounded-lg bg-[#bc78f9] px-4 py-2 text-sm font-medium text-white hover:bg-[#BC78F9] transition-colors">
         Accept Adaptations
       </button>
 

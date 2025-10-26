@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 export interface ModuleSession {
   id: string;
@@ -55,7 +56,24 @@ export interface SessionsResponse {
 })
 export class ModuleSessionService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private baseUrl = 'http://localhost:5000/api/module-sessions';
+
+  /**
+   * Get authentication headers for API requests
+   */
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getAccessToken();
+    if (!token) {
+      console.warn('[ModuleSessionService] No access token available');
+      return new HttpHeaders();
+    }
+    
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
 
   /**
    * Start a new module session
@@ -64,7 +82,9 @@ export class ModuleSessionService {
     console.log('[ModuleSessionService] Starting session for module:', request.module_id);
     console.log('[ModuleSessionService] Request details:', request);
     
-    return this.http.post<SessionResponse>(`${this.baseUrl}/start`, request)
+    return this.http.post<SessionResponse>(`${this.baseUrl}/start`, request, {
+      headers: this.getAuthHeaders()
+    })
       .pipe(
         map(response => {
           if (response.success && response.session) {
@@ -97,7 +117,9 @@ export class ModuleSessionService {
     console.log('[ModuleSessionService] Updating session:', sessionId);
     console.log('[ModuleSessionService] Update details:', request);
     
-    return this.http.put<SessionResponse>(`${this.baseUrl}/${sessionId}/update`, request)
+    return this.http.put<SessionResponse>(`${this.baseUrl}/${sessionId}/update`, request, {
+      headers: this.getAuthHeaders()
+    })
       .pipe(
         map(response => {
           if (response.success && response.session) {
@@ -129,7 +151,9 @@ export class ModuleSessionService {
    * Get a specific module session
    */
   getSession(sessionId: string): Observable<ModuleSession> {
-    return this.http.get<SessionResponse>(`${this.baseUrl}/${sessionId}`)
+    return this.http.get<SessionResponse>(`${this.baseUrl}/${sessionId}`, {
+      headers: this.getAuthHeaders()
+    })
       .pipe(
         map(response => {
           if (response.success && response.session) {
@@ -165,7 +189,9 @@ export class ModuleSessionService {
     const queryString = params.toString();
     const url = `${this.baseUrl}/user/${userId}${queryString ? `?${queryString}` : ''}`;
 
-    return this.http.get<SessionsResponse>(url)
+    return this.http.get<SessionsResponse>(url, {
+      headers: this.getAuthHeaders()
+    })
       .pipe(
         map(response => {
           if (response.success && response.sessions && response.total !== undefined) {
@@ -190,7 +216,9 @@ export class ModuleSessionService {
     console.log('[ModuleSessionService] Completing session:', sessionId);
     console.log('[ModuleSessionService] Completion details:', request);
     
-    return this.http.post<SessionResponse>(`${this.baseUrl}/${sessionId}/complete`, request)
+    return this.http.post<SessionResponse>(`${this.baseUrl}/${sessionId}/complete`, request, {
+      headers: this.getAuthHeaders()
+    })
       .pipe(
         map(response => {
           if (response.success && response.session) {
@@ -224,7 +252,9 @@ export class ModuleSessionService {
   abandonSession(sessionId: string): Observable<ModuleSession> {
     console.log('[ModuleSessionService] Abandoning session:', sessionId);
     
-    return this.http.post<SessionResponse>(`${this.baseUrl}/${sessionId}/abandon`, {})
+    return this.http.post<SessionResponse>(`${this.baseUrl}/${sessionId}/abandon`, {}, {
+      headers: this.getAuthHeaders()
+    })
       .pipe(
         map(response => {
           if (response.success && response.session) {

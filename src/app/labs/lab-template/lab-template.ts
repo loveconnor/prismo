@@ -6,6 +6,8 @@ import { takeUntil, catchError } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 import { LabDataService, LabData } from '../../../services/lab-data.service';
 import { ModuleSessionService, ModuleSession } from '../../../services/module-session.service';
+import { WidgetInteractionService } from '../../../services/widget-interaction.service';
+import { environment } from '../../../environments/environment';
 
 // Import all available widgets
 import { StepPromptComponent } from '../../../components/widgets/core/step-prompt/step-prompt';
@@ -179,6 +181,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             [collapsed]="rightPanelCollapsed"
             [hints]="hintWidgets"
             [feedback]="feedbackWidgets"
+            [sessionId]="currentSession?.id"
           ></app-support-panel>
         </div>
       </div>
@@ -192,6 +195,10 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
          (click)="handleFeedbackContinue()">
       <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
         <app-feedback-box
+          [metadata]="feedbackWidget.metadata || { id: feedbackWidget.id, type: 'feedback-box' }"
+          [config]="feedbackWidget.config"
+          [sessionId]="currentSession?.id || ''"
+          [moduleId]="feedbackWidget.moduleId || ''"
           [type]="feedbackWidget.config?.type || 'success'"
           [title]="feedbackWidget.config?.title || 'Great Job!'"
           [message]="feedbackWidget.config?.message || 'You completed the exercise!'"
@@ -210,6 +217,10 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
         <app-confidence-meter
+          [metadata]="confidenceWidget.metadata || { id: confidenceWidget.id, type: 'confidence-meter' }"
+          [config]="confidenceWidget.config"
+          [sessionId]="currentSession?.id || ''"
+          [moduleId]="confidenceWidget.moduleId || ''"
           [title]="confidenceWidget.config?.title || 'Rate Your Confidence'"
           [description]="confidenceWidget.config?.description || ''"
           [scaleLabels]="confidenceWidget.config?.scaleLabels || ['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
@@ -238,6 +249,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private router = inject(Router);
   private labDataService = inject(LabDataService);
   private moduleSessionService = inject(ModuleSessionService);
+  private widgetInteractionService = inject(WidgetInteractionService);
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
@@ -355,6 +367,10 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.currentSession) {
         this.sessionStartTime = Date.now();
         this.startSessionUpdateInterval();
+        
+        // Set current session for widget interaction tracking
+        this.widgetInteractionService.setCurrentSession(this.currentSession.id);
+        
         console.log('[LabTemplate] Module session started successfully:', {
           sessionId: this.currentSession.id,
           moduleId: this.currentSession.module_id,
@@ -527,6 +543,10 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sessionUpdateInterval = null;
       console.log('[LabTemplate] Session update interval cleared');
     }
+    
+    // Flush any pending widget interactions and clear session
+    this.widgetInteractionService.flushPendingInteractions();
+    this.widgetInteractionService.setCurrentSession(null);
   }
 
   private loadLab(): void {
@@ -538,16 +558,8 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // Check if ID is numerical
-    const isNumerical = /^\d+$/.test(labId);
-    
-    if (isNumerical) {
-      // Load from backend API
-      this.loadModuleFromBackend(labId);
-    } else {
-      // Load from assets JSON file
-      this.loadModuleFromAssets(labId);
-    }
+    // Always try to load from backend API first for UUIDs or any ID
+    this.loadLabFromBackend(labId);
   }
 
   private loadModuleFromAssets(moduleId: string): void {
@@ -689,16 +701,17 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  private loadModuleFromBackend(moduleId: string): void {
-    this.http.get<any>(`/api/modules/${moduleId}`)
+  private loadLabFromBackend(labId: string): void {
+    console.log(`Loading lab ${labId} from backend API...`);
+    this.http.get<any>(`${environment.apiUrl}/api/labs/${labId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          console.log(`Loaded module ${moduleId} from backend:`, response);
-          // Backend returns { module: {...} }
-          const moduleData = response.module;
-          const labFromModule = this.labDataService.convertModuleToLab(moduleData);
-          this.labData = labFromModule;
+          console.log(`Loaded lab ${labId} from backend:`, response);
+          // Backend returns the lab data directly
+          const labData = response;
+          const labFromResponse = this.labDataService.convertLabToLabData(labData);
+          this.labData = labFromResponse;
           this.extractWidgetsFromLabData();
           this.loading = false;
           this.error = null;
@@ -706,9 +719,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          this.error = err.message || `Failed to load module ${moduleId} from backend`;
-          this.loading = false;
-          this.cdr.detectChanges();
+          console.error(`Failed to load lab ${labId} from backend:`, err);
+          // Fallback to assets if backend fails
+          this.loadModuleFromAssets(labId);
         }
       });
   }

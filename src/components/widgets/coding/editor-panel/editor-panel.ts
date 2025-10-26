@@ -43,6 +43,11 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
+  get isStepPrompt(): boolean {
+    // A step-prompt is a non-coding step (no language configured)
+    return !this.editorConfig || !this.editorConfig.language;
+  }
+
   get languageDisplay(): string {
     const lang = this.editorConfig?.language || 'python';
     const displayNames: Record<string, string> = {
@@ -65,9 +70,17 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
 
   ngOnInit(): void {
     // Component initialization
+    console.log('EditorPanel ngOnInit - editorConfig:', this.editorConfig);
+    console.log('EditorPanel ngOnInit - editorConfig.language:', this.editorConfig?.language);
+    console.log('EditorPanel ngOnInit - passed:', this.passed);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('EditorPanel ngOnChanges - changes:', changes);
+    console.log('EditorPanel ngOnChanges - editorConfig:', this.editorConfig);
+    console.log('EditorPanel ngOnChanges - editorConfig.language:', this.editorConfig?.language);
+    console.log('EditorPanel ngOnChanges - passed:', this.passed);
+    
     // Reset passed state when currentStep or editorConfig changes (new step)
     if (changes['currentStep'] && !changes['currentStep'].firstChange) {
       this.passed = false;
@@ -76,10 +89,21 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     }
     
     // Update editor content when editorConfig changes
-    if (changes['editorConfig'] && !changes['editorConfig'].firstChange && this.monacoEditor) {
-      const newCode = this.editorConfig?.starterCode || this.editorConfig?.initialCode || '';
-      if (newCode && this.monacoEditor.getValue() !== newCode) {
-        this.monacoEditor.setValue(newCode);
+
+    if (changes['editorConfig']) {
+      if (!changes['editorConfig'].firstChange && this.monacoEditor) {
+        const newCode = this.editorConfig?.initialCode || '';
+        if (newCode && this.monacoEditor.getValue() !== newCode) {
+          this.monacoEditor.setValue(newCode);
+        }
+      }
+      
+      // For non-coding steps (steps without editor config), show informational message
+      // but DON'T auto-pass - require user to click Continue button
+      if (!this.editorConfig || !this.editorConfig.language) {
+        this.consoleOutput = [
+          { type: 'info', message: 'Review the content above and click Continue when ready.' }
+        ];
       }
     }
   }
@@ -261,6 +285,10 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
   }
 
   continueStep() {
+    // For non-coding steps, trigger feedback/confidence before moving to next step
+    if (!this.editorConfig || !this.editorConfig.language) {
+      this.codePassed.emit();
+    }
     this.passed = false;
     this.completeStep.emit();
   }

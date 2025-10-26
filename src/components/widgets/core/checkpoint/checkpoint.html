@@ -22,7 +22,7 @@
 
     <div *ngIf="showProgressBar" class="flex-1">
       <div class="h-2 bg-[#1f2937] rounded-full overflow-hidden">
-        <div class="h-full bg-[#60a5fa] transition-all duration-300" [style.width.%]="progressPercent"></div>
+        <div class="h-full bg-[#bc78f9] transition-all duration-300" [style.width.%]="progressPercent"></div>
       </div>
     </div>
 
@@ -65,7 +65,7 @@
     <!-- Progress Bar -->
     <div *ngIf="showProgressBar" class="mt-3">
       <div class="h-2 bg-[#1f2937] rounded-full overflow-hidden">
-        <div class="h-full bg-[#60a5fa] transition-all duration-300" [style.width.%]="progressPercent"></div>
+        <div class="h-full bg-[#bc78f9] transition-all duration-300" [style.width.%]="progressPercent"></div>
       </div>
     </div>
 
@@ -89,7 +89,7 @@
 
     <!-- Restore Option -->
     <div *ngIf="lastSaveTimeSig()" class="mt-3 flex justify-end">
-      <button (click)="handleRestore()" class="text-xs text-[#60a5fa] hover:text-[#3b82f6]">Restore to last checkpoint</button>
+      <button (click)="handleRestore()" class="text-xs text-[#bc78f9] hover:text-[#BC78F9]">Restore to last checkpoint</button>
     </div>
   </ng-template>
 </div>

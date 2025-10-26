@@ -164,7 +164,7 @@ export class CreateLabModalComponent {
   }
 
   get buttonClasses(): string {
-    return 'w-full h-10 bg-[#3b82f6] hover:bg-[#2563eb] text-white disabled:opacity-50 flex items-center justify-center gap-2 sm:max-w-none';
+    return 'w-full h-10 bg-[#BC78F9] hover:bg-[#2563eb] text-white disabled:opacity-50 flex items-center justify-center gap-2 sm:max-w-none';
   }
 
   close() {

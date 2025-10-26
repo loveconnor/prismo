@@ -445,17 +445,17 @@ export class MatchingPairsComponent extends WidgetBaseComponent implements OnIni
     } else if (status === 'unmatched') {
       classes.push('border-gray-500 bg-gray-500/10');
     } else if (!isMatched && !completedState) {
-      classes.push('border-[#1f2937] bg-[#0b0f14] hover:border-[#60a5fa]/50 cursor-pointer');
+      classes.push('border-[#1f2937] bg-[#0b0f14] hover:border-[#bc78f9]/50 cursor-pointer');
     } else if (isMatched && !completedState) {
-      classes.push('border-[#60a5fa] bg-[#60a5fa]/10');
+      classes.push('border-[#bc78f9] bg-[#bc78f9]/10');
     }
 
     if (isSelected) {
-      classes.push('ring-2 ring-[#60a5fa] border-[#60a5fa]');
+      classes.push('ring-2 ring-[#bc78f9] border-[#bc78f9]');
     }
 
     if (!isMatched && !completedState && itemType === 'right' && this.selectedLeft()) {
-      classes.push('cursor-pointer hover:border-[#60a5fa]');
+      classes.push('cursor-pointer hover:border-[#bc78f9]');
     }
 
     return classes.join(' ');
