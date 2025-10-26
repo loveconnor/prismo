@@ -1,0 +1,218 @@
+{
+    "name": "building-a-full-stack-todo-application-a3b0f11c",
+    "title": "Building a Full-Stack Todo Application with React, Node.js, and Express",
+    "description": "Create a complete full-stack todo application with authentication, state management, and database integration using modern web technologies.",
+    "skills": [
+      "javascript",
+      "react",
+      "nodejs",
+      "express",
+      "database",
+      "api-design",
+      "authentication",
+      "state-management",
+      "routing"
+    ],
+    "widgets": [
+      {
+        "name": "intro-todo-app",
+        "metadata": {
+          "id": "step-prompt",
+          "title": "Introduction to Full-Stack Todo App",
+          "description": "Overview of project architecture and components",
+          "skills": [
+            "javascript",
+            "react",
+            "nodejs"
+          ],
+          "difficulty": 2,
+          "estimated_time": 60,
+          "input_type": "text",
+          "output_type": "scaffold",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Building a Full-Stack Todo Application",
+          "prompt": "In this module, you'll build a complete todo application using React for the frontend, Node.js/Express for the backend, and MongoDB for data storage. The app will feature user authentication, state management with Redux, and RESTful API design.",
+          "estimatedTime": 30
+        },
+        "position": 1,
+        "dependencies_met": true
+      },
+      {
+        "name": "api-design-exercise",
+        "metadata": {
+          "id": "code-editor",
+          "title": "API Design Implementation",
+          "description": "Design and implement RESTful API endpoints",
+          "skills": [
+            "api-design",
+            "express",
+            "nodejs"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Implementing Todo API Endpoints",
+          "prompt": "Create the Express routes for CRUD operations on todos. Implement endpoints for: GET /api/todos, POST /api/todos, PUT /api/todos/:id, DELETE /api/todos/:id",
+          "estimatedTime": 45
+        },
+        "position": 2,
+        "dependencies_met": true
+      },
+      {
+        "name": "auth-implementation",
+        "metadata": {
+          "id": "code-editor",
+          "title": "Authentication Implementation",
+          "description": "Implement JWT-based authentication",
+          "skills": [
+            "authentication",
+            "nodejs",
+            "express"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Adding JWT Authentication",
+          "prompt": "Implement JWT-based authentication including user registration, login, and protected routes middleware.",
+          "estimatedTime": 60
+        },
+        "position": 3,
+        "dependencies_met": true
+      },
+      {
+        "name": "react-components",
+        "metadata": {
+          "id": "code-editor",
+          "title": "React Components Development",
+          "description": "Build React components for the todo application",
+          "skills": [
+            "react",
+            "javascript",
+            "state-management"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Creating React Components",
+          "prompt": "Create the main React components: TodoList, TodoItem, AddTodo, and implement state management using hooks.",
+          "estimatedTime": 45
+        },
+        "position": 4,
+        "dependencies_met": true
+      },
+      {
+        "name": "database-integration",
+        "metadata": {
+          "id": "code-editor",
+          "title": "Database Integration",
+          "description": "Implement MongoDB database integration",
+          "skills": [
+            "database",
+            "nodejs"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Setting up MongoDB Integration",
+          "prompt": "Implement MongoDB connection and create schemas for todos and users. Implement database operations in the API routes.",
+          "estimatedTime": 45
+        },
+        "position": 5,
+        "dependencies_met": true
+      },
+      {
+        "name": "routing-setup",
+        "metadata": {
+          "id": "code-editor",
+          "title": "Client-Side Routing",
+          "description": "Implement React Router setup",
+          "skills": [
+            "routing",
+            "react"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Setting up React Router",
+          "prompt": "Implement client-side routing with React Router including protected routes and navigation components.",
+          "estimatedTime": 30
+        },
+        "position": 6,
+        "dependencies_met": true
+      }
+    ],
+    "completion_criteria": {
+      "required_widgets": [
+        "intro-todo-app",
+        "api-design-exercise",
+        "auth-implementation",
+        "react-components",
+        "database-integration",
+        "routing-setup"
+      ],
+      "min_completion_percentage": 80,
+      "max_attempts": 3,
+      "time_limit": 5400
+    },
+    "estimated_duration": 5400,
+    "version": "1.0.0"
+  }
+  

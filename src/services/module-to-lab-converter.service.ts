@@ -34,7 +34,7 @@ export interface ModuleWidget {
     category: string;
   };
   props: any;
-  position: number;
+  position?: number; // Optional position for step ordering
   dependencies_met: boolean;
 }
 
@@ -55,7 +55,10 @@ export class ModuleToLabConverterService {
       id: widget.id,
       type: widget.id, // Use the widget ID as the type
       config: this.convertPropsToConfig(widget.props, widget.id),
-      metadata: widget.metadata
+      metadata: {
+        ...widget.metadata,
+        position: widget.position // Preserve position for step ordering
+      }
     }));
 
     // Create a single section containing all widgets
