@@ -90,8 +90,11 @@ export class App {
     const authRoutes = ['/login', '/register', '/forgot-password', '/verify'];
     const url = this.currentUrl();
     const isAuth = authRoutes.some(route => url.startsWith(route));
-    const isLab = url.startsWith('/labs');
-    return isAuth || isLab; // hide global sidebar on lab pages
+    
+    // Hide sidebar on individual lab pages (e.g., /labs/123) but not on main labs page (/labs)
+    const isIndividualLab = url.match(/^\/labs\/[^\/]+$/); // matches /labs/{id} but not /labs or /labs/
+    
+    return isAuth || !!isIndividualLab;
   }
 
   toggleTheme() {

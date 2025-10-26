@@ -210,11 +210,16 @@ export class AuthService {
   // Refresh token
   refreshToken(): Observable<AuthResponse> {
     const refreshToken = this.getRefreshToken();
+    const username = this.tokenStorage.getUsername();
+    
     if (!refreshToken) {
       console.log('No refresh token available');
       return throwError(() => new Error('No refresh token available'));
     }
-    return this.authHttp.refreshToken(refreshToken)
+    
+    console.log('Refreshing token with username:', username);
+    
+    return this.authHttp.refreshToken(refreshToken, username)
       .pipe(
         tap((res) => this.handleAuthSuccess(res)),
         catchError((err) => {
@@ -489,6 +494,13 @@ export class AuthService {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('current_user', JSON.stringify(userData));
       }
+      
+      // Store username for SECRET_HASH calculation during token refresh
+      if (userData.username) {
+        this.tokenStorage.setUsername(userData.username);
+        console.log('Stored username for token refresh:', userData.username);
+      }
+      
       console.log('User data set successfully');
     } else {
       console.warn('No user data found in response');
@@ -503,7 +515,8 @@ export class AuthService {
       isAuthenticated: this.isAuthenticated(),
       sessionComplete: this.sessionCheckComplete(),
       hasToken: !!this.getAccessToken(),
-      hasRefreshToken: !!this.getRefreshToken()
+      hasRefreshToken: !!this.getRefreshToken(),
+      hasUsername: !!this.tokenStorage.getUsername()
     });
 
     // Navigation is now handled by the login component

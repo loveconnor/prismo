@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class TokenStorageService {
   private readonly ACCESS_TOKEN_KEY = 'access_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
+  private readonly USERNAME_KEY = 'auth_username'; // Store username for SECRET_HASH
 
   /**
    * Check if we're running in a browser environment
@@ -63,11 +64,36 @@ export class TokenStorageService {
   }
 
   /**
+   * Store username for SECRET_HASH calculation
+   */
+  setUsername(username: string): void {
+    if (!this.isBrowser()) return;
+    localStorage.setItem(this.USERNAME_KEY, username);
+  }
+
+  /**
+   * Get stored username
+   */
+  getUsername(): string | null {
+    if (!this.isBrowser()) return null;
+    return localStorage.getItem(this.USERNAME_KEY);
+  }
+
+  /**
+   * Remove username
+   */
+  removeUsername(): void {
+    if (!this.isBrowser()) return;
+    localStorage.removeItem(this.USERNAME_KEY);
+  }
+
+  /**
    * Clear all tokens
    */
   clearTokens(): void {
     this.removeAccessToken();
     this.removeRefreshToken();
+    this.removeUsername();
   }
 
   /**

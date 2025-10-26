@@ -23,8 +23,15 @@ export class AuthHttpService {
   /**
    * Refresh token (bypasses interceptor)
    */
-  refreshToken(refreshToken: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/refresh`, { refresh_token: refreshToken });
+  refreshToken(refreshToken: string, username?: string | null): Observable<any> {
+    const body: any = { refresh_token: refreshToken };
+    
+    // Include username if available (needed for Cognito SECRET_HASH)
+    if (username) {
+      body.username = username;
+    }
+    
+    return this.http.post(`${this.API_URL}/refresh`, body);
   }
 
   /**

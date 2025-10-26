@@ -1,0 +1,328 @@
+{
+  "name": "coding---i-want-to-build-a-great-tool-ed4573cc",
+  "title": "Building Great Tools: A Coding Journey",
+  "description": "Learn to build exceptional software tools by mastering loops, recursion, and core coding principles through hands-on projects.",
+  "skills": [
+    "loops",
+    "recursion",
+    "cookies",
+    "andrews",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Tool Building",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Tool Building",
+        "prompt": "Building great software tools requires understanding fundamental programming concepts. In this module, you'll learn how loops and recursion are essential building blocks for creating powerful, efficient tools.\n\nLet's start by exploring what makes a tool great: it solves real problems, runs efficiently, and is maintainable. You'll master loops and recursion—two critical patterns used in virtually every tool you'll ever build.",
+        "estimatedTime": 30
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Introduction Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You're about to embark on a journey to understand the core concepts that power great tools.",
+        "explanation": "This module combines theory and practice. You'll write real code, see how loops iterate efficiently, and understand how recursion breaks down complex problems into manageable pieces.",
+        "nextSteps": [
+          "Learn about loops and iteration patterns",
+          "Explore recursion through practical examples",
+          "Build a simple tool combining both concepts"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Starting Confidence",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you about building tools with loops and recursion?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Loops: The Foundation of Iteration",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Master Loops: Build a Data Processor",
+        "language": "python",
+        "starterCode": "# Your task: Process a list of numbers using a loop\n# Add all numbers together and find the maximum\n\nnumbers = [15, 23, 8, 42, 16, 9, 35]\n\n# TODO: Use a for loop to sum all numbers\ntotal = 0\nmaximum = numbers[0]\n\nfor num in numbers:\n    total += num\n    if num > maximum:\n        maximum = num\n\nprint(f\"Sum: {total}\")\nprint(f\"Maximum: {maximum}\")\nprint(f\"Average: {total / len(numbers):.2f}\")",
+        "testCases": [
+          {
+            "name": "Correct Output",
+            "input": "",
+            "expectedOutput": "Sum: 148\nMaximum: 42\nAverage: 21.14"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Loops Practice Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent! You've Mastered Loop Basics",
+        "message": "Your loop correctly processes all elements and calculates the sum, maximum, and average.",
+        "explanation": "Loops are the backbone of tools. You've just used iteration to aggregate data—a pattern you'll see in data processors, analytics tools, and web applications every single day.",
+        "nextSteps": [
+          "Understand how loops improve efficiency",
+          "Learn recursion as an alternative approach",
+          "Combine loops and recursion in real tools"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Loops Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Uncertain",
+        "maxLabel": "Confident",
+        "question": "How confident are you using loops to solve iteration problems?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Recursion: Solving Complex Problems",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Master Recursion: File System Explorer",
+        "language": "python",
+        "starterCode": "# Your task: Build a recursive function to calculate factorial\n# Recursion: a function that calls itself to solve smaller versions of the problem\n\ndef factorial(n):\n    \"\"\"Calculate factorial using recursion\"\"\"\n    # Base case: when to stop recursing\n    if n <= 1:\n        return 1\n    # Recursive case: call yourself with smaller input\n    else:\n        return n * factorial(n - 1)\n\ndef fibonacci(n):\n    \"\"\"Calculate nth Fibonacci number using recursion\"\"\"\n    if n <= 1:\n        return n\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)\n\n# Test your functions\nprint(f\"5! = {factorial(5)}\")\nprint(f\"Fibonacci(6) = {fibonacci(6)}\")\nprint(f\"Fibonacci(7) = {fibonacci(7)}\")",
+        "testCases": [
+          {
+            "name": "Factorial Correct",
+            "input": "",
+            "expectedOutput": "5! = 120\nFibonacci(6) = 8\nFibonacci(7) = 13"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Recursion Practice Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Work! Recursion Unlocked",
+        "message": "Your recursive functions correctly solve factorial and Fibonacci problems by breaking them into smaller, identical sub-problems.",
+        "explanation": "Recursion is powerful for problems with recursive structure: trees, graphs, backtracking algorithms, and divide-and-conquer solutions. Tools like compilers, search engines, and game AI use recursion extensively.",
+        "nextSteps": [
+          "Understand the difference between loops and recursion",
+          "Learn when to use each approach",
+          "Build a tool combining both techniques"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Recursion Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Uncertain",
+        "maxLabel": "Confident",
+        "question": "How confident are you in writing and understanding recursive functions?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T05:52:10.804774",
+    "module_id": "1f91de7b-2ef9-4e95-ac49-9788fe4b0383",
+    "saved_to_filesystem": true
+  }
+}

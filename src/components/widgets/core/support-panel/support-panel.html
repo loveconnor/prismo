@@ -24,7 +24,21 @@
     </app-tabs-content>
 
     <app-tabs-content *ngIf="hasFeedback" value="feedback" className="flex-1 overflow-y-auto p-4">
-      <div class="py-6 text-center text-sm text-[#9ca3af]">Run your code to see feedback here</div>
+      <div *ngIf="feedback && feedback.length > 0" class="space-y-4">
+        <app-feedback-box 
+          *ngFor="let feedbackWidget of feedback; trackBy: trackByFeedback"
+          [type]="getFeedbackProps(feedbackWidget).type || 'info'"
+          [title]="getFeedbackProps(feedbackWidget).title || 'Feedback'"
+          [message]="getFeedbackProps(feedbackWidget).message || ''"
+          [explanation]="getFeedbackProps(feedbackWidget).explanation"
+          [nextSteps]="getFeedbackProps(feedbackWidget).nextSteps"
+          [showActions]="false"
+          [showMeta]="false"
+        ></app-feedback-box>
+      </div>
+      <div *ngIf="!feedback || feedback.length === 0" class="py-6 text-center text-sm text-[#9ca3af]">
+        Complete the exercises to see feedback here
+      </div>
     </app-tabs-content>
 
   

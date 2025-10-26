@@ -133,6 +133,7 @@ export class ModuleToLabConverterService {
           title: props.title,
           language: props.language,
           initialCode: props.starterCode,
+          starterCode: props.starterCode, // Keep both for compatibility
           placeholder: props.placeholder,
           testCases: props.testCases,
           width: '100%',

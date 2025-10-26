@@ -89,6 +89,7 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     }
     
     // Update editor content when editorConfig changes
+
     if (changes['editorConfig']) {
       if (!changes['editorConfig'].firstChange && this.monacoEditor) {
         const newCode = this.editorConfig?.initialCode || '';
@@ -171,7 +172,7 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
       }
 
       // Get initial code and language from editorConfig, or use defaults
-      const starterCode = this.editorConfig?.initialCode || '';
+      const starterCode = this.editorConfig?.starterCode || this.editorConfig?.initialCode || '';
       const language = this.editorConfig?.language || 'python';
       
       console.log('EditorConfig:', this.editorConfig);

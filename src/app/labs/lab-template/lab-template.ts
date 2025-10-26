@@ -7,6 +7,7 @@ import { Subject, throwError } from 'rxjs';
 import { LabDataService, LabData } from '../../../services/lab-data.service';
 import { ModuleSessionService, ModuleSession } from '../../../services/module-session.service';
 import { WidgetInteractionService } from '../../../services/widget-interaction.service';
+import { environment } from '../../../environments/environment';
 
 // Import all available widgets
 import { StepPromptComponent } from '../../../components/widgets/core/step-prompt/step-prompt';
@@ -188,11 +189,16 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     </div>
 
     <!-- Feedback Modal (appears first as overlay) -->
-    <div *ngIf="showFeedbackModal" 
+        <!-- Feedback Modal (appears first as overlay) -->
+    <div *ngIf="showFeedbackModal && feedbackWidget" 
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
          (click)="handleFeedbackContinue()">
       <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
         <app-feedback-box
+          [metadata]="feedbackWidget.metadata || { id: feedbackWidget.id, type: 'feedback-box' }"
+          [config]="feedbackWidget.config"
+          [sessionId]="currentSession?.id || ''"
+          [moduleId]="feedbackWidget.moduleId || ''"
           [type]="feedbackWidget.config?.type || 'success'"
           [title]="feedbackWidget.config?.title || 'Great Job!'"
           [message]="feedbackWidget.config?.message || 'You completed the exercise!'"
@@ -207,13 +213,30 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     </div>
 
     <!-- Confidence Meter Modal (appears after feedback) -->
-    <div *ngIf="showConfidenceMeter" 
+    <div *ngIf="showConfidenceMeter && confidenceWidget" 
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
         <app-confidence-meter
+          [metadata]="confidenceWidget.metadata || { id: confidenceWidget.id, type: 'confidence-meter' }"
+          [config]="confidenceWidget.config"
+          [sessionId]="currentSession?.id || ''"
+          [moduleId]="confidenceWidget.moduleId || ''"
           [title]="confidenceWidget.config?.title || 'Rate Your Confidence'"
           [description]="confidenceWidget.config?.description || ''"
           [scaleLabels]="confidenceWidget.config?.scaleLabels || ['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
+          (submit)="handleConfidenceSubmit()"
+        ></app-confidence-meter>
+      </div>
+    </div>
+
+    <!-- Confidence Meter Modal (appears after feedback) -->
+    <div *ngIf="showConfidenceMeter && confidenceWidget" 
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
+        <app-confidence-meter
+          [title]="(confidenceWidget.props || confidenceWidget.config)?.title || 'Rate Your Confidence'"
+          [description]="(confidenceWidget.props || confidenceWidget.config)?.description || ''"
+          [scaleLabels]="(confidenceWidget.props || confidenceWidget.config)?.scaleLabels || ['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
           (submit)="handleConfidenceSubmit()"
         ></app-confidence-meter>
       </div>
@@ -535,20 +558,39 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // Check if ID is numerical
-    const isNumerical = /^\d+$/.test(labId);
-    
-    if (isNumerical) {
-      // Load from backend API
-      this.loadModuleFromBackend(labId);
-    } else {
-      // Load from assets JSON file
-      this.loadModuleFromAssets(labId);
-    }
+    // Always try to load from backend API first for UUIDs or any ID
+    this.loadLabFromBackend(labId);
   }
 
   private loadModuleFromAssets(moduleId: string): void {
-    // First try the direct path
+    // First check if we have module data passed via navigation state
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state || window.history.state;
+    
+    if (state?.module) {
+      console.log('Loading module from navigation state:', state.module);
+      this.handleModuleLoad(state.module);
+      return;
+    }
+    
+    // Try backend API first (for newly generated modules)
+    console.log(`Attempting to load ${moduleId} from backend API...`);
+    this.http.get<any>(`/api/modules/${moduleId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log(`Successfully loaded ${moduleId} from backend API`);
+          this.handleModuleLoad(response.module);
+        },
+        error: (apiErr) => {
+          console.log(`Not found in backend API, trying static assets...`);
+          // Fallback to static assets
+          this.tryStaticAssets(moduleId);
+        }
+      });
+  }
+
+  private tryStaticAssets(moduleId: string): void {
     this.http.get<any>(`/assets/modules/${moduleId}.json`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -659,16 +701,17 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  private loadModuleFromBackend(moduleId: string): void {
-    this.http.get<any>(`/api/modules/${moduleId}`)
+  private loadLabFromBackend(labId: string): void {
+    console.log(`Loading lab ${labId} from backend API...`);
+    this.http.get<any>(`${environment.apiUrl}/api/labs/${labId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          console.log(`Loaded module ${moduleId} from backend:`, response);
-          // Backend returns { module: {...} }
-          const moduleData = response.module;
-          const labFromModule = this.labDataService.convertModuleToLab(moduleData);
-          this.labData = labFromModule;
+          console.log(`Loaded lab ${labId} from backend:`, response);
+          // Backend returns the lab data directly
+          const labData = response;
+          const labFromResponse = this.labDataService.convertLabToLabData(labData);
+          this.labData = labFromResponse;
           this.extractWidgetsFromLabData();
           this.loading = false;
           this.error = null;
@@ -676,9 +719,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          this.error = err.message || `Failed to load module ${moduleId} from backend`;
-          this.loading = false;
-          this.cdr.detectChanges();
+          console.error(`Failed to load lab ${labId} from backend:`, err);
+          // Fallback to assets if backend fails
+          this.loadModuleFromAssets(labId);
         }
       });
   }
@@ -866,8 +909,13 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     // Set current feedback/confidence for the initial step
     this.updateCurrentFeedbackWidgets();
     
-    // Find feedback widgets for support panel (different from modal feedback)
-    this.feedbackWidgets = allWidgets.filter(w => w.type === 'feedback-panel' || w.id === 'feedback-panel');
+    // Find feedback widgets for support panel - these are ALL feedback-box widgets
+    // They will be shown in the support panel after code execution
+    this.feedbackWidgets = allWidgets.filter(w => 
+      w.type === 'feedback-box' || 
+      w.id === 'feedback-box' || 
+      w.metadata?.id === 'feedback-box'
+    );
     console.log('Found feedback widgets for panel:', this.feedbackWidgets);
     
     // Find confidence widget
@@ -886,7 +934,8 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
           id: w.metadata?.position || index + 1,
           title: w.config?.title || w.metadata?.title || `Step ${index + 1}`,
           instruction: w.config?.prompt || w.metadata?.description,
-          example: undefined
+          example: undefined,
+          widgetPosition: w.metadata?.position
         }));
     } else {
       // Fallback to labData.steps if no positioned widgets

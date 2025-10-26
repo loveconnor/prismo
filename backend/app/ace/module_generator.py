@@ -373,6 +373,7 @@ CRITICAL POSITION FIELD RULE:
 - ONLY add "position" field to widgets requiring active learning/user work
 - INCLUDE position: step-prompt, code-editor, multiple-choice, short-answer, fill-in-blanks, matching-pairs, numeric-input, text-editor
 - EXCLUDE position: feedback-box, confidence-meter, hint-panel
+- WHEN GIVING CODE PROBELMS: Do not give the solution in the starterCode
 - Example: feedback-box and confidence-meter should NOT have "position" field
 
 CRITICAL FEEDBACK-BOX RULE:
