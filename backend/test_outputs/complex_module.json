@@ -1,0 +1,271 @@
+{
+  "id": "building-a-full-stack-todo-application-aed1c1f2",
+  "title": "Building a Full-Stack Todo Application with React, Node.js, and Authentication",
+  "description": "Create a complete todo application with React frontend, Node.js/Express backend, database integration, and user authentication. Learn essential full-stack development skills through hands-on practice.",
+  "skills": [
+    "javascript",
+    "react",
+    "nodejs",
+    "express",
+    "database",
+    "api-design",
+    "authentication",
+    "state-management",
+    "routing"
+  ],
+  "widgets": [
+    {
+      "id": "intro-step-w1",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Module Introduction",
+        "description": "Introduction to the full-stack todo application project",
+        "skills": [
+          "comprehension",
+          "planning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Project Overview: Full-Stack Todo Application",
+        "prompt": "In this comprehensive module, you'll build a complete todo application using modern web technologies. You'll create a React frontend with state management and routing, develop a RESTful API using Node.js and Express, implement user authentication, and integrate with a database. Let's break down what you'll learn and build.",
+        "estimatedTime": 30
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "project-setup-w2",
+      "metadata": {
+        "id": "lab-intro",
+        "title": "Project Setup and Architecture",
+        "description": "Setting up the development environment and project structure",
+        "skills": [
+          "javascript",
+          "nodejs"
+        ],
+        "difficulty": 2,
+        "estimated_time": 90,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Setting Up Your Development Environment",
+        "prompt": "We'll start by setting up both frontend and backend projects. Create two directories: 'client' for React and 'server' for Node.js. Initialize package.json for both, and install necessary dependencies. Review the project structure and architecture diagram.",
+        "estimatedTime": 45
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "backend-implementation-w3",
+      "metadata": {
+        "id": "short-answer",
+        "title": "Backend API Implementation",
+        "description": "Creating RESTful API endpoints with Express",
+        "skills": [
+          "nodejs",
+          "express",
+          "api-design"
+        ],
+        "difficulty": 3,
+        "estimated_time": 120,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Implementing RESTful API Endpoints",
+        "prompt": "Implement the core API endpoints for todo CRUD operations. Create routes for: GET /api/todos, POST /api/todos, PUT /api/todos/:id, and DELETE /api/todos/:id. Include request validation and error handling.",
+        "estimatedTime": 60
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "auth-implementation-w4",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Authentication System",
+        "description": "Implementing user authentication",
+        "skills": [
+          "authentication",
+          "nodejs",
+          "express"
+        ],
+        "difficulty": 3,
+        "estimated_time": 90,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding Authentication Flow",
+        "prompt": "Which components are essential for implementing JWT-based authentication?",
+        "options": [
+          "JWT token generation and validation",
+          "Password hashing with bcrypt",
+          "Protected route middleware",
+          "Session storage",
+          "Cookie parsing"
+        ],
+        "correctAnswers": [
+          0,
+          1,
+          2
+        ],
+        "estimatedTime": 45
+      },
+      "position": 4,
+      "dependencies_met": true
+    },
+    {
+      "id": "frontend-implementation-w5",
+      "metadata": {
+        "id": "coach-chat",
+        "title": "React Frontend Development",
+        "description": "Building the React frontend with routing and state management",
+        "skills": [
+          "react",
+          "javascript",
+          "state-management",
+          "routing"
+        ],
+        "difficulty": 3,
+        "estimated_time": 120,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Implementing React Components and State Management",
+        "prompt": "Let's create the main React components: TodoList, TodoItem, and TodoForm. Implement state management using React Context or Redux, and set up client-side routing with React Router.",
+        "estimatedTime": 60
+      },
+      "position": 5,
+      "dependencies_met": true
+    },
+    {
+      "id": "database-integration-w6",
+      "metadata": {
+        "id": "reflection-prompt",
+        "title": "Database Integration",
+        "description": "Connecting and implementing database operations",
+        "skills": [
+          "database",
+          "nodejs"
+        ],
+        "difficulty": 3,
+        "estimated_time": 90,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Database Schema and Integration",
+        "prompt": "Design and implement the database schema for todos and users. Create database connection and models. Implement data persistence in your API endpoints.",
+        "estimatedTime": 45
+      },
+      "position": 6,
+      "dependencies_met": true
+    },
+    {
+      "id": "final-assessment-w7",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Final Implementation Review",
+        "description": "Self-assessment of learning objectives",
+        "skills": [
+          "javascript",
+          "react",
+          "nodejs",
+          "express",
+          "database",
+          "api-design",
+          "authentication",
+          "state-management",
+          "routing"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Implementation Confidence Assessment",
+        "prompt": "Rate your confidence in implementing each aspect of the full-stack todo application",
+        "categories": [
+          "Frontend Development",
+          "Backend API",
+          "Database Integration",
+          "Authentication",
+          "State Management"
+        ],
+        "estimatedTime": 15
+      },
+      "position": 7,
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "intro-step-w1",
+      "project-setup-w2",
+      "backend-implementation-w3",
+      "auth-implementation-w4",
+      "frontend-implementation-w5",
+      "database-integration-w6",
+      "final-assessment-w7"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 5400
+  },
+  "estimated_duration": 5400,
+  "version": "1.0.0"
+}

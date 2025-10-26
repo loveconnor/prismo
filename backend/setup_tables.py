@@ -232,7 +232,6 @@ def setup_tables():
             {"AttributeName": "id", "AttributeType": "S"},
             {"AttributeName": "user_id", "AttributeType": "S"},
             {"AttributeName": "widget_id", "AttributeType": "S"},
-            {"AttributeName": "created_at", "AttributeType": "S"},
         ],
         global_secondary_indexes=[
             {
@@ -347,7 +346,6 @@ def setup_tables():
             {"AttributeName": "id", "AttributeType": "S"},
             {"AttributeName": "user_id", "AttributeType": "S"},
             {"AttributeName": "skill_tag", "AttributeType": "S"},
-            {"AttributeName": "updated_at", "AttributeType": "S"},
         ],
         global_secondary_indexes=[
             {
@@ -627,7 +625,6 @@ def setup_tables():
             {"AttributeName": "id", "AttributeType": "S"},
             {"AttributeName": "user_id", "AttributeType": "S"},
             {"AttributeName": "streak_type", "AttributeType": "S"},
-            {"AttributeName": "current_streak", "AttributeType": "N"},
         ],
         global_secondary_indexes=[
             {
@@ -652,7 +649,6 @@ def setup_tables():
             {"AttributeName": "id", "AttributeType": "S"},
             {"AttributeName": "user_id", "AttributeType": "S"},
             {"AttributeName": "badge_type", "AttributeType": "S"},
-            {"AttributeName": "earned_at", "AttributeType": "S"},
         ],
         global_secondary_indexes=[
             {
@@ -677,7 +673,6 @@ def setup_tables():
             {"AttributeName": "id", "AttributeType": "S"},
             {"AttributeName": "attempt_id", "AttributeType": "S"},
             {"AttributeName": "version_number", "AttributeType": "N"},
-            {"AttributeName": "created_at", "AttributeType": "S"},
         ],
         global_secondary_indexes=[
             {
@@ -798,7 +793,6 @@ def setup_tables():
             {"AttributeName": "id", "AttributeType": "S"},
             {"AttributeName": "user_id", "AttributeType": "S"},
             {"AttributeName": "session_type", "AttributeType": "S"},
-            {"AttributeName": "created_at", "AttributeType": "S"},
         ],
         global_secondary_indexes=[
             {
