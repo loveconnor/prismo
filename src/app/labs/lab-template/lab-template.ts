@@ -173,10 +173,11 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
         </div>
 
         <!-- Right: Support -->
-        <div class="min-w-0 overflow-hidden">
+        <div class="min-w-0 overflow-hidden" *ngIf="shouldShowSupportPanel">
           <app-support-panel
             [collapsed]="rightPanelCollapsed"
             [hints]="hintWidgets"
+            [feedback]="feedbackWidgets"
           ></app-support-panel>
         </div>
       </div>
@@ -236,15 +237,41 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   
   // Extracted widgets from labData
   public codeEditorWidget: any = null;
+  public allCodeEditorWidgets: any[] = [];
   public hintWidgets: any[] = [];
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
+  public feedbackWidgets: any[] = [];
   public hasSteps = false;
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
   
+  // Check if support panel should be shown
+  get shouldShowSupportPanel(): boolean {
+    return this.hasHints || this.hasFeedbackContent;
+  }
+  
+  get hasHints(): boolean {
+    return this.hintWidgets && this.hintWidgets.length > 0 && 
+           this.hintWidgets[0]?.config?.hints && 
+           this.hintWidgets[0].config.hints.length > 0;
+  }
+  
+  get hasFeedbackContent(): boolean {
+    return this.feedbackWidgets && this.feedbackWidgets.length > 0;
+  }
+  
   get gridTemplateColumns(): string {
+    // If no support panel content, don't allocate space for it
+    if (!this.shouldShowSupportPanel) {
+      if (!this.hasSteps) {
+        return '1fr';
+      }
+      const left = this.leftPanelCollapsed ? '0px' : 'minmax(260px, 18vw)';
+      return `${left} 1fr`;
+    }
+    
     // If no steps, only use 2 columns (center + right)
     if (!this.hasSteps) {
       const right = this.rightPanelCollapsed ? '0px' : 'minmax(260px, 19vw)';
@@ -291,7 +318,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     let actualLabId = labId;
     if (currentUrl.includes('pt01')) {
       // Load the CS1 pt01 module JSON and convert to lab using HttpClient (triggers CD in zoneless mode)
-      this.http.get<any>('/assets/modules/CS1/01-Lab/pt01.json')
+      this.http.get<any>('/assets/modules/CS1/01-Lab/pt02.json')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {
@@ -378,17 +405,33 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getDifficultyLabel(difficulty: number): string {
-    const labels = ['Beginner', 'Easy', 'Medium', 'Hard', 'Expert'];
+    const labels = [
+      'Beginner',       // 1
+      'Easy',           // 2
+      'Moderate',       // 3
+      'Medium',         // 4
+      'Challenging',    // 5
+      'Hard',           // 6
+      'Very Hard',      // 7
+      'Advanced',       // 8
+      'Expert',         // 9
+      'Master'          // 10
+    ];
     return labels[difficulty - 1] || 'Unknown';
   }
 
   getDifficultyColor(difficulty: number): string {
     const colors = [
-      'text-green-600',    // Beginner
-      'text-blue-600',     // Easy
-      'text-yellow-600',   // Medium
-      'text-orange-600',   // Hard
-      'text-red-600'       // Expert
+      'text-green-600',    // 1: Beginner
+      'text-green-500',    // 2: Easy
+      'text-blue-600',     // 3: Moderate
+      'text-blue-500',     // 4: Medium
+      'text-yellow-600',   // 5: Challenging
+      'text-yellow-500',   // 6: Hard
+      'text-orange-600',   // 7: Very Hard
+      'text-orange-500',   // 8: Advanced
+      'text-red-600',      // 9: Expert
+      'text-red-500'       // 10: Master
     ];
     return colors[difficulty - 1] || 'text-gray-600';
   }
@@ -406,25 +449,49 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const allWidgets = this.labData.sections.flatMap(section => section.widgets || []);
     console.log('All widgets:', allWidgets);
     
-    // Find code editor widget
-    this.codeEditorWidget = allWidgets.find(w => w.type === 'code-editor' || w.id === 'code-editor');
-    console.log('Found code editor widget:', this.codeEditorWidget);
+    // Find all code editor widgets
+    this.allCodeEditorWidgets = allWidgets.filter(w => w.type === 'code-editor' || w.id === 'code-editor');
+    console.log('Found code editor widgets:', this.allCodeEditorWidgets);
+    
+    // Set the initial code editor widget (will be updated based on current step)
+    this.updateCurrentCodeEditor();
     
     // Find hint widgets
     this.hintWidgets = allWidgets.filter(w => w.type === 'hint-panel' || w.id === 'hint-panel');
     console.log('Found hint widgets:', this.hintWidgets);
     
-    // Find feedback widget
+    // Find feedback widget (for modal)
     this.feedbackWidget = allWidgets.find(w => w.type === 'feedback-box' || w.id === 'feedback-box');
     console.log('Found feedback widget:', this.feedbackWidget);
+    
+    // Find feedback widgets for support panel (different from modal feedback)
+    this.feedbackWidgets = allWidgets.filter(w => w.type === 'feedback-panel' || w.id === 'feedback-panel');
+    console.log('Found feedback widgets for panel:', this.feedbackWidgets);
     
     // Find confidence widget
     this.confidenceWidget = allWidgets.find(w => w.type === 'confidence-meter' || w.id === 'confidence-meter');
     console.log('Found confidence widget:', this.confidenceWidget);
     
-    // Extract steps if they exist
-    this.steps = this.labData.steps || [];
+    // Extract steps from widgets - use widgets with position field as steps
+    // Only create steps if there are multiple positioned widgets
+    const positionedWidgets = allWidgets.filter(w => w.metadata?.position !== undefined);
+    console.log('Positioned widgets:', positionedWidgets);
+    
+    if (positionedWidgets.length > 1) {
+      this.steps = positionedWidgets
+        .sort((a, b) => (a.metadata?.position || 0) - (b.metadata?.position || 0))
+        .map((w, index) => ({
+          id: w.metadata?.position || index + 1,
+          title: w.config?.title || w.metadata?.title || `Step ${index + 1}`,
+          instruction: w.config?.prompt || w.metadata?.description,
+          example: undefined
+        }));
+    } else {
+      // Fallback to labData.steps if no positioned widgets
+      this.steps = this.labData.steps || [];
+    }
     this.hasSteps = this.steps.length > 0;
+    console.log('Extracted steps:', this.steps);
     console.log('Has steps:', this.hasSteps);
     console.log('Steps:', this.steps);
     
@@ -554,6 +621,23 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const nextUnlock = highest + 1;
     if (step <= nextUnlock) {
       this.currentStep = step;
+      this.updateCurrentCodeEditor();
+      this.cdr.detectChanges();
+    }
+  }
+  
+  private updateCurrentCodeEditor(): void {
+    // Find the code editor widget for the current step
+    if (this.allCodeEditorWidgets.length > 0) {
+      // If there are multiple code editors, find the one matching current step position
+      if (this.allCodeEditorWidgets.length > 1) {
+        const editorForStep = this.allCodeEditorWidgets.find(w => w.metadata?.position === this.currentStep);
+        this.codeEditorWidget = editorForStep || this.allCodeEditorWidgets[this.currentStep - 1] || this.allCodeEditorWidgets[0];
+      } else {
+        // Only one code editor, use it for all steps
+        this.codeEditorWidget = this.allCodeEditorWidgets[0];
+      }
+      console.log('Current code editor widget for step', this.currentStep, ':', this.codeEditorWidget);
     }
   }
 
@@ -563,7 +647,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.currentStep < this.steps.length) {
       this.currentStep += 1;
+      this.updateCurrentCodeEditor();
     }
+    this.cdr.detectChanges();
   }
 
   handleCodePassed(): void {

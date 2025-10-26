@@ -44,7 +44,7 @@ export interface ModuleWidget {
     category: string;
   };
   props: any;
-  position: number;
+  position?: number; // Optional position for step ordering
   dependencies_met: boolean;
 }
 
@@ -71,10 +71,13 @@ export class ModuleToLabConverterService {
     // Convert widgets to lab format
     const labWidgets: LabWidget[] = moduleData.widgets.map(widget => ({
       id: widget.id,
-      type: widget.metadata.id, // Use the metadata.id as the type
-      config: this.convertPropsToConfig(widget.props, widget.metadata.id),
-      metadata: widget.metadata,
-      stepId: widget.stepId
+      type: widget.id, // Use the widget ID as the type
+      config: this.convertPropsToConfig(widget.props, widget.id),
+      metadata: {
+        ...widget.metadata,
+        position: widget.position // Preserve position for step ordering
+      },
+      stepId: widget.stepId // Preserve stepId for compatibility
     }));
 
     // Group widgets by step if steps exist
