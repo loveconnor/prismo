@@ -1,4 +1,36 @@
-<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+<!-- Loading State -->
+<div *ngIf="loading" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+  <div *ngFor="let i of [1,2,3,4,5,6]" class="flex flex-col gap-4 rounded-[12px] border bg-card p-4">
+    <div class="flex items-start justify-between">
+      <div class="h-10 w-10 rounded-[10px] bg-muted animate-pulse"></div>
+      <div class="h-6 w-6 rounded bg-muted animate-pulse"></div>
+    </div>
+    <div class="flex flex-col gap-3">
+      <div class="h-6 bg-muted rounded animate-pulse"></div>
+      <div class="flex gap-2">
+        <div class="h-5 w-16 bg-muted rounded animate-pulse"></div>
+        <div class="h-5 w-12 bg-muted rounded animate-pulse"></div>
+        <div class="h-5 w-14 bg-muted rounded animate-pulse"></div>
+      </div>
+      <div class="h-2 bg-muted rounded animate-pulse"></div>
+      <div class="h-4 w-24 bg-muted rounded animate-pulse"></div>
+    </div>
+    <div class="h-9 bg-muted rounded animate-pulse"></div>
+  </div>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !loading" class="flex flex-col items-center justify-center py-12 text-center">
+  <div class="text-red-500 text-4xl mb-4">⚠️</div>
+  <h3 class="text-lg font-semibold text-foreground mb-2">Failed to Load Labs</h3>
+  <p class="text-muted-foreground mb-4">{{ error }}</p>
+  <app-button variant="outline" (click)="loadLabs()">
+    Try Again
+  </app-button>
+</div>
+
+<!-- Labs Grid -->
+<div *ngIf="!loading && !error" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
   <article
     *ngFor="let lab of visibleLabs; trackBy: trackByLabId"
     class="flex flex-col gap-4 rounded-[12px] border bg-card p-4 transition-colors hover:bg-white/5"

@@ -29,7 +29,8 @@ export interface LabWidget {
   type: string;
   config: any;
   metadata: any;
-  stepId?: number; // optional link to a step when applicable
+  stepId?: number;
+
   layout?: WidgetLayout;
   condition?: WidgetCondition;
   position?: { x: number; y: number };  // Legacy, kept for compatibility
@@ -61,7 +62,13 @@ export interface LabData {
   difficulty: number;
   estimatedTime: number;
   sections: LabSection[];
-  steps?: LabStep[];
+  steps?: Array<{
+    id: number;
+    title: string;
+    description?: string;
+    instruction?: string;
+    example?: string;
+  }>;
   metadata: {
     author?: string;
     version?: string;
@@ -691,6 +698,193 @@ export class LabDataService {
   }
 
   /**
+   * Convert widget props to config format
+   */
+  private convertPropsToConfig(props: any, widgetType: string): any {
+    // Base config with all props
+    let config = { ...props };
+
+    // Widget-specific transformations
+    switch (widgetType) {
+      case 'step-prompt':
+        return {
+          title: props.title,
+          prompt: props.prompt,
+          estimatedTime: props.estimatedTime
+        };
+
+      case 'code-editor':
+        return {
+          title: props.title,
+          language: props.language,
+          initialCode: props.starterCode,
+          placeholder: props.placeholder,
+          testCases: props.testCases,
+          width: '100%',
+          height: '300px',
+          enableSyntaxHighlighting: true,
+          enableAutoCompletion: true,
+          enableLineNumbers: true
+        };
+
+      case 'hint-panel':
+        return {
+          title: 'Hints',
+          hints: props.hints,
+          maxHintsPerTier: props.maxHintsPerTier
+        };
+
+      case 'feedback-box':
+        return {
+          type: props.type || 'success',
+          title: props.title,
+          message: props.message || props.prompt, // Support both 'message' and 'prompt' fields
+          explanation: props.explanation,
+          nextSteps: Array.isArray(props.nextSteps) ? props.nextSteps : (props.nextSteps ? [props.nextSteps] : []),
+          showContinueButton: props.showContinueButton ?? true,
+          autoComplete: props.autoComplete
+        };
+
+      case 'confidence-meter':
+        return {
+          title: props.title || props.question || 'Rate Your Confidence',
+          description: props.description || props.prompt,
+          scaleLabels: props.scaleLabels,
+          autoSubmit: props.autoSubmit
+        };
+
+      case 'equation-input':
+        return {
+          title: props.title,
+          placeholder: props.placeholder,
+          allowVariables: props.allowVariables,
+          showSteps: props.showSteps
+        };
+
+      case 'text-editor':
+        return {
+          title: props.title,
+          placeholder: props.placeholder,
+          maxLength: props.maxLength,
+          enableRichText: props.enableRichText
+        };
+
+      case 'multiple-choice':
+        return {
+          title: props.title,
+          question: props.question,
+          options: props.options,
+          correctAnswer: props.correctAnswer,
+          explanation: props.explanation
+        };
+
+      case 'short-answer':
+        return {
+          title: props.title,
+          question: props.question,
+          placeholder: props.placeholder,
+          correctAnswers: props.correctAnswers,
+          explanation: props.explanation
+        };
+
+      case 'coach-chat':
+        return {
+          title: props.title,
+          initialMessage: props.initialMessage,
+          personality: props.personality
+        };
+
+      case 'reflection-prompt':
+        return {
+          title: props.title,
+          prompt: props.prompt,
+          questions: props.questions
+        };
+
+      default:
+        // For unknown widget types, return props as-is
+        return config;
+    }
+  }
+
+  /**
+   * Convert lab data from API response to LabData format
+   */
+  convertLabToLabData(labResponse: any): LabData {
+    console.log('Converting lab response to LabData:', labResponse);
+    
+    // Convert widgets to lab format
+    const labWidgets: LabWidget[] = (labResponse.widgets || []).map((widget: any) => {
+      const widgetType = widget.metadata?.id || widget.id || 'step-prompt';
+      
+      return {
+        id: widget.id,
+        type: widgetType,
+        config: this.convertPropsToConfig(widget.props || {}, widgetType),
+        metadata: {
+          ...widget.metadata,
+          id: widgetType,
+          position: widget.position,
+          stepId: widget.stepId
+        }
+      };
+    });
+
+    // Create sections from steps if they exist
+    const sections: LabSection[] = [];
+    
+    if (labResponse.steps && labResponse.steps.length > 0) {
+      // Group widgets by step
+      const widgetsByStep = new Map<number, LabWidget[]>();
+      
+      labWidgets.forEach(widget => {
+        const stepId = widget.metadata.stepId || 1;
+        if (!widgetsByStep.has(stepId)) {
+          widgetsByStep.set(stepId, []);
+        }
+        widgetsByStep.get(stepId)!.push(widget);
+      });
+
+      // Create sections for each step
+      labResponse.steps.forEach((step: any, index: number) => {
+        const stepWidgets = widgetsByStep.get(step.id) || [];
+        sections.push({
+          id: `step-${step.id}`,
+          title: step.title,
+          description: step.description || step.instruction,
+          layout: 'stack',
+          widgets: stepWidgets
+        });
+      });
+    } else {
+      // Single section with all widgets
+      sections.push({
+        id: 'main-section',
+        title: 'Learning Activities',
+        description: labResponse.description,
+        layout: 'stack',
+        widgets: labWidgets
+      });
+    }
+
+    return {
+      id: labResponse.id,
+      title: labResponse.title,
+      description: labResponse.description,
+      difficulty: parseInt(labResponse.difficulty) || 1,
+      estimatedTime: Math.round((parseInt(labResponse.estimated_duration) || 0) / 60), // Convert seconds to minutes
+      steps: labResponse.steps || [],
+      sections: sections,
+      metadata: {
+        author: 'Prismo Labs',
+        version: labResponse.version || '1.0.0',
+        tags: labResponse.skills || [],
+        prerequisites: []
+      }
+    };
+  }
+
+  /**
    * Convert module data to lab data
    */
   convertModuleToLab(moduleData: ModuleData): LabData {
@@ -705,6 +899,8 @@ export class LabDataService {
     // For now, we'll return the example-coding-module lab as an example
     if (moduleId === 'pt01' || moduleId === 'example-coding-module') {
       return this.getLab('example-coding-module');
+    } else if (moduleId === 'binary-search-tree') {
+      return this.getLab('binary-search-tree');
     }
 
     return throwError(() => new Error(`Module with ID "${moduleId}" not found`));

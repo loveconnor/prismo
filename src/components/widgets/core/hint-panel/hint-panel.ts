@@ -158,9 +158,24 @@ export class HintPanelComponent extends WidgetBaseComponent {
         hint.viewCount = (hint.viewCount || 0) + 1;
         this.setDataValue('total_hints_used', this.hintsUsed);
         this.setDataValue('last_hint_revealed', new Date());
+        
+        // Emit state change for interaction tracking
+        this.emitStateChange('hint_revealed', {
+          hintId: hint.id,
+          hintTier: hint.tier,
+          viewCount: hint.viewCount,
+          totalHintsUsed: this.hintsUsed,
+          totalHints: this.totalHints
+        });
       } else {
         // Hiding hint
         hint.revealed = false;
+        
+        // Emit state change for interaction tracking
+        this.emitStateChange('hint_hidden', {
+          hintId: hint.id,
+          hintTier: hint.tier
+        });
       }
       
       this.setDataValue('hints_revealed', this.hints.filter(h => h.revealed).map(h => h.id));

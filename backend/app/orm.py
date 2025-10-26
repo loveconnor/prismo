@@ -12,6 +12,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, Type, TypeVar, Generic
 from dataclasses import dataclass, asdict, field
 from enum import Enum
+from decimal import Decimal
 import boto3
 from botocore.exceptions import ClientError
 from app.aws_config import aws_config
@@ -136,17 +137,39 @@ class DynamoDBORM:
         """Update record by ID"""
         updates['updated_at'] = datetime.utcnow().isoformat()
         
-        # Build update expression
-        update_expression = "SET " + ", ".join([f"{k} = :{k}" for k in updates.keys()])
-        expression_values = {f":{k}": v for k, v in updates.items()}
+        # Handle reserved keywords by using ExpressionAttributeNames
+        reserved_keywords = {'status', 'name', 'type', 'key', 'value', 'data', 'id', 'time', 'date'}
+        expression_names = {}
+        expression_values = {}
+        
+        # Build expression attribute names for reserved keywords
+        for key in updates.keys():
+            if key in reserved_keywords:
+                expression_names[f"#{key}"] = key
+            expression_values[f":{key}"] = updates[key]
+        
+        # Build update expression with proper attribute names
+        update_parts = []
+        for key in updates.keys():
+            if key in reserved_keywords:
+                update_parts.append(f"#{key} = :{key}")
+            else:
+                update_parts.append(f"{key} = :{key}")
+        
+        update_expression = "SET " + ", ".join(update_parts)
         
         try:
-            response = self.table.update_item(
-                Key={'id': id},
-                UpdateExpression=update_expression,
-                ExpressionAttributeValues=expression_values,
-                ReturnValues="ALL_NEW"
-            )
+            update_params = {
+                'Key': {'id': id},
+                'UpdateExpression': update_expression,
+                'ExpressionAttributeValues': expression_values,
+                'ReturnValues': "ALL_NEW"
+            }
+            
+            if expression_names:
+                update_params['ExpressionAttributeNames'] = expression_names
+            
+            response = self.table.update_item(**update_params)
             return self.model_class.from_dict(response['Attributes'])
         except ClientError as e:
             raise Exception(f"Failed to update record: {e}")
@@ -176,7 +199,6 @@ class DynamoDBORM:
         """Query records with optional filtering and pagination"""
         
         query_params = {
-            'TableName': self.table_name,
             'Limit': pagination.limit if pagination else 50
         }
         
@@ -211,15 +233,55 @@ class DynamoDBORM:
         except ClientError as e:
             raise Exception(f"Failed to query records: {e}")
     
+    def query_by_user_id(self, user_id: str, status: Optional[str] = None, 
+                        module_id: Optional[str] = None, limit: int = 50) -> List[BaseModel]:
+        """Query sessions by user_id with optional status and module_id filters"""
+        try:
+            # Use the user-id-index (only supports user_id as key condition)
+            key_condition = "user_id = :user_id"
+            expression_values = {":user_id": user_id}
+            expression_names = {}
+            
+            # Build filter expression for additional conditions
+            filter_parts = []
+            
+            if status:
+                filter_parts.append("#status = :status")
+                expression_values[":status"] = status
+                expression_names["#status"] = "status"
+            
+            if module_id:
+                filter_parts.append("module_id = :module_id")
+                expression_values[":module_id"] = module_id
+            
+            query_params = {
+                'IndexName': 'user-id-index',
+                'KeyConditionExpression': key_condition,
+                'ExpressionAttributeValues': expression_values,
+                'Limit': limit
+            }
+            
+            if filter_parts:
+                query_params['FilterExpression'] = " AND ".join(filter_parts)
+            
+            if expression_names:
+                query_params['ExpressionAttributeNames'] = expression_names
+            
+            response = self.table.query(**query_params)
+            return [self.model_class.from_dict(item) for item in response.get('Items', [])]
+            
+        except ClientError as e:
+            raise Exception(f"Failed to query by user_id: {e}")
+
     def scan(self,
              filter_expression: Optional[str] = None,
              expression_values: Optional[Dict[str, Any]] = None,
-             pagination: Optional[PaginationParams] = None) -> QueryResult:
+             pagination: Optional[PaginationParams] = None,
+             limit: int = 100) -> QueryResult:
         """Scan records with optional filtering and pagination"""
         
         scan_params = {
-            'TableName': self.table_name,
-            'Limit': pagination.limit if pagination else 50
+            'Limit': pagination.limit if pagination else limit
         }
         
         if filter_expression:
@@ -232,7 +294,9 @@ class DynamoDBORM:
             scan_params['ExclusiveStartKey'] = pagination.last_evaluated_key
         
         try:
+            print(f"DEBUG ORM: Scanning table {self.table_name} with params: {scan_params}")
             response = self.table.scan(**scan_params)
+            print(f"DEBUG ORM: Scan response count: {response.get('Count', 0)}")
             items = [self.model_class.from_dict(item) for item in response.get('Items', [])]
             
             return QueryResult(
@@ -242,6 +306,7 @@ class DynamoDBORM:
                 scanned_count=response.get('ScannedCount', 0)
             )
         except ClientError as e:
+            print(f"ERROR ORM: Failed to scan records: {e}")
             raise Exception(f"Failed to scan records: {e}")
     
     def batch_get(self, keys: List[Dict[str, Any]]) -> List[BaseModel]:
@@ -412,6 +477,24 @@ class Feedback(BaseModel):
     attempts_taken: int
     created_at: str
 
+@dataclass
+class ModuleSession(BaseModel):
+    """Module session model - tracks when users start and work on modules"""
+    id: str
+    user_id: str
+    module_id: str
+    status: str  # 'started', 'in_progress', 'completed', 'abandoned'
+    started_at: str
+    last_activity_at: str
+    completed_at: Optional[str] = None
+    time_spent: int = 0  # in seconds
+    progress: Decimal = Decimal('0.0')  # 0.0 to 1.0
+    current_step: int = 1
+    total_steps: int = 1
+    interactions: Optional[str] = None  # JSON string storing array of interaction events
+    created_at: str = ""
+    updated_at: str = ""
+
 # ORM Instances
 class PrismoORM:
     """Main ORM class with all model instances"""
@@ -428,6 +511,7 @@ class PrismoORM:
         self.attempts = DynamoDBORM("attempts", Attempt)
         self.mastery = DynamoDBORM("mastery", Mastery)
         self.feedback = DynamoDBORM("feedback", Feedback)
+        self.module_sessions = DynamoDBORM("module-sessions", ModuleSession)
         
         # Analytics models
         self.widget_selection = DynamoDBORM("widget-selection", BaseModel)

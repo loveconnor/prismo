@@ -524,10 +524,24 @@ export class WidgetLabComponent implements OnInit, OnDestroy {
     }
 
     try {
+      // First try to load from backend API (for auto-generated modules)
+      try {
+        const apiResponse = await this.http.get<any>(`http://localhost:5000/api/modules/${moduleId}`).toPromise();
+        if (apiResponse?.success && apiResponse?.module) {
+          this.moduleDefinition = apiResponse.module;
+          console.log('[WidgetLab] Successfully loaded module from API:', moduleId);
+          return;
+        }
+      } catch (apiError) {
+        console.log('[WidgetLab] Module not found in API, trying assets folder');
+      }
+
+      // Fall back to assets folder for pre-built modules
       const moduleData = await this.http.get<ModuleDefinition>(`/assets/modules/${moduleId}.json`).toPromise();
       this.moduleDefinition = moduleData || null;
+      console.log('[WidgetLab] Successfully loaded module from assets folder:', moduleId);
     } catch (error) {
-      console.error('Failed to load module:', error);
+      console.error('[WidgetLab] Failed to load module from both API and assets:', error);
       // Handle error - could show error message to user
     }
   }

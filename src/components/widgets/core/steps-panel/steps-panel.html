@@ -25,12 +25,12 @@
           [attr.aria-disabled]="isLocked(step.id) ? true : null"
           [attr.title]="isLocked(step.id) ? 'Complete previous steps first' : null"
           [class]="'w-full flex items-center gap-3 p-3 rounded-lg border transition-all text-left ' +
-                    (currentStep === step.id ? 'bg-[#1a1f26] border-[#2563eb]/30' : 'border-[#1f2937] hover:bg-[#12161b]') + ' ' +
+                    (currentStep === step.id ? 'bg-[#1a1f26] border-primary-custom/30' : 'border-[#1f2937] hover:bg-[#12161b]') + ' ' +
                     (isLocked(step.id) ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : '')">
           <div
             [class]="'flex items-center justify-center w-6 h-6 rounded-full border text-xs font-semibold shrink-0 ' +
                       (isCompleted(step.id) ? 'bg-[#16a34a] border-[#16a34a] text-white' :
-                       (currentStep === step.id ? 'bg-[#2563eb] border-[#2563eb] text-white' : 'bg-[#151a20] border-[#1f2937] text-[#a9b1bb]'))">
+                       (currentStep === step.id ? 'bg-primary-custom border-primary-custom text-white' : 'bg-[#151a20] border-[#1f2937] text-[#a9b1bb]'))">
             <ng-icon *ngIf="isCompleted(step.id)" name="lucideCheck" class="h-3 w-3"></ng-icon>
             <span *ngIf="!isCompleted(step.id)">{{ step.id }}</span>
           </div>
@@ -42,7 +42,7 @@
       @if (currentStepData) {
         <div class="border-t border-[#1f2937] bg-[#0e1318] p-4 overflow-y-auto" style="max-height: 40vh;">
           <div class="mb-3 flex items-center gap-2">
-            <div class="flex h-6 w-6 items-center justify-center rounded-full bg-[#2563eb] text-white text-xs font-semibold">
+            <div class="flex h-6 w-6 items-center justify-center rounded-full bg-primary-custom text-white text-xs font-semibold">
               {{ currentStep }}
             </div>
             <h3 class="text-sm font-semibold text-[#e5e7eb]">Current Step</h3>

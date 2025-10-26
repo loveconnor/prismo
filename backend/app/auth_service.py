@@ -191,12 +191,19 @@ class CognitoAuthService:
         try:
             # First, we need to find the username associated with this email
             # Since Cognito uses username as the login identifier, we need to look up the user
+            print(f"DEBUG: Authenticating user with email: {email}")
             user_data = self.user_model.get_user_by_email(email)
+            print(f"DEBUG: User data from DynamoDB: {user_data}")
+            
             if not user_data:
+                print(f"DEBUG: User not found in DynamoDB for email: {email}")
                 return {"success": False, "error": "User not found"}
             
             username = user_data.get('username')
+            print(f"DEBUG: Username from user data: {username}")
+            
             if not username:
+                print(f"DEBUG: Username not found in user data")
                 return {"success": False, "error": "Username not found for this email"}
             
             # Prepare auth parameters for password auth
@@ -263,18 +270,38 @@ class CognitoAuthService:
         except Exception as e:
             return {"success": False, "error": f"Unexpected error: {e}"}
 
-    def refresh_token(self, refresh_token: str) -> Dict[str, Any]:
-        """Refresh access token"""
+    def refresh_token(self, refresh_token: str, username: str = None) -> Dict[str, Any]:
+        """
+        Refresh access token
+        
+        Args:
+            refresh_token: The refresh token
+            username: Optional username for SECRET_HASH calculation
+        """
         try:
             # Prepare auth parameters
             auth_params = {"REFRESH_TOKEN": refresh_token}
             
-            # Add SECRET_HASH if client secret is configured
-            # For refresh token, we need to get the username from the token
-            # For now, we'll try without it and add it if needed
-            secret_hash = self._get_secret_hash("")  # Empty username for refresh
-            if secret_hash:
-                auth_params["SECRET_HASH"] = secret_hash
+            # Try to extract username from the refresh token if not provided
+            if not username:
+                import jwt
+                try:
+                    # Decode without verification to extract username
+                    decoded = jwt.decode(refresh_token, options={"verify_signature": False})
+                    username = decoded.get('username') or decoded.get('cognito:username')
+                    if username:
+                        print(f"DEBUG: Extracted username from refresh token: {username}")
+                except Exception as decode_error:
+                    print(f"DEBUG: Could not decode refresh token: {decode_error}")
+            
+            # Add SECRET_HASH if we have both client secret and username
+            if username and self.client_secret:
+                secret_hash = self._get_secret_hash(username)
+                if secret_hash:
+                    auth_params["SECRET_HASH"] = secret_hash
+                    print(f"DEBUG: Added SECRET_HASH for user: {username}")
+            elif self.client_secret:
+                print("WARNING: Client secret is configured but no username available for SECRET_HASH")
             
             response = self.cognito.initiate_auth(
                 ClientId=self.client_id,
@@ -291,8 +318,20 @@ class CognitoAuthService:
             }
 
         except ClientError as e:
+            error_message = str(e)
+            print(f"ERROR: Token refresh failed: {error_message}")
+            
+            # If SECRET_HASH mismatch, suggest re-login
+            if "SecretHash does not match" in error_message:
+                return {
+                    "success": False, 
+                    "error": "Token refresh failed due to authentication mismatch. Please log in again.",
+                    "requires_reauth": True
+                }
+            
             return {"success": False, "error": f"Token refresh failed: {e}"}
         except Exception as e:
+            print(f"ERROR: Unexpected error during token refresh: {e}")
             return {"success": False, "error": f"Unexpected error: {e}"}
 
     def forgot_password(self, email: str) -> Dict[str, Any]:
@@ -362,6 +401,29 @@ class CognitoAuthService:
     def verify_token(self, access_token: str) -> Dict[str, Any]:
         """Verify access token and get user info"""
         try:
+            # First try to decode as JWT to get user info directly
+            import jwt
+            try:
+                # Decode without verification to get the payload
+                decoded = jwt.decode(access_token, options={'verify_signature': False})
+                user_id = decoded.get('sub')
+                username = decoded.get('username')
+                
+                if user_id and username:
+                    # Get user from DynamoDB using the user ID
+                    user_data = self.user_model.get_user_by_cognito_id(user_id)
+                    
+                    return {
+                        "success": True, 
+                        "user_data": user_data, 
+                        "user_id": user_id,
+                        "username": username,
+                        "cognito_user": {"Username": username}
+                    }
+            except Exception as jwt_error:
+                print(f"JWT decode failed: {jwt_error}")
+            
+            # Fallback to Cognito get_user method
             response = self.cognito.get_user(AccessToken=access_token)
 
             # Get user from DynamoDB

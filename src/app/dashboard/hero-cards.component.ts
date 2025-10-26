@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ButtonComponent } from '../../components/ui/button/button';
 import { CardComponent } from '../../components/ui/card/card';
 import { CardHeaderComponent } from '../../components/ui/card/card-header';
@@ -57,7 +58,7 @@ import { CreateLabModalComponent } from '../../components/utility/create-lab-mod
           </div>
         </app-card-content>
         <app-card-footer className="justify-center">
-          <app-button className="w-full sm:w-2/3 md:w-1/2">Resume Lab</app-button>
+          <app-button className="w-full sm:w-2/3 md:w-1/2" (click)="navigateToLab('binary-search-tree')">Resume Lab</app-button>
         </app-card-footer>
       </app-card>
 
@@ -104,6 +105,12 @@ import { CreateLabModalComponent } from '../../components/utility/create-lab-mod
 })
 export class HeroCardsComponent {
   isModalOpen = false;
+
+  constructor(private router: Router) {}
+
+  navigateToLab(labPath: string): void {
+    this.router.navigate(['/labs', labPath]);
+  }
 
   onCardKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter' || event.key === ' ') {

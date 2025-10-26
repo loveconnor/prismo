@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit, Optional } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ThemeService } from '../../../services/theme.service';
 import { FontService } from '../../../services/font.service';
 import { Analytics } from '../../../services/analytics.service';
+import { WidgetInteractionService } from '../../../services/widget-interaction.service';
 import { WidgetMetadata, WidgetState, WidgetEvent } from '../../../types/widget.types';
 import { CardComponent } from '../../ui/card/card';
 import { CardContentComponent } from '../../ui/card/card-content';
@@ -77,6 +78,7 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
   @Input() config: Record<string, any> = {};
   @Input() initialData: Record<string, any> = {};
   @Input() moduleId: string = ''; 
+  @Input() sessionId: string = ''; // Session ID for interaction tracking
   @Input() width: string = '100%';
   @Input() height: string = '300px';
   @Input() minHeight: string = '200px';
@@ -115,7 +117,8 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
     protected themeService: ThemeService,
     protected fontService: FontService,
     @Inject(PLATFORM_ID) protected platformId: Object,
-    protected analytics?: Analytics 
+    protected analytics?: Analytics,
+    @Optional() protected widgetInteractionService?: WidgetInteractionService
   ) {}
 
   ngOnInit(): void {
@@ -251,6 +254,17 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
       timestamp: new Date()
     });
 
+    // WIDGET INTERACTION TRACKING: Track meaningful user interactions
+    if (this.widgetInteractionService && this.sessionId && this.shouldTrackInteraction(eventType, data)) {
+      const widgetType = this.getWidgetType();
+      this.widgetInteractionService.trackInteraction(
+        this._state.id,
+        widgetType,
+        eventType,
+        data
+      );
+    }
+
     // ANALYTICS INTEGRATION: Track widget selections/interactions
     if (this.analytics && this.moduleId && this.shouldTrackAnalytics(eventType, data)) {
       const selectedOption = this.extractSelectedOption(eventType, data);
@@ -265,6 +279,37 @@ export abstract class WidgetBaseComponent implements OnInit, OnDestroy, AfterVie
         });
       }
     }
+  }
+
+  // 🎯 Helper method to determine if we should track this interaction
+  private shouldTrackInteraction(eventType: string, data: any): boolean {
+    // Track meaningful user interactions, not just system events
+    const trackableEvents = [
+      'attempt', 'completion', 'state_change', 'hint_revealed', 'answer_submitted',
+      'selection_made', 'confidence_submitted', 'code_executed', 'step_completed'
+    ];
+    
+    return trackableEvents.includes(eventType) && data;
+  }
+
+  // 🎯 Helper method to get widget type for tracking
+  private getWidgetType(): string {
+    // Extract widget type from component name or metadata
+    const componentName = this.constructor.name;
+    
+    // Map component names to widget types
+    const widgetTypeMap: Record<string, string> = {
+      'HintPanelComponent': 'hint-panel',
+      'MultipleChoiceComponent': 'multiple-choice',
+      'ShortAnswerComponent': 'short-answer',
+      'CodeEditorComponent': 'code-editor',
+      'ConfidenceMeterComponent': 'confidence-meter',
+      'StepPromptInteractiveComponent': 'step-prompt',
+      'TimerComponent': 'timer',
+      'FeedbackBoxComponent': 'feedback-box'
+    };
+    
+    return widgetTypeMap[componentName] || 'unknown';
   }
 
   // 🎯 Helper method to determine if we should track this state change

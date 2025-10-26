@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
 import { lucidePlus } from '@ng-icons/lucide';
 import { ButtonComponent } from '../../components/ui/button/button';
@@ -29,6 +30,8 @@ import { CreateLabModalComponent } from '../../components/utility/create-lab-mod
   styleUrls: ['./labs.css']
 })
 export class LabsComponent {
+  private router = inject(Router);
+  
   searchQuery = '';
   filter: LabFilter = 'all';
   sortBy: LabSortBy = 'recent';
@@ -68,14 +71,17 @@ export class LabsComponent {
 
   onResume(labId: string) {
     console.log('Resuming lab:', labId);
+    this.router.navigate(['/labs', labId]);
   }
 
   onReview(labId: string) {
     console.log('Reviewing lab:', labId);
+    this.router.navigate(['/labs', labId]);
   }
 
   onRestart(labId: string) {
     console.log('Restarting lab:', labId);
+    this.router.navigate(['/labs', labId]);
   }
 
   onCreateLab() {

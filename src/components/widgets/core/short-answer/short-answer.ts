@@ -308,6 +308,15 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
     this.isValid.set(validationResult.isCorrect);
     this.componentState.set('submitted');
 
+    // Emit state change for interaction tracking
+    this.emitStateChange('answer_submitted', {
+      answer: this.answer(),
+      isCorrect: validationResult.isCorrect,
+      feedback: validationResult.feedback,
+      charCount: this.charCount,
+      validationMode: this.validation?.mode || 'none'
+    });
+
     // Modern emits
     this.onSubmit?.(this.answer(), validationResult.isCorrect, validationResult.feedback);
     this.submit.emit({
@@ -357,7 +366,7 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
     if (this.isTooShort || this.componentState() === 'submitting') {
       return `${base} cursor-not-allowed bg-[#1f2937] text-[#6b7280]`;
     }
-    return `${base} bg-[#BC78F9] text-white hover:bg-[#2563eb]`;
+    return `${base} bg-[#BC78F9] text-white hover:bg-primary-custom`;
   }
 
   isButtonDisabled(): boolean {

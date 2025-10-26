@@ -12,8 +12,8 @@ import asyncio
 import time
 from datetime import datetime
 from typing import Dict, List, Any, Optional
-import requests
 from app.orm import orm
+from app.claude_routes import get_claude_response
 from .learner_profile import LearnerProfile, LearnerProfileManager
 from .skill_tree import SkillTreeManager
 
@@ -50,20 +50,7 @@ class ModuleGenerator:
         # Rate limiter to avoid hitting API limits (10 requests per minute by default)
         self.rate_limiter = RateLimiter(requests_per_minute=10)
         
-        # AWS Bedrock API configuration
-        self.aws_region = os.getenv("AWS_REGION", "us-east-1")
-        self.bedrock_api_token = os.getenv("BEDROCK_API_TOKEN")
-        
-        if not self.bedrock_api_token:
-            print("⚠️  Warning: BEDROCK_API_TOKEN not found in environment variables")
-        else:
-            print(f"✓ Bedrock API token loaded")
-        
-        # Bedrock API endpoint for Claude 3.5 Sonnet
-        self.bedrock_url = f"https://bedrock-runtime.{self.aws_region}.amazonaws.com/model/us.anthropic.claude-3-5-sonnet-20241022-v2:0/invoke"
-        
-        print(f"✓ ModuleGenerator initialized with Bedrock API")
-        print(f"✓ Region: {self.aws_region}")
+        print(f"✓ ModuleGenerator initialized with Claude via Bedrock")
         print(f"✓ Widget registry loaded: {len(self.widget_registry)} widgets")
         print(f"✓ Rate limiter: 10 requests per minute")
     
@@ -87,10 +74,10 @@ class ModuleGenerator:
         """Generate a new module using AWS Bedrock in the exact required JSON format"""
         profile = self.profile_manager.get_or_create_profile(user_id)
         skill_tree = self.skill_manager.get_or_create_skill_tree(user_id)
-        
-        # Generate unique module ID
-        module_id = f"{topic.lower().replace(' ', '-')}-{str(uuid.uuid4())[:8]}"
-        
+
+        # Generate unique module name
+        module_name = f"{topic.lower().replace(' ', '-')}-{str(uuid.uuid4())[:8]}"
+
         # Prepare context for AI generation
         generation_context = self._prepare_generation_context(
             user_id, topic, target_skills, difficulty, profile, skill_tree
@@ -98,7 +85,7 @@ class ModuleGenerator:
         
         # Use AWS Bedrock to generate the module
         module = await self._generate_module_with_bedrock(
-            module_id, topic, target_skills, difficulty, estimated_time, generation_context
+            module_name, topic, target_skills, difficulty, estimated_time, generation_context
         )
         
         return module
@@ -108,79 +95,164 @@ class ModuleGenerator:
         """Prepare context information for the AI to generate appropriate modules"""
         
         # Get relevant widgets for the target skills
-        relevant_widgets = [w for w in self.widget_registry if any(skill in w.get('skills', []) for skill in target_skills)]
+        relevant_widget_names = [w['name'] for w in self.widget_registry if any(skill in w.get('skills', []) for skill in target_skills)]
         
-        context = f"""
-        USER PROFILE:
-        - User ID: {user_id}
-        - Learning Pace: {profile.learning_pace}
-        - Failure Rate: {profile.failure_rate:.2f}
-        - Average Completion Time: {profile.average_completion_time}s
-        - Completion Rate: {profile.calculate_completion_rate():.1f}%
-        
-        TARGET LEARNING:
-        - Topic: {topic}
-        - Target Skills: {', '.join(target_skills)}
-        - Difficulty Level: {difficulty}
-        
-        AVAILABLE WIDGETS:
-        {json.dumps(relevant_widgets, indent=2)}
-        
-        WIDGET REGISTRY (All Available):
-        {json.dumps(self.widget_registry[:10], indent=2)}  # First 10 widgets as examples
-        
-        SKILL TREE STATUS:
-        - Current Skills: {', '.join(skill_tree.get_mastered_skills()[:5])}
-        - Recommended Next Skills: {', '.join(skill_tree.get_recommended_next_skills()[:3])}
-        """
-
-
+        context = f"""USER: pace={profile.learning_pace}, fail_rate={profile.failure_rate:.1f}, completion={profile.calculate_completion_rate():.0f}%
+TOPIC: {topic} | SKILLS: {', '.join(target_skills)} | DIFFICULTY: {difficulty}
+RECOMMENDED_WIDGETS: {', '.join(relevant_widget_names[:10])}
+SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={', '.join(skill_tree.get_recommended_next_skills()[:2])}"""
         return context
     
-    async def _generate_module_with_bedrock(self, module_id: str, topic: str, target_skills: List[str],
+    def _get_widget_schema_reference(self) -> str:
+        """Create a compact reference of all available widgets with their schemas"""
+        widget_summary = []
+        for widget in self.widget_registry:
+            widget_summary.append({
+                "name": widget.get("name"),
+                "title": widget.get("title"),
+                "skills": widget.get("skills", []),
+                "category": widget.get("category"),
+                "props_hint": self._get_props_example(widget.get("name"))
+            })
+        return json.dumps(widget_summary, indent=2)
+    
+    def _get_props_example(self, widget_name: str) -> str:
+        """Return a brief hint about expected props for each widget type"""
+        props_examples = {
+            "step-prompt": "title, prompt, estimatedTime",
+            "confidence-meter": "minLabel, maxLabel, question",
+            "feedback-box": "type, title, message, explanation, nextSteps (MUST BE ARRAY)",
+            "multiple-choice": "title, question, options, correctAnswer",
+            "code-editor": "title, language, starterCode, testCases",
+            "short-answer": "title, question, expectedAnswer",
+            "hint-panel": "hints (array with tier, text)",
+            "fill-in-blanks": "title, sentence, blanks",
+            "matching-pairs": "title, pairs",
+            "numeric-input": "title, question, correctAnswer, tolerance",
+        }
+        return props_examples.get(widget_name, "title, content")
+    
+    def _get_compact_registry(self) -> str:
+        """Return a compact, formatted version of the registry for AI consumption"""
+        # For critical widgets (step-prompt, confidence-meter, feedback-box), include full schema
+        # For others, include abbreviated version
+        critical_widgets = ["step-prompt", "confidence-meter", "feedback-box"]
+        full_schemas = []
+        abbreviated = []
+        
+        for widget in self.widget_registry:
+            # Convert 'name' to 'id' for metadata
+            widget_copy = widget.copy()
+            if "name" in widget_copy:
+                widget_copy["id"] = widget_copy.pop("name")
+            
+            if widget.get("name") in critical_widgets or widget.get("id") in critical_widgets:
+                full_schemas.append(widget_copy)
+            else:
+                # Keep essential fields only - MUST include description
+                abbreviated.append({
+                    "id": widget.get("name"),
+                    "title": widget.get("title"),
+                    "description": widget.get("description"),  # CRITICAL: Must include description
+                    "skills": widget.get("skills", []),
+                    "category": widget.get("category"),
+                    "difficulty": widget.get("difficulty"),
+                    "estimated_time": widget.get("estimated_time"),
+                    "input_type": widget.get("input_type"),
+                    "output_type": widget.get("output_type"),
+                    "dependencies": widget.get("dependencies", []),
+                    "adaptive_hooks": widget.get("adaptive_hooks", {}),
+                    "version": widget.get("version", "1.0.0")
+                })
+        
+        return f"""CRITICAL WIDGETS (use exact schemas, copy metadata exactly):
+{json.dumps(full_schemas, indent=2)}
+
+OTHER AVAILABLE WIDGETS (copy structure, adapt props):
+{json.dumps(abbreviated, indent=2)}"""
+    
+    def _fix_json_string(self, text: str) -> str:
+        """Attempt to fix common JSON formatting issues by escaping unescaped newlines in string values"""
+        import re
+        
+        # This function fixes strings that contain literal newlines instead of \n
+        # Strategy: Find string values (content between quotes) and escape special chars
+        
+        result = []
+        in_string = False
+        escape_next = False
+        i = 0
+        
+        while i < len(text):
+            char = text[i]
+            
+            # Handle escape sequences
+            if escape_next:
+                result.append(char)
+                escape_next = False
+                i += 1
+                continue
+            
+            # Check for backslash (escape character)
+            if char == '\\':
+                result.append(char)
+                escape_next = True
+                i += 1
+                continue
+            
+            # Toggle string mode when we hit a quote
+            if char == '"':
+                result.append(char)
+                in_string = not in_string
+                i += 1
+                continue
+            
+            # If we're inside a string, escape special characters
+            if in_string:
+                if char == '\n':
+                    result.append('\\n')
+                elif char == '\r':
+                    result.append('\\r')
+                elif char == '\t':
+                    result.append('\\t')
+                else:
+                    result.append(char)
+            else:
+                # Outside strings, keep everything as-is
+                result.append(char)
+            
+            i += 1
+        
+        return ''.join(result)
+    
+    async def _generate_module_with_bedrock(self, module_name: str, topic: str, target_skills: List[str],
                                             difficulty: str, estimated_time: int, context: str) -> Dict[str, Any]:
         """Use AWS Bedrock API to generate a module with strict JSON output"""
         
-        # Create the prompt with explicit JSON structure
-        prompt = f"""Create a complete learning module JSON for the topic "{topic}" targeting these skills: {', '.join(target_skills)}.
+        # Widget difficulty mapping - reduced to fit in token limit
+        widget_counts = {"beginner": 2, "intermediate": 3, "advanced": 5}
+        num_learning_widgets = widget_counts.get(difficulty, 2)
+        
+        # Create the streamlined prompt
+        prompt = f"""Generate a learning module for "{topic}" as valid JSON only (no markdown, no explanations).
 
-REQUIRED MODULE STRUCTURE (return ONLY valid JSON, no markdown):
+CRITICAL JSON RULES:
+1. All strings MUST be on ONE line - replace actual newlines with \\n
+2. Escape quotes inside strings: use \\" not "
+3. For code in "starterCode" field: replace newlines with \\n, NOT actual line breaks
+4. Keep "prompt" and "starterCode" content CONCISE (under 500 chars each)
+5. Example: "starterCode": "line1\\nline2\\nline3" NOT "starterCode": "line1
+   line2"
+
+=== OUTPUT FORMAT ===
 {{
-  "id": "{module_id}",
-  "title": "Clear, engaging title for {topic}",
-  "description": "Brief summary of what the learner will accomplish",
+  "name": "{module_name}",
+  "title": "<engaging_title>",
+  "description": "<learning_objective>",
   "skills": {json.dumps(target_skills)},
-  "widgets": [
-    {{
-      "id": "unique-widget-id",
-      "metadata": {{
-        "id": "widget-type-name",
-        "title": "Widget Display Title",
-        "description": "What this widget does",
-        "skills": ["relevant", "skills"],
-        "difficulty": 2,
-        "estimated_time": 60,
-        "input_type": "text",
-        "output_type": "scaffold",
-        "dependencies": [],
-        "adaptive_hooks": {{
-          "difficulty_adjustment": true,
-          "hint_progression": false
-        }},
-        "version": "1.0.0",
-        "category": "core"
-      }},
-      "props": {{
-        "title": "Specific title for this instance",
-        "prompt": "Instructions or content",
-        "estimatedTime": 30
-      }},
-      "position": 1,
-      "dependencies_met": true
-    }}
-  ],
+  "widgets": [<see WIDGET STRUCTURE below>],
   "completion_criteria": {{
-    "required_widgets": ["list", "of", "widget", "ids"],
+    "required_widgets": ["<learning-widget-names-only>"],
     "min_completion_percentage": 80,
     "max_attempts": 3,
     "time_limit": {estimated_time}
@@ -189,126 +261,202 @@ REQUIRED MODULE STRUCTURE (return ONLY valid JSON, no markdown):
   "version": "1.0.0"
 }}
 
-WIDGET GENERATION RULES:
-1. ALWAYS start with a "step-prompt" widget (position 1) to introduce the module
-2. Each widget MUST have both "metadata" (defines the widget type) and "props" (specific instance data)
-3. For difficulty "{difficulty}", include:
-   - beginner: 3-4 widgets (step-prompt + 2-3 learning widgets)
-   - intermediate: 5-6 widgets (step-prompt + 4-5 learning widgets)  
-   - advanced: 6-8 widgets (step-prompt + 5-7 learning widgets)
-4. Use varied widget types: step-prompt, code-editor, multiple-choice, interactive-demo, practice-exercise
-5. Each widget should build on previous ones (progressive learning)
-6. Match widgets to target skills from the registry below
+=== MANDATORY RULES ===
+1. WIDGET PATTERN (STRICT - NO EXCEPTIONS):
+   Pos 1-3: step-prompt → feedback-box → confidence-meter (intro)
+   Pos 4-6: [learning-widget] → feedback-box → confidence-meter
+   Pos 7-9: [learning-widget] → feedback-box → confidence-meter
+   Continue for {num_learning_widgets} learning widgets total
 
-Context about the learner:
+2. WIDGET STRUCTURE:
+   {{
+     "id": "<widget-type>",  // CRITICAL: Must match metadata.id (e.g., "step-prompt")
+     "metadata": {{
+       "id": "<widget-type>",  // MUST BE SAME as root "id" (e.g., "step-prompt")
+       "title": "<Widget Title>",  // REQUIRED
+       "description": "<What this widget does>",  // REQUIRED - DO NOT OMIT
+       "skills": ["skill1", "skill2"],  // REQUIRED
+       "difficulty": 2,  // REQUIRED
+       "estimated_time": 30,  // REQUIRED
+       "input_type": "text",  // REQUIRED
+       "output_type": "scaffold",  // REQUIRED
+       "dependencies": [],  // REQUIRED
+       "adaptive_hooks": {{}},  // REQUIRED
+       "version": "1.0.0",  // REQUIRED
+       "category": "core"  // REQUIRED
+     }},
+     "props": {{<custom_content_per_props_hint>}},
+     "position": <number>,  // SEE RULE 3 BELOW
+     "dependencies_met": true
+   }}
+   
+   CRITICAL: Root "id" MUST equal metadata "id"
+   Example: Both should be "step-prompt" or "confidence-meter", NOT unique names like "intro-step-prompt-001"
+   
+   REQUIRED METADATA FIELDS (12 total):
+   id, title, description, skills, difficulty, estimated_time,
+   input_type, output_type, dependencies, adaptive_hooks, version, category
+
+3. POSITION FIELD RULES (CRITICAL):
+   ✓ INCLUDE "position" for ACTIVE LEARNING widgets that require user work:
+     - step-prompt (instructional content)
+     - code-editor (coding exercises)
+     - multiple-choice (questions)
+     - short-answer (text responses)
+     - fill-in-blanks (completion tasks)
+     - matching-pairs (matching exercises)
+     - numeric-input (math problems)
+     - text-editor (writing tasks)
+     
+   ✗ EXCLUDE "position" (DO NOT ADD) for PASSIVE/SUPPORT widgets:
+     - feedback-box (provides feedback, no user action)
+     - confidence-meter (optional self-assessment)
+     - hint-panel (optional help, no required action)
+
+    THE POSITION NUMBER ONLY INCREMENTS FOR ACTIVE LEARNING WIDGETS. So feedback and confidence-meter widgets do NOT increment the position value
+   Example CORRECT structure:
+   {{
+     "id": "step-prompt",
+     "metadata": {{...}},
+     "props": {{...}},
+     "position": 1,  // ✓ Has position - active learning
+     "dependencies_met": true
+   }}
+   
+   {{
+     "id": "feedback-box",
+     "metadata": {{...}},
+     "props": {{...}},
+     "dependencies_met": true  // ✗ NO position field - passive widget
+   }}
+
+
+4. metadata.id values: step-prompt | feedback-box | confidence-meter | multiple-choice | code-editor | short-answer | etc.
+
+=== CRITICAL: FEEDBACK-BOX PROPS EXAMPLE ===
+CORRECT feedback-box props structure:
+{{
+  "type": "success",  // or "error", "warning", "info"
+  "title": "Great Job!",
+  "message": "You completed the task successfully.",
+  "explanation": "This demonstrates your understanding of the concept.",
+  "nextSteps": [
+    "Try the next challenge",
+    "Review the documentation",
+    "Practice with variations"
+  ]
+}}
+
+WRONG (DO NOT USE):
+{{
+  "nextSteps": "Try the next challenge"  // ❌ NEVER use string, MUST be array
+}}
+
+=== WIDGET QUICK REF ===
+{self._get_widget_schema_reference()}
+
+=== WIDGET REGISTRY ===
+{self._get_compact_registry()}
+
+=== CONTEXT ===
 {context}
 
-Generate ONLY the complete module JSON (no markdown, no explanation, just pure JSON)."""
+Return JSON only."""
         
-        # Retry configuration for rate limiting
-        max_retries = 3
-        base_delay = 2  # seconds
+        # System prompt for Claude
+        system_prompt = """You are an expert educational content architect. Output ONLY valid JSON.
+CRITICAL: ALL string values must be on a SINGLE line. Replace newlines with \\n escape sequences.
+For multi-line code in "starterCode" or "prompt" fields: Use \\n NOT actual line breaks.
+Example: "starterCode": "import React\\n\\nfunction App() {\\n  return <div>Hello</div>\\n}"
+
+CRITICAL POSITION FIELD RULE:
+- ONLY add "position" field to widgets requiring active learning/user work
+- INCLUDE position: step-prompt, code-editor, multiple-choice, short-answer, fill-in-blanks, matching-pairs, numeric-input, text-editor
+- EXCLUDE position: feedback-box, confidence-meter, hint-panel
+- WHEN GIVING CODE PROBELMS: Do not give the solution in the starterCode
+- Example: feedback-box and confidence-meter should NOT have "position" field
+
+CRITICAL FEEDBACK-BOX RULE:
+- nextSteps MUST ALWAYS be an ARRAY of strings: ["step1", "step2", "step3"]
+- NEVER use a string for nextSteps: "step1" ❌
+- Even for single step, use array: ["step1"] ✓
+
+After every learning widget, insert confidence-meter then feedback-box widgets. Match widget metadata exactly to registry schemas."""
         
         try:
-            print(f"📡 Calling AWS Bedrock API (Claude 3.5 Sonnet)")
+            print(f"📡 Calling Claude via Bedrock")
             print(f"   Topic: {topic}")
             print(f"   Target Skills: {', '.join(target_skills)}")
             
             # Wait for rate limiter before making request
             await self.rate_limiter.acquire()
             
-            # Prepare the request body for Claude Sonnet 3.5
-            request_body = {
-                "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 4000,
-                "system": "You are an expert educational content creator. Generate ONLY valid JSON. Do not include markdown code blocks, explanations, or any text outside the JSON structure. Always create modules with MULTIPLE widgets (minimum 3-5, never just one). Each module should be a complete learning experience with introduction, learning content, practice, and assessment widgets.",
-                "messages": [{"role": "user", "content": prompt}],
-            }
+            # Make the API call using claude_routes function
+            loop = asyncio.get_event_loop()
+            generated_text = await loop.run_in_executor(
+                None,
+                lambda: get_claude_response(prompt, system_prompt, max_tokens=200000)
+            )
             
-            # Headers with the Bearer token
-            headers = {
-                "Authorization": f"Bearer {self.bedrock_api_token}",
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            }
-            
-            # Retry loop for handling rate limits
-            for attempt in range(max_retries):
-                # Make the API call asynchronously
-                loop = asyncio.get_event_loop()
-                response = await loop.run_in_executor(
-                    None,
-                    lambda: requests.post(self.bedrock_url, headers=headers, data=json.dumps(request_body), timeout=60)
-                )
+            if generated_text:
+                print(f"✓ Claude returned response ({len(generated_text)} chars)")
                 
-                # Check if the request was successful
-                if response.status_code == 200:
-                    response_body = response.json()
+                # Clean up the response (remove markdown if present)
+                generated_text = generated_text.strip()
+                if generated_text.startswith('```json'):
+                    generated_text = generated_text[7:]
+                if generated_text.startswith('```'):
+                    generated_text = generated_text[3:]
+                if generated_text.endswith('```'):
+                    generated_text = generated_text[:-3]
+                generated_text = generated_text.strip()
+                
+                # Try to parse the JSON
+                try:
+                    module = json.loads(generated_text)
+                except json.JSONDecodeError as e:
+                    print(f"⚠️  JSON parse error: {e}")
+                    print(f"   Attempting to fix common JSON issues...")
                     
-                    # Extract and print the content
-                    if "content" in response_body and len(response_body["content"]) > 0:
-                        generated_text = response_body["content"][0]["text"]
-                        
-                        print(f"✓ Bedrock API returned response ({len(generated_text)} chars)")
-                        
-                        # Clean up the response (remove markdown if present)
-                        generated_text = generated_text.strip()
-                        if generated_text.startswith('```json'):
-                            generated_text = generated_text[7:]
-                        if generated_text.startswith('```'):
-                            generated_text = generated_text[3:]
-                        if generated_text.endswith('```'):
-                            generated_text = generated_text[:-3]
-                        generated_text = generated_text.strip()
-                        
-                        # Parse the JSON
-                        module = json.loads(generated_text)
-                        
-                        print(f"✓ Successfully parsed module: {module.get('id', 'unknown')}")
-                        print(f"✓ Module has {len(module.get('widgets', []))} widgets")
-                        
-                        # Validate the generated module
-                        self._validate_generated_module(module)
-                        return module
-                    else:
-                        raise Exception("No content found in Bedrock response")
+                    # Save the raw response for debugging first
+                    debug_file = f"/tmp/module_generation_error_{int(time.time())}.txt"
+                    with open(debug_file, 'w') as f:
+                        f.write(generated_text)
+                    print(f"   Raw response saved to: {debug_file}")
+                    
+                    # Try to fix the JSON by escaping unescaped content
+                    try:
+                        fixed_text = self._fix_json_string(generated_text)
+                        module = json.loads(fixed_text)
+                        print(f"✓ Successfully fixed and parsed JSON!")
+                    except Exception as fix_error:
+                        print(f"   Failed to fix JSON: {fix_error}")
+                        # Re-raise original error
+                        raise
                 
-                # Handle rate limiting (429 Too Many Requests)
-                elif response.status_code == 429:
-                    if attempt < max_retries - 1:
-                        # Exponential backoff: 2s, 4s, 8s
-                        delay = base_delay * (2 ** attempt)
-                        print(f"⚠️  Rate limit hit (429). Retrying in {delay}s... (attempt {attempt + 1}/{max_retries})")
-                        await asyncio.sleep(delay)
-                        continue
-                    else:
-                        raise Exception(f"Rate limit exceeded after {max_retries} attempts. Please try again later.")
+                print(f"✓ Successfully parsed module: {module.get('name', 'unknown')}")
+                print(f"✓ Module has {len(module.get('widgets', []))} widgets")
                 
-                # Handle other HTTP errors
-                else:
-                    # Check if we should retry on certain error codes
-                    if response.status_code in [500, 502, 503, 504] and attempt < max_retries - 1:
-                        delay = base_delay * (2 ** attempt)
-                        print(f"⚠️  Server error ({response.status_code}). Retrying in {delay}s... (attempt {attempt + 1}/{max_retries})")
-                        await asyncio.sleep(delay)
-                        continue
-                    else:
-                        raise Exception(f"HTTP {response.status_code}: {response.text}")
+                # Validate the generated module
+                self._validate_generated_module(module)
+                return module
+            else:
+                raise Exception("No response from Claude")
                         
         except json.JSONDecodeError as e:
             print(f"✗ Failed to parse JSON from Bedrock response: {e}")
             print(f"   Response text: {generated_text[:500]}...")
-            return self._create_fallback_module(module_id, topic, target_skills, estimated_time)
+            return self._create_fallback_module(module_name, topic, target_skills, estimated_time)
         except Exception as e:
             print(f"✗ Error generating module with Bedrock: {e}")
             import traceback
             traceback.print_exc()
             # Fallback to a basic module structure if API fails
-            return self._create_fallback_module(module_id, topic, target_skills, estimated_time)
+            return self._create_fallback_module(module_name, topic, target_skills, estimated_time)
     
     def _validate_generated_module(self, module: Dict[str, Any]) -> None:
         """Validate that the generated module follows the required format"""
-        required_fields = ["id", "title", "description", "skills", "widgets", "completion_criteria", "estimated_duration", "version"]
+        required_fields = ["name", "title", "description", "skills", "widgets", "completion_criteria", "estimated_duration", "version"]
         
         for field in required_fields:
             if field not in module:
@@ -319,12 +467,35 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
             raise ValueError("Module must have at least one widget")
         
         for i, widget in enumerate(module["widgets"]):
-            # Check for required widget fields (be flexible about structure)
-            if "id" not in widget:
-                raise ValueError(f"Widget {i} missing required field: id")
-            if "position" not in widget:
-                # Auto-assign position if missing
+            # CRITICAL: Frontend expects "id" at root level, NOT "name"
+            # Convert "name" to "id" if AI generated "name"
+            if "name" in widget and "id" not in widget:
+                widget["id"] = widget.pop("name")
+                print(f"⚠️  Widget {i}: converted 'name' to 'id': {widget['id']}")
+            elif "id" not in widget:
+                # Generate an id if missing
+                widget_type = widget.get("metadata", {}).get("id", "unknown")
+                widget["id"] = widget_type  # Use widget type, not unique name
+                print(f"⚠️  Warning: Widget {i} missing 'id', auto-generated: {widget['id']}")
+            
+            # CRITICAL: Root "id" must match metadata "id"
+            metadata_id = widget.get("metadata", {}).get("id")
+            if metadata_id and widget.get("id") != metadata_id:
+                print(f"⚠️  Widget {i}: root id '{widget['id']}' doesn't match metadata.id '{metadata_id}', fixing...")
+                widget["id"] = metadata_id
+            
+            # CRITICAL: Remove position from passive/support widgets
+            passive_widget_types = ['feedback-box', 'confidence-meter', 'hint-panel']
+            widget_type = widget.get("id") or widget.get("metadata", {}).get("id")
+            
+            if widget_type in passive_widget_types:
+                if "position" in widget:
+                    print(f"⚠️  Widget {i} ({widget_type}): Removing 'position' field - passive widget doesn't need it")
+                    del widget["position"]
+            elif "position" not in widget:
+                # Auto-assign position if missing for active learning widgets
                 widget["position"] = i + 1
+                
             if "dependencies_met" not in widget:
                 # Default to True if missing
                 widget["dependencies_met"] = True
@@ -338,16 +509,16 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
             if "props" not in widget:
                 widget["props"] = {}
     
-    def _create_fallback_module(self, module_id: str, topic: str, target_skills: List[str], estimated_time: int) -> Dict[str, Any]:
+    def _create_fallback_module(self, module_name: str, topic: str, target_skills: List[str], estimated_time: int) -> Dict[str, Any]:
         """Create a basic fallback module if API generation fails"""
         return {
-            "id": module_id,
+            "name": module_name,
             "title": f"Introduction to {topic}",
             "description": f"Learn the fundamentals of {topic} through interactive exercises.",
             "skills": target_skills,
             "widgets": [
                 {
-                    "id": "step-prompt",
+                    "id": "step-prompt",  # Root id must match metadata.id
                     "metadata": {
                         "id": "step-prompt",
                         "title": "Step Prompt",
@@ -386,11 +557,11 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
     
     
     def save_generated_module(self, module: Dict[str, Any], user_id: str) -> str:
-        """Save generated module to database and return module ID"""
+        """Save generated module to database and return module name"""
         module_data = {
-            "id": module["id"],
+            "id": str(uuid.uuid4()),  # Generate a unique ID for database
             "user_id": user_id,
-            "name": module["title"],
+            "name": module["name"],  # Use the module name from the generated content
             "module_type": "generated",
             "content": module,
             "is_public": False,
@@ -403,7 +574,7 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
         return saved_module.to_dict()["id"]
     
     async def create_personalized_module(self, user_id: str, learning_goal: str = None) -> Dict[str, Any]:
-        """Create a personalized module based on user's current state using STEVE API"""
+        """Create a personalized module based on user's current state using Bedrock API"""
         profile = self.profile_manager.get_or_create_profile(user_id)
         skill_tree = self.skill_manager.get_or_create_skill_tree(user_id)
         
@@ -435,12 +606,12 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
         else:
             estimated_time = int(profile.average_completion_time) if profile.average_completion_time > 0 else 1800
         
-        # Generate the module using STEVE API
+        # Generate the module using Bedrock API
         module = await self.generate_module(user_id, topic, target_skills, difficulty, estimated_time)
         
         # Save to database
-        module_id = self.save_generated_module(module, user_id)
-        module["saved_id"] = module_id
+        module_name = self.save_generated_module(module, user_id)
+        module["saved_id"] = module_name
         
         return module
     

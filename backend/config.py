@@ -21,9 +21,9 @@ class Config:
     COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
     DYNAMODB_TABLE_PREFIX = os.getenv("DYNAMODB_TABLE_PREFIX", "prismo")
     
-    # STEVE API Configuration
-    STEVE_API_URL = os.getenv("STEVE_API_URL", "https://stevellmapi.vercel.app/generate-content")
-    STEVE_API_KEY = os.getenv("STEVE_API_KEY")
+    # Bedrock API Configuration
+    Bedrock_API_URL = os.getenv("Bedrock_API_URL", "https://Bedrockllmapi.vercel.app/generate-content")
+    Bedrock_API_KEY = os.getenv("Bedrock_API_KEY")
 
 
 class DevelopmentConfig(Config):

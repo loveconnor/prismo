@@ -4,7 +4,7 @@
   [className]="dialogClasses"
   [closeOnBackdropClick]="true"
 >
-  <form (submit)="submit($event)">
+  <div>
     <app-dialog-header [className]="'space-y-0'">
       <div class="modal-header">
         <div class="icon-pill">
@@ -56,22 +56,39 @@
         <app-label for="skills" [className]="labelClasses">
           What skills do you want to practice?
         </app-label>
-        <app-input
-          id="skills"
-          name="skills"
-          [ngModel]="skillInput"
-          (ngModelChange)="onSkillInputChange($event)"
-          (keydown)="handleSkillKeydown($event)"
-          placeholder="Add skills (e.g., loops, debugging, recursion)"
-          [className]="inputClasses"
-        ></app-input>
+        <div class="flex gap-2">
+          <app-input
+            id="skills"
+            name="skills"
+            [ngModel]="skillInput"
+            (ngModelChange)="onSkillInputChange($event)"
+            (keydown)="handleSkillKeydown($event)"
+            (blur)="handleSkillInputBlur()"
+            placeholder="Add skill then press enter (e.g., loops, debugging, recursion)"
+            [className]="inputClasses"
+            class="flex-1"
+          ></app-input>
+          <button
+            type="button"
+            (click)="addSkill()"
+            [disabled]="!skillInput.trim()"
+            class="px-4 py-2 text-sm font-medium rounded whitespace-nowrap transition-colors"
+            [style.backgroundColor]="skillInput.trim() ? '#3b82f6' : '#e5e7eb'"
+            [style.color]="skillInput.trim() ? '#fff' : '#9ca3af'"
+            [style.borderColor]="skillInput.trim() ? '#1e40af' : '#d1d5db'"
+            [style.border]="'1px solid'"
+            [style.cursor]="skillInput.trim() ? 'pointer' : 'not-allowed'"
+          >
+            Add Skill
+          </button>
+        </div>
 
         @if (skills.length > 0) {
           <div class="skills-list">
             @for (skill of skills; track i; let i = $index) {
               <span class="skill-pill">
                 {{ skill }}
-                <button type="button" (click)="removeSkill(i)">
+                <button type="button" (click)="removeSkill(i)" class="ml-1 hover:opacity-70">
                   <ng-icon name="lucide-x" class="h-3 w-3"></ng-icon>
                 </button>
               </span>
@@ -79,7 +96,7 @@
           </div>
         }
 
-        <p class="helper-text">Optional — helps the AI personalize your lab</p>
+        <p class="helper-text">Optional — helps the AI personalize your lab. Press Enter or click "Add Skill" to add.</p>
       </div>
 
       <div class="field-group">
@@ -100,13 +117,22 @@
 
     <app-dialog-footer class="footer">
       <app-button 
-        type="submit" 
-        [disabled]="!canSubmit" 
+        (click)="submit()" 
+        [disabled]="!canSubmit || isGenerating" 
         [className]="buttonClasses"
       >
         <ng-icon name="lucide-sparkles" class="h-4 w-4"></ng-icon>
-        Generate Lab
+        {{ isGenerating ? 'Generating...' : 'Generate Lab' }}
       </app-button>
     </app-dialog-footer>
-  </form>
+  </div>
 </app-dialog>
+
+<!-- Loading Screen -->
+<app-module-loading-screen
+  [isLoading]="isGenerating"
+  [title]="'Generating Your Lab'"
+  [message]="'Our AI is crafting a personalized learning experience just for you...'"
+  [progress]="loadingProgress"
+  [progressText]="loadingProgressText"
+></app-module-loading-screen>

@@ -44,27 +44,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   { 
+    path: 'labs/module/:name', 
+    loadComponent: () => import('./widget-lab/widget-lab').then(m => m.WidgetLabComponent),
+    canActivate: [authGuard]
+  },
+  { 
     path: 'labs/:id', 
-    loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
-    canActivate: [authGuard]
-  },
-  { 
-    path: 'labs/pt01', 
-    loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
-    canActivate: [authGuard]
-  },
-  { 
-    path: 'labs/javascript-array-methods', 
-    loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
-    canActivate: [authGuard]
-  },
-  { 
-    path: 'labs/test-fullstack-todo', 
-    loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
-    canActivate: [authGuard]
-  },
-  { 
-    path: 'labs/fullstack-todo-with-steps', 
     loadComponent: () => import('./labs/lab-template/lab-template').then(m => m.LabTemplateComponent),
     canActivate: [authGuard]
   },

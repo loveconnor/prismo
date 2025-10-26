@@ -767,6 +767,14 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
 
     console.log('🔍 Language:', this.language);
     
+    // Emit state change for interaction tracking
+    this.emitStateChange('code_executed', {
+      runsCount: this.runsCount,
+      language: this.language,
+      codeLength: this.code.length,
+      hasTests: this.testCases.length > 0
+    });
+
     // For JavaScript, Python, and C++, execute on backend
     const lang = this.language.toLowerCase();
     if (lang === 'javascript' || lang === 'js' || 
@@ -783,10 +791,24 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
         this.lastExecutionTime = Date.now() - startTime;
         this.setDataValue('last_execution_time', this.lastExecutionTime);
         this.setDataValue('execution_success', true);
+        
+        // Emit success state change
+        this.emitStateChange('code_execution_success', {
+          executionTime: this.lastExecutionTime,
+          outputLength: this.output.length,
+          testsPassed: this.testCases.filter(t => t.passed).length,
+          totalTests: this.testCases.length
+        });
       } catch (error) {
         this.output = `Error: ${error}`;
         this.outputStatus = 'error';
         this.setDataValue('execution_error', error);
+        
+        // Emit error state change
+        this.emitStateChange('code_execution_error', {
+          error: String(error),
+          executionTime: Date.now() - startTime
+        });
       }
       
       this.isRunning = false;
@@ -1211,4 +1233,3 @@ export class CodeEditorComponent extends WidgetBaseComponent implements AfterVie
     console.log('Feedback layout changed:', sizes);
   }
 }
-

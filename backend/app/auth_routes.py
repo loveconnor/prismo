@@ -160,7 +160,10 @@ def refresh_token():
         if "refresh_token" not in data:
             return jsonify({"error": "Refresh token required"}), 400
 
-        result = auth_service.refresh_token(data["refresh_token"])
+        # Optional: accept username to help with SECRET_HASH calculation
+        username = data.get("username")
+        
+        result = auth_service.refresh_token(data["refresh_token"], username=username)
 
         if result["success"]:
             return (
@@ -173,7 +176,14 @@ def refresh_token():
                 200,
             )
         else:
-            return jsonify({"error": result["error"]}), 401
+            status_code = 401
+            response_data = {"error": result["error"]}
+            
+            # If re-authentication is required, add flag
+            if result.get("requires_reauth"):
+                response_data["requires_reauth"] = True
+                
+            return jsonify(response_data), status_code
 
     except Exception as e:
         return jsonify({"error": f"Token refresh failed: {e}"}), 500
