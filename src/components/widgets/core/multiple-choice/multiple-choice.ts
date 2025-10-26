@@ -21,6 +21,7 @@ import {
 import { cn } from '../../../../lib/utils';
 import { ThemeService } from '../../../../services/theme.service';
 import { FontService } from '../../../../services/font.service';
+import { SkillTrackingService } from '../../../../services/skill-tracking.service';
 
 /** ==================== LEGACY (HEAD) TYPES ==================== */
 export interface MultipleChoiceOption {
@@ -158,7 +159,8 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
   constructor(
     themeService: ThemeService,
     fontService: FontService,
-    @Inject(PLATFORM_ID) platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object,
+    private skillTrackingService: SkillTrackingService
   ) {
     super(themeService, fontService, platformId);
 
@@ -256,6 +258,9 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
     this.submitted.set(true);
 
     const correct = this.isCorrect();
+
+    // Update skill mastery based on correct/incorrect answer
+    this.updateSkillMastery(correct);
 
     // Emit state change for interaction tracking
     this.emitStateChange('answer_submitted', {
@@ -421,6 +426,38 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
 
   // Expose for template
   cn = cn;
+
+  /** ==================== SKILL MASTERY TRACKING ==================== */
+  
+  /**
+   * Update skill mastery when answer is submitted
+   */
+  private updateSkillMastery(correct: boolean): void {
+    // Get skills from metadata
+    const skills = this.metadata?.skills || [];
+    
+    if (skills.length === 0) {
+      console.log('[MultipleChoice] No skills defined in metadata, skipping mastery update');
+      return;
+    }
+
+    // Get session and module IDs from Input properties
+    const sessionId = this.sessionId || '';
+    const moduleId = this.moduleId || '';
+    const widgetId = this.id || this._state.id;
+
+    console.log(`[MultipleChoice] Updating skills: ${skills.join(', ')} - ${correct ? 'CORRECT' : 'INCORRECT'}`);
+    console.log(`[MultipleChoice] Context: sessionId=${sessionId}, moduleId=${moduleId}, widgetId=${widgetId}`);
+
+    // Update skill mastery through the skill tracking service
+    this.skillTrackingService.updateSkillsFromMultipleChoice(
+      skills,
+      correct,
+      widgetId,
+      moduleId,
+      sessionId
+    );
+  }
 
   /** ==================== GETTERS FOR TEMPLATE / LEGACY UI ==================== */
   showAttemptsLeft(): boolean {

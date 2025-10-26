@@ -1,0 +1,327 @@
+{
+  "name": "coding---multiple-choice-please-853f597b",
+  "title": "Coding Fundamentals: Functions and Trees",
+  "description": "Master the basics of functions and tree data structures through interactive multiple-choice assessments and coding concepts.",
+  "skills": [
+    "functions",
+    "trees",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Introduction to Functions and Trees",
+        "description": "Learn the fundamental concepts of functions and tree data structures in coding.",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Functions and Trees",
+        "prompt": "Functions are reusable blocks of code that perform specific tasks, while trees are hierarchical data structures with a root node and branches. Understanding these concepts is essential for writing clean, organized code. In this module, you'll test your knowledge through interactive questions about how functions and trees work in programming.",
+        "estimatedTime": 30
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Getting Started",
+        "message": "You're about to explore key concepts in functions and trees. Take your time with each question and think about how these concepts apply to real-world programming.",
+        "explanation": "This introduction sets the context for the learning objectives ahead.",
+        "nextSteps": [
+          "Read the prompts carefully",
+          "Consider each option thoughtfully",
+          "Review explanations for deeper understanding"
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you about your understanding of functions and trees?"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Functions in Programming",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "What is the primary purpose of a function?",
+        "question": "Select the best description of why functions are used in programming:",
+        "options": [
+          "To store data permanently in memory",
+          "To reuse code and organize logic into manageable blocks",
+          "To create visual elements on the screen",
+          "To perform operations only once per program"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Functions allow developers to write reusable code blocks that perform specific tasks. This promotes code organization, reduces repetition, and makes programs easier to maintain and debug."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Understanding!",
+        "message": "You've grasped the core purpose of functions in programming.",
+        "explanation": "Functions are fundamental building blocks that make code more modular and efficient.",
+        "nextSteps": [
+          "Move on to tree data structures",
+          "Consider how functions can call other functions",
+          "Think about function parameters and return values"
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you about your understanding of functions?"
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Tree Data Structures",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding Tree Data Structures",
+        "question": "Which of the following statements accurately describe a tree data structure?",
+        "options": [
+          "A tree has a single root node and branches that extend downward",
+          "All nodes in a tree must have exactly two children",
+          "A tree can contain cycles between nodes",
+          "Trees are useful for representing hierarchical relationships"
+        ],
+        "correctAnswer": [
+          0,
+          3
+        ],
+        "explanation": "Trees are hierarchical structures with a root node and zero or more child nodes. Not all nodes need exactly two children (that's a binary tree), and trees cannot contain cycles. Trees excel at representing hierarchical data like file systems or organizational charts."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Progress!",
+        "message": "You've demonstrated solid knowledge of tree data structures.",
+        "explanation": "Understanding the hierarchical nature of trees and their lack of cycles is crucial for working with complex data relationships.",
+        "nextSteps": [
+          "Explore binary search trees next",
+          "Practice traversing tree structures",
+          "Consider real-world applications of trees in databases"
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you about your understanding of tree data structures?"
+      },
+      "position": 3,
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T08:17:36.089457",
+    "module_id": "9064c0bc-7e97-43d7-8949-0f52f39cf2a5",
+    "saved_to_filesystem": true
+  }
+}
