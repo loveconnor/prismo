@@ -65,6 +65,16 @@ export class SettingsContentComponent {
     } catch (error) {
       console.error('Failed to load avatar:', error);
     }
+    
+    // Load display name from localStorage
+    try {
+      const savedDisplayName = localStorage.getItem('user_display_name');
+      if (savedDisplayName) {
+        this.displayName = savedDisplayName;
+      }
+    } catch (error) {
+      console.error('Failed to load display name:', error);
+    }
   }
 
   readonly timeZoneOptions: SelectOption[] = [
@@ -204,6 +214,17 @@ export class SettingsContentComponent {
       window.dispatchEvent(new CustomEvent('avatar-updated'));
     } catch (error) {
       console.error('Failed to remove avatar:', error);
+    }
+  }
+
+  onDisplayNameChange(value: string): void {
+    this.displayName = value;
+    try {
+      localStorage.setItem('user_display_name', value);
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('displayname-updated'));
+    } catch (error) {
+      console.error('Failed to save display name:', error);
     }
   }
 

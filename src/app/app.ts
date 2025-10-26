@@ -64,6 +64,7 @@ export class App {
   settingsOpen = false;
   currentUrl = signal('');
   userAvatarUrl = signal<string>('');
+  userDisplayName = signal<string>('');
   
   // Inject services
   public themeService = inject(ThemeService);
@@ -82,13 +83,17 @@ export class App {
     // Set initial URL
     this.currentUrl.set(this.router.url);
     
-    // Load avatar from localStorage
+    // Load avatar and display name from localStorage
     this.loadAvatar();
+    this.loadDisplayName();
     
-    // Listen for avatar updates from settings
+    // Listen for avatar and display name updates from settings
     if (typeof window !== 'undefined') {
       window.addEventListener('avatar-updated', () => {
         this.loadAvatar();
+      });
+      window.addEventListener('displayname-updated', () => {
+        this.loadDisplayName();
       });
     }
   }
@@ -99,6 +104,15 @@ export class App {
       this.userAvatarUrl.set(savedAvatar || '');
     } catch (error) {
       console.error('Failed to load avatar:', error);
+    }
+  }
+  
+  private loadDisplayName(): void {
+    try {
+      const savedDisplayName = localStorage.getItem('user_display_name');
+      this.userDisplayName.set(savedDisplayName || '');
+    } catch (error) {
+      console.error('Failed to load display name:', error);
     }
   }
 
