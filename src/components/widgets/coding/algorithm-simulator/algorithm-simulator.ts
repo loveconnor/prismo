@@ -54,6 +54,7 @@ interface PositionedEdge {
 })
 export class AlgorithmSimulatorComponent extends WidgetBaseComponent implements OnInit, OnDestroy {
   @Input() defaultAlgorithm: Algorithm = 'bubble';
+  @Input() enabledAlgorithms: Algorithm[] = ['bubble', 'quick', 'recursion'];
 
   // State
   algorithm = signal<Algorithm>('bubble');
@@ -96,6 +97,8 @@ export class AlgorithmSimulatorComponent extends WidgetBaseComponent implements 
 
   override ngOnInit(): void {
     super.ngOnInit();
+    console.log('AlgorithmSimulator - defaultAlgorithm:', this.defaultAlgorithm);
+    console.log('AlgorithmSimulator - enabledAlgorithms:', this.enabledAlgorithms);
     this.algorithm.set(this.defaultAlgorithm);
     this.generateBubbleArray();
     this.generateQuickArray();

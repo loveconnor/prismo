@@ -15,6 +15,88 @@
     ],
     "widgets": [
       {
+        "name": "setup-react-component",
+        "metadata": {
+          "id": "code-editor",
+          "title": "Create Your First React Component",
+          "description": "Build a simple React component for the todo list",
+          "skills": [
+            "react",
+            "javascript",
+            "jsx"
+          ],
+          "difficulty": 2,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "execution",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding",
+          "position": 1
+        },
+        "props": {
+          "title": "Build a Todo List Component",
+          "language": "javascript",
+          "initialCode": "import React, { useState } from 'react';\n\nfunction TodoList() {\n  const [todos, setTodos] = useState([]);\n  const [input, setInput] = useState('');\n\n  const addTodo = () => {\n    // TODO: Add logic to add a new todo\n  };\n\n  return (\n    <div className=\"todo-list\">\n      <h2>My Todo List</h2>\n      <input \n        value={input}\n        onChange={(e) => setInput(e.target.value)}\n        placeholder=\"Enter a todo\"\n      />\n      <button onClick={addTodo}>Add Todo</button>\n      <ul>\n        {/* TODO: Map over todos and display them */}\n      </ul>\n    </div>\n  );\n}\n\nexport default TodoList;",
+          "testCases": [
+            {
+              "name": "Component renders",
+              "input": "TodoList component",
+              "expected": "Component renders with heading and input"
+            },
+            {
+              "name": "Add todo functionality",
+              "input": "addTodo function called",
+              "expected": "New todo is added to state"
+            }
+          ],
+          "hints": [
+            "Use the spread operator to add new todos to the array",
+            "Remember to clear the input field after adding a todo",
+            "Use the map function to render each todo item"
+          ]
+        },
+        "position": 1,
+        "dependencies_met": true
+      },
+      {
+        "name": "algorithm-visualization",
+        "metadata": {
+          "id": "algorithm-simulator",
+          "title": "Algorithm Simulator",
+          "description": "Interactive visualizations for bubble sort, quick sort, and recursion tree",
+          "skills": [
+            "sorting",
+            "recursion",
+            "visualization",
+            "algorithms"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "text",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false,
+            "hint_progression": false,
+            "time_extension": false
+          },
+          "version": "1.0.0",
+          "category": "coding",
+          "position": 2
+        },
+        "config": {
+          "defaultAlgorithm": "bubble",
+          "enabledAlgorithms": ["bubble"]
+        },
+        "position": 2,
+        "dependencies_met": true
+      },
+      {
         "name": "module-intro",
         "metadata": {
           "id": "step-prompt",
@@ -42,7 +124,7 @@
           "prompt": "In this module, you'll build a complete todo application using React for the frontend and Node.js/Express for the backend. We'll cover:\n\n- Frontend with React and modern state management\n- RESTful API design with Express\n- Database integration\n- User authentication\n- Routing and navigation\n\nBy the end, you'll have a production-ready full-stack application.",
           "estimatedTime": 30
         },
-        "position": 1,
+        "position": 3,
         "dependencies_met": true
       },
       {
@@ -71,7 +153,7 @@
           "min": 1,
           "max": 5
         },
-        "position": 2,
+        "position": 4,
         "dependencies_met": true
       },
       {
@@ -106,38 +188,43 @@
           ],
           "showContinueButton": true
         },
-        "position": 3,
+        "position": 5,
         "dependencies_met": true
       },
       {
         "name": "frontend-setup",
         "metadata": {
-          "id": "code-editor",
-          "title": "Frontend Project Setup",
-          "description": "Set up React project structure",
+          "id": "multiple-choice",
+          "title": "React Architecture Quiz",
+          "description": "Test your understanding of React architecture",
           "skills": [
             "react",
-            "javascript"
+            "javascript",
+            "architecture"
           ],
-          "difficulty": 3,
-          "estimated_time": 300,
-          "input_type": "code",
-          "output_type": "visualization",
+          "difficulty": 2,
+          "estimated_time": 120,
+          "input_type": "selection",
+          "output_type": "validation",
           "dependencies": [],
           "adaptive_hooks": {
-            "difficulty_adjustment": true,
-            "hint_progression": true
+            "difficulty_adjustment": true
           },
           "version": "1.0.0",
-          "category": "coding"
+          "category": "core"
         },
         "props": {
-          "title": "Setting up the React Frontend",
-          "prompt": "Create the initial React project structure with necessary dependencies. Include React Router and state management setup.",
-          "language": "javascript",
-          "template": "// Create src/App.js\nimport React from 'react';\nimport { BrowserRouter as Router } from 'react-router-dom';\n\nfunction App() {\n  return (\n    <Router>\n      {/* Add your router setup here */}\n    </Router>\n  );\n}\n\nexport default App;"
+          "question": "Which of the following is the correct way to set up routing in a React application?",
+          "options": [
+            "Use <Router> component from 'react-router-dom' and wrap your app",
+            "Use <Link> components directly without a Router wrapper",
+            "Import routing from 'react' core library",
+            "Use window.location.href for navigation"
+          ],
+          "correctAnswer": 0,
+          "explanation": "React Router requires wrapping your application with a Router component (like BrowserRouter or HashRouter) to enable routing functionality. The Router component provides the routing context that all navigation components (Link, Route, etc.) depend on."
         },
-        "position": 4,
+        "position": 6,
         "dependencies_met": true
       },
       {
@@ -166,7 +253,7 @@
           "min": 1,
           "max": 5
         },
-        "position": 5,
+        "position": 7,
         "dependencies_met": true
       },
       {
@@ -201,7 +288,7 @@
           ],
           "showContinueButton": true
         },
-        "position": 6,
+        "position": 8,
         "dependencies_met": true
       }
     ],

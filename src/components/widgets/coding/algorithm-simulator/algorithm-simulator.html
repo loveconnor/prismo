@@ -15,9 +15,9 @@
 
     <!-- Algorithm Selection -->
     <div class="flex gap-2 mb-4">
-      <button type="button" (click)="setAlgorithm('bubble')" [class]="algorithm() === 'bubble' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Bubble Sort</button>
-      <button type="button" (click)="setAlgorithm('quick')" [class]="algorithm() === 'quick' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Quick Sort</button>
-      <button type="button" (click)="setAlgorithm('recursion')" [class]="algorithm() === 'recursion' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Recursion Tree</button>
+      <button *ngIf="enabledAlgorithms.includes('bubble')" type="button" (click)="setAlgorithm('bubble')" [class]="algorithm() === 'bubble' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Bubble Sort</button>
+      <button *ngIf="enabledAlgorithms.includes('quick')" type="button" (click)="setAlgorithm('quick')" [class]="algorithm() === 'quick' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Quick Sort</button>
+      <button *ngIf="enabledAlgorithms.includes('recursion')" type="button" (click)="setAlgorithm('recursion')" [class]="algorithm() === 'recursion' ? 'px-4 py-2 rounded-lg font-medium bg-primary text-primary-foreground' : 'px-4 py-2 rounded-lg font-medium bg-accent text-foreground hover:bg-accent/70'">Recursion Tree</button>
     </div>
 
     <!-- Controls -->
