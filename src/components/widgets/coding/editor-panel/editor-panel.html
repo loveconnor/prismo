@@ -25,6 +25,17 @@
         <span>Run Code</span>
         <span class="ml-2.5 opacity-60 text-xs font-normal border-l border-white/20 pl-2.5">Ctrl+⏎</span>
       </app-button>
+      
+      <app-button 
+        *ngIf="editorConfig?.language"
+        (click)="getAIReview()"
+        [disabled]="isGettingReview"
+        className="border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 font-medium">
+        <ng-icon name="lucideSparkles" class="h-3.5 w-3.5 mr-1.5"></ng-icon>
+        <span *ngIf="!isGettingReview">AI Review</span>
+        <span *ngIf="isGettingReview">Reviewing...</span>
+      </app-button>
+      
       <!-- For coding steps: show Continue only after code passes -->
       <app-button 
         *ngIf="editorConfig?.language && passed && currentStep < totalSteps" 

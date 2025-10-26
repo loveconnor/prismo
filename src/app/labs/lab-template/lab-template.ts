@@ -162,6 +162,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             [editorConfig]="codeEditorWidget?.config"
             (completeStep)="handleCompleteStep()"
             (codePassed)="handleCodePassed()"
+            (aiReviewComplete)="handleAIReviewComplete($event)"
           >
             <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
               <button
@@ -182,6 +183,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             [hints]="hintWidgets"
             [feedback]="feedbackWidgets"
             [sessionId]="currentSession?.id"
+            [aiReview]="aiReviewFeedback"
           ></app-support-panel>
         </div>
       </div>
@@ -228,19 +230,6 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
         ></app-confidence-meter>
       </div>
     </div>
-
-    <!-- Confidence Meter Modal (appears after feedback) -->
-    <div *ngIf="showConfidenceMeter && confidenceWidget" 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
-        <app-confidence-meter
-          [title]="(confidenceWidget.props || confidenceWidget.config)?.title || 'Rate Your Confidence'"
-          [description]="(confidenceWidget.props || confidenceWidget.config)?.description || ''"
-          [scaleLabels]="(confidenceWidget.props || confidenceWidget.config)?.scaleLabels || ['Not at all', 'Slightly', 'Moderately', 'Very', 'Extremely']"
-          (submit)="handleConfidenceSubmit()"
-        ></app-confidence-meter>
-      </div>
-    </div>
   `,
 })
 export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -271,6 +260,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
   public feedbackWidgets: any[] = [];
+  public aiReviewFeedback: string = '';
   public hasSteps = false;
   public codePassed = false;
   public showFeedbackModal = false;
@@ -1262,6 +1252,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   handleConfidenceSubmit(): void {
     console.log('Confidence submitted');
     this.showConfidenceMeter = false;
+    this.cdr.detectChanges();
+  }
+
+  handleAIReviewComplete(feedback: string): void {
+    this.aiReviewFeedback = feedback;
     this.cdr.detectChanges();
   }
 

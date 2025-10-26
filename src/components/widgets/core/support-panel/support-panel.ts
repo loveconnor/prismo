@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TabsNewComponent } from '../../../ui/tabs/tabs-new';
 import { TabsListComponent } from '../../../ui/tabs/tabs-list';
@@ -37,23 +37,32 @@ interface HintItem {
   templateUrl: './support-panel.html',
   styleUrls: ['./support-panel.css']
 })
-export class SupportPanelComponent {
+export class SupportPanelComponent implements OnChanges {
   @Input() collapsed = false;
   @Input() onToggleCollapse?: () => void;
   @Input() hints: any[] = [];
   @Input() feedback: any[] = [];
   @Input() sessionId: string = '';
+  @Input() aiReview: string = '';
 
   openHints: number[] = [];
 
   // Get the default tab value based on what content is available
   get defaultTabValue(): string {
+    if (this.aiReview) return 'feedback'; // Auto-switch to feedback if AI review exists
     if (this.hasHints) return 'hints';
     if (this.hasFeedback) return 'feedback';
     return 'hints';
   }
 
   value = this.defaultTabValue;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Auto-switch to feedback tab when AI review comes in
+    if (changes['aiReview'] && changes['aiReview'].currentValue && !changes['aiReview'].previousValue) {
+      this.value = 'feedback';
+    }
+  }
 
   // Check if hints exist
   get hasHints(): boolean {
