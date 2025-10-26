@@ -1,0 +1,343 @@
+{
+  "name": "coding---chicken-burger-6cbd4f79",
+  "title": "Build a Chicken Burger Ordering System",
+  "description": "Learn coding fundamentals by building a chicken burger customization and ordering system. Master functions, conditionals, and data structures while creating a real-world application.",
+  "skills": [
+    "cheese",
+    "tacos",
+    "pickles",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Chicken Burger Coding Lab",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Chicken Burger Coding Lab",
+        "prompt": "In this lab, you will build a chicken burger ordering system. You'll learn to:\n• Create functions to calculate burger prices\n• Use conditionals to apply cheese and topping costs\n• Store burger orders in data structures\n\nLet's start by understanding the burger pricing model: A basic chicken burger costs $8. Adding cheese costs $1.50. Each topping (pickles, lettuce, tomato) costs $0.75. Your first task is to write a function that calculates the total price based on selected options.",
+        "estimatedTime": 30
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Lab Overview Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Lab Overview",
+        "message": "You now understand the chicken burger ordering system structure.",
+        "explanation": "This lab teaches practical coding concepts using a real-world scenario. You will work with functions, conditionals, and data structures to build a complete ordering system.",
+        "nextSteps": [
+          "Review the pricing model",
+          "Proceed to the code editor",
+          "Write your first pricing function"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you about starting this chicken burger coding project?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor - Pricing Function",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Create a Burger Pricing Function",
+        "language": "python",
+        "starterCode": "def calculate_burger_price(has_cheese, toppings_list):\n    # Base price for chicken burger\n    base_price = 8.00\n    \n    # TODO: Add $1.50 if has_cheese is True\n    # TODO: Add $0.75 for each topping in toppings_list\n    # TODO: Return total price\n    \n    return total_price\n\n# Test your function\norder1 = calculate_burger_price(True, ['pickles', 'lettuce'])\nprint(f\"Order 1 total: ${order1}\")",
+        "testCases": [
+          {
+            "input": "calculate_burger_price(False, [])",
+            "expected_output": "8.0",
+            "description": "Basic burger no cheese or toppings"
+          },
+          {
+            "input": "calculate_burger_price(True, ['pickles'])",
+            "expected_output": "10.25",
+            "description": "Burger with cheese and pickles"
+          },
+          {
+            "input": "calculate_burger_price(True, ['pickles', 'lettuce', 'tomato'])",
+            "expected_output": "12.25",
+            "description": "Burger with cheese and three toppings"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Code Submission Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "Your pricing function works correctly for all test cases!",
+        "explanation": "You successfully implemented conditional logic to calculate burger prices based on cheese and toppings. This demonstrates your understanding of functions, parameters, and arithmetic operations.",
+        "nextSteps": [
+          "Test with different topping combinations",
+          "Move to the next challenge",
+          "Build the order storage system"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Needs practice",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in writing functions with conditional logic?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor - Order Management",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Build an Order Management System",
+        "language": "python",
+        "starterCode": "# Define the calculate_burger_price function from the previous task\ndef calculate_burger_price(has_cheese, toppings_list):\n    base_price = 8.00\n    total = base_price\n    if has_cheese:\n        total += 1.50\n    for topping in toppings_list:\n        total += 0.75\n    return total\n\nclass BurgerOrder:\n    def __init__(self, order_id, customer_name):\n        self.order_id = order_id\n        self.customer_name = customer_name\n        self.burgers = []\n    \n    def add_burger(self, has_cheese, toppings_list):\n        # TODO: Calculate the price using calculate_burger_price\n        # TODO: Create a burger dict with has_cheese, toppings_list, and price\n        # TODO: Append burger to self.burgers\n        pass\n    \n    def get_order_total(self):\n        # TODO: Return the sum of all burger prices in this order\n        pass\n\n# Test the order system\norder = BurgerOrder(1, \"Alice\")\norder.add_burger(True, ['pickles', 'lettuce'])\norder.add_burger(False, [])\nprint(f\"Order Total: ${order.get_order_total()}\")",
+        "testCases": [
+          {
+            "input": "order = BurgerOrder(1, 'Alice'); order.add_burger(True, ['pickles']); order.get_order_total()",
+            "expected_output": "10.25",
+            "description": "Single burger order with cheese and pickles"
+          },
+          {
+            "input": "order = BurgerOrder(1, 'Bob'); order.add_burger(True, ['pickles', 'lettuce']); order.add_burger(False, []); order.get_order_total()",
+            "expected_output": "20.25",
+            "description": "Multiple burgers in one order"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Order System Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "Your order management system is complete and working correctly!",
+        "explanation": "You've successfully built a class-based system to manage burger orders. This demonstrates your understanding of object-oriented programming, data structures (lists and dictionaries), and how to organize code into reusable components.",
+        "nextSteps": [
+          "Review your class design",
+          "Test with more complex orders",
+          "Congratulations on completing the lab!"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Final Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Need more practice",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in building object-oriented programs with multiple functions and data structures?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T06:35:31.937059",
+    "module_id": "82d78e44-0a20-4ccb-ba1d-f50d955e0622",
+    "saved_to_filesystem": true
+  }
+}

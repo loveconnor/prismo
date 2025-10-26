@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, BehaviorSubject, forkJoin, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 
 export interface Lab {
@@ -19,6 +19,20 @@ export interface Lab {
   is_public: boolean;
   created_at: string;
   updated_at: string;
+  user_id?: string;
+  source?: 'lab' | 'module'; // Track if it's from labs or modules table
+}
+
+export interface Module {
+  id: string;
+  user_id: string;
+  name: string;
+  module_type: string;
+  content: any; // Contains the full module structure (widgets, etc.)
+  is_public: boolean;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface LabsResponse {
@@ -27,31 +41,109 @@ export interface LabsResponse {
   status: string;
 }
 
+export interface ModulesResponse {
+  modules: Module[];
+  count: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class LabsService {
-  private apiUrl = environment.apiUrl || 'http://localhost:5000/api';
+  private apiUrl = environment.apiUrl || 'http://localhost:5000';
   private labsSubject = new BehaviorSubject<Lab[]>([]);
   public labs$ = this.labsSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Fetch all labs from the backend API
+   * Get auth headers from localStorage
+   */
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      return new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      });
+    }
+    return new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+  }
+
+  /**
+   * Convert a Module to Lab format for display
+   */
+  private convertModuleToLab(module: Module): Lab {
+    const content = module.content || {};
+    return {
+      id: module.id,
+      title: content.title || module.name || 'Untitled Module',
+      description: content.description || 'No description available',
+      skills: content.skills || module.tags || [],
+      steps: content.steps || [],
+      widgets: content.widgets || [],
+      completion_criteria: content.completion_criteria || {},
+      estimated_duration: content.estimated_duration || 1800,
+      version: content.version || '1.0.0',
+      lab_type: module.module_type || 'generated',
+      difficulty: content.difficulty || 2,
+      is_public: module.is_public,
+      created_at: module.created_at,
+      updated_at: module.updated_at,
+      user_id: module.user_id,
+      source: 'module'
+    };
+  }
+
+  /**
+   * Fetch all labs AND modules from the backend API (combined view)
    */
   getAllLabs(): Observable<Lab[]> {
-    return this.http.get<LabsResponse>(`${this.apiUrl}/api/labs`).pipe(
-      map(response => {
-        if (response.status === 'success') {
-          this.labsSubject.next(response.labs);
-          return response.labs;
-        }
-        throw new Error('Failed to fetch labs');
+    const headers = this.getAuthHeaders();
+    
+    // Fetch both labs and modules in parallel
+    return forkJoin({
+      labs: this.http.get<any>(`${this.apiUrl}/api/labs`, { headers }).pipe(
+        map(response => {
+          console.log('Labs response:', response);
+          return response.labs || [];
+        }),
+        map(labs => labs.map((lab: any) => ({ ...lab, source: 'lab' as const }))),
+        catchError(error => {
+          console.error('Error fetching labs:', error);
+          return of([]); // Return empty array on error
+        })
+      ),
+      modules: this.http.get<ModulesResponse>(`${this.apiUrl}/learning/modules`, { headers }).pipe(
+        map(response => {
+          console.log('Modules response:', response);
+          return response.modules || [];
+        }),
+        map(modules => modules.map(m => this.convertModuleToLab(m))),
+        catchError(error => {
+          console.error('Error fetching modules:', error);
+          // Log more details about the error
+          if (error.error) {
+            console.error('Error details:', error.error);
+          }
+          return of([]); // Return empty array on error
+        })
+      )
+    }).pipe(
+      map(({ labs, modules }) => {
+        // Combine both arrays
+        const combined = [...labs, ...modules];
+        this.labsSubject.next(combined);
+        return combined;
       }),
+      tap(combined => console.log(`Loaded ${combined.length} total labs/modules`)),
       catchError(error => {
-        console.error('Error fetching labs:', error);
-        throw error;
+        console.error('Error combining labs and modules:', error);
+        // Return empty array instead of throwing
+        this.labsSubject.next([]);
+        return of([]);
       })
     );
   }

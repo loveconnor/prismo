@@ -1,0 +1,321 @@
+{
+  "name": "coding-multiple-choice-please-0f1dab4c",
+  "title": "Mastering Loops: Multiple Choice Challenge",
+  "description": "Learn loop concepts through interactive multiple choice questions covering loops, iteration, and coding fundamentals",
+  "skills": [
+    "loops",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Introduction to Loops",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "What are Loops?",
+        "prompt": "Loops are fundamental programming constructs that allow you to repeat code blocks. In this module, you'll test your understanding of loop concepts through multiple choice questions. Let's begin by exploring different types of loops and their uses."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You're about to explore loop concepts through interactive multiple choice questions.",
+        "explanation": "This will help reinforce your understanding of iteration patterns and loop structures.",
+        "nextSteps": [
+          "Answer the first multiple choice question",
+          "Review loop syntax patterns",
+          "Test your knowledge"
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident do you feel about loop concepts?",
+        "minLabel": "Not at all confident",
+        "maxLabel": "Very confident"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "selection",
+        "output_type": "validation",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "For Loop Fundamentals",
+        "question": "Which of the following best describes the purpose of a for loop?",
+        "options": [
+          "To execute a block of code a specific number of times",
+          "To store multiple values in a single variable",
+          "To make decisions based on conditions",
+          "To pause program execution"
+        ],
+        "correctAnswer": 0,
+        "explanation": "A for loop repeats code a predetermined number of times, making it ideal for iterating over sequences or ranges."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Understanding!",
+        "message": "You've demonstrated knowledge of for loop fundamentals.",
+        "explanation": "Understanding the core purpose of for loops is essential for writing efficient repetitive code.",
+        "nextSteps": [
+          "Move to the next question about while loops",
+          "Review loop syntax",
+          "Practice with code examples"
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you about for loop concepts?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "While Loop Scenarios",
+        "question": "When should you use a while loop instead of a for loop?",
+        "options": [
+          "When the number of iterations is unknown and depends on a condition",
+          "When iterating over a specific range of numbers",
+          "When you need to repeat code exactly 10 times",
+          "When storing data in a list"
+        ],
+        "correctAnswer": 0,
+        "explanation": "While loops are best used when you don't know how many times you need to iterate—the loop continues until a condition becomes false."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Progress!",
+        "message": "You've correctly identified when to use while loops.",
+        "explanation": "Choosing the right loop type is crucial for writing clean and efficient code.",
+        "nextSteps": [
+          "Review loop control statements",
+          "Practice distinguishing loop types",
+          "Complete the module"
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident do you feel about loop selection and usage?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "position": 3,
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T07:20:00.624370",
+    "module_id": "9a6cf60e-0ba3-4aab-aae3-e6efe2f077ea",
+    "saved_to_filesystem": true
+  }
+}

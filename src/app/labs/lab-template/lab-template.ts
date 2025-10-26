@@ -155,11 +155,82 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
 
         <!-- Center: Editor fills remaining space -->
         <div class="min-w-0 overflow-hidden">
+          <!-- Code Editor Panel (for code-editor widgets) -->
           <app-editor-panel
+            *ngIf="codeEditorWidget?.type === 'code-editor' || codeEditorWidget?.metadata?.id === 'code-editor'"
             [currentStep]="currentStep"
             [totalSteps]="steps.length || 1"
             [shiftHeader]="leftPanelCollapsed || !hasSteps"
             [editorConfig]="codeEditorWidget?.config"
+            (completeStep)="handleCompleteStep()"
+            (codePassed)="handleCodePassed()"
+          >
+            <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
+              <button
+                (click)="leftPanelCollapsed = false"
+                class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                aria-label="Expand steps panel"
+              >
+                <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+              </button>
+            </div>
+          </app-editor-panel>
+
+          <!-- Multiple Choice Widget (for multiple-choice widgets) -->
+          <div *ngIf="codeEditorWidget?.type === 'multiple-choice' || codeEditorWidget?.metadata?.id === 'multiple-choice'" 
+               class="flex flex-col h-full bg-[#12161b] overflow-hidden">
+            <!-- Header -->
+            <div class="relative flex items-center justify-between border-b border-[#1f2937] bg-[#151a20] px-4 py-3 flex-shrink-0" [class.pl-16]="leftPanelCollapsed || !hasSteps">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
+                <button
+                  (click)="leftPanelCollapsed = false"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                  aria-label="Expand steps panel"
+                >
+                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+                </button>
+              </div>
+
+              <div class="flex items-center gap-3 text-sm text-[#a9b1bb]">
+                <div class="flex items-center gap-1.5 rounded-md border border-[#BC78F9]/30 bg-[#BC78F9]/15 px-2 py-1 text-xs font-semibold text-[#bc78f9]">
+                  Multiple Choice
+                </div>
+                <span>Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <app-button 
+                  *ngIf="currentStep < (steps.length || 1)" 
+                  (click)="handleCompleteStep()"
+                  className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
+                  Continue to Step {{ currentStep + 1 }}
+                </app-button>
+              </div>
+            </div>
+
+            <!-- Multiple Choice Content -->
+            <div class="flex-1 overflow-y-auto p-6">
+              <app-multiple-choice
+                [metadata]="codeEditorWidget.metadata"
+                [config]="codeEditorWidget.config"
+                [sessionId]="currentSession?.id || ''"
+                [moduleId]="labData?.id || ''"
+                [question]="codeEditorWidget.config?.question || ''"
+                [options]="getMultipleChoiceOptions(codeEditorWidget.config)"
+                [correctAnswers]="getMultipleChoiceCorrectAnswers(codeEditorWidget.config)"
+                [showRationale]="true"
+                (answerSubmitted)="handleCodePassed()"
+              ></app-multiple-choice>
+            </div>
+          </div>
+
+          <!-- Step Prompt Widget (for step-prompt widgets) -->
+          <app-editor-panel
+            *ngIf="codeEditorWidget?.type === 'step-prompt' || codeEditorWidget?.metadata?.id === 'step-prompt'"
+            [currentStep]="currentStep"
+            [totalSteps]="steps.length || 1"
+            [shiftHeader]="leftPanelCollapsed || !hasSteps"
+            [editorConfig]="null"
             (completeStep)="handleCompleteStep()"
             (codePassed)="handleCodePassed()"
           >
@@ -267,6 +338,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codeEditorWidget: any = null;
   public allCodeEditorWidgets: any[] = [];
   public allStepPromptWidgets: any[] = [];
+  public allMultipleChoiceWidgets: any[] = [];
   public hintWidgets: any[] = [];
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
@@ -787,6 +859,14 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     );
     console.log('Found step-prompt widgets:', this.allStepPromptWidgets);
     
+    // Find all multiple-choice widgets
+    this.allMultipleChoiceWidgets = allWidgets.filter(w => 
+      w.type === 'multiple-choice' || 
+      w.id === 'multiple-choice' || 
+      w.metadata?.id === 'multiple-choice'
+    );
+    console.log('Found multiple-choice widgets:', this.allMultipleChoiceWidgets);
+    
     // Set the initial code editor widget (will be updated based on current step)
     this.updateCurrentCodeEditor();
     
@@ -924,8 +1004,16 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // Extract steps from widgets - use widgets with position field as steps
     // Only create steps if there are multiple positioned widgets
-    const positionedWidgets = allWidgets.filter(w => w.metadata?.position !== undefined);
-    console.log('Positioned widgets:', positionedWidgets);
+    // Filter out feedback-box and confidence-meter widgets as they are associated with steps, not standalone steps
+    const positionedWidgets = allWidgets.filter(w => {
+      const widgetType = w.type || w.metadata?.id || w.id;
+      const hasPosition = w.metadata?.position !== undefined;
+      const isContentWidget = widgetType !== 'feedback-box' && 
+                             widgetType !== 'confidence-meter' && 
+                             widgetType !== 'hint-panel';
+      return hasPosition && isContentWidget;
+    });
+    console.log('Positioned content widgets (for steps):', positionedWidgets);
     
     if (positionedWidgets.length > 1) {
       this.steps = positionedWidgets
@@ -1085,7 +1173,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   private updateCurrentCodeEditor(): void {
-    // Find the widget for the current step - could be code editor or step-prompt
+    // Find the widget for the current step - could be code editor, step-prompt, or multiple-choice
     
     // Get the current step data to find the widget position
     const currentStepData = this.steps[this.currentStep - 1];
@@ -1108,7 +1196,14 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     
-    // If no code editor found, try step-prompt widgets (like congratulations screens)
+    // If no code editor found, try multiple-choice widgets
+    if (!widgetForStep && this.allMultipleChoiceWidgets.length > 0) {
+      widgetForStep = this.allMultipleChoiceWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
+                      this.allMultipleChoiceWidgets.find(w => w.metadata?.position === widgetPosition) ||
+                      this.allMultipleChoiceWidgets.find(w => w.metadata?.position === this.currentStep);
+    }
+    
+    // If no multiple-choice found, try step-prompt widgets (like congratulations screens)
     if (!widgetForStep && this.allStepPromptWidgets.length > 0) {
       widgetForStep = this.allStepPromptWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
                       this.allStepPromptWidgets.find(w => w.metadata?.position === widgetPosition) ||
@@ -1276,5 +1371,34 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   restartLab(): void {
     // Reset any lab state if needed
     this.loadLab();
+  }
+
+  /**
+   * Transform module-format multiple choice options to component format
+   */
+  getMultipleChoiceOptions(config: any): any[] {
+    if (!config || !config.options) return [];
+    
+    const options = config.options;
+    const correctAnswer = config.correctAnswer;
+    const explanation = config.explanation || '';
+    
+    return options.map((option: string, index: number) => ({
+      id: `option-${index}`,
+      label: option,
+      value: `option-${index}`,
+      rationale: index === correctAnswer ? explanation : undefined,
+      isCorrect: index === correctAnswer
+    }));
+  }
+
+  /**
+   * Transform module-format correct answer (index) to component format (array of IDs)
+   */
+  getMultipleChoiceCorrectAnswers(config: any): string[] {
+    if (!config || config.correctAnswer === undefined) return [];
+    
+    const correctIndex = config.correctAnswer;
+    return [`option-${correctIndex}`];
   }
 }
