@@ -1,8 +1,8 @@
 {
-  "id": "example-coding-module",
-"title": "Introduction to C++ Printing",
-"description": "Learn the basics of C++ through printing to the console.",
-"skills": ["programming", "C++", "functions", "problem-solving", "printing"],
+  "id": "python-binary-search-tree",
+"title": "Python Binary Search Tree",
+"description": "Learn to implement a binary search tree data structure in Python with insert and search operations.",
+"skills": ["programming", "Python", "data-structures", "binary-search-tree", "algorithms", "recursion"],
   "widgets": [
     {
       "id": "step-prompt",
@@ -24,9 +24,9 @@
         "category": "core"
       },
       "props": {
-"title": "Welcome to C++ Printing!",
-"prompt": "In this module, you'll learn how to create your first C++ program! It will print out text into the console.",
-"estimatedTime": 30
+"title": "Python Binary Search Tree",
+"prompt": "In this module you will create a binary search tree in Python and learn about tree data structures. A binary search tree is a hierarchical data structure where each node has at most two children, and the left child is always smaller than the parent while the right child is always larger. You'll implement the insert and search methods to build a fully functional BST.",
+"estimatedTime": 45
       },
       "position": 1,
       "dependencies_met": true
@@ -52,16 +52,28 @@
         "category": "coding"
       },
       "props": {
-"title": "Create Your First Program",
-"language": "cpp",
-"starterCode": "// Create an int main function that prints out \"Hello, human! How are you?\"",
+"title": "Implement Binary Search Tree",
+"language": "python",
+"starterCode": "# Binary Search Tree Implementation\n# Complete the BinarySearchTree so that is passes the below tests...\n# and more hidden ones :)\n\nclass BinarySearchTree:\n    def __init__(self):\n        self.root = None\n    \n    def insert(self, value):\n        # TODO: Implement insert method\n        pass\n    \n    def search(self, value):\n        # TODO: Implement search method\n        pass\n\n# Example usage\nif __name__ == \"__main__\":\n    bst = BinarySearchTree()\n    test_array = [50, 30, 70, 20, 40, 60, 80]\n    \n    # Insert values from array\n    for value in test_array:\n        bst.insert(value)\n    \n    # Test search\n    print(bst.search(40))\n    print(bst.search(100))",
         "placeholder": "Write your code here...",
         "testCases": [
           {
 "id": "test-1",
-"input": "main()",
-"expectedOutput": "Hello, human! How are you?",
-"description": "Function should print \"Hello, human! How are you?\""
+"input": "bst.search(40)",
+"expectedOutput": "True",
+"description": "Search should return True for value 40 which exists in the tree"
+          },
+          {
+"id": "test-2",
+"input": "bst.search(100)",
+"expectedOutput": "False",
+"description": "Search should return False for value 100 which doesn't exist in the tree"
+          },
+          {
+"id": "test-3",
+"input": "bst.search(50)",
+"expectedOutput": "True",
+"description": "Search should return True for the root value 50"
           }
         ]
       },
@@ -92,19 +104,37 @@
 {
 "id": "hint-1",
 "tier": 1,
-"text": "Remember to include <iostream> at the top.",
+"text": "For the insert method: If the tree is empty (self.root is None), create a new Node and set it as the root.",
 "revealed": false
 },
 {
 "id": "hint-2",
 "tier": 2,
-"text": "Put your code inside the main function",
+"text": "For the search method: Start at the root and compare values. If the value matches, return True. If searching value is smaller, go left; if larger, go right.",
 "revealed": false
 },
 {
 "id": "hint-3",
 "tier": 3,
-"text": "Make sure to use cout at the start and endl at the end.",
+"text": "Both insert and search can be implemented recursively. Create helper methods that take a node and value as parameters.",
+"revealed": false
+},
+{
+"id": "hint-4",
+"tier": 4,
+"text": "For insert: Compare the value with the current node. If smaller, go left; if larger, go right. If you reach None, that's where you insert the new node.",
+"revealed": false
+},
+{
+"id": "hint-5",
+"tier": 5,
+"text": "Complete insert pseudocode: if root is None, create new node. Otherwise, if value < current.value and current.left exists, recurse left. If current.left is None, create new node there. Do the same for right side.",
+"revealed": false
+},
+{
+"id": "hint-6",
+"tier": 6,
+"text": "Complete search pseudocode: if current is None, return False. If current.value == value, return True. If value < current.value, search left subtree. Otherwise, search right subtree.",
 "revealed": false
 }
         ],
@@ -133,13 +163,14 @@
       },
       "props": {
         "type": "success",
-        "title": "Great Job!",
-"message": "You've successfully completed the C++ printing module!",
-"explanation": "You've learned how to create your first C++ program and print output to the console. This is the foundation of C++ programming that you'll build upon throughout your coding journey.",
+        "title": "Excellent Work!",
+"message": "You've successfully implemented a binary search tree in Python!",
+"explanation": "You've learned how to create a fundamental data structure used in computer science. Binary search trees provide efficient O(log n) search, insert, and delete operations when balanced. You implemented both insert and search methods, understanding how to navigate tree structures recursively.",
 "nextSteps": [
-"Try printing different messages",
-"Learn about variables in C++",
-"Explore more complex C++ features"
+"Implement a delete method for the BST",
+"Learn about balanced trees (AVL, Red-Black trees)",
+"Explore tree traversal algorithms (in-order, pre-order, post-order)",
+"Try implementing other tree-based data structures"
 ],
         "showContinueButton": true,
         "autoComplete": true
@@ -167,7 +198,7 @@
       },
       "props": {
         "title": "Rate Your Confidence",
-        "description": "How confident do you feel about C++ printing now?",
+        "description": "How confident do you feel about implementing binary search trees in Python?",
         "scaleLabels": ["Not confident", "Slightly confident", "Moderately confident", "Very confident", "Extremely confident"],
         "autoSubmit": true
       },
@@ -178,9 +209,9 @@
   "completion_criteria": {
     "required_widgets": ["step-prompt", "code-editor", "feedback-box"],
     "min_completion_percentage": 80,
-    "max_attempts": 3,
-    "time_limit": 1800
+    "max_attempts": 5,
+    "time_limit": 2700
   },
-  "estimated_duration": 1800,
+  "estimated_duration": 2700,
   "version": "1.0.0"
 }
