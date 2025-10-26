@@ -3,6 +3,50 @@
     <ng-container *ngSwitchCase="'profile'">
       <app-settings-section title="Profile">
         <app-settings-row
+          label="Profile picture"
+          description="Upload a photo to personalize your account."
+        >
+          <div class="flex items-center gap-4">
+            <div class="relative">
+              <img 
+                [src]="avatarUrl || 'https://hacksu.com//staff-photos/beautiful_mason.png_1747039062046.png'" 
+                alt="Profile picture"
+                class="w-16 h-16 rounded-full object-cover border-2"
+                [class.border-zinc-700]="isDark"
+                [class.border-zinc-200]="!isDark"
+              >
+            </div>
+            <div class="flex flex-col gap-2">
+              <input 
+                #fileInput
+                type="file" 
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                class="hidden"
+              >
+              <app-button
+                type="button"
+                variant="outline"
+                [className]="uploadButtonClasses"
+                (click)="fileInput.click()"
+              >
+                Upload photo
+              </app-button>
+              @if (avatarUrl) {
+                <app-button
+                  type="button"
+                  variant="ghost"
+                  [className]="removeButtonClasses"
+                  (click)="removeAvatar()"
+                >
+                  Remove
+                </app-button>
+              }
+            </div>
+          </div>
+        </app-settings-row>
+
+        <app-settings-row
           label="Display name"
           description="This name appears on your shared labs and profile."
         >

@@ -416,7 +416,7 @@ export class AuthService {
       email: 'demo@example.com',
       name: 'Demo User',
       username: 'demo',
-      avatar: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1473',
+      avatar: 'https://hacksu.com//staff-photos/beautiful_mason.png_1747039062046.png',
       is_active: true,
     };
 

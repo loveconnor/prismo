@@ -63,6 +63,7 @@ import { ToastContainerComponent } from '../components/ui/toast-container/toast-
 export class App {
   settingsOpen = false;
   currentUrl = signal('');
+  userAvatarUrl = signal<string>('');
   
   // Inject services
   public themeService = inject(ThemeService);
@@ -80,6 +81,25 @@ export class App {
     
     // Set initial URL
     this.currentUrl.set(this.router.url);
+    
+    // Load avatar from localStorage
+    this.loadAvatar();
+    
+    // Listen for avatar updates from settings
+    if (typeof window !== 'undefined') {
+      window.addEventListener('avatar-updated', () => {
+        this.loadAvatar();
+      });
+    }
+  }
+  
+  private loadAvatar(): void {
+    try {
+      const savedAvatar = localStorage.getItem('user_avatar');
+      this.userAvatarUrl.set(savedAvatar || '');
+    } catch (error) {
+      console.error('Failed to load avatar:', error);
+    }
   }
 
   isActive(route: string): boolean {
