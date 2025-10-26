@@ -1,0 +1,544 @@
+{
+    "id": "building-a-full-stack-todo-application-a3b0f11c",
+    "title": "Building a Full-Stack Todo Application with React, Node.js, and Express",
+    "description": "Create a complete full-stack todo application with authentication, state management, and database integration using modern web technologies.",
+    "skills": [
+      "javascript",
+      "react",
+      "nodejs",
+      "express",
+      "database",
+      "api-design",
+      "authentication",
+      "state-management",
+      "routing"
+    ],
+    "steps": [
+      {
+        "id": 1,
+        "title": "Project Introduction",
+        "description": "Overview of project architecture and components",
+        "instruction": "Learn about the full-stack todo application structure",
+        "example": "Understanding React + Node.js + MongoDB architecture"
+      },
+      {
+        "id": 2,
+        "title": "API Design Implementation",
+        "description": "Design and implement RESTful API endpoints",
+        "instruction": "Create Express routes for CRUD operations on todos",
+        "example": "GET /api/todos, POST /api/todos, PUT /api/todos/:id, DELETE /api/todos/:id"
+      },
+      {
+        "id": 3,
+        "title": "Authentication Implementation",
+        "description": "Implement JWT-based authentication",
+        "instruction": "Add user registration, login, and protected routes middleware",
+        "example": "JWT token generation, password hashing, route protection"
+      },
+      {
+        "id": 4,
+        "title": "React Components Development",
+        "description": "Build React components for the todo application",
+        "instruction": "Create main React components and implement state management",
+        "example": "TodoList, TodoItem, AddTodo components with hooks"
+      },
+      {
+        "id": 5,
+        "title": "Database Integration",
+        "description": "Implement MongoDB database integration",
+        "instruction": "Set up MongoDB connection and create schemas",
+        "example": "User and Todo schemas with Mongoose"
+      },
+      {
+        "id": 6,
+        "title": "Client-Side Routing",
+        "description": "Implement React Router setup",
+        "instruction": "Set up client-side routing with protected routes",
+        "example": "React Router with authentication guards"
+      },
+      {
+        "id": 7,
+        "title": "Project Completion & Assessment",
+        "description": "Final congratulations and confidence assessment",
+        "instruction": "Celebrate your achievement and assess your learning",
+        "example": "Project summary and self-assessment"
+      }
+    ],
+    "widgets": [
+      {
+        "id": "intro-todo-app",
+        "stepId": 1,
+        "metadata": {
+          "id": "step-prompt",
+          "title": "Introduction to Full-Stack Todo App",
+          "description": "Overview of project architecture and components",
+          "skills": [
+            "javascript",
+            "react",
+            "nodejs"
+          ],
+          "difficulty": 2,
+          "estimated_time": 60,
+          "input_type": "text",
+          "output_type": "scaffold",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Building a Full-Stack Todo Application",
+          "prompt": "In this module, you'll build a complete todo application using React for the frontend, Node.js/Express for the backend, and MongoDB for data storage. The app will feature user authentication, state management with Redux, and RESTful API design.",
+          "estimatedTime": 30
+        },
+        "position": 1,
+        "dependencies_met": true
+      },
+      {
+        "id": "api-design-exercise",
+        "stepId": 2,
+        "metadata": {
+          "id": "code-editor",
+          "title": "API Design Implementation",
+          "description": "Design and implement RESTful API endpoints",
+          "skills": [
+            "api-design",
+            "express",
+            "nodejs"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Implementing Todo API Endpoints",
+          "language": "javascript",
+          "initialCode": "// Create Express routes for CRUD operations on todos\n// Implement endpoints for: GET /api/todos, POST /api/todos, PUT /api/todos/:id, DELETE /api/todos/:id\n\nconst express = require('express');\nconst router = express.Router();\n\n// Your code here\n",
+          "placeholder": "Implement the API endpoints here...",
+          "estimatedTime": 45
+        },
+        "position": 2,
+        "dependencies_met": true
+      },
+      {
+        "id": "auth-implementation",
+        "stepId": 3,
+        "metadata": {
+          "id": "code-editor",
+          "title": "Authentication Implementation",
+          "description": "Implement JWT-based authentication",
+          "skills": [
+            "authentication",
+            "nodejs",
+            "express"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Adding JWT Authentication",
+          "language": "javascript",
+          "initialCode": "// Implement JWT-based authentication\n// Include user registration, login, and protected routes middleware\n\nconst jwt = require('jsonwebtoken');\nconst bcrypt = require('bcrypt');\n\n// Your code here\n",
+          "placeholder": "Implement JWT authentication here...",
+          "estimatedTime": 60
+        },
+        "position": 3,
+        "dependencies_met": true
+      },
+      {
+        "id": "react-components",
+        "stepId": 4,
+        "metadata": {
+          "id": "code-editor",
+          "title": "React Components Development",
+          "description": "Build React components for the todo application",
+          "skills": [
+            "react",
+            "javascript",
+            "state-management"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Creating React Components",
+          "language": "jsx",
+          "initialCode": "// Create the main React components: TodoList, TodoItem, AddTodo\n// Implement state management using hooks\n\nimport React, { useState, useEffect } from 'react';\n\n// Your code here\n",
+          "placeholder": "Implement React components here...",
+          "estimatedTime": 45
+        },
+        "position": 4,
+        "dependencies_met": true
+      },
+      {
+        "id": "database-integration",
+        "stepId": 5,
+        "metadata": {
+          "id": "code-editor",
+          "title": "Database Integration",
+          "description": "Implement MongoDB database integration",
+          "skills": [
+            "database",
+            "nodejs"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Setting up MongoDB Integration",
+          "language": "javascript",
+          "initialCode": "// Implement MongoDB connection and create schemas for todos and users\n// Implement database operations in the API routes\n\nconst mongoose = require('mongoose');\n\n// Your code here\n",
+          "placeholder": "Implement MongoDB integration here...",
+          "estimatedTime": 45
+        },
+        "position": 5,
+        "dependencies_met": true
+      },
+      {
+        "id": "routing-setup",
+        "stepId": 6,
+        "metadata": {
+          "id": "code-editor",
+          "title": "Client-Side Routing",
+          "description": "Implement React Router setup",
+          "skills": [
+            "routing",
+            "react"
+          ],
+          "difficulty": 3,
+          "estimated_time": 300,
+          "input_type": "code",
+          "output_type": "visualization",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": true,
+            "hint_progression": true
+          },
+          "version": "1.0.0",
+          "category": "coding"
+        },
+        "props": {
+          "title": "Setting up React Router",
+          "language": "jsx",
+          "initialCode": "// Implement client-side routing with React Router\n// Include protected routes and navigation components\n\nimport { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';\n\n// Your code here\n",
+          "placeholder": "Implement React Router here...",
+          "estimatedTime": 30
+        },
+        "position": 6,
+        "dependencies_met": true
+      },
+      {
+        "id": "api-feedback",
+        "stepId": 2,
+        "metadata": {
+          "id": "feedback-box",
+          "title": "API Implementation Feedback",
+          "description": "Feedback for API implementation step",
+          "skills": [
+            "api-design",
+            "feedback"
+          ],
+          "difficulty": 1,
+          "estimated_time": 30,
+          "input_type": "completion",
+          "output_type": "feedback",
+          "dependencies": ["api-design-exercise"],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Great API Implementation!",
+          "message": "You've successfully implemented the RESTful API endpoints for the todo application. Your Express routes should handle all CRUD operations properly.",
+          "type": "success",
+          "explanation": "The API endpoints you created will serve as the backbone for your frontend application. Make sure to test them with tools like Postman or curl.",
+          "nextSteps": [
+            "Test your API endpoints with Postman",
+            "Add input validation to your routes",
+            "Implement error handling middleware"
+          ]
+        },
+        "position": 3,
+        "dependencies_met": true
+      },
+      {
+        "id": "auth-feedback",
+        "stepId": 3,
+        "metadata": {
+          "id": "feedback-box",
+          "title": "Authentication Implementation Feedback",
+          "description": "Feedback for authentication implementation step",
+          "skills": [
+            "authentication",
+            "feedback"
+          ],
+          "difficulty": 1,
+          "estimated_time": 30,
+          "input_type": "completion",
+          "output_type": "feedback",
+          "dependencies": ["auth-implementation"],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Excellent Authentication Setup!",
+          "message": "You've implemented JWT-based authentication with proper security measures. Your users can now register, login, and access protected routes.",
+          "type": "success",
+          "explanation": "JWT authentication provides stateless security for your application. The middleware you created will protect sensitive routes.",
+          "nextSteps": [
+            "Test user registration and login flows",
+            "Implement password reset functionality",
+            "Add role-based access control if needed"
+          ]
+        },
+        "position": 5,
+        "dependencies_met": true
+      },
+      {
+        "id": "react-feedback",
+        "stepId": 4,
+        "metadata": {
+          "id": "feedback-box",
+          "title": "React Components Feedback",
+          "description": "Feedback for React components implementation step",
+          "skills": [
+            "react",
+            "feedback"
+          ],
+          "difficulty": 1,
+          "estimated_time": 30,
+          "input_type": "completion",
+          "output_type": "feedback",
+          "dependencies": ["react-components"],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Outstanding React Components!",
+          "message": "You've built clean, reusable React components with proper state management. Your TodoList, TodoItem, and AddTodo components work together seamlessly.",
+          "type": "success",
+          "explanation": "React hooks provide a modern way to manage component state. Your components are now ready to be connected to the backend API.",
+          "nextSteps": [
+            "Connect components to your API endpoints",
+            "Add loading states and error handling",
+            "Implement optimistic updates for better UX"
+          ]
+        },
+        "position": 7,
+        "dependencies_met": true
+      },
+      {
+        "id": "database-feedback",
+        "stepId": 5,
+        "metadata": {
+          "id": "feedback-box",
+          "title": "Database Integration Feedback",
+          "description": "Feedback for database integration step",
+          "skills": [
+            "database",
+            "feedback"
+          ],
+          "difficulty": 1,
+          "estimated_time": 30,
+          "input_type": "completion",
+          "output_type": "feedback",
+          "dependencies": ["database-integration"],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Perfect Database Integration!",
+          "message": "You've successfully connected MongoDB to your application with proper schemas and database operations. Your data persistence is now fully functional.",
+          "type": "success",
+          "explanation": "MongoDB with Mongoose provides a flexible and powerful database solution. Your schemas define the structure of your data effectively.",
+          "nextSteps": [
+            "Add database indexes for better performance",
+            "Implement data validation at the schema level",
+            "Set up database backups and monitoring"
+          ]
+        },
+        "position": 9,
+        "dependencies_met": true
+      },
+      {
+        "id": "routing-feedback",
+        "stepId": 6,
+        "metadata": {
+          "id": "feedback-box",
+          "title": "Routing Implementation Feedback",
+          "description": "Feedback for routing implementation step",
+          "skills": [
+            "routing",
+            "feedback"
+          ],
+          "difficulty": 1,
+          "estimated_time": 30,
+          "input_type": "completion",
+          "output_type": "feedback",
+          "dependencies": ["routing-setup"],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Excellent Routing Setup!",
+          "message": "You've implemented client-side routing with React Router, including protected routes and proper navigation. Your application now has a complete navigation system.",
+          "type": "success",
+          "explanation": "React Router enables single-page application navigation. Your protected routes ensure only authenticated users can access sensitive pages.",
+          "nextSteps": [
+            "Add route transitions and animations",
+            "Implement breadcrumb navigation",
+            "Add route-based code splitting for better performance"
+          ]
+        },
+        "position": 11,
+        "dependencies_met": true
+      },
+      {
+        "id": "final-congratulations",
+        "stepId": 7,
+        "metadata": {
+          "id": "step-prompt",
+          "title": "Congratulations - Project Complete!",
+          "description": "Final congratulations and project summary",
+          "skills": [
+            "completion",
+            "celebration"
+          ],
+          "difficulty": 1,
+          "estimated_time": 60,
+          "input_type": "text",
+          "output_type": "scaffold",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "🎉 Congratulations! You've Built a Complete Full-Stack Todo Application!",
+          "prompt": "Amazing work! You've successfully built a complete full-stack todo application with:\n\n✅ **Backend API** - RESTful endpoints with Express.js\n✅ **Authentication** - JWT-based user authentication\n✅ **Frontend** - React components with state management\n✅ **Database** - MongoDB integration with Mongoose\n✅ **Routing** - Client-side navigation with React Router\n\nYour application now has all the essential features of a modern web application. You've learned how to integrate multiple technologies and create a cohesive user experience.\n\n**What's Next?**\n- Deploy your application to a cloud platform\n- Add more features like user profiles, categories, or due dates\n- Implement real-time updates with WebSockets\n- Add unit and integration tests\n- Explore advanced React patterns like Context API or Redux",
+          "estimatedTime": 30
+        },
+        "position": 7,
+        "dependencies_met": true
+      },
+      {
+        "id": "final-confidence-assessment",
+        "stepId": 7,
+        "metadata": {
+          "id": "confidence-meter",
+          "title": "Final Confidence Assessment",
+          "description": "Self-assessment of learning objectives",
+          "skills": [
+            "javascript",
+            "react",
+            "nodejs",
+            "express",
+            "database",
+            "api-design",
+            "authentication",
+            "state-management",
+            "routing"
+          ],
+          "difficulty": 1,
+          "estimated_time": 30,
+          "input_type": "slider",
+          "output_type": "progress",
+          "dependencies": [],
+          "adaptive_hooks": {
+            "difficulty_adjustment": false
+          },
+          "version": "1.0.0",
+          "category": "core"
+        },
+        "props": {
+          "title": "Rate Your Confidence in Full-Stack Development",
+          "description": "How confident do you feel about implementing each aspect of full-stack development?",
+          "scaleLabels": [
+            "Not confident",
+            "Slightly confident", 
+            "Moderately confident",
+            "Very confident",
+            "Extremely confident"
+          ]
+        },
+        "position": 13,
+        "dependencies_met": true
+      }
+    ],
+    "completion_criteria": {
+      "required_widgets": [
+        "intro-todo-app",
+        "api-design-exercise",
+        "api-feedback",
+        "auth-implementation",
+        "auth-feedback",
+        "react-components",
+        "react-feedback",
+        "database-integration",
+        "database-feedback",
+        "routing-setup",
+        "routing-feedback",
+        "final-congratulations",
+        "final-confidence-assessment"
+      ],
+      "min_completion_percentage": 80,
+      "max_attempts": 3,
+      "time_limit": 5400
+    },
+    "estimated_duration": 5400,
+    "version": "1.0.0"
+  }

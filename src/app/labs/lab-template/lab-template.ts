@@ -310,7 +310,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     let actualLabId = labId;
     if (currentUrl.includes('pt01')) {
       // Load the CS1 pt01 module JSON and convert to lab using HttpClient (triggers CD in zoneless mode)
-      this.http.get<any>('/assets/modules/CS1/01-Lab/pt02.json')
+      this.http.get<any>('/assets/modules/CS1/01-Lab/pt03.json')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {
