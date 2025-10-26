@@ -1,16 +1,19 @@
 {
-  "name": "coding---java-52584839",
-  "title": "Java Fundamentals: Variables, Data Types, and Basic Operations",
-  "description": "Master Java basics including variable declaration, primitive data types, and fundamental operations to build a strong foundation for object-oriented programming.",
+  "name": "coding---multiple-choice-484d3c9b",
+  "title": "Functions and Coding Fundamentals",
+  "description": "Master the basics of coding with a focus on functions, control flow, and logical reasoning through interactive multiple-choice challenges.",
   "skills": [
-    "coding"
+    "functions",
+    "coding",
+    "comprehension",
+    "reasoning"
   ],
   "widgets": [
     {
       "id": "step-prompt",
       "metadata": {
         "id": "step-prompt",
-        "title": "Welcome to Java Fundamentals",
+        "title": "Introduction to Functions in Code",
         "description": "Displays task or question text with optional formatting",
         "skills": [
           "comprehension",
@@ -29,9 +32,8 @@
         "category": "core"
       },
       "props": {
-        "title": "Introduction to Java Variables and Data Types",
-        "prompt": "In this module, you'll learn how to declare variables, understand Java's primitive data types, and perform basic operations. Variables are containers for storing data values. Java requires you to specify the data type when declaring a variable. Let's start by exploring how to create and use variables in Java.",
-        "estimatedTime": 30
+        "title": "Introduction to Functions in Code",
+        "prompt": "Functions are reusable blocks of code that perform specific tasks. They help organize code, reduce repetition, and make programs easier to understand. In this module, you'll learn how functions work and practice identifying correct function behavior through interactive challenges."
       },
       "position": 1,
       "dependencies_met": true
@@ -59,13 +61,13 @@
       },
       "props": {
         "type": "info",
-        "title": "Module Overview",
-        "message": "You're about to explore the building blocks of Java programming.",
-        "explanation": "Understanding variables and data types is essential for writing any Java program. These concepts form the foundation for storing and manipulating data.",
+        "title": "Ready to Begin",
+        "message": "You're about to start learning about functions and their behavior in code.",
+        "explanation": "Functions are fundamental building blocks in programming. Understanding how they work will help you write better code.",
         "nextSteps": [
-          "Learn about primitive data types",
-          "Practice declaring variables",
-          "Write your first Java code"
+          "Complete the first challenge",
+          "Test your knowledge",
+          "Review key concepts"
         ]
       },
       "dependencies_met": true
@@ -94,7 +96,7 @@
       "props": {
         "minLabel": "Not Confident",
         "maxLabel": "Very Confident",
-        "question": "How confident are you with Java variables and data types?"
+        "question": "How confident are you with basic coding functions?"
       },
       "dependencies_met": true
     },
@@ -121,20 +123,16 @@
         "category": "core"
       },
       "props": {
-        "title": "Java Primitive Data Types",
-        "question": "Which of the following are valid primitive data types in Java? (Select all that apply)",
+        "title": "Understanding Function Parameters",
+        "question": "What do parameters in a function do?",
         "options": [
-          "int",
-          "String",
-          "double",
-          "boolean",
-          "Array"
+          "They store the function's name",
+          "They are inputs that allow functions to receive data and customize behavior",
+          "They control the file where the function is stored",
+          "They determine the color of the code editor"
         ],
-        "correctAnswer": [
-          0,
-          2,
-          3
-        ]
+        "correctAnswer": 1,
+        "explanation": "Parameters are variables that functions accept as input. They allow the same function to work with different data, making code more flexible and reusable."
       },
       "position": 2,
       "dependencies_met": true
@@ -162,13 +160,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Correct!",
-        "message": "You've identified the valid primitive data types.",
-        "explanation": "Java has 8 primitive data types: byte, short, int, long, float, double, boolean, and char. String is not primitive; it's a reference type. Array is also a reference type.",
+        "title": "Great Understanding!",
+        "message": "You've correctly identified the purpose of function parameters.",
+        "explanation": "Parameters make functions dynamic and reusable. Instead of writing separate functions for different inputs, one function with parameters can handle many cases.",
         "nextSteps": [
-          "Learn variable declaration syntax",
-          "Practice writing variable declarations",
-          "Explore type casting"
+          "Move to the next challenge",
+          "Review function syntax",
+          "Practice with more examples"
         ]
       },
       "dependencies_met": true
@@ -197,57 +195,43 @@
       "props": {
         "minLabel": "Not Confident",
         "maxLabel": "Very Confident",
-        "question": "How confident are you about identifying Java data types?"
+        "question": "How confident are you about function parameters now?"
       },
       "dependencies_met": true
     },
     {
-      "id": "code-editor",
+      "id": "multiple-choice",
       "metadata": {
-        "id": "code-editor",
-        "title": "Code Editor",
-        "description": "Interactive code editor with run and reset functionality",
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
         "skills": [
-          "programming",
-          "debugging",
-          "syntax"
+          "comprehension",
+          "reasoning"
         ],
-        "difficulty": 3,
-        "estimated_time": 300,
-        "input_type": "code",
-        "output_type": "visualization",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
         "dependencies": [],
         "adaptive_hooks": {
           "difficulty_adjustment": true,
-          "hint_progression": true,
-          "alternative_widgets": [
-            "step-prompt"
-          ]
+          "hint_progression": true
         },
         "version": "1.0.0",
-        "category": "coding"
+        "category": "core"
       },
       "props": {
-        "title": "Write Your First Java Program",
-        "language": "java",
-        "starterCode": "public class HelloVariables {\n  public static void main(String[] args) {\n    // TODO: Declare an integer variable named age and assign it a value\n    // TODO: Declare a double variable named salary and assign it a value\n    // TODO: Declare a boolean variable named isStudent and assign it a value\n    // TODO: Print all three variables using System.out.println()\n  }\n}",
-        "testCases": [
-          {
-            "input": "",
-            "expectedOutput": "contains: age",
-            "description": "Should declare and use an age variable"
-          },
-          {
-            "input": "",
-            "expectedOutput": "contains: salary",
-            "description": "Should declare and use a salary variable"
-          },
-          {
-            "input": "",
-            "expectedOutput": "contains: isStudent",
-            "description": "Should declare and use a boolean variable"
-          }
-        ]
+        "title": "Function Return Values",
+        "question": "What does a function return statement do?",
+        "options": [
+          "It prints output to the screen automatically",
+          "It sends data back to the code that called the function, allowing that data to be used in further computations",
+          "It closes the function permanently",
+          "It declares a new variable in the program"
+        ],
+        "correctAnswer": 1,
+        "explanation": "The return statement allows a function to send a value back to the caller. This value can then be stored in a variable, printed, or used in calculations, making functions powerful tools for data processing."
       },
       "position": 3,
       "dependencies_met": true
@@ -275,13 +259,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Great Job!",
-        "message": "You've successfully declared and used Java variables!",
-        "explanation": "You've completed the fundamental task of declaring variables with different data types and printing them. This is the foundation of Java programming.",
+        "title": "Excellent Progress!",
+        "message": "You've mastered the concept of return values in functions.",
+        "explanation": "Return values are what make functions composable. By returning values, functions can pass data to other functions or calculations, enabling complex program logic.",
         "nextSteps": [
-          "Learn about variable naming conventions",
-          "Explore arithmetic operations on variables",
-          "Practice with more complex data types"
+          "Review key function concepts",
+          "Practice writing functions",
+          "Take the final challenge"
         ]
       },
       "dependencies_met": true
@@ -310,7 +294,7 @@
       "props": {
         "minLabel": "Not Confident",
         "maxLabel": "Very Confident",
-        "question": "How confident are you in writing Java code with variables?"
+        "question": "How confident are you about function return values?"
       },
       "dependencies_met": true
     }
@@ -318,8 +302,7 @@
   "completion_criteria": {
     "required_widgets": [
       "step-prompt",
-      "multiple-choice",
-      "code-editor"
+      "multiple-choice"
     ],
     "min_completion_percentage": 80,
     "max_attempts": 3,
@@ -328,8 +311,8 @@
   "estimated_duration": 1800,
   "version": "1.0.0",
   "_metadata": {
-    "generated_at": "2025-10-26T08:49:54.373799",
-    "module_id": "2afb6ea0-9dca-4292-a362-28b5a11f598c",
+    "generated_at": "2025-10-26T09:07:53.321926",
+    "module_id": "eedab99a-e459-4807-9fb0-7e09d2c1f9cd",
     "saved_to_filesystem": true
   }
 }

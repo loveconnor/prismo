@@ -66,7 +66,6 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     ShortAnswerComponent,
     CoachChatComponent,
     ReflectionPromptComponent,
-    AlgorithmSimulatorComponent,
     StepsPanelComponent,
     EditorPanelComponent,
     SupportPanelComponent,
@@ -214,8 +213,15 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
                   <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
                 </button>
               </div>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+
+              <div class="flex items-center gap-3 text-sm text-[#a9b1bb]">
+                <div class="flex items-center gap-1.5 rounded-md border border-[#BC78F9]/30 bg-[#BC78F9]/15 px-2 py-1 text-xs font-semibold text-[#bc78f9]">
+                  Multiple Choice
+                </div>
+                <span>Step {{ currentStep }} of {{ steps.length || 1 }}</span>
+              </div>
+
+              <div class="flex items-center gap-2">
                 <app-button 
                   *ngIf="currentStep < (steps.length || 1) && completedSteps.includes(currentStep)" 
                   (click)="handleCompleteStep()"
@@ -224,102 +230,43 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
                 </app-button>
               </div>
             </div>
-            <div class="flex-1 overflow-auto p-6">
+
+            <!-- Multiple Choice Content -->
+            <div class="flex-1 overflow-y-auto p-6">
               <app-multiple-choice
-                [id]="currentStepWidget?.id || 'mc-' + currentStep"
-                [question]="currentStepWidget?.config?.question || currentStepWidget?.props?.question || ''"
-                [options]="currentStepMultipleChoiceOptions"
-                [correctAnswers]="(currentStepWidget?.config?.correctAnswer !== undefined ? [currentStepWidget.config.correctAnswer.toString()] : (currentStepWidget?.props?.correctAnswer !== undefined ? [currentStepWidget.props.correctAnswer.toString()] : []))"
-                [showFeedback]="true"
-                [maxAttempts]="3"
-                (choiceSubmit)="handleMultipleChoiceSubmit($event)"
+                [metadata]="codeEditorWidget.metadata"
+                [config]="codeEditorWidget.config"
+                [sessionId]="currentSession?.id || ''"
+                [moduleId]="labData?.id || ''"
+                [question]="codeEditorWidget.config?.question || ''"
+                [options]="getMultipleChoiceOptions(codeEditorWidget.config)"
+                [correctAnswers]="getMultipleChoiceCorrectAnswers(codeEditorWidget.config)"
+                [showRationale]="true"
+                (answerSubmitted)="handleCodePassed()"
               ></app-multiple-choice>
             </div>
           </div>
 
-          <!-- Text Editor -->
-          <div *ngIf="currentStepWidgetType === 'text-editor'" class="flex h-full flex-col bg-[#12161b]">
-            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
-              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
-                <button
-                  (click)="leftPanelCollapsed = false"
-                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
-                  aria-label="Expand steps panel"
-                >
-                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
-                </button>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
-              </div>
+          <!-- Step Prompt Widget (for step-prompt widgets) -->
+          <app-editor-panel
+            *ngIf="codeEditorWidget?.type === 'step-prompt' || codeEditorWidget?.metadata?.id === 'step-prompt'"
+            [currentStep]="currentStep"
+            [totalSteps]="steps.length || 1"
+            [shiftHeader]="leftPanelCollapsed || !hasSteps"
+            [editorConfig]="null"
+            (completeStep)="handleCompleteStep()"
+            (codePassed)="handleCodePassed()"
+          >
+            <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
+              <button
+                (click)="leftPanelCollapsed = false"
+                class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
+                aria-label="Expand steps panel"
+              >
+                <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
+              </button>
             </div>
-            <div class="flex-1 overflow-auto p-6">
-              <app-text-editor
-                [title]="codeEditorWidget?.config?.title || 'Text Editor'"
-                [placeholder]="codeEditorWidget?.config?.placeholder || 'Start writing...'"
-                [maxLength]="codeEditorWidget?.config?.maxLength || 5000"
-                (stateChanged)="handleWidgetComplete($event)"
-              ></app-text-editor>
-            </div>
-          </div>
-
-          <!-- Equation Input -->
-          <div *ngIf="currentStepWidgetType === 'equation-input'" class="flex h-full flex-col bg-[#12161b]">
-            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
-              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
-                <button
-                  (click)="leftPanelCollapsed = false"
-                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
-                  aria-label="Expand steps panel"
-                >
-                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
-                </button>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
-              </div>
-            </div>
-            <div class="flex-1 overflow-auto p-6">
-              <app-equation-input
-                [title]="codeEditorWidget?.config?.title || 'Mathematical Expression'"
-                [placeholder]="codeEditorWidget?.config?.placeholder || 'e.g., x^2 + 2x + 1'"
-                [formatHint]="codeEditorWidget?.config?.formatHint"
-                [expectedFormat]="codeEditorWidget?.config?.expectedFormat"
-                (stateChanged)="handleWidgetComplete($event)"
-              ></app-equation-input>
-            </div>
-          </div>
-
-          <!-- Algorithm Simulator -->
-          <div *ngIf="currentStepWidgetType === 'algorithm-simulator'" class="flex h-full flex-col bg-[#12161b]">
-            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
-              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
-                <button
-                  (click)="leftPanelCollapsed = false"
-                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
-                  aria-label="Expand steps panel"
-                >
-                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
-                </button>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-[#a9b1bb]">Step {{ currentStep }} of {{ steps.length || 1 }}</span>
-                <app-button 
-                  *ngIf="currentStep < (steps.length || 1)" 
-                  (click)="handleCompleteStep()"
-                  className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
-                  I Understand - Continue to Step {{ currentStep + 1 }}
-                </app-button>
-              </div>
-            </div>
-            <div class="flex-1 overflow-auto p-6">
-              <app-algorithm-simulator
-                [metadata]="currentStepWidget?.metadata"
-                [defaultAlgorithm]="algorithmSimulatorDefaultAlgorithm"
-                [enabledAlgorithms]="algorithmSimulatorEnabledAlgorithms"
-              ></app-algorithm-simulator>
-            </div>
-          </div>
+          </app-editor-panel>
         </div>
 
         <!-- Right: Support -->
@@ -485,6 +432,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codeEditorWidget: any = null;
   public allCodeEditorWidgets: any[] = [];
   public allStepPromptWidgets: any[] = [];
+  public allMultipleChoiceWidgets: any[] = [];
   public hintWidgets: any[] = [];
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
@@ -512,8 +460,6 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public currentStepWidget: any = null;
   public currentStepWidgetType: string | null = null;
   public currentStepMultipleChoiceOptions: ChoiceOption[] = [];
-  public algorithmSimulatorDefaultAlgorithm: Algorithm = 'bubble';
-  public algorithmSimulatorEnabledAlgorithms: Algorithm[] = ['bubble', 'quick', 'recursion'];
   
   // Session tracking
   public currentSession: ModuleSession | null = null;
@@ -1605,7 +1551,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   private updateCurrentCodeEditor(): void {
-    // Find the widget for the current step - could be code editor or step-prompt
+    // Find the widget for the current step - could be code editor, step-prompt, or multiple-choice
     
     // Get the current step data to find the widget position
     const currentStepData = this.steps[this.currentStep - 1];
@@ -1636,62 +1582,6 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     this.codeEditorWidget = widgetForStep || this.allCodeEditorWidgets[0] || null;
-    
-    // Update current step widget and type
-    this.currentStepWidget = widgetForStep;
-    this.currentStepWidgetType = widgetForStep?.type || widgetForStep?.metadata?.id || widgetForStep?.id || null;
-    
-    // Update multiple choice options if applicable
-    if (this.currentStepWidgetType === 'multiple-choice') {
-      const options = widgetForStep?.config?.options || widgetForStep?.props?.options || [];
-      // Convert to ChoiceOption[] format
-      if (Array.isArray(options)) {
-        this.currentStepMultipleChoiceOptions = options.map((opt: any, index: number) => {
-          // If already in ChoiceOption format
-          if (typeof opt === 'object' && opt.id && opt.label) {
-            return opt as ChoiceOption;
-          }
-          // If it's a string, convert it
-          if (typeof opt === 'string') {
-            return {
-              id: `option-${index}`,
-              label: opt,
-              value: opt
-            } as ChoiceOption;
-          }
-          // Fallback
-          return {
-            id: opt.id || `option-${index}`,
-            label: opt.text || opt.label || String(opt),
-            value: opt.value || opt.id || String(opt)
-          } as ChoiceOption;
-        });
-      } else {
-        this.currentStepMultipleChoiceOptions = [];
-      }
-    } else {
-      this.currentStepMultipleChoiceOptions = [];
-    }
-    
-    // Update algorithm simulator settings if applicable
-    if (this.currentStepWidgetType === 'algorithm-simulator') {
-      const defaultAlg = widgetForStep?.config?.defaultAlgorithm || 
-                        widgetForStep?.props?.defaultAlgorithm || 
-                        'bubble';
-      // Validate it's a valid Algorithm type
-      this.algorithmSimulatorDefaultAlgorithm = (['bubble', 'quick', 'recursion'].includes(defaultAlg)) 
-        ? defaultAlg as Algorithm 
-        : 'bubble';
-      
-      const enabledAlgs = widgetForStep?.config?.enabledAlgorithms || 
-                         widgetForStep?.props?.enabledAlgorithms || 
-                         ['bubble', 'quick', 'recursion'];
-      // Filter to only valid Algorithm types
-      this.algorithmSimulatorEnabledAlgorithms = (Array.isArray(enabledAlgs) 
-        ? enabledAlgs.filter((alg: string) => ['bubble', 'quick', 'recursion'].includes(alg))
-        : ['bubble', 'quick', 'recursion']) as Algorithm[];
-    }
-    
     console.log(`Current widget for step ${this.currentStep} (widgetPosition: ${widgetPosition}):`, this.codeEditorWidget);
   }
   
@@ -1908,7 +1798,4 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const correctIndex = config.correctAnswer;
     return [`option-${correctIndex}`];
   }
-  
-  
-  
 }
