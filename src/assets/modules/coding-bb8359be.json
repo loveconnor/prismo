@@ -1,8 +1,9 @@
 {
-  "name": "coding-7c26b085",
-  "title": "Introduction to Programming Fundamentals",
-  "description": "Learn the core concepts of coding including variables, data types, control flow, and functions through interactive exercises and hands-on coding challenges.",
+  "name": "coding-bb8359be",
+  "title": "Master Loops in Python: From Basics to Practice",
+  "description": "Learn fundamental loop concepts and syntax in Python, then apply them through hands-on coding exercises. Build confidence with for and while loops.",
   "skills": [
+    "loops",
     "coding"
   ],
   "widgets": [
@@ -10,7 +11,7 @@
       "id": "step-prompt",
       "metadata": {
         "id": "step-prompt",
-        "title": "Welcome to Coding Basics",
+        "title": "Welcome to Loop Fundamentals",
         "description": "Displays task or question text with optional formatting",
         "skills": [
           "comprehension",
@@ -29,8 +30,9 @@
         "category": "core"
       },
       "props": {
-        "title": "What is Programming?",
-        "prompt": "Programming is the process of writing instructions for a computer to perform tasks. In this module, you'll learn fundamental concepts like variables, data types, and control flow. Let's start by understanding what makes a program work and why coding skills are valuable in today's world."
+        "title": "Welcome to Loop Fundamentals",
+        "prompt": "Loops are a core programming concept that let you repeat code without writing it multiple times. In this module, you'll learn:\n1. What loops are and why they matter\n2. How for loops work in Python\n3. How while loops work in Python\n4. When to use each type\n\nLet's start by understanding the basics of loops!",
+        "estimatedTime": 30
       },
       "position": 1,
       "dependencies_met": true
@@ -59,12 +61,12 @@
       "props": {
         "type": "info",
         "title": "Module Overview",
-        "message": "You're about to begin your coding journey!",
-        "explanation": "This module covers the building blocks of programming. By the end, you'll understand how to write simple programs and solve problems using code.",
+        "message": "You're about to explore the power of loops in programming.",
+        "explanation": "Loops save time and make code cleaner. Instead of writing the same code repeatedly, loops handle repetition for you.",
         "nextSteps": [
-          "Learn about variables",
-          "Understand data types",
-          "Write your first program"
+          "Learn about for loops",
+          "Understand loop syntax",
+          "Practice with exercises"
         ]
       },
       "dependencies_met": true
@@ -93,7 +95,106 @@
       "props": {
         "minLabel": "Not confident",
         "maxLabel": "Very confident",
-        "question": "How confident are you with basic programming concepts?"
+        "question": "How confident are you with loops before starting this module?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding Loop Purpose",
+        "question": "What is the primary purpose of using a loop in programming?",
+        "options": [
+          "To make your code run faster",
+          "To repeat a block of code multiple times without rewriting it",
+          "To store multiple values",
+          "To create functions"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Loops allow you to execute the same code repeatedly, which reduces duplication and makes your code more maintainable."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Understanding!",
+        "message": "You've grasped the core purpose of loops.",
+        "explanation": "Loops are fundamental because they let you write less code while accomplishing more. This is a key principle in programming called DRY (Don't Repeat Yourself).",
+        "nextSteps": [
+          "Learn for loop syntax",
+          "Practice writing for loops",
+          "Explore while loops"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you understanding loop purposes?"
       },
       "dependencies_met": true
     },
@@ -124,114 +225,17 @@
         "category": "coding"
       },
       "props": {
-        "title": "Write Your First Program",
+        "title": "Write Your First For Loop",
         "language": "python",
-        "starterCode": "# Welcome to coding!\n# Write a program that prints a greeting\n\nname = \"World\"\nprint(f\"Hello, {name}!\")\n\n# TODO: Change the name variable and run the code",
+        "starterCode": "# Write a for loop that prints numbers 1 to 5\n# Use: for i in range(1, 6):\n\nfor i in range(1, 6):\n    print(i)",
         "testCases": [
           {
             "input": "",
-            "expectedOutput": "Hello, World!",
-            "description": "Program should print a greeting"
+            "expectedOutput": "1\n2\n3\n4\n5\n",
+            "description": "Should print numbers 1 through 5"
           }
-        ]
-      },
-      "position": 2,
-      "dependencies_met": true
-    },
-    {
-      "id": "feedback-box",
-      "metadata": {
-        "id": "feedback-box",
-        "title": "Feedback Box",
-        "description": "Shows correctness, explanation, and next steps",
-        "skills": [
-          "reflection",
-          "learning"
         ],
-        "difficulty": 2,
-        "estimated_time": 45,
-        "input_type": "text",
-        "output_type": "feedback",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "type": "success",
-        "title": "Great Start!",
-        "message": "You've written and executed your first program successfully!",
-        "explanation": "This simple program demonstrates key concepts: variables store data, and print() displays output. You've just executed your first line of code!",
-        "nextSteps": [
-          "Learn about variables and data types",
-          "Explore control flow with loops",
-          "Practice writing functions"
-        ]
-      },
-      "dependencies_met": true
-    },
-    {
-      "id": "confidence-meter",
-      "metadata": {
-        "id": "confidence-meter",
-        "title": "Confidence Meter",
-        "description": "Self-rating slider for confidence assessment",
-        "skills": [
-          "self-assessment",
-          "metacognition"
-        ],
-        "difficulty": 2,
-        "estimated_time": 20,
-        "input_type": "slider",
-        "output_type": "progress",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "minLabel": "Not confident",
-        "maxLabel": "Very confident",
-        "question": "How confident are you about writing and running Python code?"
-      },
-      "dependencies_met": true
-    },
-    {
-      "id": "multiple-choice",
-      "metadata": {
-        "id": "multiple-choice",
-        "title": "Multiple Choice",
-        "description": "Single or multiple answer selection with feedback",
-        "skills": [
-          "comprehension",
-          "reasoning"
-        ],
-        "difficulty": 2,
-        "estimated_time": 60,
-        "input_type": "checkbox",
-        "output_type": "feedback",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true,
-          "hint_progression": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "title": "Understanding Variables",
-        "question": "What is a variable in programming?",
-        "options": [
-          "A container that stores a value in memory",
-          "A mathematical function",
-          "A type of error in code",
-          "A reserved keyword in Python"
-        ],
-        "correctAnswer": 0
+        "instructions": "Complete the for loop to print numbers 1 through 5. The range(1, 6) function generates numbers from 1 to 5 (6 is excluded)."
       },
       "position": 3,
       "dependencies_met": true
@@ -259,13 +263,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Perfect!",
-        "message": "You understand what variables are!",
-        "explanation": "Variables are fundamental to programming. They allow you to store, retrieve, and manipulate data. Think of them as labeled boxes that hold information.",
+        "title": "Excellent Work!",
+        "message": "You've successfully written your first for loop!",
+        "explanation": "The for loop iterates through each number in the range and executes the print statement. The variable 'i' takes on each value (1, 2, 3, 4, 5) in sequence.",
         "nextSteps": [
-          "Explore different data types",
-          "Practice with variable assignments",
-          "Learn about operations on variables"
+          "Learn about loop variables",
+          "Practice nested loops",
+          "Explore while loops"
         ]
       },
       "dependencies_met": true
@@ -294,7 +298,7 @@
       "props": {
         "minLabel": "Not confident",
         "maxLabel": "Very confident",
-        "question": "How confident are you about understanding programming variables?"
+        "question": "How confident are you writing for loops?"
       },
       "dependencies_met": true
     }
@@ -302,8 +306,8 @@
   "completion_criteria": {
     "required_widgets": [
       "step-prompt",
-      "code-editor",
-      "multiple-choice"
+      "multiple-choice",
+      "code-editor"
     ],
     "min_completion_percentage": 80,
     "max_attempts": 3,
@@ -312,8 +316,8 @@
   "estimated_duration": 1800,
   "version": "1.0.0",
   "_metadata": {
-    "generated_at": "2025-10-26T05:09:02.987583",
-    "module_id": "875c0fe8-f2bb-4331-9acd-b35b00647b5b",
+    "generated_at": "2025-10-26T05:47:08.675460",
+    "module_id": "604e29af-d7e4-4e4b-85db-2a89b48787f9",
     "saved_to_filesystem": true
   }
 }

@@ -524,23 +524,24 @@ export class WidgetLabComponent implements OnInit, OnDestroy {
     }
 
     try {
-      // First try to load from auto-generated-labs folder
-      const autoGenPath = `/assets/modules/auto-generated-labs/${moduleId}.json`;
+      // First try to load from backend API (for auto-generated modules)
       try {
-        const moduleData = await this.http.get<ModuleDefinition>(autoGenPath).toPromise();
-        this.moduleDefinition = moduleData || null;
-        console.log('[WidgetLab] Successfully loaded module from auto-generated-labs:', moduleId);
-        return;
-      } catch (autoGenError) {
-        console.log('[WidgetLab] Module not found in auto-generated-labs, trying regular modules folder');
+        const apiResponse = await this.http.get<any>(`http://localhost:5000/api/modules/${moduleId}`).toPromise();
+        if (apiResponse?.success && apiResponse?.module) {
+          this.moduleDefinition = apiResponse.module;
+          console.log('[WidgetLab] Successfully loaded module from API:', moduleId);
+          return;
+        }
+      } catch (apiError) {
+        console.log('[WidgetLab] Module not found in API, trying assets folder');
       }
 
-      // Fall back to regular modules folder
+      // Fall back to assets folder for pre-built modules
       const moduleData = await this.http.get<ModuleDefinition>(`/assets/modules/${moduleId}.json`).toPromise();
       this.moduleDefinition = moduleData || null;
-      console.log('[WidgetLab] Successfully loaded module from modules folder:', moduleId);
+      console.log('[WidgetLab] Successfully loaded module from assets folder:', moduleId);
     } catch (error) {
-      console.error('Failed to load module from both locations:', error);
+      console.error('[WidgetLab] Failed to load module from both API and assets:', error);
       // Handle error - could show error message to user
     }
   }

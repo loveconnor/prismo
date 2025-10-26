@@ -537,7 +537,34 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadModuleFromAssets(moduleId: string): void {
-    // First try the direct path
+    // First check if we have module data passed via navigation state
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state || window.history.state;
+    
+    if (state?.module) {
+      console.log('Loading module from navigation state:', state.module);
+      this.handleModuleLoad(state.module);
+      return;
+    }
+    
+    // Try backend API first (for newly generated modules)
+    console.log(`Attempting to load ${moduleId} from backend API...`);
+    this.http.get<any>(`/api/modules/${moduleId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log(`Successfully loaded ${moduleId} from backend API`);
+          this.handleModuleLoad(response.module);
+        },
+        error: (apiErr) => {
+          console.log(`Not found in backend API, trying static assets...`);
+          // Fallback to static assets
+          this.tryStaticAssets(moduleId);
+        }
+      });
+  }
+
+  private tryStaticAssets(moduleId: string): void {
     this.http.get<any>(`/assets/modules/${moduleId}.json`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

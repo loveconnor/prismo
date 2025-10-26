@@ -1,8 +1,9 @@
 {
-  "name": "coding-0e613db2",
-  "title": "Introduction to Programming Fundamentals",
-  "description": "Learn core coding concepts including variables, data types, control flow, and functions through interactive exercises and hands-on practice.",
+  "name": "coding-0e4323ee",
+  "title": "Master Programming Loops: From Basics to Practice",
+  "description": "Learn how to write and use loops in programming, understand loop syntax, and practice with interactive coding challenges to build foundational loop skills.",
   "skills": [
+    "loops",
     "coding"
   ],
   "widgets": [
@@ -10,7 +11,7 @@
       "id": "step-prompt",
       "metadata": {
         "id": "step-prompt",
-        "title": "Welcome to Coding Fundamentals",
+        "title": "Introduction to Loops",
         "description": "Displays task or question text with optional formatting",
         "skills": [
           "comprehension",
@@ -29,9 +30,8 @@
         "category": "core"
       },
       "props": {
-        "title": "Welcome to Coding Fundamentals",
-        "prompt": "In this module, you'll learn the essential building blocks of programming. We'll start with variables and data types, then explore how to write functions and control program flow. By the end, you'll be able to write simple programs that solve real problems.",
-        "estimatedTime": 30
+        "title": "What Are Loops?",
+        "prompt": "Loops allow you to repeat code blocks multiple times without writing the same code repeatedly. In this module, you'll learn two main types: for loops and while loops. For loops repeat a set number of times, while while loops repeat until a condition becomes false. Let's start by understanding the basic syntax and then practice writing loops in real code."
       },
       "position": 1,
       "dependencies_met": true
@@ -59,13 +59,13 @@
       },
       "props": {
         "type": "info",
-        "title": "Let's Get Started",
-        "message": "You're about to begin your coding journey. Take your time and don't rush through the concepts.",
-        "explanation": "Programming is a skill that improves with practice. Each exercise builds on previous knowledge.",
+        "title": "Module Overview",
+        "message": "You're starting your journey into loops, one of the most important programming concepts.",
+        "explanation": "Loops are fundamental to programming. They help you write efficient, concise code that can process large amounts of data or repeat actions without duplication.",
         "nextSteps": [
-          "Review the learning objectives",
-          "Complete the first code exercise",
-          "Check your understanding with a quiz"
+          "Read the loop introduction",
+          "Review loop syntax examples",
+          "Move to the first code challenge"
         ]
       },
       "dependencies_met": true
@@ -92,9 +92,9 @@
         "category": "core"
       },
       "props": {
+        "question": "How confident do you feel about understanding loops so far?",
         "minLabel": "Not confident",
-        "maxLabel": "Very confident",
-        "question": "How confident are you about starting to learn programming?"
+        "maxLabel": "Very confident"
       },
       "dependencies_met": true
     },
@@ -125,17 +125,15 @@
         "category": "coding"
       },
       "props": {
-        "title": "Exercise 1: Variables and Data Types",
+        "title": "Write Your First For Loop",
         "language": "python",
-        "starterCode": "# Create variables to store different types of data\nname = \"Alice\"\nage = 25\nheight = 5.6\nis_student = True\n\n# Print the variables\nprint(\"Name:\", name)\nprint(\"Age:\", age)\nprint(\"Height:\", height)\nprint(\"Is Student:\", is_student)",
+        "starterCode": "# Write a for loop that prints numbers 1 to 5\n# Complete the code below:\n\nfor i in range(1, 6):\n    print(i)",
         "testCases": [
           {
             "input": "",
-            "expectedOutput": "Name: Alice\nAge: 25\nHeight: 5.6\nIs Student: True",
-            "description": "Run the code to see variable output"
+            "expectedOutput": "1\n2\n3\n4\n5\n"
           }
-        ],
-        "prompt": "Run the code to see how variables store different types of data. Try modifying the values and see what happens."
+        ]
       },
       "position": 2,
       "dependencies_met": true
@@ -163,13 +161,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Great Job!",
-        "message": "You've successfully run your first program with variables. Variables are containers that store data values.",
-        "explanation": "Python supports different data types: strings (text), integers (whole numbers), floats (decimals), and booleans (true/false). Each variable holds one type of data.",
+        "title": "Great Job on Your First Loop!",
+        "message": "You've successfully written and executed a for loop!",
+        "explanation": "The for loop iterates through each number in the range 1-5 and prints it. The range(1, 6) function generates numbers from 1 up to (but not including) 6, so you get 1, 2, 3, 4, 5.",
         "nextSteps": [
-          "Learn about arithmetic operations",
-          "Try creating your own variables",
-          "Move to control flow structures"
+          "Try modifying the range to print different numbers",
+          "Learn about while loops next",
+          "Practice with a more complex loop challenge"
         ]
       },
       "dependencies_met": true
@@ -196,9 +194,9 @@
         "category": "core"
       },
       "props": {
+        "question": "How confident are you in writing for loops now?",
         "minLabel": "Not confident",
-        "maxLabel": "Very confident",
-        "question": "How confident are you with variables and data types?"
+        "maxLabel": "Very confident"
       },
       "dependencies_met": true
     },
@@ -229,17 +227,15 @@
         "category": "coding"
       },
       "props": {
-        "title": "Exercise 2: Writing Your First Function",
+        "title": "Master While Loops",
         "language": "python",
-        "starterCode": "# Define a function that adds two numbers\ndef add_numbers(a, b):\n    result = a + b\n    return result\n\n# Call the function with different values\nsum1 = add_numbers(5, 3)\nsum2 = add_numbers(10, 20)\n\nprint(\"5 + 3 =\", sum1)\nprint(\"10 + 20 =\", sum2)",
+        "starterCode": "# Write a while loop that counts from 1 to 5\n# Complete the code below:\n\ncount = 1\nwhile count <= 5:\n    print(count)\n    count += 1",
         "testCases": [
           {
             "input": "",
-            "expectedOutput": "5 + 3 = 8\n10 + 20 = 30",
-            "description": "Function should correctly add two numbers"
+            "expectedOutput": "1\n2\n3\n4\n5\n"
           }
-        ],
-        "prompt": "Modify the function to create a multiply_numbers function. Test it by multiplying 4 and 7."
+        ]
       },
       "position": 3,
       "dependencies_met": true
@@ -267,13 +263,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Excellent Work!",
-        "message": "You've created and called your first function. Functions are reusable blocks of code that perform specific tasks.",
-        "explanation": "Functions help organize code, reduce repetition, and make programs easier to understand. They take input (parameters), process it, and return output.",
+        "title": "Excellent While Loop Implementation!",
+        "message": "You've successfully written and executed a while loop!",
+        "explanation": "The while loop continues as long as the condition (count <= 5) is true. The count variable increments by 1 each iteration using count += 1. This is different from a for loop because you manually control when the loop stops.",
         "nextSteps": [
-          "Learn about control flow with if statements",
-          "Practice writing functions with multiple parameters",
-          "Explore loops and iteration"
+          "Compare for loops and while loops",
+          "Practice nested loops",
+          "Complete the module summary"
         ]
       },
       "dependencies_met": true
@@ -300,9 +296,9 @@
         "category": "core"
       },
       "props": {
+        "question": "How confident are you now with both for and while loops?",
         "minLabel": "Not confident",
-        "maxLabel": "Very confident",
-        "question": "How confident are you with writing and calling functions?"
+        "maxLabel": "Very confident"
       },
       "dependencies_met": true
     }
@@ -310,7 +306,6 @@
   "completion_criteria": {
     "required_widgets": [
       "step-prompt",
-      "code-editor",
       "code-editor"
     ],
     "min_completion_percentage": 80,
@@ -320,8 +315,8 @@
   "estimated_duration": 1800,
   "version": "1.0.0",
   "_metadata": {
-    "generated_at": "2025-10-26T05:14:20.340402",
-    "module_id": "caaabb4a-4262-4cce-8f64-918715902751",
+    "generated_at": "2025-10-26T05:49:40.330378",
+    "module_id": "58ee0bda-8d8f-402f-ae20-b057198dbb7b",
     "saved_to_filesystem": true
   }
 }

@@ -1,8 +1,10 @@
 {
-  "name": "coding-ce7ceaac",
-  "title": "Introduction to Programming Fundamentals",
-  "description": "Learn the basics of coding including variables, data types, and simple operations to build a strong foundation in programming.",
+  "name": "coding-38dcc682",
+  "title": "Mastering Loops and Functions in Python",
+  "description": "Learn to write efficient Python code using loops and functions. Build foundational programming skills through interactive exercises and real-world examples.",
   "skills": [
+    "loops",
+    "functions",
     "coding"
   ],
   "widgets": [
@@ -10,7 +12,7 @@
       "id": "step-prompt",
       "metadata": {
         "id": "step-prompt",
-        "title": "Welcome to Coding Basics",
+        "title": "Welcome to Loops and Functions",
         "description": "Displays task or question text with optional formatting",
         "skills": [
           "comprehension",
@@ -29,8 +31,9 @@
         "category": "core"
       },
       "props": {
-        "title": "Welcome to Coding Basics",
-        "prompt": "In this module, you'll learn fundamental programming concepts including variables, data types, and how to write your first lines of code. Programming is about giving instructions to a computer in a language it understands. Let's start by exploring what code is and why it matters."
+        "title": "Welcome to Loops and Functions",
+        "prompt": "In this module, you will learn how loops and functions are the building blocks of programming. Loops help you repeat actions efficiently, while functions let you organize and reuse code. By the end, you'll write your first complete Python program. Let's start!",
+        "estimatedTime": 30
       },
       "position": 1,
       "dependencies_met": true
@@ -59,12 +62,12 @@
       "props": {
         "type": "info",
         "title": "What You'll Learn",
-        "message": "This beginner-friendly module introduces you to core coding concepts that form the foundation of all programming languages.",
-        "explanation": "Understanding variables, data types, and basic operations is essential before moving to more complex programming tasks.",
+        "message": "This module covers two essential programming concepts: loops and functions.",
+        "explanation": "Loops automate repetitive tasks, and functions organize code into reusable blocks. Together, they make your programs cleaner, faster, and easier to maintain.",
         "nextSteps": [
-          "Complete the code editor exercise",
-          "Review the concepts",
-          "Practice with variations"
+          "Understand loop basics",
+          "Learn function syntax",
+          "Practice with exercises"
         ]
       },
       "dependencies_met": true
@@ -73,7 +76,7 @@
       "id": "confidence-meter",
       "metadata": {
         "id": "confidence-meter",
-        "title": "Starting Confidence",
+        "title": "Starting Confidence Check",
         "description": "Self-rating slider for confidence assessment",
         "skills": [
           "self-assessment",
@@ -93,7 +96,7 @@
       "props": {
         "minLabel": "Not confident",
         "maxLabel": "Very confident",
-        "question": "How confident are you with basic programming concepts?"
+        "question": "How confident are you with loops and functions?"
       },
       "dependencies_met": true
     },
@@ -101,7 +104,7 @@
       "id": "code-editor",
       "metadata": {
         "id": "code-editor",
-        "title": "Your First Program",
+        "title": "Your First Loop",
         "description": "Interactive code editor with run and reset functionality",
         "skills": [
           "programming",
@@ -124,21 +127,17 @@
         "category": "coding"
       },
       "props": {
-        "title": "Write Your First Program",
+        "title": "Write a For Loop",
         "language": "python",
-        "starterCode": "# Welcome to coding!\n# Create variables to store information\nname = \"Programmer\"\nage = 25\n\n# Print a message\nprint(f\"Hello, {name}!\")\nprint(f\"You are {age} years old\")\n\n# Try changing the values and running again",
+        "starterCode": "# Write a for loop that prints numbers 1 to 5\nfor i in range(1, 6):\n    print(i)",
         "testCases": [
           {
             "input": "",
-            "expectedOutput": "Hello, Programmer!",
-            "description": "Program should print greeting"
-          },
-          {
-            "input": "",
-            "expectedOutput": "You are 25 years old",
-            "description": "Program should print age"
+            "expected_output": "1\n2\n3\n4\n5\n",
+            "description": "Print numbers 1 to 5"
           }
-        ]
+        ],
+        "prompt": "Complete the for loop to print numbers 1 through 5. The range(1, 6) function generates numbers from 1 to 5."
       },
       "position": 2,
       "dependencies_met": true
@@ -147,7 +146,7 @@
       "id": "feedback-box",
       "metadata": {
         "id": "feedback-box",
-        "title": "Code Exercise Feedback",
+        "title": "Loop Execution Feedback",
         "description": "Shows correctness, explanation, and next steps",
         "skills": [
           "reflection",
@@ -166,13 +165,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Great Start!",
-        "message": "You've successfully written your first program with variables and print statements.",
-        "explanation": "Variables allow you to store data and reuse it. The print() function displays output to the screen. This is the foundation of interactive programming.",
+        "title": "Great Job!",
+        "message": "You successfully created your first loop!",
+        "explanation": "The for loop iterates through each number from 1 to 5 using range(1, 6). Each iteration prints the current value of i.",
         "nextSteps": [
-          "Explore data types next",
-          "Modify your program with new variables",
-          "Try different print formats"
+          "Learn about while loops",
+          "Understand loop control",
+          "Practice with nested loops"
         ]
       },
       "dependencies_met": true
@@ -181,7 +180,7 @@
       "id": "confidence-meter",
       "metadata": {
         "id": "confidence-meter",
-        "title": "Confidence After Exercise",
+        "title": "Loop Confidence Check",
         "description": "Self-rating slider for confidence assessment",
         "skills": [
           "self-assessment",
@@ -199,45 +198,50 @@
         "category": "core"
       },
       "props": {
-        "minLabel": "Not confident",
-        "maxLabel": "Very confident",
-        "question": "How confident are you with writing basic code?"
+        "minLabel": "Unclear",
+        "maxLabel": "Understand",
+        "question": "How well do you understand for loops now?"
       },
       "dependencies_met": true
     },
     {
-      "id": "multiple-choice",
+      "id": "code-editor",
       "metadata": {
-        "id": "multiple-choice",
-        "title": "Data Types Quiz",
-        "description": "Single or multiple answer selection with feedback",
+        "id": "code-editor",
+        "title": "Create Your First Function",
+        "description": "Interactive code editor with run and reset functionality",
         "skills": [
-          "comprehension",
-          "reasoning"
+          "programming",
+          "debugging",
+          "syntax"
         ],
-        "difficulty": 2,
-        "estimated_time": 60,
-        "input_type": "checkbox",
-        "output_type": "feedback",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
         "dependencies": [],
         "adaptive_hooks": {
           "difficulty_adjustment": true,
-          "hint_progression": true
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
         },
         "version": "1.0.0",
-        "category": "core"
+        "category": "coding"
       },
       "props": {
-        "title": "Understanding Data Types",
-        "question": "Which of the following are valid Python data types? (Select all that apply)",
-        "options": [
-          "String (text)",
-          "Integer (whole numbers)",
-          "Float (decimal numbers)",
-          "Boolean (true/false)",
-          "All of the above"
+        "title": "Write a Greeting Function",
+        "language": "python",
+        "starterCode": "# Define a function that takes a name and prints a greeting\ndef greet(name):\n    print(f\"Hello, {name}!\")\n\n# Call the function\ngreet(\"Alice\")",
+        "testCases": [
+          {
+            "input": "",
+            "expected_output": "Hello, Alice!\n",
+            "description": "Function should print greeting"
+          }
         ],
-        "correctAnswer": 4
+        "prompt": "Complete the greet function that takes a name parameter and prints a personalized greeting. Call the function with \"Alice\"."
       },
       "position": 3,
       "dependencies_met": true
@@ -246,7 +250,7 @@
       "id": "feedback-box",
       "metadata": {
         "id": "feedback-box",
-        "title": "Quiz Feedback",
+        "title": "Function Creation Feedback",
         "description": "Shows correctness, explanation, and next steps",
         "skills": [
           "reflection",
@@ -265,13 +269,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Excellent Understanding!",
-        "message": "You correctly identified all the fundamental Python data types.",
-        "explanation": "These data types form the building blocks of all Python programs. Understanding their differences helps you choose the right type for each situation.",
+        "title": "Excellent Work!",
+        "message": "You've created and called your first function!",
+        "explanation": "Functions are reusable blocks of code. The greet function accepts a name parameter and uses string formatting (f-string) to create personalized output. You called it with \"Alice\" to demonstrate how functions work.",
         "nextSteps": [
-          "Practice with operations on different types",
-          "Review type conversion",
-          "Try more complex programs"
+          "Combine loops and functions",
+          "Learn about return values",
+          "Build a complete program"
         ]
       },
       "dependencies_met": true
@@ -280,7 +284,7 @@
       "id": "confidence-meter",
       "metadata": {
         "id": "confidence-meter",
-        "title": "Final Confidence Assessment",
+        "title": "Function Confidence Check",
         "description": "Self-rating slider for confidence assessment",
         "skills": [
           "self-assessment",
@@ -298,17 +302,17 @@
         "category": "core"
       },
       "props": {
-        "minLabel": "Not confident",
-        "maxLabel": "Very confident",
-        "question": "How confident are you with coding fundamentals now?"
+        "minLabel": "Confused",
+        "maxLabel": "Confident",
+        "question": "How confident are you with functions now?"
       },
       "dependencies_met": true
     }
   ],
   "completion_criteria": {
     "required_widgets": [
-      "code-editor",
-      "multiple-choice"
+      "step-prompt",
+      "code-editor"
     ],
     "min_completion_percentage": 80,
     "max_attempts": 3,
@@ -317,8 +321,8 @@
   "estimated_duration": 1800,
   "version": "1.0.0",
   "_metadata": {
-    "generated_at": "2025-10-26T05:11:51.019083",
-    "module_id": "ff34f1b9-2b3d-4b9e-8ec9-5f901ca4cbff",
+    "generated_at": "2025-10-26T05:42:09.151977",
+    "module_id": "2a73ef04-043d-4d64-ade7-8ef288d3e8b7",
     "saved_to_filesystem": true
   }
 }

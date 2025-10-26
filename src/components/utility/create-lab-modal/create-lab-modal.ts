@@ -305,9 +305,13 @@ export class CreateLabModalComponent {
         // Close the modal
         this.close();
         
-        // Navigate to /labs/{module-name} route
+        // Use the clean filename (same as backend save_module_to_filesystem)
         const moduleName = response.module?.name || response.module_id;
-        this.router.navigate(['/labs', moduleName], {
+        const safeFilename = moduleName.replace(/[^a-zA-Z0-9\-_]/g, '-');
+        
+        // Navigate to /labs/{safe-filename} route
+        // Use the safe filename that matches what the backend saves
+        this.router.navigate(['/labs', safeFilename], {
           state: {
             module: response.module,
             moduleId: response.module_id

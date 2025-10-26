@@ -34,17 +34,16 @@ def save_module_to_filesystem(module: dict, module_id: str):
         backend_root = os.path.dirname(current_dir)
         project_root = os.path.dirname(backend_root)
         
-        # Path to auto-generated-labs folder
-        auto_gen_path = os.path.join(
+        # Path to modules folder (no longer using auto-generated-labs subfolder)
+        modules_path = os.path.join(
             project_root, 
             "src", 
             "assets", 
-            "modules", 
-            "auto-generated-labs"
+            "modules"
         )
         
         # Create directory if it doesn't exist
-        os.makedirs(auto_gen_path, exist_ok=True)
+        os.makedirs(modules_path, exist_ok=True)
         
         # Generate filename from module name or ID
         module_name = module.get("name", module_id)
@@ -52,7 +51,7 @@ def save_module_to_filesystem(module: dict, module_id: str):
         safe_filename = "".join(c if c.isalnum() or c in ('-', '_') else '-' for c in module_name)
         filename = f"{safe_filename}.json"
         
-        filepath = os.path.join(auto_gen_path, filename)
+        filepath = os.path.join(modules_path, filename)
         
         # Add metadata to module
         module_with_meta = module.copy()
@@ -317,4 +316,57 @@ def generate_personalized_module():
         return jsonify({
             "success": False,
             "error": f"Failed to generate personalized module: {str(e)}"
+        }), 500
+
+
+@module_generator_bp.route("/api/modules/<module_name>", methods=["GET"])
+def get_module(module_name: str):
+    """
+    Get a generated module by name/ID
+    
+    Returns:
+    {
+        "success": true,
+        "module": { ... module data ... }
+    }
+    """
+    try:
+        # Load from modules folder
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        backend_root = os.path.dirname(current_dir)
+        project_root = os.path.dirname(backend_root)
+        
+        module_path = os.path.join(
+            project_root,
+            "src",
+            "assets",
+            "modules",
+            f"{module_name}.json"
+        )
+        
+        print(f"[GET Module] Looking for module at: {module_path}")
+        
+        # Check if file exists
+        if os.path.exists(module_path):
+            with open(module_path, 'r', encoding='utf-8') as f:
+                module = json.load(f)
+            
+            print(f"[GET Module] Successfully loaded module: {module_name}")
+            return jsonify({
+                "success": True,
+                "module": module
+            }), 200
+        else:
+            print(f"[GET Module] Module not found: {module_name}")
+            return jsonify({
+                "success": False,
+                "error": f"Module '{module_name}' not found"
+            }), 404
+    
+    except Exception as e:
+        print(f"[Module Generator] Error loading module {module_name}: {str(e)}")
+        traceback.print_exc()
+        return jsonify({
+            "success": False,
+            "error": f"Failed to load module: {str(e)}"
         }), 500

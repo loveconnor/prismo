@@ -1,9 +1,10 @@
 {
-  "name": "coding-bee4297b",
-  "title": "Master Loops in Python: From Basics to Practice",
-  "description": "Learn how to use loops to automate repetitive tasks in Python. Master for and while loops, understand loop control, and practice with real-world examples.",
+  "name": "coding-0aac3530",
+  "title": "Master Functions and Loops in Python",
+  "description": "Learn to write reusable code with functions and iterate efficiently with loops. Perfect for beginners starting their coding journey.",
   "skills": [
-    "loop",
+    "loops",
+    "functions",
     "coding"
   ],
   "widgets": [
@@ -11,7 +12,7 @@
       "id": "step-prompt",
       "metadata": {
         "id": "step-prompt",
-        "title": "Understanding Loops",
+        "title": "Introduction to Functions and Loops",
         "description": "Displays task or question text with optional formatting",
         "skills": [
           "comprehension",
@@ -30,8 +31,8 @@
         "category": "core"
       },
       "props": {
-        "title": "What are Loops?",
-        "prompt": "Loops allow you to repeat code multiple times without writing it over and over. In Python, there are two main types: for loops (for a known number of repetitions) and while loops (until a condition is false). Let's start by learning how for loops work."
+        "title": "Welcome to Functions and Loops",
+        "prompt": "In this module, you'll learn two essential programming concepts: functions and loops. Functions let you write reusable code blocks, while loops help you repeat actions efficiently. By mastering these skills, you'll write cleaner, more powerful Python code. Let's start by understanding what functions do and why they matter in programming."
       },
       "position": 1,
       "dependencies_met": true
@@ -59,12 +60,13 @@
       },
       "props": {
         "type": "info",
-        "title": "Key Concepts",
-        "message": "You've learned the basics of loops. Loops are fundamental to programming and let you write efficient, clean code.",
-        "explanation": "Understanding loops is essential because many real-world tasks require repeating actions. From processing data to generating sequences, loops are everywhere in coding.",
+        "title": "Module Overview",
+        "message": "You're about to explore functions and loops—two pillars of programming.",
+        "explanation": "Functions help you organize code into reusable blocks. Loops let you automate repetitive tasks. Together, they make your code more efficient and maintainable.",
         "nextSteps": [
-          "See a for loop in action with code examples",
-          "Practice writing your first loop"
+          "Learn function basics",
+          "Understand loop syntax",
+          "Practice writing code"
         ]
       },
       "dependencies_met": true
@@ -91,7 +93,7 @@
         "category": "core"
       },
       "props": {
-        "question": "How confident are you about the basic concept of loops?",
+        "question": "How confident are you about functions and loops?",
         "minLabel": "Not confident",
         "maxLabel": "Very confident"
       },
@@ -124,14 +126,19 @@
         "category": "coding"
       },
       "props": {
-        "title": "Write Your First For Loop",
+        "title": "Write Your First Function",
         "language": "python",
-        "starterCode": "# Write a for loop that prints numbers 1 through 5\nfor i in range(1, 6):\n    print(i)",
+        "starterCode": "def greet(name):\n    return f\"Hello, {name}!\"\n\nresult = greet(\"Alice\")\nprint(result)",
         "testCases": [
           {
-            "input": "",
-            "expectedOutput": "1\n2\n3\n4\n5",
-            "description": "Should print numbers 1 through 5, each on a new line"
+            "input": "greet(\"Bob\")",
+            "expectedOutput": "Hello, Bob!",
+            "description": "Test function with different name"
+          },
+          {
+            "input": "greet(\"Python\")",
+            "expectedOutput": "Hello, Python!",
+            "description": "Verify string parameter handling"
           }
         ]
       },
@@ -161,13 +168,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Excellent!",
-        "message": "Your for loop works perfectly! You've successfully created your first loop.",
-        "explanation": "The range(1, 6) function generates numbers from 1 up to (but not including) 6. The loop variable 'i' takes each value in turn, and print(i) displays it. This pattern is the foundation of loop programming.",
+        "title": "Great Job!",
+        "message": "You've successfully created and called a function.",
+        "explanation": "Functions accept parameters (like 'name') and use return statements to send results back. This reusability is key to clean programming.",
         "nextSteps": [
-          "Try modifying the loop to print different numbers",
-          "Learn how while loops work",
-          "Practice with list iteration"
+          "Learn about function parameters",
+          "Understand return statements",
+          "Move on to loops"
         ]
       },
       "dependencies_met": true
@@ -194,7 +201,7 @@
         "category": "core"
       },
       "props": {
-        "question": "How confident are you about writing for loops?",
+        "question": "How confident are you about writing functions now?",
         "minLabel": "Not confident",
         "maxLabel": "Very confident"
       },
@@ -227,14 +234,19 @@
         "category": "coding"
       },
       "props": {
-        "title": "Loop Through a List",
+        "title": "Master Loops with For and While",
         "language": "python",
-        "starterCode": "# Loop through a list of fruits and print each one\nfruits = [\"apple\", \"banana\", \"cherry\", \"date\"]\nfor fruit in fruits:\n    print(fruit)",
+        "starterCode": "numbers = [1, 2, 3, 4, 5]\ntotal = 0\n\nfor num in numbers:\n    total += num\n\nprint(f\"Sum: {total}\")\n\ncount = 0\nwhile count < 3:\n    print(f\"Count: {count}\")\n    count += 1",
         "testCases": [
           {
-            "input": "",
-            "expectedOutput": "apple\nbanana\ncherry\ndate",
-            "description": "Should print each fruit on a new line"
+            "input": "for num in [10, 20, 30]: total += num",
+            "expectedOutput": "Sum: 60",
+            "description": "Test for loop with different values"
+          },
+          {
+            "input": "count = 5; while count > 0: count -= 1",
+            "expectedOutput": "Loop completes without error",
+            "description": "Verify while loop termination"
           }
         ]
       },
@@ -264,13 +276,13 @@
       },
       "props": {
         "type": "success",
-        "title": "Perfect!",
-        "message": "You've mastered looping through lists! This is one of the most common loop patterns in Python.",
-        "explanation": "When you loop through a list using 'for item in list', Python automatically assigns each element to the loop variable in order. This is much cleaner than using indices and is preferred in Python.",
+        "title": "Excellent Work!",
+        "message": "You've mastered both for and while loops.",
+        "explanation": "For loops iterate over collections, while while loops repeat based on a condition. Combining these with functions creates powerful, reusable code patterns.",
         "nextSteps": [
-          "Challenge: Create a loop that sums numbers in a list",
-          "Learn about nested loops",
-          "Explore loop control with break and continue"
+          "Combine functions and loops",
+          "Practice nested loops",
+          "Review best practices"
         ]
       },
       "dependencies_met": true
@@ -297,7 +309,7 @@
         "category": "core"
       },
       "props": {
-        "question": "How confident are you about working with loops in Python?",
+        "question": "How confident are you about loops now?",
         "minLabel": "Not confident",
         "maxLabel": "Very confident"
       },
@@ -316,8 +328,8 @@
   "estimated_duration": 1800,
   "version": "1.0.0",
   "_metadata": {
-    "generated_at": "2025-10-26T05:18:11.638292",
-    "module_id": "11c2fc0c-c18f-40c7-888c-1daacf043d1a",
+    "generated_at": "2025-10-26T05:43:36.912050",
+    "module_id": "6f523586-6437-4628-ba8f-7ca8cf87af49",
     "saved_to_filesystem": true
   }
 }
