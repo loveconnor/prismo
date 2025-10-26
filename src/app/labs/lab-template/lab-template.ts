@@ -844,11 +844,15 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     const progressKey = `lab-progress-${this.currentModuleId}`;
+    // Ensure progress is capped at 1.0 (100%)
+    const rawProgress = this.steps.length > 0 ? this.completedSteps.length / this.steps.length : 0;
+    const cappedProgress = Math.min(1, Math.max(0, rawProgress));
+    
     const progressData = {
       currentStep: this.currentStep,
       completedSteps: this.completedSteps,
       totalSteps: this.steps.length,
-      progress: this.steps.length > 0 ? this.completedSteps.length / this.steps.length : 0,
+      progress: cappedProgress,
       lastUpdated: Date.now()
     };
     
@@ -1500,7 +1504,10 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // ===== Tri-panel helpers =====
   get progress(): number {
-    return this.steps.length ? (this.completedSteps.length / this.steps.length) * 100 : 0;
+    if (!this.steps.length) return 0;
+    // Ensure progress never exceeds 100%
+    const calculatedProgress = (this.completedSteps.length / this.steps.length) * 100;
+    return Math.min(100, Math.max(0, calculatedProgress));
   }
 
   onStepClick(step: number): void {
@@ -1978,9 +1985,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     // Update session progress
+    const rawProgress = this.steps.length > 0 ? this.completedSteps.length / this.steps.length : 0;
+    const cappedProgress = Math.min(1, Math.max(0, rawProgress));
+    
     this.updateModuleSession({
       current_step: this.currentStep,
-      progress: this.steps.length > 0 ? this.completedSteps.length / this.steps.length : 0,
+      progress: cappedProgress,
       status: allStepsCompleted ? 'completed' : 'in_progress',
       completed: allStepsCompleted
     });
@@ -2148,7 +2158,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   getCompletionPercent(): number {
     if (!this.steps.length) return 100;
-    return Math.round((this.completedSteps.length / this.steps.length) * 100);
+    // Ensure completion percentage never exceeds 100%
+    const calculatedPercent = Math.round((this.completedSteps.length / this.steps.length) * 100);
+    return Math.min(100, Math.max(0, calculatedPercent));
   }
 
   /**
