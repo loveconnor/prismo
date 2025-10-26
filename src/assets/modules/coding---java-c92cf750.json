@@ -1,0 +1,324 @@
+{
+  "name": "coding---java-c92cf750",
+  "title": "Java Fundamentals: Variables and Data Types",
+  "description": "Master Java variable declaration, primitive data types, and type conversion through hands-on coding exercises and interactive challenges.",
+  "skills": [
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Java Fundamentals",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Java Fundamentals",
+        "prompt": "In this module, you'll learn the essentials of Java programming: declaring variables, understanding primitive data types (int, double, boolean, char, String), and performing type conversions. By the end, you'll be able to write code that properly declares and manipulates variables of different types."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "This module covers Java variable declaration and primitive data types.",
+        "explanation": "Understanding variables and data types is fundamental to writing Java programs. Variables store data, and data types define what kind of data they can hold.",
+        "nextSteps": [
+          "Learn variable declaration syntax",
+          "Explore primitive data types",
+          "Practice type conversions"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with Java variables and data types?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Declare and Use Variables",
+        "language": "java",
+        "starterCode": "public class VariablesExample {\n    public static void main(String[] args) {\n        // TODO: Declare an integer variable named age and assign it value 25\n        \n        // TODO: Declare a double variable named price and assign it value 19.99\n        \n        // TODO: Declare a boolean variable named isStudent and assign it true\n        \n        // TODO: Print all three variables using System.out.println()\n        \n    }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "25\n19.99\ntrue",
+            "description": "Successfully declare and print int, double, and boolean variables"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great! Variable Declaration Complete",
+        "message": "You've successfully declared and printed variables of different types.",
+        "explanation": "In Java, variables must be declared with a data type before use. The syntax is: dataType variableName = value;. You used int, double, and boolean types, which are fundamental primitives in Java.",
+        "nextSteps": [
+          "Learn about type casting",
+          "Explore String data type",
+          "Practice arithmetic operations with variables"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with declaring and using variables?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Type Casting and Conversion",
+        "language": "java",
+        "starterCode": "public class TypeCasting {\n    public static void main(String[] args) {\n        // TODO: Declare a double variable named score with value 95.7\n        \n        // TODO: Cast the double to an int and store it in a variable named intScore\n        \n        // TODO: Declare an int variable named count with value 10\n        \n        // TODO: Convert count to a double and store it in a variable named doubleCount\n        \n        // TODO: Print all variables to verify the conversions\n        \n    }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "95.7\n95\n10\n10.0",
+            "description": "Successfully perform explicit and implicit type conversions"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Type Casting!",
+        "message": "You've mastered explicit and implicit type conversions in Java.",
+        "explanation": "Type casting allows you to convert variables from one type to another. Explicit casting uses (dataType) syntax, like (int)95.7, which truncates the decimal. Implicit casting happens automatically when converting a smaller type to a larger one, like int to double.",
+        "nextSteps": [
+          "Review all variable concepts",
+          "Complete the final challenge",
+          "Explore practice exercises"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with type casting in Java?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T08:59:25.831684",
+    "module_id": "b5e1453c-2721-4286-a0f7-c2f7eb0a4076",
+    "saved_to_filesystem": true
+  }
+}

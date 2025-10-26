@@ -5,7 +5,11 @@
   [class]="'mx-auto max-w-3xl ' + getContainerClasses()"
 >
   <!-- ==================== HEADER ==================== -->
-  <header class="mb-4 flex items-start justify-between gap-3" #cardHeader>
+  <header 
+    class="mb-4 flex items-start justify-between gap-3" 
+    #cardHeader
+    *ngIf="promptConfig?.title || promptConfig?.stepNumber || promptConfig?.difficulty || promptConfig?.estimatedMinutes || timeRemaining() !== undefined"
+  >
     <div class="flex-1">
       <!-- Step Indicator -->
       <div class="mb-3" *ngIf="promptConfig?.stepNumber && promptConfig?.totalSteps">
