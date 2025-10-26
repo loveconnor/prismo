@@ -82,6 +82,14 @@ class SkillTree:
                 if prerequisites_met:
                     ready_skills.append(skill_name)
         return ready_skills
+    
+    def get_mastered_skills(self, threshold: float = 75.0) -> List[str]:
+        """Get list of skills that have been mastered (above threshold)"""
+        mastered = []
+        for skill_name, skill in self.skills.items():
+            if skill.proficiency_level >= threshold:
+                mastered.append(skill_name)
+        return mastered
 
 
 class SkillTreeManager:
@@ -101,7 +109,10 @@ class SkillTreeManager:
             
             # Reconstruct skills from stored data
             for skill_name, skill_data in skill_tree_data.get('skills', {}).items():
-                skill_tree.skills[skill_name] = SkillNode(**skill_data)
+                # Convert Decimal back to float for the dataclass
+                skill_data_copy = skill_data.copy()
+                skill_data_copy['proficiency_level'] = float(skill_data_copy.get('proficiency_level', 0))
+                skill_tree.skills[skill_name] = SkillNode(**skill_data_copy)
             
             return skill_tree
         
@@ -179,7 +190,7 @@ class SkillTreeManager:
         for skill_name, skill_node in skill_tree.skills.items():
             skills_data[skill_name] = {
                 "skill_name": skill_node.skill_name,
-                "proficiency_level": skill_node.proficiency_level,
+                "proficiency_level": Decimal(str(skill_node.proficiency_level)),
                 "times_practiced": skill_node.times_practiced,
                 "last_practiced": skill_node.last_practiced,
                 "prerequisite_skills": skill_node.prerequisite_skills,

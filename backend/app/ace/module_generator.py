@@ -1,34 +1,71 @@
 """
 Module Generation Engine
 
-Creates custom modules using AI-powered generation through the STEVE API.
+Creates custom modules using AI-powered generation through AWS Bedrock.
 Generates adaptive content based on user profile, skill requirements, and available widgets.
 """
 
 import uuid
 import json
 import os
-import aiohttp
 import asyncio
+import time
 from datetime import datetime
 from typing import Dict, List, Any, Optional
+import requests
 from app.orm import orm
 from .learner_profile import LearnerProfile, LearnerProfileManager
 from .skill_tree import SkillTreeManager
 
 
+class RateLimiter:
+    """Simple rate limiter to avoid hitting API limits"""
+    
+    def __init__(self, requests_per_minute: int = 10):
+        self.requests_per_minute = requests_per_minute
+        self.min_interval = 60.0 / requests_per_minute
+        self.last_request_time = 0
+    
+    async def acquire(self):
+        """Wait if necessary to respect rate limits"""
+        current_time = time.time()
+        time_since_last = current_time - self.last_request_time
+        
+        if time_since_last < self.min_interval:
+            wait_time = self.min_interval - time_since_last
+            print(f"⏱️  Rate limiter: waiting {wait_time:.1f}s before next request")
+            await asyncio.sleep(wait_time)
+        
+        self.last_request_time = time.time()
+
+
 class ModuleGenerator:
-    """Generates custom learning modules using STEVE API"""
+    """Generates custom learning modules using AWS Bedrock Agent"""
     
     def __init__(self):
         self.profile_manager = LearnerProfileManager()
         self.skill_manager = SkillTreeManager()
-        self.steve_api_url = os.getenv("STEVE_API_URL", "http://localhost:3000/generate-content")
-        self.steve_api_key = os.getenv("STEVE_API_KEY")
         self.widget_registry = self._load_widget_registry()
         
-        if not self.steve_api_key:
-            raise ValueError("STEVE_API_KEY environment variable is required")
+        # Rate limiter to avoid hitting API limits (10 requests per minute by default)
+        self.rate_limiter = RateLimiter(requests_per_minute=10)
+        
+        # AWS Bedrock API configuration
+        self.aws_region = os.getenv("AWS_REGION", "us-east-1")
+        self.bedrock_api_token = os.getenv("BEDROCK_API_TOKEN")
+        
+        if not self.bedrock_api_token:
+            print("⚠️  Warning: BEDROCK_API_TOKEN not found in environment variables")
+        else:
+            print(f"✓ Bedrock API token loaded")
+        
+        # Bedrock API endpoint for Claude 3.5 Sonnet
+        self.bedrock_url = f"https://bedrock-runtime.{self.aws_region}.amazonaws.com/model/us.anthropic.claude-3-5-sonnet-20241022-v2:0/invoke"
+        
+        print(f"✓ ModuleGenerator initialized with Bedrock API")
+        print(f"✓ Region: {self.aws_region}")
+        print(f"✓ Widget registry loaded: {len(self.widget_registry)} widgets")
+        print(f"✓ Rate limiter: 10 requests per minute")
     
     def _load_widget_registry(self) -> List[Dict[str, Any]]:
         """Load widget registry from assets folder"""
@@ -47,7 +84,7 @@ class ModuleGenerator:
     
     async def generate_module(self, user_id: str, topic: str, target_skills: List[str], 
                        difficulty: str = "beginner", estimated_time: int = 1800) -> Dict[str, Any]:
-        """Generate a new module using STEVE API in the exact required JSON format"""
+        """Generate a new module using AWS Bedrock in the exact required JSON format"""
         profile = self.profile_manager.get_or_create_profile(user_id)
         skill_tree = self.skill_manager.get_or_create_skill_tree(user_id)
         
@@ -59,8 +96,8 @@ class ModuleGenerator:
             user_id, topic, target_skills, difficulty, profile, skill_tree
         )
         
-        # Use STEVE API to generate the module
-        module = await self._generate_module_with_steve_api(
+        # Use AWS Bedrock to generate the module
+        module = await self._generate_module_with_bedrock(
             module_id, topic, target_skills, difficulty, estimated_time, generation_context
         )
         
@@ -96,131 +133,176 @@ class ModuleGenerator:
         - Current Skills: {', '.join(skill_tree.get_mastered_skills()[:5])}
         - Recommended Next Skills: {', '.join(skill_tree.get_recommended_next_skills()[:3])}
         """
-        
+
+
         return context
     
-    async def _generate_module_with_steve_api(self, module_id: str, topic: str, target_skills: List[str],
+    async def _generate_module_with_bedrock(self, module_id: str, topic: str, target_skills: List[str],
                                             difficulty: str, estimated_time: int, context: str) -> Dict[str, Any]:
-        """Use STEVE API to generate a module following the exact format"""
+        """Use AWS Bedrock API to generate a module with strict JSON output"""
         
-        # Define the exact module schema that STEVE API should follow
-        module_schema = {
-            "type": "OBJECT",
-            "properties": {
-                "id": {"type": "STRING"},
-                "title": {"type": "STRING"},
-                "description": {"type": "STRING"},
-                "skills": {
-                    "type": "ARRAY",
-                    "items": {"type": "STRING"}
-                },
-                "widgets": {
-                    "type": "ARRAY",
-                    "items": {
-                        "type": "OBJECT",
-                        "properties": {
-                            "id": {"type": "STRING"},
-                            "metadata": {
-                                "type": "OBJECT",
-                                "properties": {
-                                    "id": {"type": "STRING"},
-                                    "title": {"type": "STRING"},
-                                    "description": {"type": "STRING"},
-                                    "skills": {"type": "ARRAY", "items": {"type": "STRING"}},
-                                    "difficulty": {"type": "NUMBER"},
-                                    "estimated_time": {"type": "NUMBER"},
-                                    "input_type": {"type": "STRING"},
-                                    "output_type": {"type": "STRING"},
-                                    "dependencies": {"type": "ARRAY", "items": {"type": "STRING"}},
-                                    "adaptive_hooks": {"type": "OBJECT"},
-                                    "version": {"type": "STRING"},
-                                    "category": {"type": "STRING"}
-                                },
-                                "required": ["id", "title", "description", "skills", "difficulty", "estimated_time", "input_type", "output_type", "dependencies", "version", "category"]
-                            },
-                            "props": {"type": "OBJECT"},
-                            "position": {"type": "NUMBER"},
-                            "dependencies_met": {"type": "BOOLEAN"}
-                        },
-                        "required": ["id", "metadata", "props", "position", "dependencies_met"]
-                    }
-                },
-                "completion_criteria": {
-                    "type": "OBJECT",
-                    "properties": {
-                        "required_widgets": {"type": "ARRAY", "items": {"type": "STRING"}},
-                        "min_completion_percentage": {"type": "NUMBER"},
-                        "max_attempts": {"type": "NUMBER"},
-                        "time_limit": {"type": "NUMBER"}
-                    },
-                    "required": ["required_widgets", "min_completion_percentage", "max_attempts", "time_limit"]
-                },
-                "estimated_duration": {"type": "NUMBER"},
-                "version": {"type": "STRING"}
-            },
-            "required": ["id", "title", "description", "skills", "widgets", "completion_criteria", "estimated_duration", "version"]
-        }
+        # Create the prompt with explicit JSON structure
+        prompt = f"""Create a complete learning module JSON for the topic "{topic}" targeting these skills: {', '.join(target_skills)}.
+
+REQUIRED MODULE STRUCTURE (return ONLY valid JSON, no markdown):
+{{
+  "id": "{module_id}",
+  "title": "Clear, engaging title for {topic}",
+  "description": "Brief summary of what the learner will accomplish",
+  "skills": {json.dumps(target_skills)},
+  "widgets": [
+    {{
+      "id": "unique-widget-id",
+      "metadata": {{
+        "id": "widget-type-name",
+        "title": "Widget Display Title",
+        "description": "What this widget does",
+        "skills": ["relevant", "skills"],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {{
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        }},
+        "version": "1.0.0",
+        "category": "core"
+      }},
+      "props": {{
+        "title": "Specific title for this instance",
+        "prompt": "Instructions or content",
+        "estimatedTime": 30
+      }},
+      "position": 1,
+      "dependencies_met": true
+    }}
+  ],
+  "completion_criteria": {{
+    "required_widgets": ["list", "of", "widget", "ids"],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": {estimated_time}
+  }},
+  "estimated_duration": {estimated_time},
+  "version": "1.0.0"
+}}
+
+WIDGET GENERATION RULES:
+1. ALWAYS start with a "step-prompt" widget (position 1) to introduce the module
+2. Each widget MUST have both "metadata" (defines the widget type) and "props" (specific instance data)
+3. For difficulty "{difficulty}", include:
+   - beginner: 3-4 widgets (step-prompt + 2-3 learning widgets)
+   - intermediate: 5-6 widgets (step-prompt + 4-5 learning widgets)  
+   - advanced: 6-8 widgets (step-prompt + 5-7 learning widgets)
+4. Use varied widget types: step-prompt, code-editor, multiple-choice, interactive-demo, practice-exercise
+5. Each widget should build on previous ones (progressive learning)
+6. Match widgets to target skills from the registry below
+
+Context about the learner:
+{context}
+
+Generate ONLY the complete module JSON (no markdown, no explanation, just pure JSON)."""
         
-        # Create the prompt for STEVE API
-        prompt = f"""
-        Create a learning module for the topic "{topic}" targeting these skills: {', '.join(target_skills)}.
-        
-        Requirements:
-        1. Module ID should be: {module_id}
-        2. Difficulty level: {difficulty}
-        3. Estimated duration: {estimated_time} seconds
-        4. Version: "1.0.0"
-        
-        Context about the learner and available resources:
-        {context}
-        
-        CRITICAL INSTRUCTIONS:
-        - Use ONLY widgets that exist in the provided widget registry
-        - Each widget in the module must include complete metadata from the registry
-        - Widget props should be customized for the specific topic and learning goals
-        - Always include a "step-prompt" widget as the first widget (position 1)
-        - Include appropriate widgets based on the target skills
-        - Ensure completion_criteria includes logical required widgets
-        - All widgets should have dependencies_met set to true for this basic module
-        - Widget positions should be sequential starting from 1
-        
-        Generate a complete, valid learning module following the exact JSON structure.
-        """
-        
-        system_instruction = """
-        You are an expert educational content creator specializing in adaptive learning modules.
-        Create engaging, pedagogically sound learning experiences that match the learner's profile.
-        Always follow the exact JSON schema provided and use only the widgets available in the registry.
-        Ensure the module is appropriately challenging for the specified difficulty level.
-        """
+        # Retry configuration for rate limiting
+        max_retries = 3
+        base_delay = 2  # seconds
         
         try:
-            async with aiohttp.ClientSession() as session:
-                payload = {
-                    "prompt": prompt,
-                    "systemInstruction": system_instruction,
-                    "responseType": "json",
-                    "responseSchema": module_schema,
-                    "temperature": 0.7
-                }
+            print(f"📡 Calling AWS Bedrock API (Claude 3.5 Sonnet)")
+            print(f"   Topic: {topic}")
+            print(f"   Target Skills: {', '.join(target_skills)}")
+            
+            # Wait for rate limiter before making request
+            await self.rate_limiter.acquire()
+            
+            # Prepare the request body for Claude Sonnet 3.5
+            request_body = {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 4000,
+                "system": "You are an expert educational content creator. Generate ONLY valid JSON. Do not include markdown code blocks, explanations, or any text outside the JSON structure. Always create modules with MULTIPLE widgets (minimum 3-5, never just one). Each module should be a complete learning experience with introduction, learning content, practice, and assessment widgets.",
+                "messages": [{"role": "user", "content": prompt}],
+            }
+            
+            # Headers with the Bearer token
+            headers = {
+                "Authorization": f"Bearer {self.bedrock_api_token}",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            }
+            
+            # Retry loop for handling rate limits
+            for attempt in range(max_retries):
+                # Make the API call asynchronously
+                loop = asyncio.get_event_loop()
+                response = await loop.run_in_executor(
+                    None,
+                    lambda: requests.post(self.bedrock_url, headers=headers, data=json.dumps(request_body), timeout=60)
+                )
                 
-                headers = {
-                    "Content-Type": "application/json",
-                    "x-api-key": self.steve_api_key
-                }
-                
-                async with session.post(self.steve_api_url, json=payload, headers=headers) as response:
-                    if response.status == 200:
-                        module = await response.json()
+                # Check if the request was successful
+                if response.status_code == 200:
+                    response_body = response.json()
+                    
+                    # Extract and print the content
+                    if "content" in response_body and len(response_body["content"]) > 0:
+                        generated_text = response_body["content"][0]["text"]
+                        
+                        print(f"✓ Bedrock API returned response ({len(generated_text)} chars)")
+                        
+                        # Clean up the response (remove markdown if present)
+                        generated_text = generated_text.strip()
+                        if generated_text.startswith('```json'):
+                            generated_text = generated_text[7:]
+                        if generated_text.startswith('```'):
+                            generated_text = generated_text[3:]
+                        if generated_text.endswith('```'):
+                            generated_text = generated_text[:-3]
+                        generated_text = generated_text.strip()
+                        
+                        # Parse the JSON
+                        module = json.loads(generated_text)
+                        
+                        print(f"✓ Successfully parsed module: {module.get('id', 'unknown')}")
+                        print(f"✓ Module has {len(module.get('widgets', []))} widgets")
+                        
                         # Validate the generated module
                         self._validate_generated_module(module)
                         return module
                     else:
-                        error_text = await response.text()
-                        raise Exception(f"STEVE API error {response.status}: {error_text}")
+                        raise Exception("No content found in Bedrock response")
+                
+                # Handle rate limiting (429 Too Many Requests)
+                elif response.status_code == 429:
+                    if attempt < max_retries - 1:
+                        # Exponential backoff: 2s, 4s, 8s
+                        delay = base_delay * (2 ** attempt)
+                        print(f"⚠️  Rate limit hit (429). Retrying in {delay}s... (attempt {attempt + 1}/{max_retries})")
+                        await asyncio.sleep(delay)
+                        continue
+                    else:
+                        raise Exception(f"Rate limit exceeded after {max_retries} attempts. Please try again later.")
+                
+                # Handle other HTTP errors
+                else:
+                    # Check if we should retry on certain error codes
+                    if response.status_code in [500, 502, 503, 504] and attempt < max_retries - 1:
+                        delay = base_delay * (2 ** attempt)
+                        print(f"⚠️  Server error ({response.status_code}). Retrying in {delay}s... (attempt {attempt + 1}/{max_retries})")
+                        await asyncio.sleep(delay)
+                        continue
+                    else:
+                        raise Exception(f"HTTP {response.status_code}: {response.text}")
                         
+        except json.JSONDecodeError as e:
+            print(f"✗ Failed to parse JSON from Bedrock response: {e}")
+            print(f"   Response text: {generated_text[:500]}...")
+            return self._create_fallback_module(module_id, topic, target_skills, estimated_time)
         except Exception as e:
-            print(f"Error generating module with STEVE API: {e}")
+            print(f"✗ Error generating module with Bedrock: {e}")
+            import traceback
+            traceback.print_exc()
             # Fallback to a basic module structure if API fails
             return self._create_fallback_module(module_id, topic, target_skills, estimated_time)
     
@@ -236,11 +318,25 @@ class ModuleGenerator:
         if not isinstance(module["widgets"], list) or len(module["widgets"]) == 0:
             raise ValueError("Module must have at least one widget")
         
-        for widget in module["widgets"]:
-            required_widget_fields = ["id", "metadata", "props", "position", "dependencies_met"]
-            for field in required_widget_fields:
-                if field not in widget:
-                    raise ValueError(f"Widget missing required field: {field}")
+        for i, widget in enumerate(module["widgets"]):
+            # Check for required widget fields (be flexible about structure)
+            if "id" not in widget:
+                raise ValueError(f"Widget {i} missing required field: id")
+            if "position" not in widget:
+                # Auto-assign position if missing
+                widget["position"] = i + 1
+            if "dependencies_met" not in widget:
+                # Default to True if missing
+                widget["dependencies_met"] = True
+            
+            # If metadata is missing but we have type/props, that's okay
+            # (Some AI models may generate simpler structures)
+            if "metadata" not in widget and "type" not in widget:
+                print(f"⚠️  Warning: Widget {i} missing both 'metadata' and 'type' fields")
+            
+            # Ensure props exists (even if empty)
+            if "props" not in widget:
+                widget["props"] = {}
     
     def _create_fallback_module(self, module_id: str, topic: str, target_skills: List[str], estimated_time: int) -> Dict[str, Any]:
         """Create a basic fallback module if API generation fails"""
@@ -367,8 +463,28 @@ class ModuleGenerator:
     def generate_module_sync(self, user_id: str, topic: str, target_skills: List[str], 
                             difficulty: str = "beginner", estimated_time: int = 1800) -> Dict[str, Any]:
         """Synchronous wrapper for generate_module"""
-        return asyncio.run(self.generate_module(user_id, topic, target_skills, difficulty, estimated_time))
+        try:
+            # Check if we're already in an event loop
+            loop = asyncio.get_running_loop()
+            # If we get here, we're in a loop - can't use asyncio.run()
+            raise RuntimeError(
+                "generate_module_sync() cannot be called from an async context. "
+                "Use 'await generate_module()' instead."
+            )
+        except RuntimeError:
+            # No running loop, we can use asyncio.run()
+            return asyncio.run(self.generate_module(user_id, topic, target_skills, difficulty, estimated_time))
     
     def create_personalized_module_sync(self, user_id: str, learning_goal: str = None) -> Dict[str, Any]:
         """Synchronous wrapper for create_personalized_module"""
-        return asyncio.run(self.create_personalized_module(user_id, learning_goal))
+        try:
+            # Check if we're already in an event loop
+            loop = asyncio.get_running_loop()
+            # If we get here, we're in a loop - can't use asyncio.run()
+            raise RuntimeError(
+                "create_personalized_module_sync() cannot be called from an async context. "
+                "Use 'await create_personalized_module()' instead."
+            )
+        except RuntimeError:
+            # No running loop, we can use asyncio.run()
+            return asyncio.run(self.create_personalized_module(user_id, learning_goal))

@@ -22,7 +22,7 @@ class Config:
     DYNAMODB_TABLE_PREFIX = os.getenv("DYNAMODB_TABLE_PREFIX", "prismo")
     
     # STEVE API Configuration
-    STEVE_API_URL = os.getenv("STEVE_API_URL", "http://localhost:3000/generate-content")
+    STEVE_API_URL = os.getenv("STEVE_API_URL", "https://stevellmapi.vercel.app/generate-content")
     STEVE_API_KEY = os.getenv("STEVE_API_KEY")
 
 

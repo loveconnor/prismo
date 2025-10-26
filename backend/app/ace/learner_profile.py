@@ -59,7 +59,20 @@ class LearnerProfileManager:
         
         if result.items:
             profile_data = result.items[0].to_dict()
-            return LearnerProfile(**profile_data['profile_data'])
+            # Convert Decimal values back to float for the dataclass
+            raw_data = profile_data['profile_data']
+            return LearnerProfile(
+                user_id=raw_data['user_id'],
+                total_modules_attempted=raw_data['total_modules_attempted'],
+                total_modules_completed=raw_data['total_modules_completed'],
+                average_completion_time=float(raw_data['average_completion_time']),
+                failure_rate=float(raw_data['failure_rate']),
+                preferred_difficulty=raw_data['preferred_difficulty'],
+                learning_pace=raw_data['learning_pace'],
+                last_activity=raw_data['last_activity'],
+                created_at=raw_data['created_at'],
+                updated_at=raw_data['updated_at']
+            )
         
         # Create new profile
         profile = LearnerProfile(
@@ -122,8 +135,8 @@ class LearnerProfileManager:
                 "user_id": profile.user_id,
                 "total_modules_attempted": profile.total_modules_attempted,
                 "total_modules_completed": profile.total_modules_completed,
-                "average_completion_time": profile.average_completion_time,
-                "failure_rate": profile.failure_rate,
+                "average_completion_time": Decimal(str(profile.average_completion_time)),
+                "failure_rate": Decimal(str(profile.failure_rate)),
                 "preferred_difficulty": profile.preferred_difficulty,
                 "learning_pace": profile.learning_pace,
                 "last_activity": profile.last_activity,

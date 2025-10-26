@@ -264,12 +264,16 @@ async def test_synchronous_wrappers():
     """Test synchronous wrapper methods"""
     print_separator("TEST 5: Synchronous Wrapper Methods")
     
-    print("Testing generate_module_sync()...")
+    print("Note: Testing from async context, so using async methods directly")
+    print("(Sync wrappers are for non-async code only)")
+    print()
+    
+    print("Testing generate_module() from async context...")
     try:
         generator = ModuleGenerator()
         
-        # This will internally use asyncio.run()
-        module = generator.generate_module_sync(
+        # Call the async method directly since we're in an async context
+        module = await generator.generate_module(
             user_id=TEST_USER_ID,
             topic="Testing Synchronous Generation",
             target_skills=["testing", "python"],
@@ -277,16 +281,203 @@ async def test_synchronous_wrappers():
             estimated_time=1200
         )
         
-        print(f"✓ Sync generation successful: {module.get('title')}")
+        print(f"✓ Async generation successful: {module.get('title')}")
         print(f"✓ Module has {len(module.get('widgets', []))} widgets")
         
         return True
         
     except Exception as e:
-        print(f"✗ Synchronous wrapper test failed: {e}")
+        print(f"✗ Async wrapper test failed: {e}")
         import traceback
         traceback.print_exc()
         return False
+
+
+async def test_complex_module_generation():
+    """Test generation of a complex module with multiple skills and advanced criteria"""
+    print_separator("TEST 6: Complex Module Generation")
+    
+    print("Testing ModuleGenerator with complex, multi-skill learning scenario:")
+    
+    # Complex test case: Full-stack web application
+    complex_topic = "Building a Full-Stack Todo Application"
+    complex_skills = [
+        "javascript",
+        "react",
+        "nodejs",
+        "express",
+        "database",
+        "api-design",
+        "authentication",
+        "state-management",
+        "routing"
+    ]
+    
+    print(f"  Topic: {complex_topic}")
+    print(f"  Skills ({len(complex_skills)}): {', '.join(complex_skills)}")
+    print(f"  Difficulty: advanced")
+    print(f"  Estimated Time: 5400s (1.5 hours)")
+    print()
+    
+    try:
+        generator = ModuleGenerator()
+        print("✓ ModuleGenerator initialized")
+        print()
+        
+        print("Calling STEVE API to generate complex module...")
+        print("(This may take longer due to the complexity of the request)")
+        print()
+        
+        module = await generator.generate_module(
+            user_id=TEST_USER_ID,
+            topic=complex_topic,
+            target_skills=complex_skills,
+            difficulty="advanced",
+            estimated_time=5400  # 1.5 hours
+        )
+        
+        print("✓ Complex module generated successfully!")
+        print()
+        
+        # Detailed validation for complex module
+        print_separator("COMPLEX MODULE ANALYSIS")
+        
+        # Basic info
+        print(f"Module ID: {module.get('id')}")
+        print(f"Title: {module.get('title')}")
+        print(f"Description: {module.get('description')}")
+        print()
+        
+        # Skills coverage
+        print("Skills Coverage:")
+        module_skills = module.get('skills', [])
+        print(f"  Total skills in module: {len(module_skills)}")
+        print(f"  Skills: {', '.join(module_skills)}")
+        
+        # Check if complex skills are covered
+        covered_skills = [s for s in complex_skills if s in module_skills]
+        print(f"  ✓ Covered {len(covered_skills)}/{len(complex_skills)} requested skills")
+        
+        if len(covered_skills) < len(complex_skills):
+            missing = [s for s in complex_skills if s not in module_skills]
+            print(f"  ⚠️  Missing skills: {', '.join(missing)}")
+        print()
+        
+        # Widget analysis
+        widgets = module.get('widgets', [])
+        print(f"Widget Structure:")
+        print(f"  Total widgets: {len(widgets)}")
+        
+        if len(widgets) >= 5:
+            print("  ✓ Module has sufficient complexity (5+ widgets)")
+        else:
+            print(f"  ⚠️  Module may be too simple (only {len(widgets)} widgets)")
+        
+        # Analyze widget types
+        widget_types = {}
+        for widget in widgets:
+            widget_type = widget.get('metadata', {}).get('type', 'unknown')
+            widget_types[widget_type] = widget_types.get(widget_type, 0) + 1
+        
+        print(f"\n  Widget Types Distribution:")
+        for wtype, count in widget_types.items():
+            print(f"    - {wtype}: {count}")
+        print()
+        
+        # Dependencies check
+        print("Widget Dependencies:")
+        has_dependencies = False
+        for widget in widgets:
+            deps = widget.get('dependencies', [])
+            if deps:
+                has_dependencies = True
+                widget_title = widget.get('metadata', {}).get('title', widget.get('id'))
+                print(f"  - {widget_title} depends on: {', '.join(deps)}")
+        
+        if has_dependencies:
+            print("  ✓ Module includes widget dependencies (progressive learning)")
+        else:
+            print("  ⚠️  No dependencies found (all widgets independent)")
+        print()
+        
+        # Completion criteria analysis
+        criteria = module.get('completion_criteria', {})
+        print("Completion Criteria:")
+        print(f"  Required widgets: {len(criteria.get('required_widgets', []))}")
+        print(f"  Min completion: {criteria.get('min_completion_percentage', 0)}%")
+        print(f"  Max attempts: {criteria.get('max_attempts', 0)}")
+        print(f"  Time limit: {criteria.get('time_limit', 0)}s")
+        
+        # Check if criteria matches complexity
+        required_count = len(criteria.get('required_widgets', []))
+        total_count = len(widgets)
+        
+        if required_count > 0:
+            required_percentage = (required_count / total_count) * 100 if total_count > 0 else 0
+            print(f"  Required widget ratio: {required_percentage:.1f}% ({required_count}/{total_count})")
+            
+            if required_percentage >= 70:
+                print("  ✓ Rigorous completion criteria")
+            else:
+                print("  ⚠️  Lenient completion criteria")
+        print()
+        
+        # Difficulty assessment
+        print("Difficulty Assessment:")
+        print(f"  Requested: advanced")
+        print(f"  Skills complexity: {len(module_skills)} skills")
+        print(f"  Widget count: {len(widgets)} widgets")
+        print(f"  Estimated duration: {module.get('estimated_duration', 0)}s")
+        
+        complexity_score = len(module_skills) * 2 + len(widgets)
+        print(f"  Complexity score: {complexity_score}")
+        
+        if complexity_score >= 20:
+            print("  ✓ Module meets advanced difficulty expectations")
+        else:
+            print("  ⚠️  Module may be less complex than expected")
+        print()
+        
+        # Print detailed widget breakdown
+        print_separator("DETAILED WIDGET BREAKDOWN")
+        for i, widget in enumerate(widgets, 1):
+            widget_id = widget.get('id', 'unknown')
+            metadata = widget.get('metadata', {})
+            widget_title = metadata.get('title', 'Unknown')
+            widget_type = metadata.get('type', 'unknown')
+            position = widget.get('position', i)
+            deps = widget.get('dependencies', [])
+            deps_met = widget.get('dependencies_met', True)
+            
+            print(f"{position}. {widget_title}")
+            print(f"   ID: {widget_id}")
+            print(f"   Type: {widget_type}")
+            print(f"   Dependencies: {', '.join(deps) if deps else 'None'}")
+            print(f"   Dependencies Met: {'✓' if deps_met else '✗'}")
+            print()
+        
+        # Save to file for inspection
+        output_file = backend_dir / "test_outputs" / "complex_module.json"
+        output_file.parent.mkdir(exist_ok=True)
+        
+        with open(output_file, 'w') as f:
+            json.dump(module, f, indent=2)
+        
+        print(f"✓ Full module JSON saved to: {output_file}")
+        print()
+        
+        # Print the full JSON to console
+        print_separator("FULL COMPLEX MODULE JSON")
+        print(json.dumps(module, indent=2))
+        print()
+        
+        return module
+        
+    except Exception as e:
+        print(f"✗ Error during complex module generation: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
 
 
 async def run_all_tests():
@@ -334,6 +525,10 @@ async def run_all_tests():
     result5 = await test_synchronous_wrappers()
     test_results.append(("Synchronous Wrappers", result5))
     
+    # Test 6: Complex module generation
+    result6 = await test_complex_module_generation()
+    test_results.append(("Complex Module Generation", result6 is not None))
+    
     # Print final summary
     print_separator("FINAL TEST SUMMARY")
     
@@ -365,7 +560,7 @@ if __name__ == "__main__":
         setup_tables()
         print("✓ DynamoDB tables ready\n")
     except Exception as e:
-        print(f"⚠️  Warning: Could not setup tables: {e}")
+        print(f"  Warning: Could not setup tables: {e}")
         print("Tables may already exist or AWS credentials may not be configured.\n")
     
     try:
