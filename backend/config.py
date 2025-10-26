@@ -19,7 +19,12 @@ class Config:
     COGNITO_USER_POOL_ID = os.getenv("COGNITO_USER_POOL_ID", "us-east-1_JEflDBGQ0")
     COGNITO_CLIENT_ID = os.getenv("COGNITO_CLIENT_ID", "63rmk63l7a9iis438elt3lofpr")
     COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
+    COGNITO_DOMAIN = os.getenv("COGNITO_DOMAIN", "us-east-1jefldbgq0")
     DYNAMODB_TABLE_PREFIX = os.getenv("DYNAMODB_TABLE_PREFIX", "prismo")
+    
+    # OAuth Configuration
+    OAUTH_CALLBACK_URL = os.getenv("OAUTH_CALLBACK_URL", "http://localhost:4200/auth/callback")
+    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "174911154905-3d2k5au7monn142921u3f455lkgu5a2v.apps.googleusercontent.com")
     
     # Bedrock API Configuration
     Bedrock_API_URL = os.getenv("Bedrock_API_URL", "https://Bedrockllmapi.vercel.app/generate-content")

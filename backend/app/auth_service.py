@@ -487,6 +487,103 @@ class CognitoAuthService:
         except Exception as e:
             return {"success": False, "error": f"Unexpected error: {e}"}
 
+    def handle_social_login(self, access_token: str, id_token: str = None) -> Dict[str, Any]:
+        """Handle social login (Google OAuth via Cognito)"""
+        try:
+            import jwt
+            
+            print(f"DEBUG: Handling social login with access token")
+            
+            # Get user info from Cognito
+            user_info = self.cognito.get_user(AccessToken=access_token)
+            cognito_user_id = user_info["Username"]
+            
+            print(f"DEBUG: Cognito user ID: {cognito_user_id}")
+            
+            # Extract user attributes
+            attributes = {attr["Name"]: attr["Value"] for attr in user_info["UserAttributes"]}
+            email = attributes.get("email")
+            name = attributes.get("name", "")
+            picture = attributes.get("picture", "")
+            
+            print(f"DEBUG: User email: {email}, name: {name}")
+            
+            if not email:
+                return {"success": False, "error": "Email not provided by social provider"}
+            
+            # Check if user already exists in DynamoDB
+            existing_user = self.user_model.get_user_by_email(email)
+            
+            if existing_user:
+                print(f"DEBUG: Existing user found: {existing_user.get('id')}")
+                
+                # Update last login and any missing profile info
+                update_data = {}
+                if not existing_user.get("cognito_user_id"):
+                    update_data["cognito_user_id"] = cognito_user_id
+                
+                if picture and not existing_user.get("profile", {}).get("picture"):
+                    if "profile" not in update_data:
+                        update_data["profile"] = existing_user.get("profile", {})
+                    update_data["profile"]["picture"] = picture
+                    update_data["profile"]["provider"] = "google"
+                
+                if update_data:
+                    self.user_model.update_item(
+                        {"id": existing_user["id"]},
+                        update_data
+                    )
+                    # Refresh user data
+                    existing_user = self.user_model.get_by_id(existing_user["id"])
+                
+                return {
+                    "success": True,
+                    "user_data": existing_user,
+                    "is_new_user": False
+                }
+            else:
+                print(f"DEBUG: Creating new user for email: {email}")
+                
+                # Create new user in DynamoDB
+                username = email.split('@')[0]
+                
+                # Check if username exists, append number if needed
+                base_username = username
+                counter = 1
+                while self.user_model.get_user_by_username(username):
+                    username = f"{base_username}{counter}"
+                    counter += 1
+                
+                user_data = self.user_model.create_user(
+                    cognito_user_id=cognito_user_id,
+                    email=email,
+                    username=username,
+                    profile={
+                        "name": name,
+                        "picture": picture,
+                        "provider": "google"
+                    }
+                )
+                
+                print(f"DEBUG: New user created: {user_data.get('id')}")
+                
+                return {
+                    "success": True,
+                    "user_data": user_data,
+                    "is_new_user": True
+                }
+                
+        except ClientError as e:
+            error_msg = f"Social login failed: {e}"
+            print(f"ERROR: {error_msg}")
+            return {"success": False, "error": error_msg}
+        except Exception as e:
+            error_msg = f"Unexpected error during social login: {e}"
+            print(f"ERROR: {error_msg}")
+            import traceback
+            traceback.print_exc()
+            return {"success": False, "error": error_msg}
+
 
 # Global auth service instance
 auth_service = CognitoAuthService()

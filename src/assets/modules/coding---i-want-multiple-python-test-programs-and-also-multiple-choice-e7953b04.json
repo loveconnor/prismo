@@ -1,0 +1,682 @@
+{
+  "name": "coding---i-want-multiple-python-test-programs-and-also-multiple-choice-e7953b04",
+  "title": "Python Programming: Loops, Conditionals & Recursion Mastery",
+  "description": "Master Python fundamentals through multiple coding challenges and conceptual assessments. Build proficiency with loops, conditionals, recursion, and variables through hands-on coding exercises and multiple-choice questions.",
+  "skills": [
+    "loops",
+    "ifs",
+    "while",
+    "recursion",
+    "variables",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Python Fundamentals",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Python Programming Challenge Series",
+        "prompt": "Welcome! In this module, you'll tackle real-world Python coding challenges using loops, conditionals, recursion, and variables. You'll write test programs and answer conceptual questions to solidify your understanding. Let's begin!"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Module Overview Confirmation",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "You're Ready to Start",
+        "message": "You have a solid foundation for this challenge track. You'll work through 5 learning activities combining code editors and multiple-choice assessments.",
+        "explanation": "This mixed-format approach reinforces your coding skills while validating conceptual understanding.",
+        "nextSteps": [
+          "Review the first coding challenge",
+          "Work through systematically",
+          "Check your answers carefully"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Starting Confidence Assessment",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with Python loops and variables right now?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Challenge 1: Sum Calculator with Loop",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Write a Function to Sum Numbers",
+        "language": "python",
+        "starterCode": "def sum_numbers(n):\n    # Write a function that sums integers from 1 to n\n    # Use a for or while loop\n    pass\n\n# Test your function\nprint(sum_numbers(5))  # Should output 15\nprint(sum_numbers(10))  # Should output 55",
+        "testCases": [
+          {
+            "input": "sum_numbers(5)",
+            "expected": "15",
+            "description": "Sum of 1 to 5"
+          },
+          {
+            "input": "sum_numbers(10)",
+            "expected": "55",
+            "description": "Sum of 1 to 10"
+          },
+          {
+            "input": "sum_numbers(1)",
+            "expected": "1",
+            "description": "Edge case: single number"
+          },
+          {
+            "input": "sum_numbers(0)",
+            "expected": "0",
+            "description": "Edge case: zero"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Challenge 1 Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Loop Mastery Demonstrated",
+        "message": "You've successfully implemented a loop-based sum calculator. This shows strong understanding of iteration and accumulation patterns.",
+        "explanation": "Loops are fundamental for processing collections of data. Your solution demonstrates both syntax correctness and algorithmic thinking.",
+        "nextSteps": [
+          "Review loop performance characteristics",
+          "Attempt the conditionals challenge",
+          "Practice edge case handling"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Post-Challenge 1 Confidence",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you now with Python loops?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Conceptual Check: Loops & Conditionals",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Understanding Loop Behavior",
+        "question": "Which statements correctly describe a 'for' loop in Python? (Select all that apply)",
+        "options": [
+          "A for loop iterates over a sequence or range of values",
+          "A for loop always executes at least once",
+          "The loop variable is automatically incremented after each iteration",
+          "A for loop can be exited early using the 'break' statement",
+          "A for loop requires an explicit condition check before each iteration"
+        ],
+        "correctAnswer": [
+          0,
+          3
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Conceptual Assessment Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Strong Conceptual Understanding",
+        "message": "You correctly identified key characteristics of Python loops. Your conceptual foundation is solid.",
+        "explanation": "Understanding loop mechanics is crucial for writing efficient, correct code. For loops are declarative—you specify what to iterate over, and Python handles the mechanics.",
+        "nextSteps": [
+          "Move to the conditionals coding challenge",
+          "Practice nested loop patterns",
+          "Explore performance implications"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Post-Conceptual Check Confidence",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with your conceptual understanding of loops?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Challenge 2: Conditional Logic",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Classify Numbers with Conditionals",
+        "language": "python",
+        "starterCode": "def classify_number(num):\n    # Return 'positive', 'negative', or 'zero'\n    # Use if, elif, else statements\n    pass\n\n# Test your function\nprint(classify_number(5))    # Should output 'positive'\nprint(classify_number(-3))   # Should output 'negative'\nprint(classify_number(0))    # Should output 'zero'",
+        "testCases": [
+          {
+            "input": "classify_number(5)",
+            "expected": "'positive'",
+            "description": "Positive number"
+          },
+          {
+            "input": "classify_number(-3)",
+            "expected": "'negative'",
+            "description": "Negative number"
+          },
+          {
+            "input": "classify_number(0)",
+            "expected": "'zero'",
+            "description": "Zero value"
+          },
+          {
+            "input": "classify_number(100)",
+            "expected": "'positive'",
+            "description": "Large positive"
+          }
+        ]
+      },
+      "position": 4,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Challenge 2 Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Conditional Logic Mastered",
+        "message": "Excellent! Your conditional implementation correctly handles all cases. Control flow is now solid.",
+        "explanation": "Conditionals are the second pillar of programming logic. Combining loops and conditionals enables complex algorithms.",
+        "nextSteps": [
+          "Prepare for recursion challenge",
+          "Study base case patterns",
+          "Practice conditional nesting"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Post-Challenge 2 Confidence",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with conditional statements?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Challenge 3: Recursion & Base Cases",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Implement Factorial Using Recursion",
+        "language": "python",
+        "starterCode": "def factorial(n):\n    # Calculate n! recursively\n    # Remember: n! = n * (n-1)!\n    # Base case: 0! = 1\n    pass\n\n# Test your function\nprint(factorial(5))   # Should output 120\nprint(factorial(0))   # Should output 1\nprint(factorial(3))   # Should output 6",
+        "testCases": [
+          {
+            "input": "factorial(5)",
+            "expected": "120",
+            "description": "5 factorial"
+          },
+          {
+            "input": "factorial(0)",
+            "expected": "1",
+            "description": "Base case: 0!"
+          },
+          {
+            "input": "factorial(1)",
+            "expected": "1",
+            "description": "Base case: 1!"
+          },
+          {
+            "input": "factorial(4)",
+            "expected": "24",
+            "description": "4 factorial"
+          }
+        ]
+      },
+      "position": 5,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Challenge 3 Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Recursion Successfully Implemented",
+        "message": "Outstanding! You've grasped recursion—one of programming's most elegant concepts. Your base case handling was correct.",
+        "explanation": "Recursion allows functions to call themselves, enabling elegant solutions for problems with recursive structure. The key is defining proper base cases to prevent infinite loops.",
+        "nextSteps": [
+          "Explore more complex recursive patterns",
+          "Compare recursion vs. iteration performance",
+          "Practice mutual recursion"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Post-Challenge 3 Confidence",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with recursion?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Advanced Concepts: While Loops & Variables",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Mastering While Loops and Variable Scope",
+        "question": "Which statements are true about while loops and variable scope in Python? (Select all that apply)",
+        "options": [
+          "A while loop continues executing as long as its condition is true",
+          "Variables defined inside a while loop are only accessible inside that loop",
+          "You can use 'continue' to skip to the next iteration of a while loop",
+          "A while loop's condition is evaluated before each iteration begins",
+          "Variables defined before a while loop cannot be modified inside the loop"
+        ],
+        "correctAnswer": [
+          0,
+          2,
+          3
+        ]
+      },
+      "position": 6,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Advanced Concepts Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Advanced Concepts Understood",
+        "message": "Perfect! You understand while loops, scope, and control flow statements. You're thinking like a real programmer.",
+        "explanation": "While loops and proper variable scoping are essential for writing correct, maintainable code. Control flow statements like 'continue' and 'break' make loops more powerful.",
+        "nextSteps": [
+          "Review variable scoping rules",
+          "Practice nested while loops",
+          "Explore do-while alternatives"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Final Confidence Assessment",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you with all Python fundamentals covered in this module?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "difficulty": "challenge",
+  "_metadata": {
+    "generated_at": "2025-10-26T10:31:21.928497",
+    "module_id": "7dfa7ef2-a1e8-4bd6-bfb4-98d62229a79f",
+    "saved_to_filesystem": true
+  }
+}

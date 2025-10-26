@@ -1,0 +1,349 @@
+{
+  "name": "coding---coding-challenge-and-multiple-choice-261c7c7e",
+  "title": "Mastering Loops and Recursion: Coding Challenges",
+  "description": "Build proficiency in loop constructs and recursive functions through hands-on coding challenges and conceptual multiple-choice questions.",
+  "skills": [
+    "recursion",
+    "forloops",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Coding Challenge",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Coding Challenge",
+        "prompt": "In this module, you will tackle coding challenges that test your understanding of loops and recursion. You'll solve problems using for loops, while loops, and recursive functions. By the end, you'll be comfortable choosing the right approach for different scenarios."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You're about to explore two powerful programming concepts: loops and recursion.",
+        "explanation": "Loops allow you to repeat code blocks efficiently, while recursion enables functions to call themselves for elegant solutions to complex problems.",
+        "nextSteps": [
+          "Review loop fundamentals",
+          "Understand recursion basics",
+          "Complete coding challenges"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with loops and recursion?",
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Challenge 1: Sum Numbers with a Loop",
+        "language": "python",
+        "prompt": "Write a function named sum_numbers(n) that returns the sum of all integers from 1 to n using a for loop. For example, sum_numbers(5) should return 15 (1+2+3+4+5).",
+        "starterCode": "def sum_numbers(n):\n    # Write your code here\n    pass\n\n# Test your function\nprint(sum_numbers(5))  # Expected output: 15\nprint(sum_numbers(10))  # Expected output: 55",
+        "testCases": [
+          {
+            "input": "sum_numbers(5)",
+            "expected": "15",
+            "description": "Sum of 1 to 5"
+          },
+          {
+            "input": "sum_numbers(10)",
+            "expected": "55",
+            "description": "Sum of 1 to 10"
+          },
+          {
+            "input": "sum_numbers(1)",
+            "expected": "1",
+            "description": "Edge case: single number"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Work!",
+        "message": "You've successfully implemented a loop-based solution.",
+        "explanation": "Using a for loop to iterate from 1 to n and accumulating the sum is an efficient and readable approach. This demonstrates your understanding of loop fundamentals.",
+        "nextSteps": [
+          "Review the recursion concept",
+          "Compare loop vs recursion approaches",
+          "Try the recursive version"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with for loops now?",
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Understanding Recursion",
+        "question": "Which of the following statements about recursion are TRUE? (Select all that apply)",
+        "options": [
+          {
+            "id": "a",
+            "text": "A recursive function must call itself with different parameters to make progress toward a base case"
+          },
+          {
+            "id": "b",
+            "text": "Recursion is always more efficient than loops"
+          },
+          {
+            "id": "c",
+            "text": "Every recursive function must have a base case to prevent infinite recursion"
+          },
+          {
+            "id": "d",
+            "text": "Recursion uses the call stack to manage function calls"
+          }
+        ],
+        "correctAnswer": [
+          "a",
+          "c",
+          "d"
+        ],
+        "explanation": "Recursion relies on functions calling themselves with modified parameters. A base case is essential to stop recursion. The call stack manages recursive calls. However, recursion is not always more efficient—loops are often faster."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent!",
+        "message": "You've demonstrated a strong understanding of recursion concepts.",
+        "explanation": "You correctly identified the key principles of recursion: modifying parameters, base cases, and stack management. This conceptual knowledge is crucial for writing effective recursive solutions.",
+        "nextSteps": [
+          "Practice recursive coding",
+          "Compare efficiency with loops",
+          "Review module completion"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with recursion concepts now?",
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T10:08:29.271954",
+    "module_id": "8855f152-44ff-4ae4-b4d2-18ff408f3232",
+    "saved_to_filesystem": true
+  }
+}

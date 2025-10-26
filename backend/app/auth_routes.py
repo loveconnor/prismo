@@ -1,7 +1,10 @@
 from functools import wraps
+import requests
+import base64
 
 from app.auth_service import auth_service
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
+from config import config
 
 
 # Authentication routes blueprint
@@ -310,3 +313,110 @@ def verify_token():
 
     except Exception as e:
         return jsonify({"error": f"Token verification failed: {e}"}), 500
+
+
+@auth_bp.route("/oauth/callback", methods=["POST"])
+def oauth_callback():
+    """Handle OAuth callback and exchange authorization code for tokens"""
+    try:
+        data = request.get_json()
+        
+        if "code" not in data:
+            return jsonify({"error": "Authorization code required"}), 400
+        
+        auth_code = data["code"]
+        redirect_uri = data.get("redirect_uri", current_app.config.get("OAUTH_CALLBACK_URL"))
+        
+        print(f"DEBUG: OAuth callback - exchanging code for tokens")
+        print(f"DEBUG: Redirect URI: {redirect_uri}")
+        
+        # Exchange authorization code for tokens using Cognito token endpoint
+        token_url = f"https://{current_app.config.get('COGNITO_DOMAIN')}.auth.{current_app.config.get('AWS_REGION')}.amazoncognito.com/oauth2/token"
+        
+        # Prepare the authorization header (client_id:client_secret base64 encoded)
+        client_id = current_app.config.get("COGNITO_CLIENT_ID")
+        client_secret = current_app.config.get("COGNITO_CLIENT_SECRET")
+        
+        auth_string = f"{client_id}:{client_secret}"
+        auth_bytes = auth_string.encode('utf-8')
+        auth_b64 = base64.b64encode(auth_bytes).decode('utf-8')
+        
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': f'Basic {auth_b64}'
+        }
+        
+        body = {
+            'grant_type': 'authorization_code',
+            'client_id': client_id,
+            'code': auth_code,
+            'redirect_uri': redirect_uri
+        }
+        
+        print(f"DEBUG: Requesting tokens from: {token_url}")
+        
+        # Make request to Cognito token endpoint
+        response = requests.post(token_url, headers=headers, data=body)
+        
+        if response.status_code != 200:
+            print(f"ERROR: Token exchange failed: {response.text}")
+            return jsonify({
+                "error": "Failed to exchange authorization code",
+                "details": response.text
+            }), 400
+        
+        tokens = response.json()
+        print(f"DEBUG: Successfully received tokens from Cognito")
+        
+        # Get user info using the access token
+        access_token = tokens.get('access_token')
+        if not access_token:
+            return jsonify({"error": "No access token received"}), 400
+        
+        # Handle social login (create or get user)
+        result = auth_service.handle_social_login(access_token, tokens.get('id_token'))
+        
+        if result["success"]:
+            return jsonify({
+                "message": "Login successful",
+                "access_token": access_token,
+                "refresh_token": tokens.get('refresh_token'),
+                "id_token": tokens.get('id_token'),
+                "expires_in": tokens.get('expires_in'),
+                "user_data": result["user_data"]
+            }), 200
+        else:
+            return jsonify({"error": result["error"]}), 400
+        
+    except Exception as e:
+        print(f"ERROR: OAuth callback failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"OAuth callback failed: {str(e)}"}), 500
+
+
+@auth_bp.route("/oauth/config", methods=["GET"])
+def oauth_config():
+    """Get OAuth configuration for frontend"""
+    try:
+        cognito_domain = current_app.config.get("COGNITO_DOMAIN")
+        region = current_app.config.get("AWS_REGION")
+        client_id = current_app.config.get("COGNITO_CLIENT_ID")
+        callback_url = current_app.config.get("OAUTH_CALLBACK_URL")
+        
+        # Construct Cognito hosted UI URL
+        hosted_ui_url = f"https://{cognito_domain}.auth.{region}.amazoncognito.com"
+        
+        return jsonify({
+            "cognito_domain": cognito_domain,
+            "hosted_ui_url": hosted_ui_url,
+            "client_id": client_id,
+            "callback_url": callback_url,
+            "region": region,
+            "authorize_endpoint": f"{hosted_ui_url}/oauth2/authorize",
+            "token_endpoint": f"{hosted_ui_url}/oauth2/token",
+            "logout_endpoint": f"{hosted_ui_url}/logout"
+        }), 200
+        
+    except Exception as e:
+        return jsonify({"error": f"Failed to get OAuth config: {str(e)}"}), 500

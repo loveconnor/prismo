@@ -1,0 +1,330 @@
+{
+  "name": "coding-707e2b74",
+  "title": "Master Loops and Recursion: Your First Coding Challenge",
+  "description": "Learn fundamental coding concepts by writing your first programs using loops and recursion to solve real-world problems.",
+  "skills": [
+    "loops",
+    "recursion",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Introduction to Loops and Recursion",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Loops and Recursion",
+        "prompt": "Loops and recursion are two fundamental patterns in programming. A loop repeats code until a condition is met. Recursion is when a function calls itself to solve smaller versions of the same problem. In this module, you'll learn both concepts by writing real code. Let's start with loops!"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Let's Begin",
+        "message": "You are about to explore two powerful coding patterns that solve many real-world problems.",
+        "explanation": "Understanding loops and recursion will unlock your ability to write more efficient and elegant code.",
+        "nextSteps": [
+          "Learn about for loops",
+          "Write your first loop",
+          "Explore recursion"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you about understanding loops and recursion?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Write Your First Loop",
+        "language": "python",
+        "starterCode": "# Write a for loop that prints numbers 1 to 5\n# Hint: Use range(1, 6)\n\nfor i in range(1, 6):\n    pass  # Replace this with your code",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "1\n2\n3\n4\n5\n",
+            "description": "Loop should print numbers 1 through 5"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job with Loops!",
+        "message": "You successfully created your first loop. This pattern repeats code efficiently.",
+        "explanation": "For loops iterate over sequences like ranges. Each iteration updates the loop variable (i in this case). This is the foundation of handling repetitive tasks in programming.",
+        "nextSteps": [
+          "Understand loop control flow",
+          "Learn about recursion",
+          "Write a recursive function"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you about writing for loops?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Write Your First Recursive Function",
+        "language": "python",
+        "starterCode": "# Write a recursive function that calculates factorial\n# factorial(5) should return 120\n# Base case: factorial(0) = 1\n# Recursive case: factorial(n) = n * factorial(n-1)\n\ndef factorial(n):\n    pass  # Replace with your recursive implementation\n\n# Test your function\nprint(factorial(5))",
+        "testCases": [
+          {
+            "input": "factorial(0)",
+            "expectedOutput": "1",
+            "description": "Base case: factorial of 0 is 1"
+          },
+          {
+            "input": "factorial(5)",
+            "expectedOutput": "120",
+            "description": "Recursive case: factorial of 5 is 120"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Recursion Implementation!",
+        "message": "You've successfully written a recursive function that solves a problem by calling itself.",
+        "explanation": "Recursion works by breaking problems into smaller subproblems. Every recursive function needs a base case (when to stop) and a recursive case (how to solve smaller versions). Factorial is a classic example where recursion elegantly expresses the solution.",
+        "nextSteps": [
+          "Compare loops vs recursion",
+          "Practice more complex patterns",
+          "Explore advanced coding concepts"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you about understanding recursion?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T10:12:05.038146",
+    "module_id": "8d5c6291-25ab-478d-8395-a2c69968b455",
+    "saved_to_filesystem": true
+  }
+}

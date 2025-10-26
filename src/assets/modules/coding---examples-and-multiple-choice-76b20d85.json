@@ -1,0 +1,342 @@
+{
+  "name": "coding---examples-and-multiple-choice-76b20d85",
+  "title": "Mastering Loops, Recursion, and JavaScript: Examples and Practice",
+  "description": "Learn and practice core JavaScript concepts including loops and recursion through interactive code examples and multiple-choice assessments.",
+  "skills": [
+    "loops",
+    "javascript",
+    "recursion",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Introduction to JavaScript Loops and Recursion",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Getting Started with Loops and Recursion",
+        "prompt": "In this module, you'll explore two fundamental programming concepts: loops and recursion. Loops allow you to repeat code blocks efficiently, while recursion enables functions to call themselves. Both are essential for writing elegant and efficient code. Let's begin by understanding these concepts through practical examples."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You're about to dive into loops and recursion, two critical concepts in JavaScript programming.",
+        "explanation": "Understanding these concepts will help you write more efficient and elegant code.",
+        "nextSteps": [
+          "Review loop syntax",
+          "Explore recursion patterns",
+          "Practice with examples"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with loops and recursion in JavaScript?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Example 1: For Loop",
+        "language": "javascript",
+        "starterCode": "// Complete the for loop to print numbers 1 to 5\nfor (let i = 1; i <= 5; i++) {\n  // Add your code here\n}\n\n// Uncomment below to test\n// console.log(sum);",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "1\n2\n3\n4\n5",
+            "description": "Should print numbers 1 to 5"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Loop Example!",
+        "message": "You've successfully written a for loop that iterates from 1 to 5.",
+        "explanation": "For loops are ideal when you know the exact number of iterations. They consist of initialization, condition, and increment/decrement.",
+        "nextSteps": [
+          "Learn about while loops",
+          "Explore nested loops",
+          "Try the recursion example"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with for loops?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Recursion Fundamentals",
+        "question": "Which of the following are essential components of a recursive function? (Select all that apply)",
+        "options": [
+          {
+            "id": "a",
+            "text": "A base case to stop recursion",
+            "correct": true
+          },
+          {
+            "id": "b",
+            "text": "A recursive case that calls itself with simpler input",
+            "correct": true
+          },
+          {
+            "id": "c",
+            "text": "A for loop inside the function",
+            "correct": false
+          },
+          {
+            "id": "d",
+            "text": "A condition to prevent infinite loops",
+            "correct": true
+          }
+        ],
+        "correctAnswer": [
+          "a",
+          "b",
+          "d"
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Understanding!",
+        "message": "You've correctly identified the key components of recursive functions.",
+        "explanation": "Every recursive function needs a base case to terminate and a recursive case to reduce the problem. This prevents infinite loops and ensures the function eventually completes.",
+        "nextSteps": [
+          "Review recursion examples",
+          "Practice with factorial",
+          "Compare loops vs recursion"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with recursion concepts?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T10:21:00.443817",
+    "module_id": "4beddf01-bd74-4d0b-b0bd-50b701611ce3",
+    "saved_to_filesystem": true
+  }
+}

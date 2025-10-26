@@ -1,0 +1,344 @@
+{
+  "name": "coding---i-want-to-do-multiple-choice-and-also-a-python-coding-challenge-538f9bd8",
+  "title": "Python Loops, Recursion & Data Structures Challenge",
+  "description": "Master fundamental Python concepts through multiple choice assessments and hands-on coding challenges covering loops, recursion, and data manipulation.",
+  "skills": [
+    "loops",
+    "recursion",
+    "data",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Module Introduction",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Python Coding Challenge",
+        "prompt": "In this module, you will strengthen your Python skills by working with loops, recursion, and data structures. You'll start with multiple choice questions to reinforce key concepts, then tackle a real-world coding challenge. Let's get started!"
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Let's Begin!",
+        "message": "You're about to explore fundamental Python programming concepts.",
+        "explanation": "This module combines conceptual understanding with practical coding skills.",
+        "nextSteps": [
+          "Review the multiple choice questions",
+          "Prepare for the coding challenge",
+          "Take notes on key concepts"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with Python loops and recursion?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Python Loops & Recursion Concepts",
+        "question": "Which of the following statements are TRUE about Python loops and recursion? (Select all that apply)",
+        "options": [
+          "A for loop iterates over a sequence a predetermined number of times",
+          "Recursion always requires a base case to avoid infinite loops",
+          "While loops continue as long as a condition remains true",
+          "Recursive functions can always be replaced with iterative solutions",
+          "Python has no maximum recursion depth limit"
+        ],
+        "correctAnswer": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "explanation": "A, B, C, and D are correct. For loops iterate a set number of times over sequences. Recursion must have a base case. While loops run while conditions are true. Most recursive problems can be solved iteratively. However, E is false - Python does have a recursion limit (usually 1000) to prevent stack overflow."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Concept Check Complete",
+        "message": "Great! You've demonstrated understanding of core loop and recursion concepts.",
+        "explanation": "Understanding when to use loops vs recursion and knowing about base cases are critical for writing efficient Python code.",
+        "nextSteps": [
+          "Move on to the coding challenge",
+          "Review any concepts you were unsure about",
+          "Think about practical uses for recursion"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you now about applying loops and recursion in code?",
+        "minLabel": "Still learning",
+        "maxLabel": "Ready to code"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Fibonacci Sequence Challenge",
+        "language": "python",
+        "starterCode": "# Challenge: Implement a function that returns the nth Fibonacci number\n# Use recursion with memoization to optimize performance\n# Test cases: fib(0)=0, fib(1)=1, fib(5)=5, fib(10)=55\n\ndef fibonacci(n, memo={}):\n    # TODO: Implement your solution here\n    pass\n\n# Test your function\nprint(fibonacci(0))\nprint(fibonacci(1))\nprint(fibonacci(5))\nprint(fibonacci(10))",
+        "testCases": [
+          {
+            "input": "fibonacci(0)",
+            "expectedOutput": "0",
+            "description": "Base case: 0th Fibonacci number"
+          },
+          {
+            "input": "fibonacci(1)",
+            "expectedOutput": "1",
+            "description": "Base case: 1st Fibonacci number"
+          },
+          {
+            "input": "fibonacci(5)",
+            "expectedOutput": "5",
+            "description": "5th Fibonacci number"
+          },
+          {
+            "input": "fibonacci(10)",
+            "expectedOutput": "55",
+            "description": "10th Fibonacci number"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Code Challenge Submitted",
+        "message": "You've completed the Fibonacci recursive challenge with memoization optimization.",
+        "explanation": "Memoization is a technique that stores previously computed results to avoid redundant calculations. This transforms a naive O(2^n) recursive solution into an efficient O(n) solution.",
+        "nextSteps": [
+          "Review your implementation for clarity",
+          "Consider edge cases and error handling",
+          "Explore alternative iterative approaches"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with implementing recursive solutions and optimization techniques?",
+        "minLabel": "Need more practice",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "multiple-choice",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T10:00:26.858512",
+    "module_id": "b639c42f-4bde-4252-9d78-9523d85437b7",
+    "saved_to_filesystem": true
+  }
+}

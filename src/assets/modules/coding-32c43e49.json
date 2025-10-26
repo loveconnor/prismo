@@ -1,0 +1,336 @@
+{
+  "name": "coding-32c43e49",
+  "title": "Introduction to Python Functions and Control Flow",
+  "description": "Learn foundational coding concepts including functions, loops, and conditional statements through interactive exercises and code challenges.",
+  "skills": [
+    "test",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Welcome to Coding Fundamentals",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Coding Fundamentals",
+        "prompt": "In this module, you will learn the basics of Python programming. We'll cover functions, loops, and conditionals. By the end, you'll write your first complete program. Let's start by understanding what a function is and why it's important in coding."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You're starting your coding journey! This module is designed for beginners with no prior programming experience.",
+        "explanation": "Understanding the fundamentals will make advanced concepts easier to learn.",
+        "nextSteps": [
+          "Learn about functions",
+          "Practice writing simple code",
+          "Combine concepts to build programs"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident do you feel about starting your coding journey?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Write Your First Function",
+        "language": "python",
+        "starterCode": "def greet(name):\n    # Add your code here\n    return \"Hello, \" + name\n\n# Test your function\nprint(greet(\"Alice\"))",
+        "prompt": "Write a function called greet that takes a name parameter and returns a greeting message. The function should return a string in the format 'Hello, [name]'.",
+        "testCases": [
+          {
+            "input": "greet('Alice')",
+            "expectedOutput": "Hello, Alice",
+            "description": "Test with name Alice"
+          },
+          {
+            "input": "greet('Bob')",
+            "expectedOutput": "Hello, Bob",
+            "description": "Test with name Bob"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job on Your First Function!",
+        "message": "You've successfully created and tested a function. Functions are reusable blocks of code that make programming much more efficient.",
+        "explanation": "Functions help organize code, reduce repetition, and make programs easier to maintain. The greet function you wrote takes input (a name) and produces output (a greeting).",
+        "nextSteps": [
+          "Learn about loops and iteration",
+          "Practice with more complex functions",
+          "Combine functions with conditionals"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident do you feel about writing functions in Python?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Loops and Conditionals Challenge",
+        "language": "python",
+        "starterCode": "def check_even_odd(numbers):\n    # Write code to check if each number is even or odd\n    for num in numbers:\n        # Add your logic here\n        pass\n\n# Test your function\ncheck_even_odd([1, 2, 3, 4, 5])",
+        "prompt": "Write a function that takes a list of numbers and prints whether each number is even or odd. Use a for loop to iterate through the list and an if/else statement to check divisibility.",
+        "testCases": [
+          {
+            "input": "check_even_odd([2, 3])",
+            "expectedOutput": "2 is even\n3 is odd",
+            "description": "Test with mixed even and odd numbers"
+          },
+          {
+            "input": "check_even_odd([10])",
+            "expectedOutput": "10 is even",
+            "description": "Test with single even number"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work with Loops and Conditionals!",
+        "message": "You've successfully combined loops and conditionals to process a list of numbers. This is a fundamental pattern in programming.",
+        "explanation": "Loops allow you to repeat operations, while conditionals let you make decisions in code. Together, they enable you to build powerful, flexible programs that handle different scenarios.",
+        "nextSteps": [
+          "Review control flow concepts",
+          "Practice debugging code",
+          "Complete your first real project"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident do you feel about using loops and conditionals in Python?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:29:08.974653",
+    "module_id": "f256c834-feb0-44dc-ba9c-e81b8412c46e",
+    "saved_to_filesystem": true
+  }
+}

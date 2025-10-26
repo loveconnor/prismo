@@ -1,0 +1,63 @@
+{
+  "name": "coding---i-want-some-multiple-choice-as-well-as-some-javascript-example-questions-36faf008",
+  "title": "Introduction to coding - I want some multiple choice as well as some javascript example questions",
+  "description": "Learn the fundamentals of coding - I want some multiple choice as well as some javascript example questions through interactive exercises.",
+  "skills": [
+    "javascript",
+    "async",
+    "if",
+    "const",
+    "algorthms",
+    "recrusion",
+    "recursion",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Step Prompt",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to coding - I want some multiple choice as well as some javascript example questions!",
+        "prompt": "In this module, you'll explore coding - I want some multiple choice as well as some javascript example questions. Take your time and practice as much as you need.",
+        "estimatedTime": 30
+      },
+      "position": 1,
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 3600
+  },
+  "estimated_duration": 3600,
+  "version": "1.0.0",
+  "difficulty": "challenge",
+  "_metadata": {
+    "generated_at": "2025-10-26T10:42:18.713264",
+    "module_id": "e298aecb-c696-4a6b-b3b7-dc366816148f",
+    "saved_to_filesystem": true
+  }
+}

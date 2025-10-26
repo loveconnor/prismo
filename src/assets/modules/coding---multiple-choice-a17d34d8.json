@@ -1,0 +1,316 @@
+{
+  "name": "coding---multiple-choice-a17d34d8",
+  "title": "Coding Fundamentals: Multiple Choice Mastery",
+  "description": "Master coding concepts through comprehensive multiple-choice questions covering syntax, logic, and programming best practices.",
+  "skills": [
+    "test",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "step-prompt",
+      "metadata": {
+        "id": "step-prompt",
+        "title": "Step Prompt",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Coding Fundamentals",
+        "prompt": "In this module, you will test your knowledge of basic coding concepts through multiple-choice questions. These questions cover essential programming topics including variables, data types, control flow, and functions. Select the correct answer for each question and receive immediate feedback."
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "You are about to begin a series of coding concept questions designed to reinforce your programming knowledge.",
+        "explanation": "This module uses multiple-choice questions to help you identify and correct misconceptions about coding fundamentals.",
+        "nextSteps": [
+          "Read each question carefully",
+          "Consider all answer options",
+          "Learn from detailed feedback"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you in your coding fundamentals knowledge before starting?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Question 1: Variable Declaration",
+        "question": "Which of the following correctly declares a variable in JavaScript?",
+        "options": [
+          "var myVar = 10;",
+          "myVar = 10;",
+          "declare myVar = 10;",
+          "variable myVar = 10;"
+        ],
+        "correctAnswer": 0,
+        "explanation": "In JavaScript, variables are declared using 'var', 'let', or 'const' keywords. Option A uses 'var', which is the traditional way to declare variables. Option B assigns without declaration, C and D use invalid syntax."
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Question 1 Complete",
+        "message": "You've answered the first question about variable declaration.",
+        "explanation": "Variable declaration is a fundamental concept. Understanding the difference between var, let, and const is essential for writing modern JavaScript code.",
+        "nextSteps": [
+          "Move to the next question",
+          "Review variable scope concepts",
+          "Practice declaring different variable types"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you in your understanding of variable declaration?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Question 2: Control Flow",
+        "question": "What will be the output of the following code?\nif (5 > 3) { console.log('true'); } else { console.log('false'); }",
+        "options": [
+          "true",
+          "false",
+          "undefined",
+          "Error"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Since 5 is greater than 3, the condition evaluates to true, so the if block executes and outputs 'true'. The else block is skipped when the condition is true."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Question 2 Complete",
+        "message": "You've successfully answered the control flow question.",
+        "explanation": "Understanding if-else statements is crucial for controlling program execution flow. This pattern allows your code to make decisions and execute different blocks based on conditions.",
+        "nextSteps": [
+          "Continue with additional control flow scenarios",
+          "Explore nested conditional statements",
+          "Practice writing complex decision logic"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you in your understanding of control flow and conditionals?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "step-prompt",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "_metadata": {
+    "generated_at": "2025-10-26T09:30:25.864609",
+    "module_id": "fabad320-c352-425d-9098-45e64fdde1ba",
+    "saved_to_filesystem": true
+  }
+}
