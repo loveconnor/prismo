@@ -19,11 +19,12 @@ import { ConsoleOutputComponent } from '../../../components/widgets/coding/conso
 import { TestFeedbackComponent } from '../../../components/widgets/coding/test-feedback/test-feedback';
 import { EquationInputComponent } from '../../../components/widgets/math/equation-input/equation-input';
 import { TextEditorComponent } from '../../../components/widgets/writing/text-editor/text-editor';
-import { MultipleChoiceComponent } from '../../../components/widgets/core/multiple-choice/multiple-choice';
+import { MultipleChoiceComponent, ChoiceOption } from '../../../components/widgets/core/multiple-choice/multiple-choice';
 import { LabIntroComponent } from '../../../components/widgets/core/lab-intro/lab-intro';
 import { ShortAnswerComponent } from '../../../components/widgets/core/short-answer/short-answer';
 import { CoachChatComponent } from '../../../components/widgets/core/coach-chat/coach-chat';
 import { ReflectionPromptComponent } from '../../../components/widgets/core/reflection-prompt/reflection-prompt';
+import { AlgorithmSimulatorComponent, Algorithm } from '../../../components/widgets/coding/algorithm-simulator/algorithm-simulator';
 // Tri-panel components
 import { StepsPanelComponent } from '../../../components/widgets/core/steps-panel/steps-panel';
 import { EditorPanelComponent } from '../../../components/widgets/coding/editor-panel/editor-panel';
@@ -60,6 +61,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     ShortAnswerComponent,
     CoachChatComponent,
     ReflectionPromptComponent,
+    AlgorithmSimulatorComponent,
     StepsPanelComponent,
     EditorPanelComponent,
     SupportPanelComponent,
@@ -384,6 +386,13 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
+  
+  // Current step widget properties
+  public currentStepWidget: any = null;
+  public currentStepWidgetType: string | null = null;
+  public currentStepMultipleChoiceOptions: ChoiceOption[] = [];
+  public algorithmSimulatorDefaultAlgorithm: Algorithm = 'bubble';
+  public algorithmSimulatorEnabledAlgorithms: Algorithm[] = ['bubble', 'quick', 'recursion'];
   
   // Session tracking
   public currentSession: ModuleSession | null = null;
@@ -1225,6 +1234,29 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     this.codeEditorWidget = widgetForStep || this.allCodeEditorWidgets[0] || null;
+    
+    // Update current step widget and type
+    this.currentStepWidget = widgetForStep;
+    this.currentStepWidgetType = widgetForStep?.type || widgetForStep?.metadata?.id || widgetForStep?.id || null;
+    
+    // Update multiple choice options if applicable
+    if (this.currentStepWidgetType === 'multiple-choice') {
+      const options = widgetForStep?.config?.options || widgetForStep?.props?.options || [];
+      this.currentStepMultipleChoiceOptions = Array.isArray(options) ? options : [];
+    } else {
+      this.currentStepMultipleChoiceOptions = [];
+    }
+    
+    // Update algorithm simulator settings if applicable
+    if (this.currentStepWidgetType === 'algorithm-simulator') {
+      this.algorithmSimulatorDefaultAlgorithm = widgetForStep?.config?.defaultAlgorithm || 
+                                                 widgetForStep?.props?.defaultAlgorithm || 
+                                                 'bubble';
+      this.algorithmSimulatorEnabledAlgorithms = widgetForStep?.config?.enabledAlgorithms || 
+                                                   widgetForStep?.props?.enabledAlgorithms || 
+                                                   ['bubble', 'quick', 'recursion'];
+    }
+    
     console.log(`Current widget for step ${this.currentStep} (widgetPosition: ${widgetPosition}):`, this.codeEditorWidget);
   }
   
@@ -1377,6 +1409,22 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   handleAIReviewComplete(feedback: string): void {
     this.aiReviewFeedback = feedback;
     this.cdr.detectChanges();
+  }
+
+  handleMultipleChoiceSubmit(event: any): void {
+    console.log('Multiple choice submitted:', event);
+    // Handle multiple choice submission
+    if (event.correct || event.isCorrect) {
+      this.handleCodePassed();
+    }
+  }
+
+  handleWidgetComplete(event: any): void {
+    console.log('Widget completed:', event);
+    // Handle widget completion (e.g., text-editor, equation-input)
+    if (event.complete || event.isComplete || event.completed) {
+      this.handleCodePassed();
+    }
   }
 
   goBack(): void {
