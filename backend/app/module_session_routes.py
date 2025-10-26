@@ -8,6 +8,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from typing import Dict, Any, Optional
 from decimal import Decimal
+import json
 from app.orm import orm, ModuleSession
 from app.auth_service import CognitoAuthService
 
@@ -115,6 +116,108 @@ def start_module_session():
         return jsonify({
             "success": True,
             "session": session.to_dict()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@module_session_bp.route('/module-sessions/<session_id>/interaction', methods=['POST'])
+def track_interaction(session_id: str):
+    """Track a widget interaction for a module session"""
+    try:
+        # Get user from token
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({
+                "success": False,
+                "error": "Authentication required"
+            }), 401
+        
+        token = auth_header.split(' ')[1]
+        user_info = auth_service.verify_token(token)
+        
+        if not user_info.get('success'):
+            return jsonify({
+                "success": False,
+                "error": "Invalid token"
+            }), 401
+        
+        user_id = user_info.get('user_id') or user_info.get('cognito_user', {}).get('Username')
+        if not user_id:
+            return jsonify({
+                "success": False,
+                "error": "User ID not found"
+            }), 401
+        
+        # Get session
+        session = orm.module_sessions.get_by_id(session_id)
+        if not session:
+            return jsonify({
+                "success": False,
+                "error": "Session not found"
+            }), 404
+        
+        # Verify user owns this session
+        if session.user_id != user_id:
+            return jsonify({
+                "success": False,
+                "error": "Unauthorized"
+            }), 403
+        
+        # Get interaction data from request
+        data = request.get_json()
+        if not data:
+            return jsonify({
+                "success": False,
+                "error": "Request body required"
+            }), 400
+        
+        required_fields = ['widget_id', 'widget_type', 'action']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({
+                    "success": False,
+                    "error": f"Missing required field: {field}"
+                }), 400
+        
+        # Create interaction event
+        interaction = {
+            "widget_id": data['widget_id'],
+            "widget_type": data['widget_type'],
+            "action": data['action'],
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "data": data.get('data', {})
+        }
+        
+        # Get existing interactions or create new array
+        existing_interactions = []
+        if session.interactions:
+            try:
+                existing_interactions = json.loads(session.interactions)
+            except json.JSONDecodeError:
+                existing_interactions = []
+        
+        # Append new interaction
+        existing_interactions.append(interaction)
+        
+        # Update session with new interactions
+        now = datetime.utcnow().isoformat() + "Z"
+        updates = {
+            'interactions': json.dumps(existing_interactions),
+            'last_activity_at': now,
+            'updated_at': now
+        }
+        
+        updated_session = orm.module_sessions.update(session_id, updates)
+        
+        return jsonify({
+            "success": True,
+            "interaction": interaction,
+            "total_interactions": len(existing_interactions)
         })
         
     except Exception as e:
@@ -464,3 +567,5 @@ def abandon_module_session(session_id: str):
             "success": False,
             "error": str(e)
         }), 500
+
+

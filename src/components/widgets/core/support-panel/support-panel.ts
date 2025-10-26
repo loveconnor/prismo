@@ -4,9 +4,9 @@ import { TabsNewComponent } from '../../../ui/tabs/tabs-new';
 import { TabsListComponent } from '../../../ui/tabs/tabs-list';
 import { TabsTriggerComponent } from '../../../ui/tabs/tabs-trigger';
 import { TabsContentComponent } from '../../../ui/tabs/tabs-content';
+import { HintPanelComponent } from '../hint-panel/hint-panel';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideChevronDown, lucideChevronRight } from '@ng-icons/lucide';
-// Coach tab removed
 
 interface HintItem {
   level: number;
@@ -23,6 +23,7 @@ interface HintItem {
     TabsListComponent,
     TabsTriggerComponent,
     TabsContentComponent,
+    HintPanelComponent,
     NgIconComponent
   ],
   providers: [
@@ -39,6 +40,7 @@ export class SupportPanelComponent {
   @Input() onToggleCollapse?: () => void;
   @Input() hints: any[] = [];
   @Input() feedback: any[] = [];
+  @Input() sessionId: string = '';
 
   openHints: number[] = [];
 
@@ -96,6 +98,7 @@ export class SupportPanelComponent {
   }
 
   trackByHintLevel = (_: number, item: HintItem) => item.level;
+  trackByHintWidget = (_: number, item: any) => item.id;
 }
 
 

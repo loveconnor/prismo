@@ -308,6 +308,15 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
     this.isValid.set(validationResult.isCorrect);
     this.componentState.set('submitted');
 
+    // Emit state change for interaction tracking
+    this.emitStateChange('answer_submitted', {
+      answer: this.answer(),
+      isCorrect: validationResult.isCorrect,
+      feedback: validationResult.feedback,
+      charCount: this.charCount,
+      validationMode: this.validation?.mode || 'none'
+    });
+
     // Modern emits
     this.onSubmit?.(this.answer(), validationResult.isCorrect, validationResult.feedback);
     this.submit.emit({

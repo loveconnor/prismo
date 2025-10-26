@@ -491,6 +491,7 @@ class ModuleSession(BaseModel):
     progress: Decimal = Decimal('0.0')  # 0.0 to 1.0
     current_step: int = 1
     total_steps: int = 1
+    interactions: Optional[str] = None  # JSON string storing array of interaction events
     created_at: str = ""
     updated_at: str = ""
 

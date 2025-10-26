@@ -6,6 +6,7 @@ import { takeUntil, catchError } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 import { LabDataService, LabData } from '../../../services/lab-data.service';
 import { ModuleSessionService, ModuleSession } from '../../../services/module-session.service';
+import { WidgetInteractionService } from '../../../services/widget-interaction.service';
 
 // Import all available widgets
 import { StepPromptComponent } from '../../../components/widgets/core/step-prompt/step-prompt';
@@ -179,6 +180,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             [collapsed]="rightPanelCollapsed"
             [hints]="hintWidgets"
             [feedback]="feedbackWidgets"
+            [sessionId]="currentSession?.id"
           ></app-support-panel>
         </div>
       </div>
@@ -224,6 +226,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private router = inject(Router);
   private labDataService = inject(LabDataService);
   private moduleSessionService = inject(ModuleSessionService);
+  private widgetInteractionService = inject(WidgetInteractionService);
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
@@ -341,6 +344,10 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.currentSession) {
         this.sessionStartTime = Date.now();
         this.startSessionUpdateInterval();
+        
+        // Set current session for widget interaction tracking
+        this.widgetInteractionService.setCurrentSession(this.currentSession.id);
+        
         console.log('[LabTemplate] Module session started successfully:', {
           sessionId: this.currentSession.id,
           moduleId: this.currentSession.module_id,
@@ -513,6 +520,10 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sessionUpdateInterval = null;
       console.log('[LabTemplate] Session update interval cleared');
     }
+    
+    // Flush any pending widget interactions and clear session
+    this.widgetInteractionService.flushPendingInteractions();
+    this.widgetInteractionService.setCurrentSession(null);
   }
 
   private loadLab(): void {

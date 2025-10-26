@@ -213,7 +213,7 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
     // Emit historyLoaded when messages arrive (HEAD)
     const history: ChatHistory = {
       messages: value,
-      sessionId: this.sessionId,
+      sessionId: this.chatSessionId,
       startTime: this.sessionStart
     };
     this.historyLoaded.emit(history);
@@ -262,7 +262,7 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
   private rateLimitResetTimer?: any;
 
   // Session info for HEAD events
-  private sessionId: string = `sess-${Math.random().toString(36).slice(2)}`;
+  private chatSessionId: string = `sess-${Math.random().toString(36).slice(2)}`;
   private sessionStart: Date = new Date();
   private sessionEndTimer?: any;
 
@@ -325,12 +325,12 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
     if (!this.defaultCollapsed) {
       this.coachOpened.emit({ id: this.coachId, stepId: this.stepId, variant: this.variant });
     }
-    this.sessionStarted.emit(this.sessionId);
+    this.sessionStarted.emit(this.chatSessionId);
 
     // Session timeout (HEAD)
     if (this.sessionTimeout && isFinite(this.sessionTimeout) && this.sessionTimeout > 0) {
       this.sessionEndTimer = setTimeout(() => {
-        this.sessionEnded.emit(this.sessionId);
+        this.sessionEnded.emit(this.chatSessionId);
       }, this.sessionTimeout);
     }
 
@@ -344,7 +344,7 @@ export class CoachChatComponent extends WidgetBaseComponent implements OnInit, O
     if (this.rateLimitResetTimer) clearInterval(this.rateLimitResetTimer);
     if (this.sessionEndTimer) clearTimeout(this.sessionEndTimer);
     // Fire sessionEnded if not already
-    this.sessionEnded.emit(this.sessionId);
+    this.sessionEnded.emit(this.chatSessionId);
     super.ngOnDestroy();
   }
 

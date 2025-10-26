@@ -232,6 +232,14 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
     this.selectedValues.set(newSelected);
     this.updateValidity();
 
+    // Emit state change for interaction tracking
+    this.emitStateChange('selection_made', {
+      selectedValues: newSelected,
+      optionValue: optionValue,
+      selectionMode: this.selectionMode,
+      isValid: this.isValid()
+    });
+
     // Modern change event
     this.emitChange();
 
@@ -247,6 +255,14 @@ export class MultipleChoiceComponent extends WidgetBaseComponent implements OnIn
     this.submitted.set(true);
 
     const correct = this.isCorrect();
+
+    // Emit state change for interaction tracking
+    this.emitStateChange('answer_submitted', {
+      selectedValues: this.selectedValues(),
+      correct: correct,
+      attempts: this.attempts(),
+      maxAttempts: this.maxAttempts
+    });
 
     // Modern submit event
     this.choiceSubmit.emit({
