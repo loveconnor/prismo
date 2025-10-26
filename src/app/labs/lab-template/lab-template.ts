@@ -281,7 +281,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const labId = this.route.snapshot.paramMap.get('id');
     const currentUrl = this.router.url;
 
-    if (!labId && !currentUrl.includes('pt01') && !currentUrl.includes('javascript-array-methods') && !currentUrl.includes('test-fullstack-todo')) {
+    if (!labId && !currentUrl.includes('pt01') && !currentUrl.includes('javascript-array-methods') && !currentUrl.includes('test-fullstack-todo') && !currentUrl.includes('fullstack-todo-with-steps')) {
       this.error = 'No lab ID provided';
       this.loading = false;
       return;
@@ -330,6 +330,28 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
           },
           error: (err) => {
             this.error = err.message || 'Failed to load test module JSON';
+            this.loading = false;
+            this.cdr.detectChanges();
+          }
+        });
+      return;
+    } else if (currentUrl.includes('fullstack-todo-with-steps')) {
+      // Load the fullstack todo with steps module JSON and convert to lab
+      this.http.get<any>('/assets/modules/fullstack-todo-with-steps.json')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (json) => {
+            console.log('Loaded fullstack-todo-with-steps.json:', json);
+            const labFromModule = this.labDataService.convertModuleToLab(json);
+            console.log('Converted to lab:', labFromModule);
+            this.labData = labFromModule;
+            this.extractWidgetsFromLabData();
+            this.loading = false;
+            this.error = null;
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            this.error = err.message || 'Failed to load fullstack todo with steps module JSON';
             this.loading = false;
             this.cdr.detectChanges();
           }
@@ -400,10 +422,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     this.confidenceWidget = allWidgets.find(w => w.type === 'confidence-meter' || w.id === 'confidence-meter');
     console.log('Found confidence widget:', this.confidenceWidget);
     
-    // Extract steps if they exist (for now, no steps in the JSON)
-    this.steps = [];
+    // Extract steps if they exist
+    this.steps = this.labData.steps || [];
     this.hasSteps = this.steps.length > 0;
     console.log('Has steps:', this.hasSteps);
+    console.log('Steps:', this.steps);
     
     console.log('Extracted widgets summary:', { 
       codeEditorWidget: this.codeEditorWidget, 

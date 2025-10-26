@@ -29,6 +29,7 @@ export interface LabWidget {
   type: string;
   config: any;
   metadata: any;
+  stepId?: number;
   layout?: WidgetLayout;
   condition?: WidgetCondition;
   position?: { x: number; y: number };  // Legacy, kept for compatibility
@@ -52,6 +53,7 @@ export interface LabData {
   difficulty: number;
   estimatedTime: number;
   sections: LabSection[];
+  steps?: { id: number; title: string; instruction?: string; example?: string }[];
   metadata: {
     author?: string;
     version?: string;

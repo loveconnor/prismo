@@ -6,6 +6,7 @@ export interface ModuleData {
   title: string;
   description: string;
   skills: string[];
+  steps?: ModuleStep[];
   widgets: ModuleWidget[];
   completion_criteria?: {
     required_widgets: string[];
@@ -17,8 +18,17 @@ export interface ModuleData {
   version: string;
 }
 
+export interface ModuleStep {
+  id: number;
+  title: string;
+  description: string;
+  instruction?: string;
+  example?: string;
+}
+
 export interface ModuleWidget {
   id: string;
+  stepId?: number;
   metadata: {
     id: string;
     title: string;
@@ -50,22 +60,47 @@ export class ModuleToLabConverterService {
     // Calculate difficulty based on widget difficulties
     const avgDifficulty = this.calculateAverageDifficulty(moduleData.widgets);
     
+    // Convert steps if they exist
+    const labSteps = moduleData.steps ? moduleData.steps.map(step => ({
+      id: step.id,
+      title: step.title,
+      instruction: step.instruction,
+      example: step.example
+    })) : [];
+    
     // Convert widgets to lab format
     const labWidgets: LabWidget[] = moduleData.widgets.map(widget => ({
       id: widget.id,
-      type: widget.id, // Use the widget ID as the type
-      config: this.convertPropsToConfig(widget.props, widget.id),
-      metadata: widget.metadata
+      type: widget.metadata.id, // Use the metadata.id as the type
+      config: this.convertPropsToConfig(widget.props, widget.metadata.id),
+      metadata: widget.metadata,
+      stepId: widget.stepId
     }));
 
-    // Create a single section containing all widgets
-    const section: LabSection = {
-      id: 'main-section',
-      title: 'Learning Activities',
-      description: moduleData.description,
-      layout: 'stack',
-      widgets: labWidgets
-    };
+    // Group widgets by step if steps exist
+    let sections: LabSection[];
+    if (labSteps.length > 0) {
+      // Create sections for each step
+      sections = labSteps.map(step => {
+        const stepWidgets = labWidgets.filter(widget => widget.stepId === step.id);
+        return {
+          id: `step-${step.id}`,
+          title: step.title,
+          description: step.instruction || step.title,
+          layout: 'stack' as const,
+          widgets: stepWidgets
+        };
+      });
+    } else {
+      // Create a single section containing all widgets
+      sections = [{
+        id: 'main-section',
+        title: 'Learning Activities',
+        description: moduleData.description,
+        layout: 'stack' as const,
+        widgets: labWidgets
+      }];
+    }
 
     return {
       id: moduleData.id,
@@ -73,7 +108,8 @@ export class ModuleToLabConverterService {
       description: moduleData.description,
       difficulty: avgDifficulty,
       estimatedTime: Math.round(moduleData.estimated_duration / 60), // Convert seconds to minutes
-      sections: [section],
+      sections: sections,
+      steps: labSteps, // Add steps to lab data
       metadata: {
         author: 'Prismo Labs',
         version: moduleData.version,
