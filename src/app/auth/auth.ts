@@ -300,11 +300,8 @@ export class AuthComponent {
    * Handle Google login
    */
   onGoogleLogin(): void {
-    this.toastService.show({
-      title: 'Google Login',
-      description: 'Google login is not implemented yet. Please use email/password login.',
-      type: 'info'
-    });
+    console.log('Google login button clicked');
+    this.authService.loginWithGoogle();
   }
 
 

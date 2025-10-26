@@ -24,6 +24,10 @@ export const routes: Routes = [
     canActivate: [guestGuard]
   },
   { 
+    path: 'auth/callback', 
+    loadComponent: () => import('./auth-callback/auth-callback').then(m => m.AuthCallbackComponent)
+  },
+  { 
     path: 'dashboard', 
     loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard]

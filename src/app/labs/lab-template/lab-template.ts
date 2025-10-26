@@ -177,50 +177,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
           </app-editor-panel>
 
           <!-- Multiple Choice -->
-          <div *ngIf="currentStepWidgetType === 'multiple-choice'" class="flex h-full flex-col bg-[#12161b]">
-            <div class="border-b border-[#1f2937] bg-[#151a20] px-4 py-3" [class.pl-16]="leftPanelCollapsed || !hasSteps">
-              <div class="absolute left-3 top-1/2 -translate-y-1/2" *ngIf="hasSteps && leftPanelCollapsed">
-                <button
-                  (click)="leftPanelCollapsed = false"
-                  class="flex h-9 w-9 items-center justify-center rounded-full text-[#e5e7eb] hover:bg-white/10"
-                  aria-label="Expand steps panel"
-                >
-                  <ng-icon name="lucideChevronRight" class="h-5 w-5"></ng-icon>
-                </button>
-              </div>
-
-              <div class="flex items-center gap-3 text-sm text-[#a9b1bb]">
-                <div class="flex items-center gap-1.5 rounded-md border border-[#BC78F9]/30 bg-[#BC78F9]/15 px-2 py-1 text-xs font-semibold text-[#bc78f9]">
-                  Multiple Choice
-                </div>
-                <span>Step {{ currentStep }} of {{ steps.length || 1 }}</span>
-              </div>
-
-              <div class="flex items-center gap-2">
-                <app-button 
-                  *ngIf="currentStep < (steps.length || 1) && completedSteps.includes(currentStep)" 
-                  (click)="handleCompleteStep()"
-                  className="bg-[#16a34a] hover:bg-[#15803d] text-white border-[#16a34a] font-medium shadow-sm">
-                  Continue to Step {{ currentStep + 1 }}
-                </app-button>
-              </div>
-            </div>
-
-            <!-- Multiple Choice Content -->
-            <div class="flex-1 overflow-y-auto p-6">
-              <app-multiple-choice
-                [metadata]="codeEditorWidget.metadata"
-                [config]="codeEditorWidget.config"
-                [sessionId]="currentSession?.id || ''"
-                [moduleId]="labData?.id || ''"
-                [question]="codeEditorWidget.config?.question || ''"
-                [options]="getMultipleChoiceOptions(codeEditorWidget.config)"
-                [correctAnswers]="getMultipleChoiceCorrectAnswers(codeEditorWidget.config)"
-                [showRationale]="true"
-                (answerSubmitted)="handleCodePassed()"
-              ></app-multiple-choice>
-            </div>
-          </div>
+          
 
           <!-- Step Prompt Widget (for step-prompt widgets) -->
           <app-editor-panel

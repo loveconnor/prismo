@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, PLATFORM_ID, afterNextRender } from '@angular/core';
+import { Injectable, inject, signal, PLATFORM_ID, afterNextRender, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
@@ -94,6 +94,7 @@ export class AuthService {
   private tokenStorage = inject(TokenStorageService);
   private authHttp = inject(AuthHttpService);
   private platformId = inject(PLATFORM_ID);
+  private injector = inject(Injector);
   private isBrowser = isPlatformBrowser(this.platformId);
 
   // Cookie names (if you prefer localStorage, swap implementations below)
@@ -464,14 +465,17 @@ export class AuthService {
     });
   }
 
-  // OAuth placeholder
+  // OAuth Google login
   loginWithGoogle(): void {
-    // Implement real OAuth redirect or PKCE flow here
-    console.log('Google OAuth login - implement with your provider');
-    // Temporary: demo
-    this.demoLogin().subscribe({
-      next: () => console.log('Demo Google login successful'),
-      error: (e) => console.error('Google login failed:', e),
+    console.log('Initiating Google OAuth login via Cognito');
+    
+    // Dynamically import and instantiate OAuth service with proper injection context
+    import('./oauth.service').then(({ OAuthService }) => {
+      // Get the OAuth service using the injector to maintain proper injection context
+      const oauthService = this.injector.get(OAuthService);
+      oauthService.initiateGoogleLogin();
+    }).catch((error) => {
+      console.error('Failed to load OAuth service:', error);
     });
   }
 
