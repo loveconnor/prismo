@@ -17,7 +17,7 @@
     <button
       *ngFor="let option of shuffled(); let i = index"
       (click)="handleOptionSelect(option.value)"
-      [disabled]="submitted()"
+      [disabled]="readOnly()"
       [class]="getOptionClasses(getOptionStatus(option), isSelected(option.value))"
       type="button"
     >
@@ -84,7 +84,7 @@
       [class]="cn(
         'rounded-lg px-6 py-2 text-sm font-medium transition-colors',
         isValid()
-          ? 'bg-[#3b82f6] text-white hover:bg-[#2563eb]'
+          ? 'bg-[#BC78F9] text-white hover:bg-[#2563eb]'
           : 'cursor-not-allowed bg-[#1f2937] text-[#6b7280]'
       )"
       type="button"
@@ -98,15 +98,25 @@
     *ngIf="submitted() && correctAnswers.length > 0" 
     class="mt-4 rounded-lg border border-[#1f2937] bg-[#0b0f14] p-4"
   >
-    <div class="flex items-center gap-2">
-      <ng-container *ngIf="isCorrect()">
-        <ng-icon name="lucideCircleCheck" class="h-5 w-5 text-emerald-500"></ng-icon>
-        <span class="font-medium text-emerald-500">Correct!</span>
-      </ng-container>
-      <ng-container *ngIf="!isCorrect()">
-        <ng-icon name="lucideCircleX" class="h-5 w-5 text-red-500"></ng-icon>
-        <span class="font-medium text-red-500">Incorrect</span>
-      </ng-container>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <ng-container *ngIf="isCorrect()">
+          <ng-icon name="lucideCircleCheck" class="h-5 w-5 text-emerald-500"></ng-icon>
+          <span class="font-medium text-emerald-500">Correct!</span>
+        </ng-container>
+        <ng-container *ngIf="!isCorrect()">
+          <ng-icon name="lucideCircleX" class="h-5 w-5 text-red-500"></ng-icon>
+          <div>
+            <span class="font-medium text-red-500">Incorrect</span>
+            <p *ngIf="attempts() < maxAttempts" class="text-sm text-[#9ca3af] mt-1">
+              Try again! (Attempt {{ attempts() }} of {{ maxAttempts }})
+            </p>
+            <p *ngIf="attempts() >= maxAttempts" class="text-sm text-[#9ca3af] mt-1">
+              No more attempts remaining.
+            </p>
+          </div>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>

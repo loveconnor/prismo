@@ -130,7 +130,7 @@ export class LabsGridComponent {
   }
 
   getProgressBarClass(lab: Lab): string {
-    return lab.status === 'completed' ? 'bg-[#22c55e]' : 'bg-[#3b82f6]';
+    return lab.status === 'completed' ? 'bg-[#22c55e]' : 'bg-[#BC78F9]';
   }
 
   getProgressNote(lab: Lab): string {

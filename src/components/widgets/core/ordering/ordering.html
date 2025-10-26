@@ -32,7 +32,7 @@
     <button
       *ngIf="!autoCheck && componentState() !== 'completed'"
       (click)="handleCheckOrder()"
-      class="inline-flex items-center gap-2 rounded-lg border border-[#60a5fa] bg-[#60a5fa]/10 px-4 py-2 text-sm text-[#60a5fa] hover:bg-[#60a5fa]/20 transition-colors"
+      class="inline-flex items-center gap-2 rounded-lg border border-[#bc78f9] bg-[#bc78f9]/10 px-4 py-2 text-sm text-[#bc78f9] hover:bg-[#bc78f9]/20 transition-colors"
     >
       Check Order
     </button>
@@ -92,7 +92,7 @@
         <button
           (click)="handleMoveUp(index)"
           [disabled]="index === 0"
-          class="rounded border border-[#1f2937] p-1 text-[#6b7280] hover:border-[#60a5fa] hover:text-[#60a5fa] disabled:opacity-50 disabled:cursor-not-allowed"
+          class="rounded border border-[#1f2937] p-1 text-[#6b7280] hover:border-[#bc78f9] hover:text-[#bc78f9] disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Move up"
         >
           <ng-icon name="lucideArrowUp" class="h-3 w-3"></ng-icon>
@@ -100,7 +100,7 @@
         <button
           (click)="handleMoveDown(index)"
           [disabled]="index === orderedItems().length - 1"
-          class="rounded border border-[#1f2937] p-1 text-[#6b7280] hover:border-[#60a5fa] hover:text-[#60a5fa] disabled:opacity-50 disabled:cursor-not-allowed"
+          class="rounded border border-[#1f2937] p-1 text-[#6b7280] hover:border-[#bc78f9] hover:text-[#bc78f9] disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Move down"
         >
           <ng-icon name="lucideArrowDown" class="h-3 w-3"></ng-icon>
@@ -116,7 +116,7 @@
       *ngFor="let item of getSortedItemsByCorrectPosition()"
       class="flex items-start gap-3 rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3"
     >
-      <div class="flex h-6 w-6 items-center justify-center rounded-full border border-[#60a5fa] text-xs font-medium text-[#60a5fa]">
+      <div class="flex h-6 w-6 items-center justify-center rounded-full border border-[#bc78f9] text-xs font-medium text-[#bc78f9]">
         {{ item.correctPosition }}
       </div>
       <div class="flex-1">

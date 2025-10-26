@@ -553,7 +553,7 @@ export class TimerComponent extends WidgetBaseComponent implements OnInit, OnDes
       case 'warn':
         return 'text-amber-500 border-amber-500 bg-amber-500/10';
       default:
-        return 'text-blue-500 border-blue-500 bg-blue-500/10';
+        return 'text-blue-500 border-blue-500 bg-primary-strong/10';
     }
   }
 

@@ -30,6 +30,7 @@ export interface LabWidget {
   config: any;
   metadata: any;
   stepId?: number;
+
   layout?: WidgetLayout;
   condition?: WidgetCondition;
   position?: { x: number; y: number };  // Legacy, kept for compatibility
@@ -44,6 +45,14 @@ export interface LabSection {
   layout?: 'grid' | 'stack' | 'custom' | 'dynamic';
   gridTemplateColumns?: string;  // e.g., 'repeat(3, 1fr)', '2fr 1fr'
   gap?: string;  // e.g., '1rem', '24px'
+}
+
+export interface LabStep {
+  id: number;
+  title: string;
+  description?: string;
+  instruction?: string;
+  example?: string;
 }
 
 export interface LabData {
@@ -650,7 +659,7 @@ export class LabDataService {
   getLab(labId: string): Observable<LabData> {
     // In production, this would be: return this.http.get<LabData>(`/api/labs/${labId}`)
     const lab = this.sampleLabs[labId];
-    
+
     if (lab) {
       return of(lab);
     } else {
@@ -678,6 +687,7 @@ export class LabDataService {
       difficulty: jsonData.difficulty || 1,
       estimatedTime: jsonData.estimatedTime || 30,
       sections: jsonData.sections || [],
+      steps: jsonData.steps || [],
       metadata: {
         author: jsonData.metadata?.author || 'Custom Author',
         version: jsonData.metadata?.version || '1.0.0',
@@ -705,7 +715,7 @@ export class LabDataService {
     } else if (moduleId === 'binary-search-tree') {
       return this.getLab('binary-search-tree');
     }
-    
+
     return throwError(() => new Error(`Module with ID "${moduleId}" not found`));
   }
 

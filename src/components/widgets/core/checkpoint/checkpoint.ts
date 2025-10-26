@@ -242,7 +242,7 @@ export class CheckpointComponent extends WidgetBaseComponent implements OnInit, 
       case 'saving': return 'text-blue-500';
       case 'saved': return 'text-emerald-500';
       case 'error': return 'text-red-500';
-      default: return 'text-[#60a5fa]';
+      default: return 'text-[#bc78f9]';
     }
   }
 

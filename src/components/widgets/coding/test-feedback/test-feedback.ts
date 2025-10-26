@@ -250,7 +250,7 @@ export class TestFeedbackComponent extends WidgetBaseComponent implements OnChan
       case 'fail': return 'bg-red-500/10 border-red-500/20';
       case 'error': return 'bg-red-500/10 border-red-500/20';
       case 'timeout': return 'bg-amber-500/10 border-amber-500/20';
-      case 'pending': return 'bg-blue-500/10 border-blue-500/20';
+      case 'pending': return 'bg-primary-strong/10 border-blue-500/20';
       default: return 'bg-gray-500/10 border-gray-500/20';
     }
   }

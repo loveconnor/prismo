@@ -94,7 +94,7 @@ export class SidebarItemComponent implements ControlValueAccessor, AfterViewInit
         ? 'data-active:bg-white/[0.06] data-active:text-[#e5e7eb] data-active:*:data-[slot=icon]:text-[#e5e7eb]'
         : 'data-active:bg-zinc-950/5 data-active:text-zinc-900 data-active:*:data-[slot=icon]:text-zinc-900',
       // Current state
-      'data-current:bg-[rgba(96,165,250,0.12)]',
+      'data-current:bg-[rgba(233, 120, 250, 0.12)]',
       this.isDark
         ? 'data-current:text-[#e5e7eb] data-current:*:data-[slot=icon]:text-[#e5e7eb]'
         : 'data-current:text-zinc-950 data-current:*:data-[slot=icon]:text-zinc-950',

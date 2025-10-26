@@ -345,7 +345,7 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
   }
 
   getTextareaClasses(): string {
-    const base = 'w-full resize-none rounded-lg border bg-[#0b0f14] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#60a5fa] focus:outline-none focus:ring-1 focus:ring-[#60a5fa]';
+    const base = 'w-full resize-none rounded-lg border bg-[#0b0f14] px-3 py-2 text-sm text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#bc78f9] focus:outline-none focus:ring-1 focus:ring-[#bc78f9]';
     const stateClasses: string[] = [];
 
     if (this.autoResize) stateClasses.push('min-h-[60px]');
@@ -366,7 +366,7 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
     if (this.isTooShort || this.componentState() === 'submitting') {
       return `${base} cursor-not-allowed bg-[#1f2937] text-[#6b7280]`;
     }
-    return `${base} bg-[#3b82f6] text-white hover:bg-[#2563eb]`;
+    return `${base} bg-[#BC78F9] text-white hover:bg-[#2563eb]`;
   }
 
   isButtonDisabled(): boolean {

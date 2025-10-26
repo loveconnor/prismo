@@ -6,7 +6,7 @@
   <!-- Header -->
   <div class="flex items-center justify-between border-b border-[#1f2937] p-4">
     <div class="flex items-center gap-3">
-      <ng-icon name="lucideWrench" class="h-6 w-6 text-[#60a5fa]"></ng-icon>
+      <ng-icon name="lucideWrench" class="h-6 w-6 text-[#bc78f9]"></ng-icon>
       <div>
         <h3 class="text-lg font-semibold text-[#e5e7eb]">Code Refactoring</h3>
         <p class="text-sm text-[#a9b1bb]">{{ language }}</p>
@@ -48,7 +48,7 @@
             [value]="customCode()"
             (input)="handleCodeInput($any($event.target).value)"
             placeholder="Refactor the code above..."
-            class="w-full resize-none rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 font-mono text-sm text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#60a5fa] focus:outline-none"
+            class="w-full resize-none rounded-lg border border-[#1f2937] bg-[#0b0f14] p-3 font-mono text-sm text-[#e5e7eb] placeholder-[#6b7280] focus:border-[#bc78f9] focus:outline-none"
             rows="10"
             style="font-family: 'Fira Code', 'Monaco', 'Consolas', monospace"
           ></textarea>
@@ -85,7 +85,7 @@
                 type="checkbox"
                 [checked]="isSelected(suggestion.id)"
                 (change)="handleSuggestionToggle(suggestion.id)"
-                class="mt-1 h-4 w-4 rounded border-[#1f2937] bg-[#0a0e12] text-[#60a5fa] focus:ring-[#60a5fa]"
+                class="mt-1 h-4 w-4 rounded border-[#1f2937] bg-[#0a0e12] text-[#bc78f9] focus:ring-[#bc78f9]"
               />
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2">
@@ -126,7 +126,7 @@
         <ng-icon name="lucideLightbulb" class="h-4 w-4"></ng-icon>
         {{ showHint() ? 'Hide Hint' : 'Show Refactoring Tips' }}
       </button>
-      <div *ngIf="showHint()" class="mt-2 rounded-lg border border-blue-500/20 bg-blue-500/10 p-3">
+      <div *ngIf="showHint()" class="mt-2 rounded-lg border border-blue-500/20 bg-primary-strong/10 p-3">
         <h5 class="text-sm font-medium text-blue-400 mb-2">Refactoring Principles:</h5>
         <ul class="text-sm text-[#a9b1bb] space-y-1">
           <li>• <strong>DRY (Don't Repeat Yourself):</strong> Eliminate code duplication</li>
@@ -161,7 +161,7 @@
       <div *ngIf="timeLimit" class="text-sm text-[#6b7280]">
         Time remaining: {{ Math.floor(timeLimit / 60) }}:{{ (timeLimit % 60) < 10 ? ('0' + (timeLimit % 60)) : (timeLimit % 60) }}
       </div>
-      <button type="button" (click)="handleSubmit()" [disabled]="selectedSuggestions().size < requiredRefactors && !customCode().trim()" class="rounded-lg bg-[#60a5fa] px-4 py-2 text-sm font-medium text-white hover:bg-[#3b82f6] disabled:opacity-50 transition-colors">
+      <button type="button" (click)="handleSubmit()" [disabled]="selectedSuggestions().size < requiredRefactors && !customCode().trim()" class="rounded-lg bg-[#bc78f9] px-4 py-2 text-sm font-medium text-white hover:bg-[#BC78F9] disabled:opacity-50 transition-colors">
         Submit Refactoring
       </button>
     </div>
