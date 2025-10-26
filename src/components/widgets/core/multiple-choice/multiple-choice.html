@@ -7,10 +7,7 @@
   <div class="mb-4">
     <h3 class="text-lg font-semibold text-[#e5e7eb]">{{ question }}</h3>
     <p *ngIf="selectionMode === 'multiple'" class="mt-1 text-sm text-[#9ca3af]">
-      Select all that apply ({{ correctAnswers.length }} correct {{ correctAnswers.length === 1 ? 'answer' : 'answers' }})
-    </p>
-    <p *ngIf="selectionMode === 'single'" class="mt-1 text-sm text-[#9ca3af]">
-      Select one answer
+      Select all that apply
     </p>
   </div>
 
