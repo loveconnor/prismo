@@ -87,10 +87,10 @@ class ModuleGenerator:
         """Generate a new module using AWS Bedrock in the exact required JSON format"""
         profile = self.profile_manager.get_or_create_profile(user_id)
         skill_tree = self.skill_manager.get_or_create_skill_tree(user_id)
-        
-        # Generate unique module ID
-        module_id = f"{topic.lower().replace(' ', '-')}-{str(uuid.uuid4())[:8]}"
-        
+
+        # Generate unique module name
+        module_name = f"{topic.lower().replace(' ', '-')}-{str(uuid.uuid4())[:8]}"
+
         # Prepare context for AI generation
         generation_context = self._prepare_generation_context(
             user_id, topic, target_skills, difficulty, profile, skill_tree
@@ -98,7 +98,7 @@ class ModuleGenerator:
         
         # Use AWS Bedrock to generate the module
         module = await self._generate_module_with_bedrock(
-            module_id, topic, target_skills, difficulty, estimated_time, generation_context
+            module_name, topic, target_skills, difficulty, estimated_time, generation_context
         )
         
         return module
@@ -108,79 +108,96 @@ class ModuleGenerator:
         """Prepare context information for the AI to generate appropriate modules"""
         
         # Get relevant widgets for the target skills
-        relevant_widgets = [w for w in self.widget_registry if any(skill in w.get('skills', []) for skill in target_skills)]
+        relevant_widget_names = [w['name'] for w in self.widget_registry if any(skill in w.get('skills', []) for skill in target_skills)]
         
-        context = f"""
-        USER PROFILE:
-        - User ID: {user_id}
-        - Learning Pace: {profile.learning_pace}
-        - Failure Rate: {profile.failure_rate:.2f}
-        - Average Completion Time: {profile.average_completion_time}s
-        - Completion Rate: {profile.calculate_completion_rate():.1f}%
-        
-        TARGET LEARNING:
-        - Topic: {topic}
-        - Target Skills: {', '.join(target_skills)}
-        - Difficulty Level: {difficulty}
-        
-        AVAILABLE WIDGETS:
-        {json.dumps(relevant_widgets, indent=2)}
-        
-        WIDGET REGISTRY (All Available):
-        {json.dumps(self.widget_registry[:10], indent=2)}  # First 10 widgets as examples
-        
-        SKILL TREE STATUS:
-        - Current Skills: {', '.join(skill_tree.get_mastered_skills()[:5])}
-        - Recommended Next Skills: {', '.join(skill_tree.get_recommended_next_skills()[:3])}
-        """
-
-
+        context = f"""USER: pace={profile.learning_pace}, fail_rate={profile.failure_rate:.1f}, completion={profile.calculate_completion_rate():.0f}%
+TOPIC: {topic} | SKILLS: {', '.join(target_skills)} | DIFFICULTY: {difficulty}
+RECOMMENDED_WIDGETS: {', '.join(relevant_widget_names[:10])}
+SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={', '.join(skill_tree.get_recommended_next_skills()[:2])}"""
         return context
     
-    async def _generate_module_with_bedrock(self, module_id: str, topic: str, target_skills: List[str],
+    def _get_widget_schema_reference(self) -> str:
+        """Create a compact reference of all available widgets with their schemas"""
+        widget_summary = []
+        for widget in self.widget_registry:
+            widget_summary.append({
+                "name": widget.get("name"),
+                "title": widget.get("title"),
+                "skills": widget.get("skills", []),
+                "category": widget.get("category"),
+                "props_hint": self._get_props_example(widget.get("name"))
+            })
+        return json.dumps(widget_summary, indent=2)
+    
+    def _get_props_example(self, widget_name: str) -> str:
+        """Return a brief hint about expected props for each widget type"""
+        props_examples = {
+            "step-prompt": "title, prompt, estimatedTime",
+            "confidence-meter": "minLabel, maxLabel, question",
+            "feedback-box": "type, title, message, explanation, nextSteps",
+            "multiple-choice": "title, question, options, correctAnswer",
+            "code-editor": "title, language, starterCode, testCases",
+            "short-answer": "title, question, expectedAnswer",
+            "hint-panel": "hints (array with tier, text)",
+            "fill-in-blanks": "title, sentence, blanks",
+            "matching-pairs": "title, pairs",
+            "numeric-input": "title, question, correctAnswer, tolerance",
+        }
+        return props_examples.get(widget_name, "title, content")
+    
+    def _get_compact_registry(self) -> str:
+        """Return a compact, formatted version of the registry for AI consumption"""
+        # For critical widgets (step-prompt, confidence-meter, feedback-box), include full schema
+        # For others, include abbreviated version
+        critical_widgets = ["step-prompt", "confidence-meter", "feedback-box"]
+        full_schemas = []
+        abbreviated = []
+        
+        for widget in self.widget_registry:
+            if widget.get("name") in critical_widgets:
+                full_schemas.append(widget)
+            else:
+                # Keep essential fields only
+                abbreviated.append({
+                    "name": widget.get("name"),
+                    "title": widget.get("title"),
+                    "skills": widget.get("skills", []),
+                    "category": widget.get("category"),
+                    "difficulty": widget.get("difficulty"),
+                    "estimated_time": widget.get("estimated_time"),
+                    "input_type": widget.get("input_type"),
+                    "output_type": widget.get("output_type"),
+                    "dependencies": widget.get("dependencies", []),
+                    "adaptive_hooks": widget.get("adaptive_hooks", {}),
+                    "version": widget.get("version", "1.0.0")
+                })
+        
+        return f"""CRITICAL WIDGETS (use exact schemas):
+{json.dumps(full_schemas, indent=2)}
+
+OTHER AVAILABLE WIDGETS (copy structure, adapt props):
+{json.dumps(abbreviated, indent=2)}"""
+    
+    async def _generate_module_with_bedrock(self, module_name: str, topic: str, target_skills: List[str],
                                             difficulty: str, estimated_time: int, context: str) -> Dict[str, Any]:
         """Use AWS Bedrock API to generate a module with strict JSON output"""
         
-        # Create the prompt with explicit JSON structure
-        prompt = f"""Create a complete learning module JSON for the topic "{topic}" targeting these skills: {', '.join(target_skills)}.
+        # Widget difficulty mapping
+        widget_counts = {"beginner": 3, "intermediate": 5, "advanced": 7}
+        num_learning_widgets = widget_counts.get(difficulty, 3)
+        
+        # Create the streamlined prompt
+        prompt = f"""Generate a learning module for "{topic}" as valid JSON only (no markdown, no explanations).
 
-REQUIRED MODULE STRUCTURE (return ONLY valid JSON, no markdown):
+=== OUTPUT FORMAT ===
 {{
-  "id": "{module_id}",
-  "title": "Clear, engaging title for {topic}",
-  "description": "Brief summary of what the learner will accomplish",
+  "name": "{module_name}",
+  "title": "<engaging_title>",
+  "description": "<learning_objective>",
   "skills": {json.dumps(target_skills)},
-  "widgets": [
-    {{
-      "id": "unique-widget-id",
-      "metadata": {{
-        "id": "widget-type-name",
-        "title": "Widget Display Title",
-        "description": "What this widget does",
-        "skills": ["relevant", "skills"],
-        "difficulty": 2,
-        "estimated_time": 60,
-        "input_type": "text",
-        "output_type": "scaffold",
-        "dependencies": [],
-        "adaptive_hooks": {{
-          "difficulty_adjustment": true,
-          "hint_progression": false
-        }},
-        "version": "1.0.0",
-        "category": "core"
-      }},
-      "props": {{
-        "title": "Specific title for this instance",
-        "prompt": "Instructions or content",
-        "estimatedTime": 30
-      }},
-      "position": 1,
-      "dependencies_met": true
-    }}
-  ],
+  "widgets": [<see WIDGET STRUCTURE below>],
   "completion_criteria": {{
-    "required_widgets": ["list", "of", "widget", "ids"],
+    "required_widgets": ["<learning-widget-names-only>"],
     "min_completion_percentage": 80,
     "max_attempts": 3,
     "time_limit": {estimated_time}
@@ -189,21 +206,34 @@ REQUIRED MODULE STRUCTURE (return ONLY valid JSON, no markdown):
   "version": "1.0.0"
 }}
 
-WIDGET GENERATION RULES:
-1. ALWAYS start with a "step-prompt" widget (position 1) to introduce the module
-2. Each widget MUST have both "metadata" (defines the widget type) and "props" (specific instance data)
-3. For difficulty "{difficulty}", include:
-   - beginner: 3-4 widgets (step-prompt + 2-3 learning widgets)
-   - intermediate: 5-6 widgets (step-prompt + 4-5 learning widgets)  
-   - advanced: 6-8 widgets (step-prompt + 5-7 learning widgets)
-4. Use varied widget types: step-prompt, code-editor, multiple-choice, interactive-demo, practice-exercise
-5. Each widget should build on previous ones (progressive learning)
-6. Match widgets to target skills from the registry below
+=== MANDATORY RULES ===
+1. WIDGET PATTERN (STRICT - NO EXCEPTIONS):
+   Pos 1-3: step-prompt → confidence-meter → feedback-box (intro)
+   Pos 4-6: [learning-widget] → confidence-meter → feedback-box
+   Pos 7-9: [learning-widget] → confidence-meter → feedback-box
+   Continue for {num_learning_widgets} learning widgets total
 
-Context about the learner:
+2. WIDGET STRUCTURE:
+   {{
+     "name": "<unique-instance-id>",
+     "metadata": <EXACT_COPY_FROM_REGISTRY>,
+     "props": {{<custom_content_per_props_hint>}},
+     "position": <number>,
+     "dependencies_met": true
+   }}
+
+3. metadata.id MUST BE: step-prompt | confidence-meter | feedback-box | multiple-choice | code-editor | short-answer | etc.
+
+=== WIDGET QUICK REF ===
+{self._get_widget_schema_reference()}
+
+=== WIDGET REGISTRY ===
+{self._get_compact_registry()}
+
+=== CONTEXT ===
 {context}
 
-Generate ONLY the complete module JSON (no markdown, no explanation, just pure JSON)."""
+Return JSON only."""
         
         # Retry configuration for rate limiting
         max_retries = 3
@@ -221,7 +251,7 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
             request_body = {
                 "anthropic_version": "bedrock-2023-05-31",
                 "max_tokens": 4000,
-                "system": "You are an expert educational content creator. Generate ONLY valid JSON. Do not include markdown code blocks, explanations, or any text outside the JSON structure. Always create modules with MULTIPLE widgets (minimum 3-5, never just one). Each module should be a complete learning experience with introduction, learning content, practice, and assessment widgets.",
+                "system": "You are an expert educational content architect. Output ONLY valid JSON - no markdown, no explanations. CRITICAL: After every learning widget, immediately insert confidence-meter then feedback-box widgets. This triple pattern is mandatory. Match widget metadata exactly to registry schemas. Build progressive learning sequences.",
                 "messages": [{"role": "user", "content": prompt}],
             }
             
@@ -264,7 +294,7 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
                         # Parse the JSON
                         module = json.loads(generated_text)
                         
-                        print(f"✓ Successfully parsed module: {module.get('id', 'unknown')}")
+                        print(f"✓ Successfully parsed module: {module.get('name', 'unknown')}")
                         print(f"✓ Module has {len(module.get('widgets', []))} widgets")
                         
                         # Validate the generated module
@@ -298,17 +328,17 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
         except json.JSONDecodeError as e:
             print(f"✗ Failed to parse JSON from Bedrock response: {e}")
             print(f"   Response text: {generated_text[:500]}...")
-            return self._create_fallback_module(module_id, topic, target_skills, estimated_time)
+            return self._create_fallback_module(module_name, topic, target_skills, estimated_time)
         except Exception as e:
             print(f"✗ Error generating module with Bedrock: {e}")
             import traceback
             traceback.print_exc()
             # Fallback to a basic module structure if API fails
-            return self._create_fallback_module(module_id, topic, target_skills, estimated_time)
+            return self._create_fallback_module(module_name, topic, target_skills, estimated_time)
     
     def _validate_generated_module(self, module: Dict[str, Any]) -> None:
         """Validate that the generated module follows the required format"""
-        required_fields = ["id", "title", "description", "skills", "widgets", "completion_criteria", "estimated_duration", "version"]
+        required_fields = ["name", "title", "description", "skills", "widgets", "completion_criteria", "estimated_duration", "version"]
         
         for field in required_fields:
             if field not in module:
@@ -320,8 +350,12 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
         
         for i, widget in enumerate(module["widgets"]):
             # Check for required widget fields (be flexible about structure)
-            if "id" not in widget:
-                raise ValueError(f"Widget {i} missing required field: id")
+            if "name" not in widget:
+                # Generate a name if missing
+                widget_type = widget.get("metadata", {}).get("id", "unknown")
+                widget["name"] = f"{widget_type}-{i+1}"
+                print(f"⚠️  Warning: Widget {i} missing 'name', auto-generated: {widget['name']}")
+            
             if "position" not in widget:
                 # Auto-assign position if missing
                 widget["position"] = i + 1
@@ -338,16 +372,16 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
             if "props" not in widget:
                 widget["props"] = {}
     
-    def _create_fallback_module(self, module_id: str, topic: str, target_skills: List[str], estimated_time: int) -> Dict[str, Any]:
+    def _create_fallback_module(self, module_name: str, topic: str, target_skills: List[str], estimated_time: int) -> Dict[str, Any]:
         """Create a basic fallback module if API generation fails"""
         return {
-            "id": module_id,
+            "name": module_name,
             "title": f"Introduction to {topic}",
             "description": f"Learn the fundamentals of {topic} through interactive exercises.",
             "skills": target_skills,
             "widgets": [
                 {
-                    "id": "step-prompt",
+                    "name": "step-prompt",
                     "metadata": {
                         "id": "step-prompt",
                         "title": "Step Prompt",
@@ -386,11 +420,11 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
     
     
     def save_generated_module(self, module: Dict[str, Any], user_id: str) -> str:
-        """Save generated module to database and return module ID"""
+        """Save generated module to database and return module name"""
         module_data = {
-            "id": module["id"],
+            "id": str(uuid.uuid4()),  # Generate a unique ID for database
             "user_id": user_id,
-            "name": module["title"],
+            "name": module["name"],  # Use the module name from the generated content
             "module_type": "generated",
             "content": module,
             "is_public": False,
@@ -403,7 +437,7 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
         return saved_module.to_dict()["id"]
     
     async def create_personalized_module(self, user_id: str, learning_goal: str = None) -> Dict[str, Any]:
-        """Create a personalized module based on user's current state using STEVE API"""
+        """Create a personalized module based on user's current state using Bedrock API"""
         profile = self.profile_manager.get_or_create_profile(user_id)
         skill_tree = self.skill_manager.get_or_create_skill_tree(user_id)
         
@@ -435,12 +469,12 @@ Generate ONLY the complete module JSON (no markdown, no explanation, just pure J
         else:
             estimated_time = int(profile.average_completion_time) if profile.average_completion_time > 0 else 1800
         
-        # Generate the module using STEVE API
+        # Generate the module using Bedrock API
         module = await self.generate_module(user_id, topic, target_skills, difficulty, estimated_time)
         
         # Save to database
-        module_id = self.save_generated_module(module, user_id)
-        module["saved_id"] = module_id
+        module_name = self.save_generated_module(module, user_id)
+        module["saved_id"] = module_name
         
         return module
     

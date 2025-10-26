@@ -1,0 +1,8 @@
+('/home/mason/Desktop/programming/prismo/backend/app/../templates',) ('/home/mason/Desktop/programming/prismo/backend/app/../static',)
+us-east-1
+AWS credentials found in environment variables
+Starting Prismo Backend on port 5000
+ * Serving Flask app 'app'
+ * Debug mode: on
+Address already in use
+Port 5000 is in use by another program. Either identify and stop that program, or start the server with a different port.

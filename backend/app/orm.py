@@ -176,7 +176,6 @@ class DynamoDBORM:
         """Query records with optional filtering and pagination"""
         
         query_params = {
-            'TableName': self.table_name,
             'Limit': pagination.limit if pagination else 50
         }
         
@@ -214,12 +213,12 @@ class DynamoDBORM:
     def scan(self,
              filter_expression: Optional[str] = None,
              expression_values: Optional[Dict[str, Any]] = None,
-             pagination: Optional[PaginationParams] = None) -> QueryResult:
+             pagination: Optional[PaginationParams] = None,
+             limit: int = 100) -> QueryResult:
         """Scan records with optional filtering and pagination"""
         
         scan_params = {
-            'TableName': self.table_name,
-            'Limit': pagination.limit if pagination else 50
+            'Limit': pagination.limit if pagination else limit
         }
         
         if filter_expression:
@@ -232,7 +231,9 @@ class DynamoDBORM:
             scan_params['ExclusiveStartKey'] = pagination.last_evaluated_key
         
         try:
+            print(f"DEBUG ORM: Scanning table {self.table_name} with params: {scan_params}")
             response = self.table.scan(**scan_params)
+            print(f"DEBUG ORM: Scan response count: {response.get('Count', 0)}")
             items = [self.model_class.from_dict(item) for item in response.get('Items', [])]
             
             return QueryResult(
@@ -242,6 +243,7 @@ class DynamoDBORM:
                 scanned_count=response.get('ScannedCount', 0)
             )
         except ClientError as e:
+            print(f"ERROR ORM: Failed to scan records: {e}")
             raise Exception(f"Failed to scan records: {e}")
     
     def batch_get(self, keys: List[Dict[str, Any]]) -> List[BaseModel]:

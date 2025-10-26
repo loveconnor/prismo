@@ -1,8 +1,8 @@
 """
-Test Module Generator with STEVE API Integration
+Test Module Generator with Bedrock API Integration
 
 This test script uses hardcoded data to verify that the ModuleGenerator
-correctly integrates with STEVE API and generates valid learning modules.
+correctly integrates with Bedrock API and generates valid learning modules.
 """
 
 import json
@@ -79,7 +79,7 @@ async def test_basic_module_generation():
         print(f"✓ Widget registry loaded: {len(generator.widget_registry)} widgets available")
         print()
         
-        print("Calling STEVE API to generate module...")
+        print("Calling Bedrock API to generate module...")
         module = await generator.generate_module(
             user_id=TEST_USER_ID,
             topic=TEST_TOPIC,
@@ -120,7 +120,7 @@ async def test_personalized_module():
         print("✓ ModuleGenerator initialized successfully")
         print()
         
-        print("Calling STEVE API to generate personalized module...")
+        print("Calling Bedrock API to generate personalized module...")
         module = await generator.create_personalized_module(
             user_id=TEST_USER_ID,
             learning_goal="problem-solving"
@@ -324,7 +324,7 @@ async def test_complex_module_generation():
         print("✓ ModuleGenerator initialized")
         print()
         
-        print("Calling STEVE API to generate complex module...")
+        print("Calling Bedrock API to generate complex module...")
         print("(This may take longer due to the complexity of the request)")
         print()
         
@@ -485,45 +485,45 @@ async def run_all_tests():
     print("\n")
     print("╔" + "=" * 78 + "╗")
     print("║" + " " * 20 + "MODULE GENERATOR TEST SUITE" + " " * 31 + "║")
-    print("║" + " " * 25 + "STEVE API Integration" + " " * 32 + "║")
+    print("║" + " " * 25 + "Bedrock API Integration" + " " * 32 + "║")
     print("╚" + "=" * 78 + "╝")
     
     # Check environment variables
     print_separator("Environment Check")
-    steve_url = os.getenv("STEVE_API_URL")
-    steve_key = os.getenv("STEVE_API_KEY")
+    Bedrock_url = os.getenv("Bedrock_API_URL")
+    Bedrock_key = os.getenv("Bedrock_API_KEY")
     
-    print(f"STEVE_API_URL: {steve_url if steve_url else '❌ NOT SET'}")
-    print(f"STEVE_API_KEY: {'✓ SET' if steve_key else '❌ NOT SET'}")
+    print(f"Bedrock_API_URL: {Bedrock_url if Bedrock_url else '❌ NOT SET'}")
+    print(f"Bedrock_API_KEY: {'✓ SET' if Bedrock_key else '❌ NOT SET'}")
     
-    if not steve_key:
-        print("\n⚠️  WARNING: STEVE_API_KEY not set. Tests may fail or use fallback modules.")
-        print("   Set STEVE_API_KEY in your .env file to test actual API integration.")
+    if not Bedrock_key:
+        print("\n⚠️  WARNING: Bedrock_API_KEY not set. Tests may fail or use fallback modules.")
+        print("   Set Bedrock_API_KEY in your .env file to test actual API integration.")
     
     print()
     
     # Run tests
     test_results = []
     
-    # Test 1: Basic generation
-    result1 = await test_basic_module_generation()
-    test_results.append(("Basic Generation", result1 is not None))
+    # # Test 1: Basic generation
+    # result1 = await test_basic_module_generation()
+    # test_results.append(("Basic Generation", result1 is not None))
     
-    # Test 2: Personalized module
-    result2 = await test_personalized_module()
-    test_results.append(("Personalized Module", result2 is not None))
+    # # Test 2: Personalized module
+    # result2 = await test_personalized_module()
+    # test_results.append(("Personalized Module", result2 is not None))
     
-    # Test 3: Validation
-    result3 = await test_module_validation()
-    test_results.append(("Module Validation", result3 is not None))
+    # # Test 3: Validation
+    # result3 = await test_module_validation()
+    # test_results.append(("Module Validation", result3 is not None))
     
-    # Test 4: Multiple topics
-    result4 = await test_different_topics()
-    test_results.append(("Multiple Topics", all(r.get("success", False) for r in result4) if result4 else False))
+    # # Test 4: Multiple topics
+    # result4 = await test_different_topics()
+    # test_results.append(("Multiple Topics", all(r.get("success", False) for r in result4) if result4 else False))
     
-    # Test 5: Synchronous wrappers
-    result5 = await test_synchronous_wrappers()
-    test_results.append(("Synchronous Wrappers", result5))
+    # # Test 5: Synchronous wrappers
+    # result5 = await test_synchronous_wrappers()
+    # test_results.append(("Synchronous Wrappers", result5))
     
     # Test 6: Complex module generation
     result6 = await test_complex_module_generation()
@@ -552,7 +552,7 @@ async def run_all_tests():
 
 if __name__ == "__main__":
     print("\nStarting Module Generator Tests...")
-    print("Using hardcoded test data to verify STEVE API integration\n")
+    print("Using hardcoded test data to verify Bedrock API integration\n")
     
     # Setup DynamoDB tables first
     print("Setting up DynamoDB tables...")

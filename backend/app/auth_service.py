@@ -191,12 +191,19 @@ class CognitoAuthService:
         try:
             # First, we need to find the username associated with this email
             # Since Cognito uses username as the login identifier, we need to look up the user
+            print(f"DEBUG: Authenticating user with email: {email}")
             user_data = self.user_model.get_user_by_email(email)
+            print(f"DEBUG: User data from DynamoDB: {user_data}")
+            
             if not user_data:
+                print(f"DEBUG: User not found in DynamoDB for email: {email}")
                 return {"success": False, "error": "User not found"}
             
             username = user_data.get('username')
+            print(f"DEBUG: Username from user data: {username}")
+            
             if not username:
+                print(f"DEBUG: Username not found in user data")
                 return {"success": False, "error": "Username not found for this email"}
             
             # Prepare auth parameters for password auth

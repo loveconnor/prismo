@@ -1,6 +1,6 @@
 [
   {
-    "id": "step-prompt",
+    "name": "step-prompt",
     "title": "Step Prompt",
     "description": "Displays task or question text with optional formatting",
     "skills": ["comprehension", "reading"],
@@ -17,7 +17,7 @@
     "category": "core"
   },
   {
-    "id": "hint-panel",
+    "name": "hint-panel",
     "title": "Hint Panel",
     "description": "Progressive hint disclosure with multiple tiers",
     "skills": ["problem-solving", "guidance"],
@@ -34,7 +34,7 @@
     "category": "core"
   },
   {
-    "id": "feedback-box",
+    "name": "feedback-box",
     "title": "Feedback Box",
     "description": "Shows correctness, explanation, and next steps",
     "skills": ["reflection", "learning"],
@@ -50,7 +50,7 @@
     "category": "core"
   },
   {
-    "id": "coach-chat",
+    "name": "coach-chat",
     "title": "Coach Chat",
     "description": "Interactive chat interface for coaching and guidance",
     "skills": ["communication", "problem-solving", "guidance"],
@@ -67,7 +67,7 @@
     "category": "core"
   },
   {
-    "id": "reflection-prompt",
+    "name": "reflection-prompt",
     "title": "Reflection Prompt",
     "description": "Prompts for learner reflection with word count tracking",
     "skills": ["reflection", "metacognition", "writing"],
@@ -83,7 +83,7 @@
     "category": "core"
   },
   {
-    "id": "confidence-meter",
+    "name": "confidence-meter",
     "title": "Confidence Meter",
     "description": "Self-rating slider for confidence assessment",
     "skills": ["self-assessment", "metacognition"],
@@ -99,7 +99,7 @@
     "category": "core"
   },
   {
-    "id": "timer",
+    "name": "timer",
     "title": "Timer",
     "description": "Countdown or countup timer with progress visualization",
     "skills": ["time-management", "focus"],
@@ -115,7 +115,7 @@
     "category": "core"
   },
   {
-    "id": "lab-intro",
+    "name": "lab-intro",
     "title": "Lab Introduction",
     "description": "Displays lab objectives, prerequisites, and learning outcomes",
     "skills": ["comprehension", "planning"],
@@ -131,7 +131,7 @@
     "category": "core"
   },
   {
-    "id": "multiple-choice",
+    "name": "multiple-choice",
     "title": "Multiple Choice",
     "description": "Single or multiple answer selection with feedback",
     "skills": ["comprehension", "reasoning"],
@@ -148,7 +148,7 @@
     "category": "core"
   },
   {
-    "id": "short-answer",
+    "name": "short-answer",
     "title": "Short Answer",
     "description": "Text input with keyword matching and similarity checking",
     "skills": ["comprehension", "writing", "reasoning"],
@@ -165,7 +165,7 @@
     "category": "core"
   },
   {
-    "id": "fill-in-blanks",
+    "name": "fill-in-blanks",
     "title": "Fill in the Blanks",
     "description": "Text with missing words for completion",
     "skills": ["comprehension", "vocabulary", "reasoning"],
@@ -182,7 +182,7 @@
     "category": "core"
   },
   {
-    "id": "matching-pairs",
+    "name": "matching-pairs",
     "title": "Matching Pairs",
     "description": "Match items from two lists with drag-and-drop",
     "skills": ["comprehension", "reasoning", "pattern-recognition"],
@@ -199,7 +199,7 @@
     "category": "core"
   },
   {
-    "id": "ordering",
+    "name": "ordering",
     "title": "Ordering",
     "description": "Arrange items in correct sequence",
     "skills": ["sequencing", "reasoning", "logic"],
@@ -216,7 +216,7 @@
     "category": "core"
   },
   {
-    "id": "numeric-input",
+    "name": "numeric-input",
     "title": "Numeric Input",
     "description": "Number input with tolerance and unit checking",
     "skills": ["calculation", "precision", "mathematics"],
@@ -233,7 +233,7 @@
     "category": "core"
   },
   {
-    "id": "error-explain",
+    "name": "error-explain",
     "title": "Error Explanation",
     "description": "Identify and explain errors in code or text",
     "skills": ["debugging", "analysis", "comprehension"],
@@ -250,7 +250,7 @@
     "category": "core"
   },
   {
-    "id": "checkpoint",
+    "name": "checkpoint",
     "title": "Checkpoint",
     "description": "Save and restore progress with rollback support",
     "skills": ["planning", "organization"],
@@ -264,7 +264,7 @@
     "category": "core"
   },
   {
-    "id": "outcome-summary",
+    "name": "outcome-summary",
     "title": "Outcome Summary",
     "description": "Display learning outcomes and achievements",
     "skills": ["reflection", "self-assessment"],
@@ -280,7 +280,7 @@
     "category": "core"
   },
   {
-    "id": "adaptive-summary",
+    "name": "adaptive-summary",
     "title": "Adaptive Summary",
     "description": "Shows progress and adjusts difficulty based on performance",
     "skills": ["self-assessment", "reflection"],
@@ -296,7 +296,7 @@
     "category": "core"
   },
   {
-    "id": "goal-setter",
+    "name": "goal-setter",
     "title": "Goal Setter",
     "description": "Create and track learning goals",
     "skills": ["planning", "self-regulation", "goal-setting"],
@@ -310,7 +310,7 @@
     "category": "core"
   },
   {
-    "id": "review-loop",
+    "name": "review-loop",
     "title": "Review Loop",
     "description": "Spaced repetition practice for weak skills",
     "skills": ["practice", "retention", "mastery"],
@@ -327,7 +327,7 @@
     "category": "core"
   },
   {
-    "id": "code-editor",
+    "name": "code-editor",
     "title": "Code Editor",
     "description": "Interactive code editor with run and reset functionality",
     "skills": ["programming", "debugging", "syntax"],
@@ -345,7 +345,7 @@
     "category": "coding"
   },
   {
-    "id": "console-output",
+    "name": "console-output",
     "title": "Console Output",
     "description": "Display program output with filtering and timestamps",
     "skills": ["debugging", "analysis"],
@@ -359,7 +359,7 @@
     "category": "coding"
   },
   {
-    "id": "test-feedback",
+    "name": "test-feedback",
     "title": "Test Feedback",
     "description": "Display test results with pass/fail status and reasoning",
     "skills": ["testing", "debugging", "analysis"],
@@ -376,7 +376,7 @@
     "category": "coding"
   },
   {
-    "id": "complexity-prompt",
+    "name": "complexity-prompt",
     "title": "Complexity Analysis",
     "description": "Analyze and explain algorithm complexity",
     "skills": ["algorithms", "analysis", "complexity"],
@@ -393,7 +393,7 @@
     "category": "coding"
   },
   {
-    "id": "refactor-prompt",
+    "name": "refactor-prompt",
     "title": "Refactoring Prompt",
     "description": "Guide code refactoring with goals and metrics",
     "skills": ["refactoring", "code-quality", "design"],
@@ -410,7 +410,7 @@
     "category": "coding"
   },
   {
-    "id": "io-fixture-panel",
+    "name": "io-fixture-panel",
     "title": "I/O Fixture Panel",
     "description": "Test code with input/output fixtures",
     "skills": ["testing", "debugging", "validation"],
@@ -426,7 +426,7 @@
     "category": "coding"
   },
   {
-    "id": "code-diff-viewer",
+    "name": "code-diff-viewer",
     "title": "Code Diff Viewer",
     "description": "Compare user code with exemplar solution",
     "skills": ["analysis", "comparison", "learning"],
@@ -440,7 +440,7 @@
     "category": "coding"
   },
   {
-    "id": "profiler-trace",
+    "name": "profiler-trace",
     "title": "Profiler Trace",
     "description": "Visualize code execution performance and bottlenecks",
     "skills": ["performance", "optimization", "analysis"],
@@ -454,7 +454,7 @@
     "category": "coding"
   },
   {
-    "id": "notebook-cell",
+    "name": "notebook-cell",
     "title": "Notebook Cell",
     "description": "Interactive notebook cell with code and markdown support",
     "skills": ["programming", "documentation", "analysis"],
@@ -470,7 +470,7 @@
     "category": "coding"
   },
   {
-    "id": "simulator",
+    "name": "simulator",
     "title": "Algorithm Simulator",
     "description": "Step-by-step algorithm visualization and simulation",
     "skills": ["algorithms", "visualization", "comprehension"],
@@ -486,7 +486,7 @@
     "category": "coding"
   },
   {
-    "id": "code-review-comment",
+    "name": "code-review-comment",
     "title": "Code Review Comment",
     "description": "Add and manage code review comments",
     "skills": ["code-review", "communication", "analysis"],
@@ -500,7 +500,7 @@
     "category": "coding"
   },
   {
-    "id": "equation-input",
+    "name": "equation-input",
     "title": "Equation Input",
     "description": "LaTeX input with mathematical expression validation",
     "skills": ["algebra", "mathematics", "symbolic-reasoning"],
@@ -517,7 +517,7 @@
     "category": "math"
   },
   {
-    "id": "step-checker",
+    "name": "step-checker",
     "title": "Step Checker",
     "description": "Validate algebraic steps with justifications",
     "skills": ["algebra", "reasoning", "proof"],
@@ -534,7 +534,7 @@
     "category": "math"
   },
   {
-    "id": "graph-canvas",
+    "name": "graph-canvas",
     "title": "Graph Canvas",
     "description": "Interactive 2D graphing with functions and datasets",
     "skills": ["graphing", "visualization", "analysis"],
@@ -550,7 +550,7 @@
     "category": "math"
   },
   {
-    "id": "parameter-slider",
+    "name": "parameter-slider",
     "title": "Parameter Slider",
     "description": "Adjust parameters with sliders and see real-time effects",
     "skills": ["exploration", "analysis", "visualization"],
@@ -564,7 +564,7 @@
     "category": "math"
   },
   {
-    "id": "mistake-detector",
+    "name": "mistake-detector",
     "title": "Mistake Detector",
     "description": "Identify and explain mathematical mistakes",
     "skills": ["debugging", "analysis", "mathematics"],
@@ -581,7 +581,7 @@
     "category": "math"
   },
   {
-    "id": "numeric-answer",
+    "name": "numeric-answer",
     "title": "Numeric Answer",
     "description": "Number input with tolerance and unit validation",
     "skills": ["calculation", "precision", "mathematics"],
@@ -598,7 +598,7 @@
     "category": "math"
   },
   {
-    "id": "proof-sketch",
+    "name": "proof-sketch",
     "title": "Proof Sketch",
     "description": "Build mathematical proofs step by step",
     "skills": ["proof", "logic", "reasoning"],
@@ -615,7 +615,7 @@
     "category": "math"
   },
   {
-    "id": "diagram-sketch",
+    "name": "diagram-sketch",
     "title": "Diagram Sketch",
     "description": "Draw and annotate mathematical diagrams",
     "skills": ["geometry", "visualization", "drawing"],
@@ -629,7 +629,7 @@
     "category": "math"
   },
   {
-    "id": "dataset-table",
+    "name": "dataset-table",
     "title": "Dataset Table",
     "description": "Display and edit tabular data with statistics",
     "skills": ["data-analysis", "statistics", "organization"],
@@ -643,7 +643,7 @@
     "category": "math"
   },
   {
-    "id": "unit-checker",
+    "name": "unit-checker",
     "title": "Unit Checker",
     "description": "Validate dimensional analysis and unit conversions",
     "skills": ["units", "dimensional-analysis", "physics"],
@@ -660,7 +660,7 @@
     "category": "math"
   },
   {
-    "id": "dimension-analyzer",
+    "name": "dimension-analyzer",
     "title": "Dimension Analyzer",
     "description": "Analyze vector and matrix dimensions",
     "skills": ["linear-algebra", "matrices", "vectors"],
@@ -676,7 +676,7 @@
     "category": "math"
   },
   {
-    "id": "graph-plotter3d",
+    "name": "graph-plotter3d",
     "title": "3D Graph Plotter",
     "description": "Interactive 3D graphing with rotation and zoom",
     "skills": ["graphing", "visualization", "3d-geometry"],
@@ -690,7 +690,7 @@
     "category": "math"
   },
   {
-    "id": "parameter-explorer",
+    "name": "parameter-explorer",
     "title": "Parameter Explorer",
     "description": "Explore parameter spaces with multiple sliders and presets",
     "skills": ["exploration", "analysis", "visualization"],
@@ -704,7 +704,7 @@
     "category": "math"
   },
   {
-    "id": "text-editor",
+    "name": "text-editor",
     "title": "Text Editor",
     "description": "Rich text input with word count and structure awareness",
     "skills": ["writing", "composition", "communication"],
@@ -721,7 +721,7 @@
     "category": "writing"
   },
   {
-    "id": "outline-builder",
+    "name": "outline-builder",
     "title": "Outline Builder",
     "description": "Create and organize hierarchical outlines",
     "skills": ["organization", "planning", "structure"],
@@ -735,7 +735,7 @@
     "category": "writing"
   },
   {
-    "id": "evidence-builder",
+    "name": "evidence-builder",
     "title": "Evidence Builder",
     "description": "Collect and cite evidence sources",
     "skills": ["research", "citation", "analysis"],
@@ -749,7 +749,7 @@
     "category": "writing"
   },
   {
-    "id": "style-feedback",
+    "name": "style-feedback",
     "title": "Style Feedback",
     "description": "Analyze writing style and provide suggestions",
     "skills": ["writing", "style", "revision"],
@@ -765,7 +765,7 @@
     "category": "writing"
   },
   {
-    "id": "revision-goal-setter",
+    "name": "revision-goal-setter",
     "title": "Revision Goal Setter",
     "description": "Set and track revision goals",
     "skills": ["revision", "planning", "self-regulation"],
@@ -779,7 +779,7 @@
     "category": "writing"
   },
   {
-    "id": "thesis-checker",
+    "name": "thesis-checker",
     "title": "Thesis Checker",
     "description": "Analyze thesis statements for clarity and specificity",
     "skills": ["argumentation", "analysis", "writing"],
@@ -796,7 +796,7 @@
     "category": "writing"
   },
   {
-    "id": "citation-checker",
+    "name": "citation-checker",
     "title": "Citation Checker",
     "description": "Validate citations and generate bibliographies",
     "skills": ["citation", "research", "formatting"],
@@ -810,7 +810,7 @@
     "category": "writing"
   },
   {
-    "id": "outline-compare",
+    "name": "outline-compare",
     "title": "Outline Comparison",
     "description": "Compare user outline with exemplar",
     "skills": ["analysis", "structure", "comparison"],
@@ -824,7 +824,7 @@
     "category": "writing"
   },
   {
-    "id": "argument-mapper",
+    "name": "argument-mapper",
     "title": "Argument Mapper",
     "description": "Visualize argument structure with claims and evidence",
     "skills": ["argumentation", "logic", "visualization"],
@@ -838,7 +838,7 @@
     "category": "writing"
   },
   {
-    "id": "tone-adjuster",
+    "name": "tone-adjuster",
     "title": "Tone Adjuster",
     "description": "Analyze and adjust writing tone",
     "skills": ["writing", "tone", "style"],
@@ -852,7 +852,7 @@
     "category": "writing"
   },
   {
-    "id": "feedback-collector",
+    "name": "feedback-collector",
     "title": "Feedback Collector",
     "description": "Collect structured feedback with questions and ratings",
     "skills": ["reflection", "assessment", "communication"],

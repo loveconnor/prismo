@@ -87,11 +87,22 @@ class User(BaseModel):
     
     def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
         """Get user by email"""
-        result = self.orm.scan(
-            filter_expression='email = :email',
-            expression_values={':email': email}
-        )
-        return result.items[0].to_dict() if result.items else None
+        try:
+            print(f"DEBUG: Scanning for user with email: {email}")
+            result = self.orm.scan(
+                filter_expression='email = :email',
+                expression_values={':email': email}
+            )
+            print(f"DEBUG: Scan result: {result}")
+            print(f"DEBUG: Number of items found: {len(result.items) if result.items else 0}")
+            if result.items:
+                print(f"DEBUG: First item: {result.items[0].to_dict()}")
+            return result.items[0].to_dict() if result.items else None
+        except Exception as e:
+            print(f"ERROR: Failed to get user by email: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
 
 class Lab(BaseModel):
     """Lab model for DynamoDB - Enhanced with ORM"""
