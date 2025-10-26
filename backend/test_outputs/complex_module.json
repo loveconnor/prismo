@@ -1,7 +1,7 @@
 {
-  "name": "building-a-full-stack-todo-application-cdd5ba68",
-  "title": "Build a Modern Full-Stack Todo Application",
-  "description": "Create a complete todo application with React frontend, Node.js backend, and database integration",
+  "name": "building-a-full-stack-todo-application-bd48d6f7",
+  "title": "Introduction to Building a Full-Stack Todo Application",
+  "description": "Learn the fundamentals of Building a Full-Stack Todo Application through interactive exercises.",
   "skills": [
     "javascript",
     "react",
@@ -15,9 +15,9 @@
   ],
   "widgets": [
     {
-      "name": "project-overview-step",
+      "name": "step-prompt",
       "metadata": {
-        "name": "step-prompt",
+        "id": "step-prompt",
         "title": "Step Prompt",
         "description": "Displays task or question text with optional formatting",
         "skills": [
@@ -37,267 +37,17 @@
         "category": "core"
       },
       "props": {
-        "title": "Project Overview",
-        "prompt": "In this module, you'll build a full-stack todo application using React, Node.js, Express, and MongoDB. We'll cover frontend development, backend API design, database integration, and authentication.",
+        "title": "Welcome to Building a Full-Stack Todo Application!",
+        "prompt": "In this module, you'll explore Building a Full-Stack Todo Application. Take your time and practice as much as you need.",
         "estimatedTime": 30
       },
       "position": 1,
-      "dependencies_met": true
-    },
-    {
-      "name": "initial-confidence-check",
-      "metadata": {
-        "name": "confidence-meter",
-        "title": "Confidence Meter",
-        "description": "Self-rating slider for confidence assessment",
-        "skills": [
-          "self-assessment",
-          "metacognition"
-        ],
-        "difficulty": 2,
-        "estimated_time": 20,
-        "input_type": "slider",
-        "output_type": "progress",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "question": "How confident are you in building full-stack web applications?",
-        "minLabel": "Not confident at all",
-        "maxLabel": "Very confident"
-      },
-      "position": 2,
-      "dependencies_met": true
-    },
-    {
-      "name": "initial-feedback",
-      "metadata": {
-        "name": "feedback-box",
-        "title": "Feedback Box",
-        "description": "Shows correctness, explanation, and next steps",
-        "skills": [
-          "reflection",
-          "learning"
-        ],
-        "difficulty": 2,
-        "estimated_time": 45,
-        "input_type": "text",
-        "output_type": "feedback",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "type": "info",
-        "title": "Let's Begin!",
-        "message": "We'll start by setting up the project structure and basic components.",
-        "nextSteps": "First, we'll create the React frontend application."
-      },
-      "position": 3,
-      "dependencies_met": true
-    },
-    {
-      "name": "frontend-setup",
-      "metadata": {
-        "name": "code-editor",
-        "title": "Code Editor",
-        "skills": [
-          "programming",
-          "debugging",
-          "syntax"
-        ],
-        "category": "coding",
-        "difficulty": 3,
-        "estimated_time": 300,
-        "input_type": "code",
-        "output_type": "visualization",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true,
-          "hint_progression": true
-        },
-        "version": "1.0.0"
-      },
-      "props": {
-        "title": "Setup React Frontend",
-        "language": "javascript",
-        "starterCode": "// Create TodoList component\nimport React, { useState } from 'react';\n\nfunction TodoList() {\n  const [todos, setTodos] = useState([]);\n  // Add your code here\n}",
-        "testCases": [
-          {
-            "input": "",
-            "expected": "Component renders without crashing"
-          }
-        ]
-      },
-      "position": 4,
-      "dependencies_met": true
-    },
-    {
-      "name": "frontend-confidence",
-      "metadata": {
-        "name": "confidence-meter",
-        "title": "Confidence Meter",
-        "description": "Self-rating slider for confidence assessment",
-        "skills": [
-          "self-assessment",
-          "metacognition"
-        ],
-        "difficulty": 2,
-        "estimated_time": 20,
-        "input_type": "slider",
-        "output_type": "progress",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "question": "How confident are you with the React frontend setup?",
-        "minLabel": "Not confident",
-        "maxLabel": "Very confident"
-      },
-      "position": 5,
-      "dependencies_met": true
-    },
-    {
-      "name": "frontend-feedback",
-      "metadata": {
-        "name": "feedback-box",
-        "title": "Feedback Box",
-        "description": "Shows correctness, explanation, and next steps",
-        "skills": [
-          "reflection",
-          "learning"
-        ],
-        "difficulty": 2,
-        "estimated_time": 45,
-        "input_type": "text",
-        "output_type": "feedback",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "type": "success",
-        "title": "Frontend Setup Complete",
-        "message": "Great job setting up the React frontend! Next, we'll create the backend API.",
-        "nextSteps": "Moving on to Express backend setup..."
-      },
-      "position": 6,
-      "dependencies_met": true
-    },
-    {
-      "name": "backend-setup",
-      "metadata": {
-        "name": "code-editor",
-        "title": "Code Editor",
-        "skills": [
-          "programming",
-          "debugging",
-          "syntax"
-        ],
-        "category": "coding",
-        "difficulty": 3,
-        "estimated_time": 300,
-        "input_type": "code",
-        "output_type": "visualization",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true,
-          "hint_progression": true
-        },
-        "version": "1.0.0"
-      },
-      "props": {
-        "title": "Setup Express Backend",
-        "language": "javascript",
-        "starterCode": "const express = require('express');\nconst app = express();\n\n// Add your routes here\n\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});",
-        "testCases": [
-          {
-            "input": "GET /api/todos",
-            "expected": "200 OK"
-          }
-        ]
-      },
-      "position": 7,
-      "dependencies_met": true
-    },
-    {
-      "name": "backend-confidence",
-      "metadata": {
-        "name": "confidence-meter",
-        "title": "Confidence Meter",
-        "description": "Self-rating slider for confidence assessment",
-        "skills": [
-          "self-assessment",
-          "metacognition"
-        ],
-        "difficulty": 2,
-        "estimated_time": 20,
-        "input_type": "slider",
-        "output_type": "progress",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "question": "How confident are you with the Express backend setup?",
-        "minLabel": "Not confident",
-        "maxLabel": "Very confident"
-      },
-      "position": 8,
-      "dependencies_met": true
-    },
-    {
-      "name": "backend-feedback",
-      "metadata": {
-        "name": "feedback-box",
-        "title": "Feedback Box",
-        "description": "Shows correctness, explanation, and next steps",
-        "skills": [
-          "reflection",
-          "learning"
-        ],
-        "difficulty": 2,
-        "estimated_time": 45,
-        "input_type": "text",
-        "output_type": "feedback",
-        "dependencies": [],
-        "adaptive_hooks": {
-          "difficulty_adjustment": true
-        },
-        "version": "1.0.0",
-        "category": "core"
-      },
-      "props": {
-        "type": "success",
-        "title": "Backend Setup Complete",
-        "message": "Excellent work on the Express backend! Let's connect it to the database.",
-        "nextSteps": "Next: Database integration..."
-      },
-      "position": 9,
       "dependencies_met": true
     }
   ],
   "completion_criteria": {
     "required_widgets": [
-      "frontend-setup",
-      "backend-setup"
+      "step-prompt"
     ],
     "min_completion_percentage": 80,
     "max_attempts": 3,

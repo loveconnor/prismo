@@ -60,7 +60,7 @@ class ModuleGenerator:
             print(f"✓ Bedrock API token loaded")
         
         # Bedrock API endpoint for Claude 3.5 Sonnet
-        self.bedrock_url = f"https://bedrock-runtime.{self.aws_region}.amazonaws.com/model/us.anthropic.claude-3-5-sonnet-20241022-v2:0/invoke"
+        self.bedrock_url = f"https://bedrock-runtime.{self.aws_region}.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/invoke"
         
         print(f"✓ ModuleGenerator initialized with Bedrock API")
         print(f"✓ Region: {self.aws_region}")
