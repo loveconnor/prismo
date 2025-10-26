@@ -271,6 +271,10 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
   }
 
   continueStep() {
+    // For non-coding steps, trigger feedback/confidence before moving to next step
+    if (!this.editorConfig || !this.editorConfig.language) {
+      this.codePassed.emit();
+    }
     this.passed = false;
     this.completeStep.emit();
   }
