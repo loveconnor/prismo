@@ -266,6 +266,8 @@ CRITICAL JSON RULES:
    IMPORTANT: DO NOT create an intro step-prompt widget. The lab background modal already provides the introduction.
    Start directly with learning widgets:
    
+   First: hint-panel (REQUIRED - provides hints for all exercises)
+   Then repeat this pattern:
    Pos 1-3: [learning-widget] → feedback-box → confidence-meter
    Pos 4-6: [learning-widget] → feedback-box → confidence-meter
    Pos 7-9: [learning-widget] → feedback-box → confidence-meter
@@ -358,6 +360,41 @@ WRONG (DO NOT USE):
   "nextSteps": "Try the next challenge"  // ❌ NEVER use string, MUST be array
 }}
 
+=== CRITICAL: HINT-PANEL PROPS EXAMPLE ===
+REQUIRED hint-panel structure (MUST INCLUDE in every lab):
+{{
+  "title": "Need Help?",
+  "hints": [
+    {{
+      "id": "hint-1",
+      "tier": 1,
+      "text": "Basic hint: fundamental concept or reminder",
+      "revealed": false
+    }},
+    {{
+      "id": "hint-2", 
+      "tier": 2,
+      "text": "Intermediate hint: more specific guidance",
+      "revealed": false
+    }},
+    {{
+      "id": "hint-3",
+      "tier": 3, 
+      "text": "Advanced hint: detailed step-by-step help",
+      "revealed": false
+    }}
+  ],
+  "maxHintsPerTier": 1
+}}
+
+CRITICAL RULES FOR HINTS:
+- ALWAYS include at least 3 hints (tiers 1, 2, 3)
+- Tier 1: General/conceptual guidance
+- Tier 2: More specific direction
+- Tier 3: Detailed/near-solution help
+- hints MUST be an array of objects with id, tier, text, revealed fields
+- Each hint id should be unique (e.g., "hint-1", "hint-2", "hint-3")
+
 === WIDGET QUICK REF ===
 {self._get_widget_schema_reference()}
 
@@ -388,6 +425,13 @@ CRITICAL FEEDBACK-BOX RULE:
 - nextSteps MUST ALWAYS be an ARRAY of strings: ["step1", "step2", "step3"]
 - NEVER use a string for nextSteps: "step1" ❌
 - Even for single step, use array: ["step1"] ✓
+
+CRITICAL HINT-PANEL RULE:
+- EVERY lab MUST include ONE hint-panel widget (place it first in the widgets array)
+- hints MUST be an array with at least 3 hint objects
+- Each hint must have: id (unique), tier (1-3), text (helpful guidance), revealed (false)
+- Tier 1 = general concept, Tier 2 = specific direction, Tier 3 = detailed help
+- Make hints contextual and helpful for the specific exercises in the lab
 
 After every learning widget, insert confidence-meter then feedback-box widgets. Match widget metadata exactly to registry schemas."""
         
@@ -525,8 +569,55 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
             "description": f"Learn the fundamentals of {topic} through interactive exercises.",
             "skills": target_skills,
             "widgets": [
+                # Hint panel (always include first)
                 {
-                    "id": "multiple-choice",  # Start with a learning widget, not step-prompt
+                    "id": "hint-panel",
+                    "metadata": {
+                        "id": "hint-panel",
+                        "title": "Hint Panel",
+                        "description": "Progressive hint disclosure",
+                        "skills": ["problem-solving", "guidance"],
+                        "difficulty": 2,
+                        "estimated_time": 60,
+                        "input_type": "checkbox",
+                        "output_type": "scaffold",
+                        "dependencies": [],
+                        "adaptive_hooks": {
+                            "hint_progression": True,
+                            "time_extension": True
+                        },
+                        "version": "1.0.0",
+                        "category": "core"
+                    },
+                    "props": {
+                        "title": "Need Help?",
+                        "hints": [
+                            {
+                                "id": "hint-1",
+                                "tier": 1,
+                                "text": f"Start by understanding the basic concepts of {topic}.",
+                                "revealed": False
+                            },
+                            {
+                                "id": "hint-2",
+                                "tier": 2,
+                                "text": f"Review the key principles and try to identify patterns in {topic}.",
+                                "revealed": False
+                            },
+                            {
+                                "id": "hint-3",
+                                "tier": 3,
+                                "text": f"Break down the problem into smaller steps and tackle each one individually.",
+                                "revealed": False
+                            }
+                        ],
+                        "maxHintsPerTier": 1
+                    },
+                    "dependencies_met": True
+                },
+                # Learning widget
+                {
+                    "id": "multiple-choice",
                     "metadata": {
                         "id": "multiple-choice",
                         "title": "Multiple Choice Question",

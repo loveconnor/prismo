@@ -334,6 +334,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             [collapsed]="rightPanelCollapsed"
             [hints]="hintWidgets"
             [feedback]="feedbackWidgets"
+            [currentStep]="currentStep"
             [sessionId]="currentSession?.id"
             [aiReview]="aiReviewFeedback"
             [refactorData]="refactorFeedbackData"
@@ -514,6 +515,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private stepContextService = inject(StepContextService);
 
   public labData: LabData | null = null;
+  public currentModuleId: string = ''; // Track the current module/lab ID
   public loading = true;
   public error: string | null = null;
   // Tri-panel state
@@ -834,6 +836,49 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     this.widgetInteractionService.setCurrentSession(null);
   }
 
+  // ===== Local Storage Progress Methods =====
+  
+  private saveProgressToLocalStorage(): void {
+    if (!this.currentModuleId) {
+      return;
+    }
+    
+    const progressKey = `lab-progress-${this.currentModuleId}`;
+    const progressData = {
+      currentStep: this.currentStep,
+      completedSteps: this.completedSteps,
+      totalSteps: this.steps.length,
+      progress: this.steps.length > 0 ? this.completedSteps.length / this.steps.length : 0,
+      lastUpdated: Date.now()
+    };
+    
+    try {
+      localStorage.setItem(progressKey, JSON.stringify(progressData));
+      console.log('[LabTemplate] Saved progress to localStorage:', progressData);
+    } catch (e) {
+      console.warn('[LabTemplate] Failed to save progress to localStorage:', e);
+    }
+  }
+  
+  private loadProgressFromLocalStorage(): void {
+    if (!this.currentModuleId) {
+      return;
+    }
+    
+    const progressKey = `lab-progress-${this.currentModuleId}`;
+    try {
+      const storedData = localStorage.getItem(progressKey);
+      if (storedData) {
+        const progressData = JSON.parse(storedData);
+        this.currentStep = progressData.currentStep || 1;
+        this.completedSteps = progressData.completedSteps || [];
+        console.log('[LabTemplate] Loaded progress from localStorage:', progressData);
+      }
+    } catch (e) {
+      console.warn('[LabTemplate] Failed to load progress from localStorage:', e);
+    }
+  }
+
   private loadLab(): void {
     const labId = this.route.snapshot.paramMap.get('id');
     
@@ -976,14 +1021,39 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   private handleModuleLoad(json: any): void {
     const labFromModule = this.labDataService.convertModuleToLab(json);
     this.labData = labFromModule;
+    this.currentModuleId = json.id || json.name || 'unknown'; // Save module ID
     this.extractWidgetsFromLabData();
     this.loading = false;
     this.error = null;
     
-    // Start session tracking for this module
-    this.startModuleSession(json.id || json.name || 'unknown');
+    // Load progress from localStorage if it exists
+    this.loadProgressFromLocalStorage();
     
-    // Show lab background modal once before starting
+    // Start session tracking for this module
+    this.startModuleSession(this.currentModuleId);
+    
+    // Check localStorage for previously shown lab background
+    const labBackgroundKey = `lab-bg-shown-${this.currentModuleId}`;
+    const hasShownBefore = localStorage.getItem(labBackgroundKey) === 'true';
+    
+    if (hasShownBefore) {
+      console.log('[LabTemplate] Lab background already shown for this lab (from localStorage)');
+      this.hasShownLabBackground = true;
+      
+      // Try to load cached background context
+      const cacheKey = `lab-bg-${this.labData?.title}`;
+      try {
+        const cachedContext = localStorage.getItem(cacheKey);
+        if (cachedContext) {
+          this.labBackgroundContext = JSON.parse(cachedContext);
+          console.log('[LabTemplate] Loaded lab background from localStorage cache');
+        }
+      } catch (e) {
+        console.warn('[LabTemplate] Failed to load cached lab background:', e);
+      }
+    }
+    
+    // Show lab background modal once before starting (only if not shown before)
     if (!this.hasShownLabBackground && this.labData) {
       console.log('[LabTemplate] Lab loaded, showing lab background overview');
       // Use setTimeout to ensure the view is fully initialized
@@ -1399,6 +1469,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       this.codeEditorWidget = null;
       const previousStep = this.currentStep;
       this.currentStep = step;
+      this.saveProgressToLocalStorage(); // Save when step changes
       this.updateCurrentCodeEditor();
       this.updateCurrentFeedbackWidgets();
       
@@ -1467,6 +1538,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
         this.labBackgroundContext = context; // Store for later access
         this.displayLabBackground(context);
         this.hasShownLabBackground = true;
+        
+        // Save to localStorage so it doesn't regenerate on refresh
+        const labBackgroundKey = `lab-bg-shown-${this.currentModuleId}`;
+        localStorage.setItem(labBackgroundKey, 'true');
+        console.log('[LabTemplate] Saved lab background shown state to localStorage');
+        
         this.cdr.detectChanges(); // Ensure view updates
       },
       error: (error) => {
@@ -1483,6 +1560,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
         this.labBackgroundContext = fallbackContext; // Store for later access
         this.displayLabBackground(fallbackContext);
         this.hasShownLabBackground = true;
+        
+        // Save to localStorage so it doesn't regenerate on refresh
+        const labBackgroundKey = `lab-bg-shown-${this.currentModuleId}`;
+        localStorage.setItem(labBackgroundKey, 'true');
+        console.log('[LabTemplate] Saved lab background shown state to localStorage (fallback)');
       }
     });
   }
@@ -1757,6 +1839,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     if (widgetType === 'step-prompt' && !this.completedSteps.includes(this.currentStep)) {
       setTimeout(() => {
         this.completedSteps = [...this.completedSteps, this.currentStep];
+        this.saveProgressToLocalStorage();
         this.cdr.detectChanges();
       }, 100);
     }
@@ -1825,6 +1908,9 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       this.completedSteps = [...this.completedSteps, this.currentStep];
     }
     
+    // Save progress to localStorage
+    this.saveProgressToLocalStorage();
+    
     // Check if all steps are completed
     const allStepsCompleted = this.completedSteps.length === this.steps.length;
     
@@ -1836,6 +1922,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       
       // Increment step
       this.currentStep += 1;
+      this.saveProgressToLocalStorage(); // Save after incrementing step
       
       // Use setTimeout to ensure the widget update happens in the next tick
       setTimeout(() => {
@@ -1867,6 +1954,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     // Mark the current step as completed so the Continue button shows up
     if (!this.completedSteps.includes(this.currentStep)) {
       this.completedSteps = [...this.completedSteps, this.currentStep];
+      this.saveProgressToLocalStorage();
       console.log('[handleCodePassed] Marked step as complete. CompletedSteps:', this.completedSteps);
       console.log('[handleCodePassed] Current step:', this.currentStep, 'Total steps:', this.steps.length);
       console.log('[handleCodePassed] Is final step?', this.currentStep === this.steps.length);

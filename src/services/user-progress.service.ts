@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AuthService } from './auth.service';
+import { LabsService } from './labs.service';
 
 export interface UserLabProgress {
   lab_id: string;
@@ -43,6 +44,7 @@ export interface UserProgressResponse {
 export class UserProgressService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
+  private labsService = inject(LabsService);
   private apiUrl = environment.apiUrl;
 
   /**
@@ -63,6 +65,7 @@ export class UserProgressService {
 
   /**
    * Get user progress for all labs
+   * Merges backend session data with localStorage progress
    */
   getUserLabProgress(userId?: string): Observable<UserLabProgress[]> {
     // Get the current authenticated user ID
@@ -81,16 +84,90 @@ export class UserProgressService {
       map(response => {
         if (response.success) {
           // Convert module sessions to lab progress format
-          return this.convertModuleSessionsToLabProgress(response.sessions || []);
+          const backendProgress = this.convertModuleSessionsToLabProgress(response.sessions || []);
+          
+          // Get localStorage progress data
+          const localStorageProgress = this.labsService.getAllLocalStorageProgress();
+          
+          // Merge localStorage data with backend data
+          return this.mergeProgressData(backendProgress, localStorageProgress);
         }
         return [];
       }),
       catchError(error => {
         console.error('Error fetching user progress:', error);
-        // Return empty array on error - labs will show as "not started"
-        return of([]);
+        // Even on backend error, return localStorage data
+        const localStorageProgress = this.labsService.getAllLocalStorageProgress();
+        return of(this.convertLocalStorageToLabProgress(localStorageProgress));
       })
     );
+  }
+
+  /**
+   * Merge backend progress with localStorage progress
+   * localStorage takes priority for more recent data
+   */
+  private mergeProgressData(
+    backendProgress: UserLabProgress[], 
+    localStorageProgress: Map<string, any>
+  ): UserLabProgress[] {
+    const progressMap = new Map<string, UserLabProgress>();
+    
+    // First, add all backend progress
+    backendProgress.forEach(progress => {
+      progressMap.set(progress.lab_id, progress);
+    });
+    
+    // Then, merge/override with localStorage data (which is more up-to-date for client-side changes)
+    localStorageProgress.forEach((localData, labId) => {
+      const existing = progressMap.get(labId);
+      
+      if (existing) {
+        // Merge: use localStorage for step/completion data, keep backend for time/dates
+        progressMap.set(labId, {
+          ...existing,
+          current_step: localData.currentStep || existing.current_step,
+          total_steps: localData.totalSteps || existing.total_steps,
+          progress: Math.round((localData.progress || 0) * 100),
+          // Determine status based on progress
+          status: localData.progress >= 1 ? 'completed' : 'in_progress'
+        });
+      } else {
+        // No backend data, create from localStorage
+        progressMap.set(labId, {
+          lab_id: labId,
+          status: localData.progress >= 1 ? 'completed' : 'in_progress',
+          progress: Math.round((localData.progress || 0) * 100),
+          current_step: localData.currentStep,
+          total_steps: localData.totalSteps,
+          time_spent: 0,
+          last_activity_at: new Date(localData.lastUpdated).toISOString()
+        });
+      }
+    });
+    
+    return Array.from(progressMap.values());
+  }
+
+  /**
+   * Convert localStorage progress to lab progress format
+   */
+  private convertLocalStorageToLabProgress(localStorageProgress: Map<string, any>): UserLabProgress[] {
+    const progressList: UserLabProgress[] = [];
+    
+    localStorageProgress.forEach((localData, labId) => {
+      progressList.push({
+        lab_id: labId,
+        status: localData.progress >= 1 ? 'completed' : 'in_progress',
+        progress: Math.round((localData.progress || 0) * 100),
+        current_step: localData.currentStep,
+        total_steps: localData.totalSteps,
+        time_spent: 0,
+        last_activity_at: new Date(localData.lastUpdated).toISOString()
+      });
+    });
+    
+    return progressList;
   }
 
   /**

@@ -1,0 +1,424 @@
+{
+  "name": "coding---java-640fda73",
+  "title": "Java Fundamentals: Variables, Data Types, and Control Flow",
+  "description": "Master the essentials of Java programming by learning variables, primitive data types, and control flow structures. Write your first Java programs and understand how to solve problems with code.",
+  "skills": [
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Help Guide",
+        "description": "Progressive hint disclosure with multiple tiers of guidance for Java fundamentals",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Need Help with Java?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "Java is a compiled language where you declare variable types explicitly. Every variable must have a data type like int, String, boolean, or double.",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "To declare a variable: use the syntax 'dataType variableName = value;' For example: int age = 25; or String name = \"Alice\";",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "Common Java data types: int (whole numbers), double (decimals), String (text), boolean (true/false). Use int for ages/counts, double for measurements, String for names/text.",
+            "revealed": false
+          },
+          {
+            "id": "hint-4",
+            "tier": 1,
+            "text": "Control flow statements like if/else, for loops, and while loops help you make decisions and repeat actions in your code.",
+            "revealed": false
+          },
+          {
+            "id": "hint-5",
+            "tier": 2,
+            "text": "An if statement checks a condition: if (condition) { do this } else { do that }. The condition uses operators like ==, <, >, !=",
+            "revealed": false
+          },
+          {
+            "id": "hint-6",
+            "tier": 3,
+            "text": "For loops repeat code a specific number of times: for (int i = 0; i < 5; i++) { System.out.println(i); } This prints 0 through 4.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 2
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Exercise 1: Declare and Use Variables",
+        "description": "Write Java code to declare variables of different data types and perform basic operations",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Declare Variables and Perform Operations",
+        "language": "java",
+        "starterCode": "public class Variables {\n  public static void main(String[] args) {\n    // Declare an integer variable for age\n    int age = 0; // TODO: Set your age\n    \n    // Declare a String variable for name\n    String name = \"\"; // TODO: Set your name\n    \n    // Declare a double for height in meters\n    double height = 0.0; // TODO: Set your height\n    \n    // Print the variables\n    System.out.println(name);\n    System.out.println(age);\n    System.out.println(height);\n  }\n}",
+        "testCases": [
+          {
+            "id": "test-1",
+            "input": "",
+            "expectedOutput": "contains age value",
+            "description": "Code compiles without errors"
+          },
+          {
+            "id": "test-2",
+            "input": "",
+            "expectedOutput": "contains String output",
+            "description": "String variable is printed correctly"
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Exercise 1 Feedback",
+        "description": "Shows correctness, explanation, and next steps for variable declaration exercise",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Start!",
+        "message": "You successfully declared variables of different data types and printed them.",
+        "explanation": "This demonstrates understanding of Java's type system. Each variable requires a data type (int, String, double) and can store values of that type.",
+        "nextSteps": [
+          "Review how to perform arithmetic operations with int and double variables",
+          "Learn about variable naming conventions in Java",
+          "Move to the next exercise on control flow"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment on variable declarations",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with declaring and using variables in Java?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Exercise 2: Control Flow with if/else",
+        "description": "Write Java code using if/else statements to make decisions based on conditions",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Use if/else to Check Age",
+        "language": "java",
+        "starterCode": "public class AgeChecker {\n  public static void main(String[] args) {\n    int age = 16;\n    \n    // TODO: Write an if/else statement\n    // If age >= 18, print \"You are an adult\"\n    // Otherwise, print \"You are a minor\"\n    \n  }\n}",
+        "testCases": [
+          {
+            "id": "test-1",
+            "input": "age=20",
+            "expectedOutput": "You are an adult",
+            "description": "Correctly identifies adults"
+          },
+          {
+            "id": "test-2",
+            "input": "age=16",
+            "expectedOutput": "You are a minor",
+            "description": "Correctly identifies minors"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Exercise 2 Feedback",
+        "description": "Shows correctness, explanation, and next steps for if/else exercise",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "Your if/else statement correctly handles both conditions and produces the expected output.",
+        "explanation": "Control flow allows your code to make decisions. The if statement checks a boolean condition, and if true, executes its block; otherwise, the else block runs.",
+        "nextSteps": [
+          "Practice with more complex conditions using && (and) and || (or) operators",
+          "Learn about switch statements for multiple conditions",
+          "Try the loop exercise next"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment on control flow",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with using if/else statements in Java?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Exercise 3: Loops and Repetition",
+        "description": "Write Java code using for loops to repeat statements and process sequences",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Use Loops to Print Numbers",
+        "language": "java",
+        "starterCode": "public class LoopPractice {\n  public static void main(String[] args) {\n    // TODO: Write a for loop that prints numbers 1 to 10\n    // Each number on a new line\n    // Hint: for (int i = start; i < end; i++)\n    \n  }\n}",
+        "testCases": [
+          {
+            "id": "test-1",
+            "input": "",
+            "expectedOutput": "1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10",
+            "description": "Loop correctly prints 1 through 10"
+          },
+          {
+            "id": "test-2",
+            "input": "",
+            "expectedOutput": "contains 10 lines",
+            "description": "Exactly 10 iterations completed"
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Exercise 3 Feedback",
+        "description": "Shows correctness, explanation, and next steps for loop exercise",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Perfect!",
+        "message": "Your loop executed correctly and printed all 10 numbers as expected.",
+        "explanation": "For loops allow you to repeat code a specific number of times. The loop has three parts: initialization (int i=1), condition (i<=10), and increment (i++). This is fundamental for processing arrays and collections.",
+        "nextSteps": [
+          "Explore while loops and do-while loops for different iteration patterns",
+          "Learn about arrays and iterate through them with loops",
+          "Practice combining loops with conditions for more complex programs"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment on loops",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you with using for loops in Java?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-26T12:53:55.639694",
+    "module_id": "d70de794-7351-4508-9c96-42bc3baefbf9",
+    "saved_to_filesystem": true
+  }
+}

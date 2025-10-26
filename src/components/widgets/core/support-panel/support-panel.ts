@@ -42,6 +42,7 @@ export class SupportPanelComponent implements OnChanges {
   @Input() onToggleCollapse?: () => void;
   @Input() hints: any[] = [];
   @Input() feedback: any[] = [];
+  @Input() currentStep!: number;
   @Input() sessionId: string = '';
   @Input() aiReview: string = '';
   @Input() refactorData: any = null; // New input for refactor feedback
@@ -71,8 +72,15 @@ export class SupportPanelComponent implements OnChanges {
 
   // Check if hints exist
   get hasHints(): boolean {
-    if (!this.hints || this.hints.length === 0) return false;
-    if (this.hints[0]?.config?.hints && this.hints[0].config.hints.length > 0) return true;
+    if (!this.hints || this.hints.length === 0) {
+      console.log('[SupportPanel] No hints - hints is empty or null');
+      return false;
+    }
+    if (this.hints[0]?.config?.hints && this.hints[0].config.hints.length > 0) {
+      console.log('[SupportPanel] Has hints:', this.hints[0].config.hints.length);
+      return true;
+    }
+    console.log('[SupportPanel] No hints in config:', this.hints);
     return false;
   }
 

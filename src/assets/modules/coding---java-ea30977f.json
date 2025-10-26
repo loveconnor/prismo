@@ -1,0 +1,392 @@
+{
+  "name": "coding---java-ea30977f",
+  "title": "Java Fundamentals: Loops and Recursion",
+  "description": "Master Java programming by learning for loops and recursion through hands-on coding exercises. Build foundational skills in iteration and function calling patterns.",
+  "skills": [
+    "recursion",
+    "for loops",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Hint Panel",
+        "description": "Progressive hint disclosure with multiple tiers for coding challenges",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Need Help?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "A for loop repeats a block of code a specific number of times. The syntax is: for(int i=0; i<n; i++) where i is the counter variable.",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "To sum numbers from 1 to n using a for loop, initialize a sum variable to 0, then add each value of i inside the loop: sum += i.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "For recursion, remember that a recursive function must call itself with a simpler input and must have a base case to stop the recursion. Example: if(n==1) return 1; else return n + sum(n-1);",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Exercise 1: Sum Numbers with a For Loop",
+        "language": "java",
+        "starterCode": "public class SumLoop {\n  public static void main(String[] args) {\n    int n = 5;\n    int sum = 0;\n    // TODO: Write a for loop to sum numbers from 1 to n\n    // Expected output: 15\n    System.out.println(\"Sum: \" + sum);\n  }\n}",
+        "testCases": [
+          {
+            "input": "n=5",
+            "expectedOutput": "Sum: 15",
+            "description": "Sum of 1+2+3+4+5"
+          },
+          {
+            "input": "n=10",
+            "expectedOutput": "Sum: 55",
+            "description": "Sum of 1 to 10"
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Great Job!",
+        "message": "You successfully implemented a for loop to sum numbers.",
+        "explanation": "The for loop iterates from 1 to n, adding each value to the sum variable. This demonstrates understanding of loop initialization, condition, and increment.",
+        "nextSteps": [
+          "Review how loop variables work",
+          "Try the recursion exercise next",
+          "Experiment with different loop patterns"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with for loops?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "difficulty": 4,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0",
+        "category": "coding"
+      },
+      "props": {
+        "title": "Exercise 2: Calculate Factorial with Recursion",
+        "language": "java",
+        "starterCode": "public class Factorial {\n  // TODO: Write a recursive method to calculate factorial\n  // Factorial of n = n * (n-1) * (n-2) * ... * 1\n  // Base case: factorial(1) = 1\n  \n  public static void main(String[] args) {\n    int result = factorial(5);\n    // Expected output: 120\n    System.out.println(\"Factorial: \" + result);\n  }\n}",
+        "testCases": [
+          {
+            "input": "factorial(5)",
+            "expectedOutput": "Factorial: 120",
+            "description": "5! = 5*4*3*2*1 = 120"
+          },
+          {
+            "input": "factorial(4)",
+            "expectedOutput": "Factorial: 24",
+            "description": "4! = 4*3*2*1 = 24"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent!",
+        "message": "You successfully implemented a recursive factorial function.",
+        "explanation": "Your recursion includes a base case (when n==1) and a recursive case that calls itself with n-1. This demonstrates understanding of how recursion breaks down problems into simpler subproblems.",
+        "nextSteps": [
+          "Compare loop vs recursion approaches",
+          "Practice nested loops",
+          "Explore more complex recursion patterns"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you with recursion?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice",
+        "description": "Single or multiple answer selection with feedback",
+        "skills": [
+          "comprehension",
+          "reasoning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Concept Check: Loops vs Recursion",
+        "question": "Which statement is true about for loops and recursion?",
+        "options": [
+          "For loops are always faster than recursion",
+          "Recursion uses the call stack while loops use counters",
+          "For loops can only iterate a fixed number of times",
+          "Recursion is easier to understand than loops"
+        ],
+        "correctAnswer": 1,
+        "explanation": "Recursion uses the call stack to manage function calls, while loops use counter variables to control iteration. Both have their use cases depending on the problem."
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Perfect!",
+        "message": "You understand the key differences between loops and recursion.",
+        "explanation": "You correctly identified that recursion uses the call stack while loops use counters. Understanding these differences helps you choose the right approach for different problems.",
+        "nextSteps": [
+          "Review stack overflow risks with recursion",
+          "Learn about tail recursion optimization",
+          "Practice choosing between loops and recursion"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you comparing loops and recursion?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-26T13:06:38.723458",
+    "module_id": "e899bc6e-3cfe-4cd4-87f7-0694a0934503",
+    "saved_to_filesystem": true
+  }
+}

@@ -138,9 +138,23 @@ Return ONLY this JSON format:
   generateLabBackground(request: GenerateLabBackgroundRequest): Observable<StepContext> {
     const cacheKey = `lab-bg-${request.labTitle}`;
     
-    // Check cache first
+    // Check localStorage first
+    try {
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        console.log('[StepContext] Using localStorage cached lab background for', cacheKey);
+        const parsed = JSON.parse(cachedData);
+        // Also add to memory cache
+        this.cache.set(cacheKey, parsed);
+        return of(parsed);
+      }
+    } catch (e) {
+      console.warn('[StepContext] Error reading from localStorage:', e);
+    }
+    
+    // Check memory cache
     if (this.cache.has(cacheKey)) {
-      console.log('[StepContext] Using cached lab background for', cacheKey);
+      console.log('[StepContext] Using memory cached lab background for', cacheKey);
       return of(this.cache.get(cacheKey)!);
     }
 
@@ -220,8 +234,16 @@ Return ONLY this JSON:
             
             console.log('[StepContext] Generated lab background:', labContext);
             
-            // Cache the result
+            // Cache the result in memory
             this.cache.set(cacheKey, labContext);
+            
+            // Save to localStorage for persistence across refreshes
+            try {
+              localStorage.setItem(cacheKey, JSON.stringify(labContext));
+              console.log('[StepContext] Saved lab background to localStorage');
+            } catch (e) {
+              console.warn('[StepContext] Failed to save to localStorage:', e);
+            }
             
             return labContext;
           } catch (e) {

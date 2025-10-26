@@ -389,5 +389,53 @@ export class LabsService {
       })
     );
   }
+
+  /**
+   * Get localStorage progress for a specific lab
+   */
+  getLocalStorageProgress(labId: string): {
+    currentStep: number;
+    completedSteps: number[];
+    totalSteps: number;
+    progress: number;
+    lastUpdated: number;
+  } | null {
+    try {
+      const progressKey = `lab-progress-${labId}`;
+      const storedData = localStorage.getItem(progressKey);
+      if (storedData) {
+        return JSON.parse(storedData);
+      }
+    } catch (e) {
+      console.warn(`Failed to load localStorage progress for ${labId}:`, e);
+    }
+    return null;
+  }
+
+  /**
+   * Get localStorage progress for all labs
+   * Returns a map of labId -> progress data
+   */
+  getAllLocalStorageProgress(): Map<string, any> {
+    const progressMap = new Map<string, any>();
+    
+    try {
+      // Iterate through all localStorage keys
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('lab-progress-')) {
+          const labId = key.replace('lab-progress-', '');
+          const data = localStorage.getItem(key);
+          if (data) {
+            progressMap.set(labId, JSON.parse(data));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load localStorage progress:', e);
+    }
+    
+    return progressMap;
+  }
 }
 
