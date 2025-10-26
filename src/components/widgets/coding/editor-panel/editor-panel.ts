@@ -103,6 +103,10 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     return displayNames[lang] || lang.toUpperCase();
   }
 
+  get editorCode(): string {
+    return this.monacoEditor?.getValue() || '';
+  }
+
   ngOnInit(): void {
     // Component initialization
     console.log('EditorPanel ngOnInit - editorConfig:', this.editorConfig);

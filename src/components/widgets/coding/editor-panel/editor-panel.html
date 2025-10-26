@@ -82,7 +82,7 @@
 <app-code-refactor-modal
   [isOpen]="showRefactorModal"
   [language]="editorConfig?.language || 'javascript'"
-  [originalCode]="monacoEditor?.getValue() || ''"
+  [originalCode]="editorCode"
   [refactoredCode]="refactoredCode"
   [feedback]="gradingFeedback"
   [suggestions]="gradingSuggestions"
