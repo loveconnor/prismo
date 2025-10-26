@@ -308,7 +308,7 @@ button:focus-visible {
 
 /* Alert severity indicators */
 .alert-info {
-  border-color: #3b82f6;
+  border-color: #BC78F9;
   background-color: rgba(59, 130, 246, 0.1);
   color: #bc78f9;
 }
