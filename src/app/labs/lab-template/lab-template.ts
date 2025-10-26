@@ -233,11 +233,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public rightPanelCollapsed = false;
   public currentStep = 1;
   public completedSteps: number[] = [];
-  public steps: { id: number; title: string; instruction?: string; example?: string }[] = [];
+  public steps: { id: number; title: string; instruction?: string; example?: string; widgetPosition?: number }[] = [];
   
   // Extracted widgets from labData
   public codeEditorWidget: any = null;
   public allCodeEditorWidgets: any[] = [];
+  public allStepPromptWidgets: any[] = [];
   public hintWidgets: any[] = [];
   public feedbackWidget: any = null;
   public confidenceWidget: any = null;
@@ -246,6 +247,11 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public codePassed = false;
   public showFeedbackModal = false;
   public showConfidenceMeter = false;
+  
+  // Step-specific widgets (indexed by stepId)
+  private feedbackByStep = new Map<number, any>();
+  private confidenceByStep = new Map<number, any>();
+  private shownFeedbackForSteps = new Set<number>();
   
   // Check if support panel should be shown
   get shouldShowSupportPanel(): boolean {
@@ -313,6 +319,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+<<<<<<< HEAD
     // Check if ID is numerical
     const isNumerical = /^\d+$/.test(labId);
     
@@ -367,11 +374,45 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log(`Searching: ${currentPath}`);
 
       this.http.get<any>(currentPath)
+||||||| 31e22f5
+    // Handle specific routes: strictly load from module JSON for pt01
+    let actualLabId = labId;
+    if (currentUrl.includes('pt01')) {
+      // Load the CS1 pt01 module JSON and convert to lab using HttpClient (triggers CD in zoneless mode)
+      this.http.get<any>('/assets/modules/CS1/01-Lab/pt03.json')
+=======
+    // Handle specific routes: strictly load from module JSON for pt01
+    let actualLabId = labId;
+    if (currentUrl.includes('pt01')) {
+      // Load the CS1 pt01 module JSON and convert to lab using HttpClient (triggers CD in zoneless mode)
+      this.http.get<any>('/assets/modules/CS1/01-Lab/pt05.json')
+>>>>>>> 7e0e23d62c4a695aa3a94ab65fb65ccbe14c8d9a
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (json) => {
+<<<<<<< HEAD
             console.log(`Found module at: ${currentPath}`);
             this.handleModuleLoad(json);
+||||||| 31e22f5
+            console.log('Loaded pt01.json:', json);
+            const labFromModule = this.labDataService.convertModuleToLab(json);
+            console.log('Converted to lab:', labFromModule);
+            this.labData = labFromModule;
+            this.extractWidgetsFromLabData();
+            this.loading = false;
+            this.error = null;
+            this.cdr.detectChanges();
+=======
+            console.log('Loaded pt01.json:', json);
+            const labFromModule = this.labDataService.convertModuleToLab(json);
+            console.log('Converted to lab:', labFromModule);
+            this.labData = labFromModule;
+            this.extractWidgetsFromLabData();
+            this.loading = false;
+            this.error = null;
+            
+            this.cdr.detectChanges();
+>>>>>>> 7e0e23d62c4a695aa3a94ab65fb65ccbe14c8d9a
           },
           error: (err) => {
             currentPathIndex++;
@@ -446,6 +487,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
           this.extractWidgetsFromLabData();
           this.loading = false;
           this.error = null;
+          
           this.cdr.detectChanges();
         },
         error: (err) => {
@@ -502,50 +544,205 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('All widgets:', allWidgets);
     
     // Find all code editor widgets
-    this.allCodeEditorWidgets = allWidgets.filter(w => w.type === 'code-editor' || w.id === 'code-editor');
+    this.allCodeEditorWidgets = allWidgets.filter(w => 
+      w.type === 'code-editor' || 
+      w.id === 'code-editor' || 
+      w.metadata?.id === 'code-editor'
+    );
     console.log('Found code editor widgets:', this.allCodeEditorWidgets);
+    
+    // Find all step-prompt widgets (like final congratulations)
+    this.allStepPromptWidgets = allWidgets.filter(w => 
+      w.type === 'step-prompt' || 
+      w.id === 'step-prompt' || 
+      w.metadata?.id === 'step-prompt'
+    );
+    console.log('Found step-prompt widgets:', this.allStepPromptWidgets);
     
     // Set the initial code editor widget (will be updated based on current step)
     this.updateCurrentCodeEditor();
     
     // Find hint widgets
-    this.hintWidgets = allWidgets.filter(w => w.type === 'hint-panel' || w.id === 'hint-panel');
+    this.hintWidgets = allWidgets.filter(w => 
+      w.type === 'hint-panel' || 
+      w.id === 'hint-panel' || 
+      w.metadata?.id === 'hint-panel'
+    );
     console.log('Found hint widgets:', this.hintWidgets);
     
-    // Find feedback widget (for modal)
-    this.feedbackWidget = allWidgets.find(w => w.type === 'feedback-box' || w.id === 'feedback-box');
-    console.log('Found feedback widget:', this.feedbackWidget);
+    // Find ALL feedback widgets and organize by step
+    const allFeedbackWidgets = allWidgets.filter(w => 
+      w.type === 'feedback-box' || 
+      w.id === 'feedback-box' || 
+      w.metadata?.id === 'feedback-box'
+    );
+    console.log('All feedback widgets found:', allFeedbackWidgets);
+    console.log('Feedback widget details:', allFeedbackWidgets.map(w => ({
+      id: w.id,
+      type: w.type,
+      position: w.metadata?.position,
+      config: w.config
+    })));
+    
+    // Map feedback widgets to steps
+    allFeedbackWidgets.forEach(feedback => {
+      let stepKey: number | undefined;
+      
+      console.log(`\n=== Processing feedback widget: ${feedback.id} ===`);
+      console.log(`  Position: ${feedback.metadata?.position}`);
+      console.log(`  Has stepId: ${feedback.metadata?.stepId}`);
+      
+      // If widget has explicit stepId, use that
+      if (feedback.metadata?.stepId !== undefined) {
+        stepKey = feedback.metadata.stepId;
+        console.log(`  Using explicit stepId: ${stepKey}`);
+      } else if (feedback.metadata?.position !== undefined) {
+        // Otherwise, find which step this feedback belongs to by finding the nearest preceding content widget
+        const feedbackPosition = feedback.metadata.position;
+        const sortedWidgets = [...allWidgets].sort((a, b) => 
+          (a.metadata?.position || 0) - (b.metadata?.position || 0)
+        );
+        
+        console.log(`  Looking for content widget before position ${feedbackPosition}`);
+        
+        // Find the last content widget before this feedback widget
+        for (let i = sortedWidgets.length - 1; i >= 0; i--) {
+          const widget = sortedWidgets[i];
+          const widgetPosition = widget.metadata?.position || 0;
+          const widgetType = widget.type || widget.metadata?.id || widget.id;
+          const isContentWidget = widgetType !== 'feedback-box' && 
+                                 widgetType !== 'confidence-meter' && 
+                                 widgetType !== 'hint-panel';
+          
+          console.log(`    Checking widget at position ${widgetPosition} (type: ${widgetType}, isContent: ${isContentWidget})`);
+          
+          if (widgetPosition < feedbackPosition && isContentWidget) {
+            stepKey = widget.metadata?.position;
+            console.log(`  Found content widget at position ${widgetPosition}, using as stepKey: ${stepKey}`);
+            break;
+          }
+        }
+      }
+      
+      if (stepKey !== undefined) {
+        this.feedbackByStep.set(stepKey, feedback);
+        console.log(`✓ Mapped feedback "${feedback.id}" to step key ${stepKey}`);
+      } else {
+        console.log(`✗ Could not map feedback "${feedback.id}" to any step`);
+      }
+    });
+    console.log('Feedback widgets by step:', this.feedbackByStep);
+    
+    // Find ALL confidence widgets and organize by step
+    const allConfidenceWidgets = allWidgets.filter(w => 
+      w.type === 'confidence-meter' || 
+      w.id === 'confidence-meter' || 
+      w.metadata?.id === 'confidence-meter'
+    );
+    console.log('All confidence widgets found:', allConfidenceWidgets);
+    
+    // Map confidence widgets to steps
+    allConfidenceWidgets.forEach(confidence => {
+      let stepKey: number | undefined;
+      
+      // If widget has explicit stepId, use that
+      if (confidence.metadata?.stepId !== undefined) {
+        stepKey = confidence.metadata.stepId;
+      } else if (confidence.metadata?.position !== undefined) {
+        // Otherwise, find which step this confidence belongs to by finding the nearest preceding content widget
+        const confidencePosition = confidence.metadata.position;
+        const sortedWidgets = [...allWidgets].sort((a, b) => 
+          (a.metadata?.position || 0) - (b.metadata?.position || 0)
+        );
+        
+        // Find the last content widget before this confidence widget
+        for (let i = sortedWidgets.length - 1; i >= 0; i--) {
+          const widget = sortedWidgets[i];
+          const widgetPosition = widget.metadata?.position || 0;
+          const widgetType = widget.type || widget.metadata?.id || widget.id;
+          const isContentWidget = widgetType !== 'feedback-box' && 
+                                 widgetType !== 'confidence-meter' && 
+                                 widgetType !== 'hint-panel';
+          
+          if (widgetPosition < confidencePosition && isContentWidget) {
+            stepKey = widget.metadata?.position;
+            break;
+          }
+        }
+      }
+      
+      if (stepKey !== undefined) {
+        this.confidenceByStep.set(stepKey, confidence);
+        console.log(`Mapped confidence for step ${stepKey}:`, confidence);
+      }
+    });
+    console.log('Confidence widgets by step:', this.confidenceByStep);
+    
+    // Set current feedback/confidence for the initial step
+    this.updateCurrentFeedbackWidgets();
     
     // Find feedback widgets for support panel (different from modal feedback)
     this.feedbackWidgets = allWidgets.filter(w => w.type === 'feedback-panel' || w.id === 'feedback-panel');
     console.log('Found feedback widgets for panel:', this.feedbackWidgets);
     
-    // Find confidence widget
-    this.confidenceWidget = allWidgets.find(w => w.type === 'confidence-meter' || w.id === 'confidence-meter');
-    console.log('Found confidence widget:', this.confidenceWidget);
-    
-    // Extract steps from widgets - use widgets with position field as steps
-    // Only create steps if there are multiple positioned widgets
-    const positionedWidgets = allWidgets.filter(w => w.metadata?.position !== undefined);
-    console.log('Positioned widgets:', positionedWidgets);
-    
-    if (positionedWidgets.length > 1) {
-      this.steps = positionedWidgets
-        .sort((a, b) => (a.metadata?.position || 0) - (b.metadata?.position || 0))
-        .map((w, index) => ({
-          id: w.metadata?.position || index + 1,
-          title: w.config?.title || w.metadata?.title || `Step ${index + 1}`,
-          instruction: w.config?.prompt || w.metadata?.description,
-          example: undefined
-        }));
+    // Extract steps - prefer explicit steps from labData, otherwise derive from widgets
+    if (this.labData.steps && this.labData.steps.length > 0) {
+      // Use explicit steps from the lab data
+      this.steps = this.labData.steps.map(step => ({
+        id: step.id,
+        title: step.title,
+        instruction: step.instruction || step.description,
+        example: step.example
+      }));
+      console.log('Using explicit steps from labData:', this.steps);
     } else {
+<<<<<<< HEAD
       // Fallback to labData.steps if no positioned widgets
       this.steps = this.labData.steps || [];
+||||||| 31e22f5
+      this.steps = [];
+=======
+      // Derive steps from content widgets only (exclude feedback/confidence/hint widgets)
+      const contentWidgets = allWidgets.filter(w => {
+        const widgetType = w.type || w.metadata?.id || w.id;
+        const isContentWidget = widgetType !== 'feedback-box' && 
+                               widgetType !== 'confidence-meter' && 
+                               widgetType !== 'hint-panel';
+        const hasPosition = w.metadata?.position !== undefined;
+        console.log(`Widget ${w.id}: type=${widgetType}, hasPosition=${hasPosition}, isContent=${isContentWidget}, position=${w.metadata?.position}`);
+        return hasPosition && isContentWidget;
+      });
+      console.log('Content widgets for steps:', contentWidgets);
+      console.log('Content widget count:', contentWidgets.length);
+      
+      if (contentWidgets.length >= 1) {
+        this.steps = contentWidgets
+          .sort((a, b) => (a.metadata?.position || 0) - (b.metadata?.position || 0))
+          .map((w, index) => {
+            const step = {
+              id: index + 1, // Use sequential step IDs (1, 2, 3...) instead of widget positions
+              widgetPosition: w.metadata?.position, // Store original widget position for lookup
+              title: w.config?.title || w.metadata?.title || `Step ${index + 1}`,
+              instruction: w.config?.prompt || w.metadata?.description,
+              example: undefined
+            };
+            console.log(`Created step ${step.id} from widget at position ${step.widgetPosition}:`, step);
+            return step;
+          });
+      } else {
+        this.steps = [];
+      }
+      console.log('Derived steps from content widgets:', this.steps);
+>>>>>>> 7e0e23d62c4a695aa3a94ab65fb65ccbe14c8d9a
     }
     this.hasSteps = this.steps.length > 0;
-    console.log('Extracted steps:', this.steps);
     console.log('Has steps:', this.hasSteps);
+<<<<<<< HEAD
     console.log('Steps:', this.steps);
+||||||| 31e22f5
+=======
+    console.log('Total steps:', this.steps.length);
+>>>>>>> 7e0e23d62c4a695aa3a94ab65fb65ccbe14c8d9a
     
     console.log('Extracted widgets summary:', { 
       codeEditorWidget: this.codeEditorWidget, 
@@ -674,22 +871,99 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     if (step <= nextUnlock) {
       this.currentStep = step;
       this.updateCurrentCodeEditor();
+      this.updateCurrentFeedbackWidgets();
+      
       this.cdr.detectChanges();
     }
   }
   
   private updateCurrentCodeEditor(): void {
-    // Find the code editor widget for the current step
+    // Find the widget for the current step - could be code editor or step-prompt
+    
+    // Get the current step data to find the widget position
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || this.currentStep;
+    
+    // First try to find a code editor for this step
+    let widgetForStep = null;
+    
     if (this.allCodeEditorWidgets.length > 0) {
-      // If there are multiple code editors, find the one matching current step position
-      if (this.allCodeEditorWidgets.length > 1) {
-        const editorForStep = this.allCodeEditorWidgets.find(w => w.metadata?.position === this.currentStep);
-        this.codeEditorWidget = editorForStep || this.allCodeEditorWidgets[this.currentStep - 1] || this.allCodeEditorWidgets[0];
-      } else {
-        // Only one code editor, use it for all steps
-        this.codeEditorWidget = this.allCodeEditorWidgets[0];
+      // Try to match by stepId first, then widgetPosition, then currentStep
+      widgetForStep = this.allCodeEditorWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
+                      this.allCodeEditorWidgets.find(w => w.metadata?.position === widgetPosition) ||
+                      this.allCodeEditorWidgets.find(w => w.metadata?.position === this.currentStep);
+      
+      // If no specific match, use index-based fallback
+      if (!widgetForStep && this.allCodeEditorWidgets.length === 1) {
+        widgetForStep = this.allCodeEditorWidgets[0];
+      } else if (!widgetForStep && this.currentStep <= this.allCodeEditorWidgets.length) {
+        widgetForStep = this.allCodeEditorWidgets[this.currentStep - 1];
       }
-      console.log('Current code editor widget for step', this.currentStep, ':', this.codeEditorWidget);
+    }
+    
+    // If no code editor found, try step-prompt widgets (like congratulations screens)
+    if (!widgetForStep && this.allStepPromptWidgets.length > 0) {
+      widgetForStep = this.allStepPromptWidgets.find(w => w.metadata?.stepId === this.currentStep) ||
+                      this.allStepPromptWidgets.find(w => w.metadata?.position === widgetPosition) ||
+                      this.allStepPromptWidgets.find(w => w.metadata?.position === this.currentStep);
+    }
+    
+    this.codeEditorWidget = widgetForStep || this.allCodeEditorWidgets[0] || null;
+    console.log(`Current widget for step ${this.currentStep} (widgetPosition: ${widgetPosition}):`, this.codeEditorWidget);
+  }
+  
+  private updateCurrentFeedbackWidgets(): void {
+    // Get the actual step data to find its widget position
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    
+    // Update feedback and confidence widgets for the current step (using widget position)
+    this.feedbackWidget = this.feedbackByStep.get(widgetPosition) || null;
+    this.confidenceWidget = this.confidenceByStep.get(widgetPosition) || null;
+    console.log(`Feedback/Confidence for step ${this.currentStep} (widgetPosition: ${widgetPosition}):`, { 
+      feedback: this.feedbackWidget, 
+      confidence: this.confidenceWidget 
+    });
+  }
+
+  /**
+   * Check if the current step is non-coding and has feedback/confidence widgets.
+   * If so, auto-show them after a short delay (simulating step completion).
+   */
+  private checkAndShowFeedbackForNonCodingStep(): void {
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    
+    // Check if this step has a code editor widget
+    const hasCodeEditor = this.allCodeEditorWidgets.some(w => w.metadata?.position === widgetPosition);
+    
+    // Check if this step has feedback or confidence widgets
+    const hasFeedback = this.feedbackByStep.has(widgetPosition);
+    const hasConfidence = this.confidenceByStep.has(widgetPosition);
+    
+    console.log(`checkAndShowFeedbackForNonCodingStep - Step ${this.currentStep}:`);
+    console.log(`  widgetPosition: ${widgetPosition}`);
+    console.log(`  hasCodeEditor: ${hasCodeEditor}`);
+    console.log(`  hasFeedback: ${hasFeedback}`);
+    console.log(`  hasConfidence: ${hasConfidence}`);
+    console.log(`  feedbackByStep map:`, this.feedbackByStep);
+    console.log(`  confidenceByStep map:`, this.confidenceByStep);
+    console.log(`  already shown:`, this.shownFeedbackForSteps.has(widgetPosition));
+    
+    // If it's a non-coding step with feedback/confidence, auto-trigger after a short delay
+    if (!hasCodeEditor && (hasFeedback || hasConfidence)) {
+      // Don't show again if we've already shown for this step
+      if (!this.shownFeedbackForSteps.has(widgetPosition)) {
+        console.log(`Auto-triggering feedback for non-coding step ${this.currentStep}`);
+        setTimeout(() => {
+          this.handleCodePassed();
+          this.cdr.detectChanges();
+        }, 500); // Small delay so user can see the step content first
+      } else {
+        console.log(`Feedback already shown for step ${this.currentStep}, skipping`);
+      }
+    } else {
+      console.log(`Step ${this.currentStep} is a coding step or has no feedback/confidence widgets`);
     }
   }
 
@@ -700,21 +974,42 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.currentStep < this.steps.length) {
       this.currentStep += 1;
       this.updateCurrentCodeEditor();
+      this.updateCurrentFeedbackWidgets();
     }
     this.cdr.detectChanges();
   }
 
   handleCodePassed(): void {
-    console.log('Code passed! Showing feedback widgets...');
-    console.log('Feedback widget config:', this.feedbackWidget?.config);
-    console.log('Confidence widget config:', this.confidenceWidget?.config);
+    console.log('Code passed! Showing feedback widgets for step', this.currentStep);
     this.codePassed = true;
     
-    // Show feedback modal first if it exists
-    if (this.feedbackWidget) {
+    // Get the actual step data to find its widget position
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    
+    // Check if we've already shown feedback for this step
+    if (this.shownFeedbackForSteps.has(widgetPosition)) {
+      console.log('Feedback already shown for this step, skipping');
+      return;
+    }
+    
+    // Mark this step as having shown feedback
+    this.shownFeedbackForSteps.add(widgetPosition);
+    
+    // Get feedback and confidence widgets for the current step (using widget position)
+    const stepFeedback = this.feedbackByStep.get(widgetPosition);
+    const stepConfidence = this.confidenceByStep.get(widgetPosition);
+    
+    console.log(`Step ${this.currentStep} (widgetPosition: ${widgetPosition}) feedback:`, stepFeedback);
+    console.log(`Step ${this.currentStep} (widgetPosition: ${widgetPosition}) confidence:`, stepConfidence);
+    
+    // Show feedback modal first if it exists for this step
+    if (stepFeedback) {
+      this.feedbackWidget = stepFeedback;
       this.showFeedbackModal = true;
-    } else if (this.confidenceWidget) {
+    } else if (stepConfidence) {
       // If no feedback widget, go straight to confidence meter
+      this.confidenceWidget = stepConfidence;
       this.showConfidenceMeter = true;
     }
     
@@ -722,11 +1017,17 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   handleFeedbackContinue(): void {
-    console.log('Feedback dismissed, showing confidence meter...');
+    console.log('Feedback dismissed, checking for confidence meter...');
     this.showFeedbackModal = false;
     
-    // Show confidence meter after feedback is dismissed
-    if (this.confidenceWidget) {
+    // Get the actual step data to find its widget position
+    const currentStepData = this.steps[this.currentStep - 1];
+    const widgetPosition = currentStepData?.widgetPosition || currentStepData?.id || this.currentStep;
+    
+    // Show confidence meter for the current step after feedback is dismissed
+    const stepConfidence = this.confidenceByStep.get(widgetPosition);
+    if (stepConfidence) {
+      this.confidenceWidget = stepConfidence;
       this.showConfidenceMeter = true;
     }
     

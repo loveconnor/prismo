@@ -1,0 +1,547 @@
+{
+  "name": "building-a-full-stack-todo-application-019b6a0c",
+  "title": "Building a Full-Stack Todo Application: From React Frontend to Express Backend",
+  "description": "Master full-stack development by building a complete todo application with React frontend, Express backend, database integration, JWT authentication, and RESTful API design.",
+  "skills": [
+    "javascript",
+    "react",
+    "nodejs",
+    "express",
+    "database",
+    "api-design",
+    "authentication",
+    "state-management",
+    "routing"
+  ],
+  "widgets": [
+    {
+      "name": "intro-step-prompt-001",
+      "metadata": {
+        "name": "step-prompt",
+        "title": "Step Prompt",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Welcome to Full-Stack Todo Development",
+        "prompt": "In this module, you will build a complete todo application with user authentication, state management, and a RESTful API. You'll learn to structure a full-stack project, connect frontend to backend, handle authentication with JWT tokens, and manage application state efficiently. By the end, you'll have a production-ready todo app.",
+        "estimatedTime": 300
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "name": "intro-confidence-meter-002",
+      "metadata": {
+        "name": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you in building a full-stack application with React, Express, and databases?",
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident"
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "name": "intro-feedback-box-003",
+      "metadata": {
+        "name": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "info",
+        "title": "Module Overview",
+        "message": "This is an advanced full-stack development module. We'll cover architecture patterns, API design, authentication, and state management.",
+        "explanation": "Full-stack development requires understanding both client-side and server-side technologies. This module integrates React for UI, Express for APIs, and databases for persistence.",
+        "nextSteps": [
+          "Let's start by understanding the architecture and then build each component step by step."
+        ],
+        "showContinueButton": true
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "name": "frontend-architecture-step-004",
+      "metadata": {
+        "name": "step-prompt",
+        "title": "Step Prompt",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "React Frontend Architecture",
+        "prompt": "Design the React component structure for your todo app. You'll need: (1) App component as root, (2) TodoList component to display todos, (3) TodoItem component for individual items, (4) TodoForm component for creating todos, (5) Auth components for login/signup. Plan how state will flow between components and identify which components need Redux or Context API.",
+        "estimatedTime": 180
+      },
+      "position": 4,
+      "dependencies_met": true
+    },
+    {
+      "name": "frontend-code-editor-005",
+      "metadata": {
+        "name": "code-editor",
+        "title": "Code Editor",
+        "description": "Write and test React component code",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Build React Todo Components",
+        "language": "javascript",
+        "starterCode": "import React, { useState, useEffect } from 'react';\nimport axios from 'axios';\n\nfunction App() {\n  const [todos, setTodos] = useState([]);\n  const [loading, setLoading] = useState(false);\n  const [auth, setAuth] = useState(null);\n\n  useEffect(() => {\n    // Fetch todos on mount\n    fetchTodos();\n  }, []);\n\n  const fetchTodos = async () => {\n    try {\n      setLoading(true);\n      const response = await axios.get('/api/todos', {\n        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }\n      });\n      setTodos(response.data);\n    } catch (error) {\n      console.error('Error fetching todos:', error);\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  const addTodo = async (title) => {\n    try {\n      const response = await axios.post('/api/todos', { title }, {\n        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }\n      });\n      setTodos([...todos, response.data]);\n    } catch (error) {\n      console.error('Error adding todo:', error);\n    }\n  };\n\n  return (\n    <div className=\"App\">\n      <h1>Todo Application</h1>\n      {loading ? <p>Loading...</p> : <TodoList todos={todos} onAddTodo={addTodo} />}\n    </div>\n  );\n}\n\nexport default App;",
+        "testCases": [
+          {
+            "name": "Component renders without error",
+            "input": "App component mounted",
+            "expected": "Component renders with Todo Application heading"
+          },
+          {
+            "name": "Fetches todos on mount",
+            "input": "App mounted with auth token",
+            "expected": "fetchTodos is called and todos are displayed"
+          },
+          {
+            "name": "Add todo functionality",
+            "input": "User submits new todo",
+            "expected": "New todo added to list via API call"
+          }
+        ]
+      },
+      "position": 5,
+      "dependencies_met": true
+    },
+    {
+      "name": "frontend-confidence-meter-006",
+      "metadata": {
+        "name": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you in building React components with state management and API integration?",
+        "minLabel": "Needs improvement",
+        "maxLabel": "Very confident"
+      },
+      "position": 6,
+      "dependencies_met": true
+    },
+    {
+      "name": "frontend-feedback-box-007",
+      "metadata": {
+        "name": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "React Components Complete",
+        "message": "Your React components successfully manage state, handle API calls, and display todos with proper error handling.",
+        "explanation": "The App component uses useState for todos and loading state, useEffect to fetch data on mount, and axios for HTTP requests. The component properly handles authorization headers with JWT tokens.",
+        "nextSteps": "Next, we'll build the Express backend API to handle these requests."
+      },
+      "position": 7,
+      "dependencies_met": true
+    },
+    {
+      "name": "backend-api-design-step-008",
+      "metadata": {
+        "name": "step-prompt",
+        "title": "Step Prompt",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Express Backend API Design",
+        "prompt": "Design your RESTful API endpoints: POST /api/auth/register (user registration), POST /api/auth/login (authentication), GET /api/todos (fetch all user todos), POST /api/todos (create todo), PUT /api/todos/:id (update todo), DELETE /api/todos/:id (delete todo). Include JWT middleware for protected routes, request validation, error handling, and database integration. Use MongoDB or PostgreSQL for persistence.",
+        "estimatedTime": 240
+      },
+      "position": 8,
+      "dependencies_met": true
+    },
+    {
+      "name": "backend-code-editor-009",
+      "metadata": {
+        "name": "code-editor",
+        "title": "Code Editor",
+        "description": "Write and test Express backend code",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Build Express Backend API",
+        "language": "javascript",
+        "starterCode": "const express = require('express');\nconst mongoose = require('mongoose');\nconst jwt = require('jsonwebtoken');\nconst bcrypt = require('bcryptjs');\nconst app = express();\n\napp.use(express.json());\n\nconst SECRET = process.env.JWT_SECRET || 'your-secret-key';\n\n// Middleware for authentication\nconst authMiddleware = (req, res, next) => {\n  const token = req.headers.authorization?.split(' ')[1];\n  if (!token) return res.status(401).json({ error: 'No token' });\n  try {\n    const decoded = jwt.verify(token, SECRET);\n    req.userId = decoded.userId;\n    next();\n  } catch (error) {\n    res.status(401).json({ error: 'Invalid token' });\n  }\n};\n\n// MongoDB connection\nmongoose.connect('mongodb://localhost/todo-app');\n\n// User Schema\nconst userSchema = new mongoose.Schema({ email: String, password: String });\nconst User = mongoose.model('User', userSchema);\n\n// Todo Schema\nconst todoSchema = new mongoose.Schema({ title: String, completed: Boolean, userId: String });\nconst Todo = mongoose.model('Todo', todoSchema);\n\n// Register endpoint\napp.post('/api/auth/register', async (req, res) => {\n  try {\n    const { email, password } = req.body;\n    const hashedPassword = await bcrypt.hash(password, 10);\n    const user = new User({ email, password: hashedPassword });\n    await user.save();\n    res.json({ message: 'User registered' });\n  } catch (error) {\n    res.status(400).json({ error: error.message });\n  }\n});\n\n// Login endpoint\napp.post('/api/auth/login', async (req, res) => {\n  try {\n    const { email, password } = req.body;\n    const user = await User.findOne({ email });\n    if (!user || !(await bcrypt.compare(password, user.password))) {\n      return res.status(401).json({ error: 'Invalid credentials' });\n    }\n    const token = jwt.sign({ userId: user._id }, SECRET);\n    res.json({ token });\n  } catch (error) {\n    res.status(400).json({ error: error.message });\n  }\n});\n\n// Get todos\napp.get('/api/todos', authMiddleware, async (req, res) => {\n  const todos = await Todo.find({ userId: req.userId });\n  res.json(todos);\n});\n\n// Create todo\napp.post('/api/todos', authMiddleware, async (req, res) => {\n  const { title } = req.body;\n  const todo = new Todo({ title, completed: false, userId: req.userId });\n  await todo.save();\n  res.json(todo);\n});\n\napp.listen(5000, () => console.log('Server running on port 5000'));",
+        "testCases": [
+          {
+            "name": "Register user endpoint",
+            "input": "POST /api/auth/register with email and password",
+            "expected": "User created with hashed password, returns success message"
+          },
+          {
+            "name": "Login endpoint",
+            "input": "POST /api/auth/login with valid credentials",
+            "expected": "Returns JWT token"
+          },
+          {
+            "name": "Protected route",
+            "input": "GET /api/todos with valid token",
+            "expected": "Returns todos for authenticated user"
+          }
+        ]
+      },
+      "position": 9,
+      "dependencies_met": true
+    },
+    {
+      "name": "backend-confidence-meter-010",
+      "metadata": {
+        "name": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you in building RESTful APIs with Express, JWT authentication, and database integration?",
+        "minLabel": "Needs work",
+        "maxLabel": "Highly confident"
+      },
+      "position": 10,
+      "dependencies_met": true
+    },
+    {
+      "name": "backend-feedback-box-011",
+      "metadata": {
+        "name": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Express Backend Complete",
+        "message": "Your Express API successfully handles authentication with JWT, implements protected routes, and manages todo data with proper error handling.",
+        "explanation": "The backend uses middleware for JWT verification, bcryptjs for password hashing, and Mongoose for database operations. Each endpoint validates requests and returns appropriate HTTP status codes.",
+        "nextSteps": "Now connect the frontend and backend together, test the full integration, and add state management refinements."
+      },
+      "position": 11,
+      "dependencies_met": true
+    },
+    {
+      "name": "integration-step-012",
+      "metadata": {
+        "name": "step-prompt",
+        "title": "Step Prompt",
+        "description": "Displays task or question text with optional formatting",
+        "skills": [
+          "comprehension",
+          "reading"
+        ],
+        "difficulty": 2,
+        "estimated_time": 30,
+        "input_type": "text",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Full-Stack Integration & Testing",
+        "prompt": "Integrate frontend and backend: (1) Store JWT tokens in localStorage after login, (2) Include tokens in API request headers, (3) Implement logout functionality, (4) Add error handling for failed requests, (5) Test user flows: register, login, create/read/update/delete todos. Debug CORS issues, implement refresh tokens, and add comprehensive error boundaries in React.",
+        "estimatedTime": 180
+      },
+      "position": 12,
+      "dependencies_met": true
+    },
+    {
+      "name": "integration-code-editor-013",
+      "metadata": {
+        "name": "code-editor",
+        "title": "Code Editor",
+        "description": "Write integration and testing code",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Integrate Frontend with Backend",
+        "language": "javascript",
+        "starterCode": "import React, { createContext, useState, useContext, useEffect } from 'react';\nimport axios from 'axios';\n\nconst AuthContext = createContext();\n\nfunction AuthProvider({ children }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    const token = localStorage.getItem('token');\n    if (token) {\n      validateToken(token);\n    } else {\n      setLoading(false);\n    }\n  }, []);\n\n  const validateToken = async (token) => {\n    try {\n      const response = await axios.get('/api/auth/verify', {\n        headers: { Authorization: `Bearer ${token}` }\n      });\n      setUser(response.data);\n    } catch (err) {\n      localStorage.removeItem('token');\n      setError('Session expired');\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  const login = async (email, password) => {\n    try {\n      const response = await axios.post('/api/auth/login', { email, password });\n      localStorage.setItem('token', response.data.token);\n      setUser({ email });\n      setError(null);\n      return true;\n    } catch (err) {\n      setError(err.response?.data?.error || 'Login failed');\n      return false;\n    }\n  };\n\n  const logout = () => {\n    localStorage.removeItem('token');\n    setUser(null);\n  };\n\n  return (\n    <AuthContext.Provider value={{ user, loading, error, login, logout }}>\n      {children}\n    </AuthContext.Provider>\n  );\n}\n\nconst useAuth = () => useContext(AuthContext);\nexport { AuthProvider, useAuth };",
+        "testCases": [
+          {
+            "name": "User login flow",
+            "input": "Valid email and password",
+            "expected": "Token stored in localStorage, user state updated"
+          },
+          {
+            "name": "Token validation",
+            "input": "Valid token in localStorage on app load",
+            "expected": "User remains authenticated"
+          },
+          {
+            "name": "Logout functionality",
+            "input": "User clicks logout",
+            "expected": "Token removed, user state cleared"
+          }
+        ]
+      },
+      "position": 13,
+      "dependencies_met": true
+    },
+    {
+      "name": "integration-confidence-meter-014",
+      "metadata": {
+        "name": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "question": "How confident are you in integrating frontend and backend with proper authentication and error handling?",
+        "minLabel": "Not confident",
+        "maxLabel": "Fully confident"
+      },
+      "position": 14,
+      "dependencies_met": true
+    },
+    {
+      "name": "integration-feedback-box-015",
+      "metadata": {
+        "name": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Full-Stack Integration Complete",
+        "message": "Your todo application now successfully connects React frontend with Express backend with proper JWT authentication, error handling, and state management.",
+        "explanation": "The AuthContext provider manages user state globally, stores JWT tokens securely, and validates tokens on app load. Requests include authorization headers and handle errors gracefully.",
+        "nextSteps": "Congratulations! Your full-stack todo app is complete. Review best practices for deployment, scaling, and security hardening."
+      },
+      "position": 15,
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "intro-step-prompt-001",
+      "frontend-code-editor-005",
+      "backend-code-editor-009",
+      "integration-code-editor-013"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 5400
+  },
+  "estimated_duration": 5400,
+  "version": "1.0.0"
+}

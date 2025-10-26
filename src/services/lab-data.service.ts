@@ -53,7 +53,13 @@ export interface LabData {
   difficulty: number;
   estimatedTime: number;
   sections: LabSection[];
-  steps?: { id: number; title: string; instruction?: string; example?: string }[];
+  steps?: Array<{
+    id: number;
+    title: string;
+    description?: string;
+    instruction?: string;
+    example?: string;
+  }>;
   metadata: {
     author?: string;
     version?: string;
@@ -699,7 +705,6 @@ export class LabDataService {
     } else if (moduleId === 'binary-search-tree') {
       return this.getLab('binary-search-tree');
     }
-    
     
     return throwError(() => new Error(`Module with ID "${moduleId}" not found`));
   }

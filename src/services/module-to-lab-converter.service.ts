@@ -6,7 +6,13 @@ export interface ModuleData {
   title: string;
   description: string;
   skills: string[];
-  steps?: ModuleStep[];
+  steps?: Array<{
+    id: number;
+    title: string;
+    description: string;
+    instruction: string;
+    example?: string;
+  }>;
   widgets: ModuleWidget[];
   completion_criteria?: {
     required_widgets: string[];
@@ -18,17 +24,8 @@ export interface ModuleData {
   version: string;
 }
 
-export interface ModuleStep {
-  id: number;
-  title: string;
-  description: string;
-  instruction?: string;
-  example?: string;
-}
-
 export interface ModuleWidget {
   id: string;
-  stepId?: number;
   metadata: {
     id: string;
     title: string;
@@ -45,6 +42,7 @@ export interface ModuleWidget {
   };
   props: any;
   position?: number; // Optional position for step ordering
+  stepId?: number; // Optional stepId for associating widgets with steps
   dependencies_met: boolean;
 }
 
@@ -60,50 +58,32 @@ export class ModuleToLabConverterService {
     // Calculate difficulty based on widget difficulties
     const avgDifficulty = this.calculateAverageDifficulty(moduleData.widgets);
     
-    // Convert steps if they exist
-    const labSteps = moduleData.steps ? moduleData.steps.map(step => ({
-      id: step.id,
-      title: step.title,
-      instruction: step.instruction,
-      example: step.example
-    })) : [];
-    
     // Convert widgets to lab format
-    const labWidgets: LabWidget[] = moduleData.widgets.map(widget => ({
-      id: widget.id,
-      type: widget.id, // Use the widget ID as the type
-      config: this.convertPropsToConfig(widget.props, widget.id),
-      metadata: {
-        ...widget.metadata,
-        position: widget.position // Preserve position for step ordering
-      },
-      stepId: widget.stepId // Preserve stepId for compatibility
-    }));
+    const labWidgets: LabWidget[] = moduleData.widgets.map(widget => {
+      // Support both metadata.id and metadata.name for widget type
+      const widgetType = widget.metadata.id || (widget.metadata as any).name;
+      
+      return {
+        id: widget.id,
+        type: widgetType, // Use the metadata.id or metadata.name as the type (e.g., 'feedback-box', 'code-editor')
+        config: this.convertPropsToConfig(widget.props, widgetType), // Use widgetType for conversion logic
+        metadata: {
+          ...widget.metadata,
+          id: widgetType, // Normalize to use 'id' field
+          position: widget.position, // Preserve position for step ordering
+          stepId: widget.stepId // Preserve stepId for associating widgets with steps
+        }
+      };
+    });
 
-    // Group widgets by step if steps exist
-    let sections: LabSection[];
-    if (labSteps.length > 0) {
-      // Create sections for each step
-      sections = labSteps.map(step => {
-        const stepWidgets = labWidgets.filter(widget => widget.stepId === step.id);
-        return {
-          id: `step-${step.id}`,
-          title: step.title,
-          description: step.instruction || step.title,
-          layout: 'stack' as const,
-          widgets: stepWidgets
-        };
-      });
-    } else {
-      // Create a single section containing all widgets
-      sections = [{
-        id: 'main-section',
-        title: 'Learning Activities',
-        description: moduleData.description,
-        layout: 'stack' as const,
-        widgets: labWidgets
-      }];
-    }
+    // Create a single section containing all widgets
+    const section: LabSection = {
+      id: 'main-section',
+      title: 'Learning Activities',
+      description: moduleData.description,
+      layout: 'stack',
+      widgets: labWidgets
+    };
 
     return {
       id: moduleData.id,
@@ -111,8 +91,8 @@ export class ModuleToLabConverterService {
       description: moduleData.description,
       difficulty: avgDifficulty,
       estimatedTime: Math.round(moduleData.estimated_duration / 60), // Convert seconds to minutes
-      sections: sections,
-      steps: labSteps, // Add steps to lab data
+      steps: moduleData.steps, // Preserve steps if they exist
+      sections: [section],
       metadata: {
         author: 'Prismo Labs',
         version: moduleData.version,
@@ -171,19 +151,19 @@ export class ModuleToLabConverterService {
 
       case 'feedback-box':
         return {
-          type: props.type,
+          type: props.type || 'success',
           title: props.title,
-          message: props.message,
+          message: props.message || props.prompt, // Support both 'message' and 'prompt' fields
           explanation: props.explanation,
-          nextSteps: props.nextSteps,
-          showContinueButton: props.showContinueButton,
+          nextSteps: Array.isArray(props.nextSteps) ? props.nextSteps : (props.nextSteps ? [props.nextSteps] : []),
+          showContinueButton: props.showContinueButton ?? true,
           autoComplete: props.autoComplete
         };
 
       case 'confidence-meter':
         return {
-          title: props.title,
-          description: props.description,
+          title: props.title || props.question || 'Rate Your Confidence',
+          description: props.description || props.prompt,
           scaleLabels: props.scaleLabels,
           autoSubmit: props.autoSubmit
         };
@@ -210,75 +190,6 @@ export class ModuleToLabConverterService {
           options: props.options,
           correctAnswer: props.correctAnswer,
           explanation: props.explanation
-        };
-
-      case 'lab-intro':
-        return {
-          title: props.title,
-          subtitle: props.subtitle,
-          objective: props.objective,
-          difficulty: props.difficulty,
-          estimatedMinutes: props.estimatedMinutes,
-          skills: props.skills || [],
-          prerequisites: props.prerequisites || [],
-          requirements: props.requirements || [],
-          miniSyllabus: props.miniSyllabus || [],
-          policy: props.policy || {},
-          ui: props.ui || {},
-          cta: props.cta || {},
-          integrations: props.integrations || {}
-        };
-
-      case 'short-answer':
-        return {
-          question: props.title || props.question,
-          placeholder: props.placeholder || 'Enter your answer...',
-          validation: props.validation,
-          maxLength: props.maxLength || 500,
-          minLength: props.minLength || 1,
-          ui: props.ui || {},
-          showFeedback: props.showFeedback !== false,
-          correctFeedback: props.correctFeedback || 'Correct!',
-          incorrectFeedback: props.incorrectFeedback || 'Incorrect. Try again.',
-          value: props.value,
-          defaultValue: props.defaultValue || ''
-        };
-
-      case 'coach-chat':
-        return {
-          coachId: props.coachId || 'coach-1',
-          stepId: props.stepId || 'step-1',
-          variant: props.variant || 'inline',
-          maxTurns: props.maxTurns || 12,
-          policy: props.policy || {},
-          context: props.context || {
-            stepPromptMD: props.prompt || 'Complete this step',
-            visibleHints: [],
-            recentAttempts: 0,
-            domain: 'general',
-            skillTags: []
-          },
-          ui: props.ui || {},
-          rateLimits: props.rateLimits || {},
-          integrations: props.integrations || {}
-        };
-
-      case 'reflection-prompt':
-        return {
-          reflectionId: props.reflectionId || 'reflection-1',
-          scope: props.scope || 'step',
-          scopeId: props.scopeId || 'step-1',
-          promptText: props.prompt || props.promptText || 'Reflect on what you learned',
-          minChars: props.minChars || 30,
-          maxChars: props.maxChars || 450,
-          placeholder: props.placeholder || 'Share your thoughts...',
-          chips: props.chips,
-          allowMarkdownLite: props.allowMarkdownLite || false,
-          requireBeforeNext: props.requireBeforeNext || false,
-          autosaveMs: props.autosaveMs || 1200,
-          ui: props.ui || {},
-          privacy: props.privacy || {},
-          integrations: props.integrations || {}
         };
 
       default:
