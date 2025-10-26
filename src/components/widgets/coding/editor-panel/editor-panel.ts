@@ -3,7 +3,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ButtonComponent } from '../../../ui/button/button';
 import { CodeReviewCommentComponent } from '../code-review-comment/code-review-comment';
-import { CodeRefactorModalComponent } from '../code-refactor-modal/code-refactor-modal';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucidePlay, lucideTrash2, lucideChevronUp, lucideChevronDown, lucideSparkles, lucideInfo } from '@ng-icons/lucide';
 import { environment } from '../../../../environments/environment';
@@ -20,7 +19,7 @@ interface CodeReviewComment {
 @Component({
   selector: 'app-editor-panel',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, CodeReviewCommentComponent, CodeRefactorModalComponent, NgIconComponent],
+  imports: [CommonModule, ButtonComponent, CodeReviewCommentComponent, NgIconComponent],
   providers: [
     provideIcons({
       lucidePlay,
@@ -42,6 +41,7 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
   @Output() completeStep = new EventEmitter<void>();
   @Output() codePassed = new EventEmitter<void>();
   @Output() aiReviewComplete = new EventEmitter<string>(); // Emit summary to parent
+  @Output() refactorFeedback = new EventEmitter<any>(); // Emit refactor feedback to parent
 
   @ViewChild('editorHost', { static: false }) editorHost?: ElementRef<HTMLDivElement>;
 
@@ -58,7 +58,6 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
   showReviewComments = false;
   
   // Grading state
-  showRefactorModal = false;
   refactoredCode = '';
   gradingFeedback = '';
   gradingSuggestions: any[] = [];
@@ -123,7 +122,6 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
     // Reset passed state when currentStep or editorConfig changes (new step)
     if (changes['currentStep'] && !changes['currentStep'].firstChange) {
       this.passed = false;
-      this.showRefactorModal = false; // Hide feedback modal when changing steps
       this.gradingFeedback = ''; // Clear previous feedback
       this.gradingSuggestions = []; // Clear previous suggestions
       this.clearConsole();
@@ -864,7 +862,6 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
             // Code passed grading
             console.log('🎉 Code passed grading!');
             this.passed = true; // Set passed flag to show Continue button
-            this.showRefactorModal = false; // Hide feedback modal on success
             this.consoleOutput.push({ 
               type: 'success', 
               message: '\n✓ Code passed all requirements!' 
@@ -872,8 +869,8 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
             this.codePassed.emit();
             this.cdr.detectChanges(); // Update UI to show Continue button
           } else {
-            // Code failed grading - show refactor modal
-            console.log('⚠️ Code failed grading - showing refactor modal');
+            // Code failed grading - send feedback to support panel instead of modal
+            console.log('⚠️ Code failed grading - sending to feedback panel');
             console.log('📝 Refactored code:', response.refactoredCode);
             console.log('💬 Feedback:', response.feedback);
             console.log('📋 Suggestions:', response.suggestions);
@@ -881,14 +878,20 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
             this.refactoredCode = response.refactoredCode || '';
             this.gradingFeedback = response.feedback || 'Your code needs improvement.';
             this.gradingSuggestions = response.suggestions || [];
-            this.showRefactorModal = true;
             
-            console.log('🎨 showRefactorModal is now:', this.showRefactorModal);
+            // Emit refactor feedback to parent component for display in support panel
+            this.refactorFeedback.emit({
+              feedback: this.gradingFeedback,
+              suggestions: this.gradingSuggestions,
+              refactoredCode: this.refactoredCode,
+              originalCode: code,
+              language: language
+            });
+            
+            console.log('✅ Refactor feedback emitted to parent');
             
             // Force change detection
             this.cdr.detectChanges();
-            
-            console.log('✅ Change detection triggered');
             
             this.consoleOutput.push({ 
               type: 'error', 
@@ -915,33 +918,10 @@ export class EditorPanelComponent implements OnInit, AfterViewInit, OnDestroy, O
       }
     });
   }
-
-  closeRefactorModal(): void {
-    this.showRefactorModal = false;
-  }
-
-  acceptRefactoredCode(refactoredCode: string): void {
-    if (this.monacoEditor) {
-      this.monacoEditor.setValue(refactoredCode);
-    }
-    this.showRefactorModal = false;
-    
-    // Re-run the code with the refactored version
-    this.runCode();
-  }
-
-  keepOriginalCode(): void {
-    this.showRefactorModal = false;
-  }
-
-  modifyOriginalCode(): void {
-    // Don't close the modal - let it minimize instead
-    // this.showRefactorModal = false;
-    // Modal will handle its own minimize state
-    console.log('📝 Modify code clicked - modal will minimize');
-    // Focus stays on editor
-  }
 }
+
+
+
 
 
 

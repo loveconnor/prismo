@@ -165,6 +165,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             (completeStep)="handleCompleteStep()"
             (codePassed)="handleCodePassed()"
             (aiReviewComplete)="handleAIReviewComplete($event)"
+            (refactorFeedback)="handleRefactorFeedback($event)"
           >
             <div expandControl *ngIf="hasSteps && leftPanelCollapsed">
               <button
@@ -305,6 +306,7 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
             [feedback]="feedbackWidgets"
             [sessionId]="currentSession?.id"
             [aiReview]="aiReviewFeedback"
+            [refactorData]="refactorFeedbackData"
           ></app-support-panel>
         </div>
       </div>
@@ -314,9 +316,10 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
     <!-- Feedback Modal (appears first as overlay) -->
         <!-- Feedback Modal (appears first as overlay) -->
     <div *ngIf="showFeedbackModal && feedbackWidget" 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+         style="margin: 0; top: 0; left: 0; right: 0; bottom: 0; position: fixed;"
          (click)="handleFeedbackContinue()">
-      <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
+      <div class="max-w-2xl w-full mx-auto" style="position: relative; z-index: 10000;" (click)="$event.stopPropagation()">
         <app-feedback-box
           [metadata]="feedbackWidget.metadata || { id: feedbackWidget.id, type: 'feedback-box' }"
           [config]="feedbackWidget.config"
@@ -337,8 +340,9 @@ import { lucideArrowLeft, lucidePlay, lucideBookOpen, lucideLightbulb, lucideCod
 
     <!-- Confidence Meter Modal (appears after feedback) -->
     <div *ngIf="showConfidenceMeter && confidenceWidget" 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div class="max-w-2xl w-full" (click)="$event.stopPropagation()">
+         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+         style="margin: 0; top: 0; left: 0; right: 0; bottom: 0; position: fixed;">
+      <div class="max-w-2xl w-full mx-auto" style="position: relative; z-index: 10000;" (click)="$event.stopPropagation()">
         <app-confidence-meter
           [metadata]="confidenceWidget.metadata || { id: confidenceWidget.id, type: 'confidence-meter' }"
           [config]="confidenceWidget.config"
@@ -382,6 +386,7 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
   public confidenceWidget: any = null;
   public feedbackWidgets: any[] = [];
   public aiReviewFeedback: string = '';
+  public refactorFeedbackData: any = null; // Store refactor feedback for support panel
   public hasSteps = false;
   public codePassed = false;
   public showFeedbackModal = false;
@@ -1441,6 +1446,12 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
 
   handleAIReviewComplete(feedback: string): void {
     this.aiReviewFeedback = feedback;
+    this.cdr.detectChanges();
+  }
+
+  handleRefactorFeedback(data: any): void {
+    console.log('Refactor feedback received:', data);
+    this.refactorFeedbackData = data;
     this.cdr.detectChanges();
   }
 

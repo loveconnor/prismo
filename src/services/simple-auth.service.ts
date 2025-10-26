@@ -1,6 +1,7 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
@@ -29,6 +30,8 @@ export interface AuthResponse {
 export class SimpleAuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
   
   // Simple state management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -47,6 +50,13 @@ export class SimpleAuthService {
   }
   
   private initializeAuth(): void {
+    // Only initialize auth in the browser, not during SSR
+    if (!this.isBrowser) {
+      console.log('Skipping auth initialization - running on server');
+      this.sessionCheckComplete.set(true);
+      return;
+    }
+    
     console.log('Initializing authentication...');
     const token = this.getStoredToken();
     
@@ -61,17 +71,17 @@ export class SimpleAuthService {
   }
   
   private getStoredToken(): string | null {
-    if (typeof localStorage === 'undefined') return null;
+    if (!this.isBrowser || typeof localStorage === 'undefined') return null;
     return localStorage.getItem('access_token');
   }
   
   private setStoredToken(token: string): void {
-    if (typeof localStorage === 'undefined') return;
+    if (!this.isBrowser || typeof localStorage === 'undefined') return;
     localStorage.setItem('access_token', token);
   }
   
   private removeStoredToken(): void {
-    if (typeof localStorage === 'undefined') return;
+    if (!this.isBrowser || typeof localStorage === 'undefined') return;
     localStorage.removeItem('access_token');
   }
   
