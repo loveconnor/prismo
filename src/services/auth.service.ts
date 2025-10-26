@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
+import { Injectable, inject, signal, PLATFORM_ID, afterNextRender } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
@@ -122,17 +122,22 @@ export class AuthService {
   private sessionCheckPromise: Promise<boolean> | null = null;
 
   constructor() {
-    this.initializeSessionCheck();
+    // Use afterNextRender to ensure session check runs after browser hydration
+    if (this.isBrowser) {
+      afterNextRender(() => {
+        console.log('Running session check after hydration');
+        this.initializeSessionCheck();
+      });
+    } else {
+      // On server, just mark as complete without auth
+      console.log('SSR: Skipping session check');
+      this.sessionCheckComplete.set(true);
+      this.sessionCheckPromise = Promise.resolve(false);
+    }
   }
 
   private initializeSessionCheck(): void {
-    // Only run session check in the browser, not during SSR
-    if (!this.isBrowser) {
-      console.log('Skipping session check - running on server');
-      this.sessionCheckComplete.set(true);
-      this.sessionCheckPromise = Promise.resolve(false);
-      return;
-    }
+    console.log('Initializing session check in browser');
     
     this.sessionCheckPromise = new Promise<boolean>((resolve) => {
       const checkComplete = () => {
@@ -229,14 +234,25 @@ export class AuthService {
     }
     
     console.log('Refreshing token with username:', username);
+    console.log('Refresh token (first 20 chars):', refreshToken.substring(0, 20));
     
     return this.authHttp.refreshToken(refreshToken, username)
       .pipe(
-        tap((res) => this.handleAuthSuccess(res)),
+        tap((res) => {
+          console.log('Token refresh successful:', res);
+          this.handleAuthSuccess(res);
+        }),
         catchError((err) => {
-          console.log('Token refresh failed:', err);
-          // Don't call logout here to avoid circular dependency
-          return this.handleAuthError(err);
+          console.error('Token refresh failed:', err);
+          console.error('Error status:', err.status);
+          console.error('Error message:', err.message);
+          console.error('Error details:', err.error);
+          
+          // Clear the invalid tokens
+          this.clearSessionState();
+          
+          // Don't call logout here to avoid circular dependency during session check
+          return throwError(() => err);
         })
       );
   }
@@ -514,7 +530,23 @@ export class AuthService {
       
       console.log('User data set successfully');
     } else {
-      console.warn('No user data found in response');
+      // If no user data in response (e.g., during token refresh), keep existing user
+      console.log('No user data in response, preserving existing user');
+      const existingUser = this.currentUser();
+      if (!existingUser && this.isBrowser && typeof localStorage !== 'undefined') {
+        // Try to restore from localStorage
+        const storedUser = localStorage.getItem('current_user');
+        if (storedUser) {
+          try {
+            const restoredUser = JSON.parse(storedUser);
+            console.log('Restored user from localStorage:', restoredUser);
+            this.currentUserSubject.next(restoredUser);
+            this.currentUser.set(restoredUser);
+          } catch (error) {
+            console.error('Error parsing stored user:', error);
+          }
+        }
+      }
     }
     
     this.isAuthenticated.set(true);

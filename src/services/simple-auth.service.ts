@@ -1,4 +1,4 @@
-import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID, afterNextRender } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
@@ -46,18 +46,21 @@ export class SimpleAuthService {
   private readonly API_URL = 'http://localhost:5000/auth';
   
   constructor() {
-    this.initializeAuth();
+    // Use afterNextRender to ensure auth check runs after browser hydration
+    if (this.isBrowser) {
+      afterNextRender(() => {
+        console.log('Running auth initialization after hydration');
+        this.initializeAuth();
+      });
+    } else {
+      // On server, just mark as complete without auth
+      console.log('SSR: Skipping auth initialization');
+      this.sessionCheckComplete.set(true);
+    }
   }
   
   private initializeAuth(): void {
-    // Only initialize auth in the browser, not during SSR
-    if (!this.isBrowser) {
-      console.log('Skipping auth initialization - running on server');
-      this.sessionCheckComplete.set(true);
-      return;
-    }
-    
-    console.log('Initializing authentication...');
+    console.log('Initializing authentication in browser');
     const token = this.getStoredToken();
     
     if (!token) {
