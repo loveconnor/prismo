@@ -1407,7 +1407,4 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     const correctIndex = config.correctAnswer;
     return [`option-${correctIndex}`];
   }
-  
-  
-  
 }
