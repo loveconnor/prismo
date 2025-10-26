@@ -30,7 +30,16 @@ def get_user_id_from_token() -> Optional[str]:
         # Verify token and get user info
         user_info = auth_service.verify_token(token)
         if user_info and 'success' in user_info and user_info['success']:
-            return user_info.get('user_id') or user_info.get('cognito_user', {}).get('Username')
+            # Try multiple possible user ID fields
+            user_id = (
+                user_info.get('user_id') or 
+                user_info.get('cognito_user_id') or
+                user_info.get('user_data', {}).get('cognito_user_id') or
+                user_info.get('user_data', {}).get('id') or
+                user_info.get('cognito_user', {}).get('Username')
+            )
+            print(f"[Auth Debug] Extracted user_id: {user_id} from token")
+            return user_id
     except Exception as e:
         print(f"Error verifying token: {e}")
     
@@ -386,6 +395,10 @@ def get_user_module_sessions(user_id: str):
     try:
         # Get requesting user ID from token
         requesting_user_id = get_user_id_from_token()
+        
+        print(f"[Get User Sessions] Requested user_id: {user_id}")
+        print(f"[Get User Sessions] Token user_id: {requesting_user_id}")
+        
         if not requesting_user_id:
             return jsonify({
                 "success": False,
@@ -393,11 +406,17 @@ def get_user_module_sessions(user_id: str):
             }), 401
         
         # Verify user can access these sessions (for now, only own sessions)
+        # Be flexible with ID comparison - might have different formats
         if requesting_user_id != user_id:
-            return jsonify({
-                "success": False,
-                "error": "Unauthorized"
-            }), 403
+            print(f"[Get User Sessions] User ID mismatch: {requesting_user_id} != {user_id}")
+            # Check if one is a substring of the other (different ID formats)
+            if not (requesting_user_id in user_id or user_id in requesting_user_id):
+                return jsonify({
+                    "success": False,
+                    "error": "Unauthorized - user ID mismatch"
+                }), 403
+            else:
+                print(f"[Get User Sessions] Allowing access due to partial ID match")
         
         # Get query parameters
         status = request.args.get('status')

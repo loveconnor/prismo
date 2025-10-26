@@ -52,11 +52,24 @@ def get_modules():
         module_type = request.args.get('module_type')
         limit = int(request.args.get('limit', 50))
         
+        print(f"[Get Modules] user_id: {user_id}, module_type: {module_type}, limit: {limit}")
+        
         if user_id:
-            result = orm.modules.query(
-                index_name="user-id-index",
-                key_condition={"user_id": user_id}
-            )
+            try:
+                result = orm.modules.query_by_user_id(
+                    user_id=user_id,
+                    limit=limit
+                )
+                modules = result if isinstance(result, list) else []
+            except Exception as query_error:
+                print(f"[Get Modules] Query by user_id failed: {query_error}, falling back to scan")
+                # Fallback to scan if query fails
+                result = orm.modules.scan(
+                    filter_expression="user_id = :user_id",
+                    expression_values={":user_id": user_id},
+                    limit=limit
+                )
+                modules = result.items if hasattr(result, 'items') else []
         else:
             filter_conditions = []
             expression_values = {}
@@ -70,15 +83,29 @@ def get_modules():
             result = orm.modules.scan(
                 filter_expression=filter_expression,
                 expression_values=expression_values if expression_values else None,
-                pagination=PaginationParams(limit=limit)
+                limit=limit
             )
+            modules = result.items if hasattr(result, 'items') else []
+        
+        # Convert modules to dict format
+        modules_list = []
+        for module in modules:
+            if hasattr(module, 'to_dict'):
+                modules_list.append(module.to_dict())
+            elif isinstance(module, dict):
+                modules_list.append(module)
+        
+        print(f"[Get Modules] Returning {len(modules_list)} modules")
         
         return jsonify({
-            "modules": [module.to_dict() for module in result.items],
-            "count": result.count
+            "modules": modules_list,
+            "count": len(modules_list)
         }), 200
     except Exception as e:
-        return jsonify({"error": f"Failed to get modules: {e}"}), 500
+        print(f"[Get Modules] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Failed to get modules: {str(e)}"}), 500
 
 @learning_bp.route("/modules", methods=["POST"])
 @require_auth

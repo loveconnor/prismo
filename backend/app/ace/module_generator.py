@@ -370,6 +370,7 @@ For multi-line code in "starterCode" or "prompt" fields: Use \\n NOT actual line
 Example: "starterCode": "import React\\n\\nfunction App() {\\n  return <div>Hello</div>\\n}"
 
 CRITICAL POSITION FIELD RULE:
+- CHOOSE widgets based on the learning objective, if they want multiple choice, use a multiple-choice widget.
 - ONLY add "position" field to widgets requiring active learning/user work
 - INCLUDE position: step-prompt, code-editor, multiple-choice, short-answer, fill-in-blanks, matching-pairs, numeric-input, text-editor
 - EXCLUDE position: feedback-box, confidence-meter, hint-panel
@@ -558,6 +559,7 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
     
     def save_generated_module(self, module: Dict[str, Any], user_id: str) -> str:
         """Save generated module to database and return module name"""
+        print("Saving generated module to database...")
         module_data = {
             "id": str(uuid.uuid4()),  # Generate a unique ID for database
             "user_id": user_id,

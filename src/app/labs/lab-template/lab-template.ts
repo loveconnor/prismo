@@ -1483,4 +1483,35 @@ export class LabTemplateComponent implements OnInit, OnDestroy, AfterViewInit {
     // Reset any lab state if needed
     this.loadLab();
   }
+   /**
+   * Transform module-format multiple choice options to component format
+   */
+  getMultipleChoiceOptions(config: any): any[] {
+    if (!config || !config.options) return [];
+    
+    const options = config.options;
+    const correctAnswer = config.correctAnswer;
+    const explanation = config.explanation || '';
+    
+    return options.map((option: string, index: number) => ({
+      id: `option-${index}`,
+      label: option,
+      value: `option-${index}`,
+      rationale: index === correctAnswer ? explanation : undefined,
+      isCorrect: index === correctAnswer
+    }));
+  }
+
+  /**
+   * Transform module-format correct answer (index) to component format (array of IDs)
+   */
+  getMultipleChoiceCorrectAnswers(config: any): string[] {
+    if (!config || config.correctAnswer === undefined) return [];
+    
+    const correctIndex = config.correctAnswer;
+    return [`option-${correctIndex}`];
+  }
+  
+  
+  
 }

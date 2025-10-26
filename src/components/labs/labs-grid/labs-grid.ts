@@ -52,6 +52,22 @@ export class LabsGridComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadLabs();
+    
+    // Subscribe to labs$ observable to auto-refresh when data changes
+    this.labsService.labs$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(labs => {
+        if (labs.length > 0) {
+          // Reload progress and update display
+          this.userProgressService.getUserLabProgress()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(progress => {
+              this.labs = labs.map(lab => this.convertServiceLabToLab(lab, progress));
+              this.loading = false;
+              this.cdr.detectChanges();
+            });
+        }
+      });
   }
 
   ngOnDestroy(): void {
