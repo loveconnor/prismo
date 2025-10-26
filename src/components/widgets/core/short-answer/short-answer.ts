@@ -366,7 +366,7 @@ export class ShortAnswerComponent extends WidgetBaseComponent implements OnInit 
     if (this.isTooShort || this.componentState() === 'submitting') {
       return `${base} cursor-not-allowed bg-[#1f2937] text-[#6b7280]`;
     }
-    return `${base} bg-[#BC78F9] text-white hover:bg-[#2563eb]`;
+    return `${base} bg-[#BC78F9] text-white hover:bg-primary-custom`;
   }
 
   isButtonDisabled(): boolean {
