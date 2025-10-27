@@ -106,32 +106,35 @@ export class LabsComponent implements OnInit, OnDestroy {
             ? Math.round((completedLabs / totalLabs) * 100) 
             : 0;
 
-          this.stats = [
-            { 
-              label: 'Total Labs', 
-              value: totalLabs, 
-              trend: `${labs.filter(l => l.source === 'module').length} AI-generated`, 
-              iconType: 'arrow' 
-            },
-            { 
-              label: 'In Progress', 
-              value: inProgressLabs, 
-              trend: inProgressLabs > 0 ? 'Active now' : 'No active labs', 
-              iconType: 'progress' 
-            },
-            { 
-              label: 'Completed', 
-              value: completedLabs, 
-              trend: `${completionPercentage}% completion`, 
-              iconType: 'check' 
-            },
-            { 
-              label: 'Total Time', 
-              value: displayHours > 0 ? `${displayHours}h` : '0h', 
-              trend: 'Learning time', 
-              iconType: 'arrow' 
-            }
-          ];
+          // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+          setTimeout(() => {
+            this.stats = [
+              { 
+                label: 'Total Labs', 
+                value: totalLabs, 
+                trend: `${labs.filter(l => l.source === 'module').length} AI-generated`, 
+                iconType: 'arrow' 
+              },
+              { 
+                label: 'In Progress', 
+                value: inProgressLabs, 
+                trend: inProgressLabs > 0 ? 'Active now' : 'No active labs', 
+                iconType: 'progress' 
+              },
+              { 
+                label: 'Completed', 
+                value: completedLabs, 
+                trend: `${completionPercentage}% completion`, 
+                iconType: 'check' 
+              },
+              { 
+                label: 'Total Time', 
+                value: displayHours > 0 ? `${displayHours}h` : '0h', 
+                trend: 'Learning time', 
+                iconType: 'arrow' 
+              }
+            ];
+          });
         },
         error: (error) => {
           console.error('Error loading stats:', error);

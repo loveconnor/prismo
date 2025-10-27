@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, render_template
-from app.orm import orm
+from app.orm_supabase import orm
 
 
 # Main routes blueprint

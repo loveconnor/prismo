@@ -7,8 +7,8 @@ API routes for advanced learning features including sandbox sessions, review ses
 
 from functools import wraps
 from flask import Blueprint, jsonify, request
-from app.orm import orm, PaginationParams
-from app.auth_service import auth_service
+from app.orm_supabase import orm, PaginationParams
+from app.auth_service_supabase import auth_service
 from datetime import datetime, timedelta
 import traceback
 

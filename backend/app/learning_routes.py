@@ -7,9 +7,9 @@ API routes for the core learning system including modules, attempts, mastery, an
 
 from functools import wraps
 from flask import Blueprint, jsonify, request
-from app.orm import orm, PaginationParams
-from app.auth_service import auth_service
-from app.claude_routes import get_claude_response
+from app.orm_supabase import orm, PaginationParams
+from app.auth_service_supabase import auth_service
+from app.ai_routes import get_ai_response
 from datetime import datetime
 import traceback
 import json
@@ -50,7 +50,8 @@ def require_auth(f):
 def get_modules():
     """Get learning modules"""
     try:
-        user_id = request.current_user.get("cognito_user_id")
+        # For Supabase, use 'id' field from user data
+        user_id = request.current_user.get("id")
         module_type = request.args.get('module_type')
         limit = int(request.args.get('limit', 100))  # Increased default limit
         
@@ -58,33 +59,21 @@ def get_modules():
         
         if user_id:
             try:
-                result = orm.modules.query_by_user_id(
-                    user_id=user_id,
-                    limit=limit
-                )
-                modules = result if isinstance(result, list) else []
-            except Exception as query_error:
-                print(f"[Get Modules] Query by user_id failed: {query_error}, falling back to scan")
-                # Fallback to scan if query fails
-                result = orm.modules.scan(
-                    filter_expression="user_id = :user_id",
-                    expression_values={":user_id": user_id},
-                    limit=limit
-                )
+                # Use query with filters for Supabase ORM
+                filters = {"user_id": user_id}
+                result = orm.modules.query(filters=filters, pagination=PaginationParams(limit=limit))
                 modules = result.items if hasattr(result, 'items') else []
+            except Exception as query_error:
+                print(f"[Get Modules] Query by user_id failed: {query_error}")
+                modules = []
         else:
-            filter_conditions = []
-            expression_values = {}
+            filters = {}
             
             if module_type:
-                filter_conditions.append("module_type = :module_type")
-                expression_values[":module_type"] = module_type
-            
-            filter_expression = " AND ".join(filter_conditions) if filter_conditions else None
+                filters["module_type"] = module_type
             
             result = orm.modules.scan(
-                filter_expression=filter_expression,
-                expression_values=expression_values if expression_values else None,
+                filters=filters if filters else None,
                 limit=limit
             )
             modules = result.items if hasattr(result, 'items') else []
@@ -118,7 +107,7 @@ def create_module():
     """Create learning module"""
     try:
         data = request.get_json()
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         
         module_data = {
             "user_id": user_id,
@@ -170,7 +159,7 @@ def delete_module(module_id):
             return jsonify({"error": "Module not found"}), 404
         
         # Check if user owns this module
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         if module.user_id != user_id:
             return jsonify({"error": "Unauthorized"}), 403
         
@@ -189,7 +178,7 @@ def delete_module(module_id):
 def get_attempts():
     """Get learning attempts"""
     try:
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         lab_id = request.args.get('lab_id')
         status = request.args.get('status')
         limit = int(request.args.get('limit', 50))
@@ -224,7 +213,7 @@ def create_attempt():
     """Create learning attempt"""
     try:
         data = request.get_json()
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         
         attempt_data = {
             "user_id": user_id,
@@ -273,7 +262,7 @@ def update_attempt(attempt_id):
 def get_mastery():
     """Get mastery records"""
     try:
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         skill_tag = request.args.get('skill_tag')
         level = request.args.get('level')
         limit = int(request.args.get('limit', 50))
@@ -308,7 +297,7 @@ def create_mastery():
     """Create mastery record"""
     try:
         data = request.get_json()
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         
         mastery_data = {
             "user_id": user_id,
@@ -343,7 +332,7 @@ def update_mastery(mastery_id):
 def get_feedback():
     """Get feedback records"""
     try:
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         widget_id = request.args.get('widget_id')
         limit = int(request.args.get('limit', 50))
         
@@ -371,7 +360,7 @@ def create_feedback():
     """Create feedback record"""
     try:
         data = request.get_json()
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         
         feedback_data = {
             "user_id": user_id,
@@ -396,7 +385,7 @@ def create_feedback():
 def get_learning_paths():
     """Get learning paths"""
     try:
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         path_type = request.args.get('path_type')
         limit = int(request.args.get('limit', 50))
         
@@ -424,7 +413,7 @@ def create_learning_path():
     """Create learning path"""
     try:
         data = request.get_json()
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         
         path_data = {
             "user_id": user_id,
@@ -557,11 +546,11 @@ def get_lab_recommendations():
         print(f"[Recommendations] current_user type: {type(request.current_user)}")
         print(f"[Recommendations] current_user: {request.current_user}")
         
-        # Safely extract user_id
+        # Safely extract user_id - use 'id' for Supabase
         if request.current_user is None:
             return jsonify({"error": "User not authenticated"}), 401
             
-        user_id = request.current_user.get("cognito_user_id")
+        user_id = request.current_user.get("id")
         print(f"[Recommendations] user_id: {user_id}, type: {type(user_id)}")
         
         # Ensure user_id is a string
@@ -644,7 +633,7 @@ Respond in valid JSON format like this:
 """
                 
                 # Get AI recommendations
-                ai_response = get_claude_response(
+                ai_response = get_ai_response(
                     message=user_context,
                     system_prompt=system_prompt,
                     max_tokens=2000
@@ -762,7 +751,7 @@ Respond in valid JSON format like this:
 """
         
         # Get AI recommendations
-        ai_response = get_claude_response(
+        ai_response = get_ai_response(
             message=user_context,
             system_prompt=system_prompt,
             max_tokens=2000

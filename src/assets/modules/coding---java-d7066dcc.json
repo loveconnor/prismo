@@ -1,0 +1,111 @@
+{
+  "name": "coding---java-d7066dcc",
+  "title": "Introduction to coding - java",
+  "description": "Learn the fundamentals of coding - java through interactive exercises.",
+  "skills": [
+    "for loops",
+    "coding"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Hint Panel",
+        "description": "Progressive hint disclosure",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "title": "Need Help?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "Start by understanding the basic concepts of coding - java.",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "Review the key principles and try to identify patterns in coding - java.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "Break down the problem into smaller steps and tackle each one individually.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Multiple Choice Question",
+        "description": "Select the correct answer from multiple options",
+        "skills": [
+          "for loops",
+          "coding"
+        ],
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "selection",
+        "output_type": "evaluation",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": false
+        },
+        "version": "1.0.0",
+        "category": "assessment"
+      },
+      "props": {
+        "title": "Understanding coding - java",
+        "question": "What is the main purpose of coding - java?",
+        "options": [
+          "To learn and practice coding - java",
+          "To avoid learning",
+          "To skip exercises",
+          "None of the above"
+        ],
+        "correctAnswer": 0
+      },
+      "position": 1,
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-26T23:41:22.808304",
+    "module_id": "b85ed5f1-1df8-48af-9ac7-36365a09adde",
+    "saved_to_filesystem": true
+  }
+}

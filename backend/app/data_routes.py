@@ -1,6 +1,6 @@
 from functools import wraps
 
-from app.auth_service import auth_service
+from app.auth_service_supabase import auth_service
 from app.models import Collection, Lab, User, Widget
 from flask import Blueprint, jsonify, request
 

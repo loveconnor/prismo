@@ -228,39 +228,35 @@ export class AuthService {
   // Refresh token
   refreshToken(): Observable<AuthResponse> {
     const refreshToken = this.getRefreshToken();
-    const username = this.tokenStorage.getUsername();
     
     if (!refreshToken) {
       console.error('RefreshToken: No refresh token available');
       return throwError(() => new Error('No refresh token available'));
     }
     
-    if (!username) {
-      console.warn('RefreshToken: No username available for SECRET_HASH calculation');
-    }
-    
-    console.log('RefreshToken: Starting refresh with username:', username);
+    console.log('RefreshToken: Starting refresh');
     console.log('RefreshToken: Refresh token (first 20 chars):', refreshToken.substring(0, 20));
     
-    return this.authHttp.refreshToken(refreshToken, username)
-      .pipe(
-        tap((res) => {
-          console.log('RefreshToken: Token refresh successful:', res);
-          this.handleAuthSuccess(res);
-        }),
-        catchError((err) => {
-          console.error('RefreshToken: Token refresh failed:', err);
-          console.error('RefreshToken: Error status:', err.status);
-          console.error('RefreshToken: Error message:', err.message);
-          console.error('RefreshToken: Error details:', err.error);
-          
-          // Clear the invalid tokens
-          this.clearSessionState();
-          
-          // Don't call logout here to avoid circular dependency during session check
-          return throwError(() => err);
-        })
-      );
+    return this.http.post<AuthResponse>(`${this.API_URL}/refresh`, { 
+      refresh_token: refreshToken 
+    }).pipe(
+      tap((res) => {
+        console.log('RefreshToken: Token refresh successful:', res);
+        this.handleAuthSuccess(res);
+      }),
+      catchError((err) => {
+        console.error('RefreshToken: Token refresh failed:', err);
+        console.error('RefreshToken: Error status:', err.status);
+        console.error('RefreshToken: Error message:', err.message);
+        console.error('RefreshToken: Error details:', err.error);
+        
+        // Clear the invalid tokens
+        this.clearSessionState();
+        
+        // Don't call logout here to avoid circular dependency during session check
+        return throwError(() => err);
+      })
+    );
   }
 
   // Forgot password
@@ -500,19 +496,17 @@ export class AuthService {
       hasRefresh: !!refresh
     });
 
-    // Cookie expirations
-    const tokenExpiryDays = remember ? 30 : 1;
-    const refreshExpiryDays = 30;
-
+    // Always store tokens to localStorage for persistence across page reloads
     if (access) {
-      console.log('Storing access token:', access.substring(0, 20) + '...');
+      console.log('Storing access token to localStorage');
       this.tokenStorage.setAccessToken(access);
       console.log('Access token stored successfully');
     } else {
       console.warn('No access token found in response');
     }
+    
     if (refresh) {
-      console.log('Storing refresh token:', refresh.substring(0, 20) + '...');
+      console.log('Storing refresh token to localStorage');
       this.tokenStorage.setRefreshToken(refresh);
       console.log('Refresh token stored successfully');
     } else {
@@ -531,10 +525,10 @@ export class AuthService {
         localStorage.setItem('current_user', JSON.stringify(userData));
       }
       
-      // Store username for SECRET_HASH calculation during token refresh
+      // Store username for future use
       if (userData.username) {
         this.tokenStorage.setUsername(userData.username);
-        console.log('Stored username for token refresh:', userData.username);
+        console.log('Stored username:', userData.username);
       }
       
       console.log('User data set successfully');

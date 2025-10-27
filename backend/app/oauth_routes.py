@@ -8,8 +8,8 @@ Google OAuth authentication routes for user login and registration.
 import os
 import requests
 from flask import Blueprint, jsonify, request, redirect, session
-from app.auth_service import auth_service
-from app.orm import orm
+from app.auth_service_supabase import auth_service
+from app.orm_supabase import orm
 import secrets
 import hashlib
 import base64

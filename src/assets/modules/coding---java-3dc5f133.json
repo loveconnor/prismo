@@ -1,0 +1,287 @@
+{
+  "name": "coding---java-3dc5f133",
+  "title": "Mastering Java For Loops",
+  "description": "This module introduces you to Java for loops, a fundamental concept for iterative programming. You'll learn to write basic loops and apply them to solve common coding problems.",
+  "skills": [
+    "for loops",
+    "coding",
+    "java syntax",
+    "iteration"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Need Help?",
+        "description": "Progressive hint disclosure with multiple tiers",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Need Help?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "Remember the basic structure of a for loop: initialization, condition, increment/decrement. Think about what values you need to iterate through.",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "For the first problem, you need to print numbers from 1 to 5. Your loop variable `i` should start at 1, continue as long as `i <= 5`, and increment `i` by 1 in each step.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "For the sum problem, initialize a 'sum' variable to 0. Inside the loop, add the current loop variable `i` to 'sum' in each iteration. The loop should go from 1 to 10.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Basic For Loop",
+        "description": "Write a Java for loop to print a sequence of numbers.",
+        "skills": [
+          "for loops",
+          "java syntax",
+          "iteration"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 150,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Print Numbers 1-5",
+        "language": "java",
+        "starterCode": "public class LoopPractice {\n    public static void main(String[] args) {\n        // Your for loop here\n    }\n}",
+        "prompt": "Write a Java `for` loop inside the `main` method that prints numbers from 1 to 5, each on a new line.",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "1\n2\n3\n4\n5\n",
+            "hidden": false
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You've successfully implemented your first Java for loop.",
+        "explanation": "This demonstrates your understanding of loop initialization, condition, and increment.",
+        "nextSteps": [
+          "Proceed to the next challenge to practice more complex loops.",
+          "Review the syntax of for loops if you found this difficult.",
+          "Experiment with different ranges for the loop."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you in writing a basic for loop in Java?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "For Loop with Summation",
+        "description": "Implement a for loop to calculate the sum of numbers.",
+        "skills": [
+          "for loops",
+          "java syntax",
+          "arithmetic",
+          "iteration"
+        ],
+        "category": "coding",
+        "difficulty": 4,
+        "estimated_time": 180,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Calculate Sum 1-10",
+        "language": "java",
+        "starterCode": "public class SumCalculator {\n    public int calculateSum() {\n        int sum = 0;\n        // Your for loop to calculate sum from 1 to 10\n        return sum;\n    }\n\n    public static void main(String[] args) {\n        SumCalculator calculator = new SumCalculator();\n        System.out.println(\"Sum: \" + calculator.calculateSum());\n    }\n}",
+        "prompt": "Write a Java `for` loop inside the `calculateSum` method that calculates the sum of all integers from 1 to 10 and returns the result.",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Sum: 55\n",
+            "hidden": false
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Fantastic!",
+        "message": "You've successfully used a for loop to perform a calculation.",
+        "explanation": "This task showed you how to use a loop to accumulate a value, a common pattern in programming.",
+        "nextSteps": [
+          "Explore nested for loops for more complex iterations.",
+          "Try calculating products instead of sums.",
+          "Consider how a `while` loop might achieve a similar result."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you in using for loops for calculations in Java?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-26T23:45:16.919073",
+    "module_id": "b991d6b9-7d88-4215-ad55-ccac8cf5c81e",
+    "saved_to_filesystem": true
+  }
+}

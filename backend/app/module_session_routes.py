@@ -9,14 +9,14 @@ from flask import Blueprint, request, jsonify
 from typing import Dict, Any, Optional
 from decimal import Decimal
 import json
-from app.orm import orm, ModuleSession
-from app.auth_service import CognitoAuthService
+from app.orm_supabase import orm, ModuleSession
+from app.auth_service_supabase import SupabaseAuthService
 
 # Create blueprint
 module_session_bp = Blueprint("module_sessions", __name__)
 
 # Initialize auth service
-auth_service = CognitoAuthService()
+auth_service = SupabaseAuthService()
 
 
 def get_user_id_from_token() -> Optional[str]:

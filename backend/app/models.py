@@ -1,12 +1,12 @@
 """
-Prismo Backend Models - Updated to use ORM
+Prismo Backend Models - Updated to use Supabase ORM
 
 This module provides backward compatibility with the existing models
-while leveraging the new ORM system for improved functionality.
+while leveraging the new Supabase ORM system for improved functionality.
 """
 
 from typing import Dict, List, Optional, Any
-from app.orm import orm, User, Lab, Widget, Collection, Module, Attempt, Mastery, Feedback, ModuleSession
+from app.orm_supabase import orm, User, Lab, Widget, Collection, Module, Attempt, Mastery, Feedback, ModuleSession
 
 class BaseModel:
     """Base model class for backward compatibility"""

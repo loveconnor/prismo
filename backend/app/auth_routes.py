@@ -2,7 +2,7 @@ from functools import wraps
 import requests
 import base64
 
-from app.auth_service import auth_service
+from app.auth_service_supabase import auth_service
 from flask import Blueprint, jsonify, request, current_app
 from config import config
 
@@ -151,7 +151,13 @@ def login():
             return jsonify({"error": result["error"]}), 401
 
     except Exception as e:
-        return jsonify({"error": f"Login failed: {e}"}), 500
+        import traceback
+        print(f"\n{'='*80}")
+        print(f"LOGIN ERROR: {str(e)}")
+        print(f"{'='*80}")
+        traceback.print_exc()
+        print(f"{'='*80}\n")
+        return jsonify({"error": f"Login failed: {str(e)}"}), 500
 
 
 @auth_bp.route("/refresh", methods=["POST"])
@@ -169,34 +175,32 @@ def refresh_token():
             print("ERROR: No refresh_token in request")
             return jsonify({"error": "Refresh token required"}), 400
 
-        # Optional: accept username to help with SECRET_HASH calculation
-        username = data.get("username")
-        print(f"Username from request: {username}")
         print(f"Refresh token (first 30 chars): {data['refresh_token'][:30]}...")
         
-        result = auth_service.refresh_token(data["refresh_token"], username=username)
+        result = auth_service.refresh_session(data["refresh_token"])
         print(f"Refresh result success: {result.get('success')}")
 
         if result["success"]:
             print("Token refresh successful, returning new tokens")
-            return (
-                jsonify(
-                    {
-                        "access_token": result["access_token"],
-                        "id_token": result.get("id_token"),
-                    }
-                ),
-                200,
-            )
+            response_data = {
+                "access_token": result["access_token"],
+                "id_token": result["access_token"],  # Use access_token as id_token for compatibility
+            }
+            
+            # Include refresh token if returned
+            if "refresh_token" in result:
+                response_data["refresh_token"] = result["refresh_token"]
+            
+            # Include user data if available
+            if "user_data" in result:
+                response_data["user_data"] = result["user_data"]
+            
+            return jsonify(response_data), 200
         else:
             print(f"Token refresh failed: {result.get('error')}")
             status_code = 401
             response_data = {"error": result["error"]}
             
-            # If re-authentication is required, add flag
-            if result.get("requires_reauth"):
-                response_data["requires_reauth"] = True
-                
             return jsonify(response_data), status_code
 
     except Exception as e:

@@ -6,10 +6,9 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "aiohttp>=3.10.11",
-    "boto3>=1.40.59",
+    "supabase>=2.0.0",
     "flask>=3.1.2",
     "flask-cors>=6.0.1",
-    "jwt>=1.4.0",
     "passlib[bcrypt]>=1.7.4",
     "pyjwt>=2.10.1",
     "python-dotenv>=1.1.1",

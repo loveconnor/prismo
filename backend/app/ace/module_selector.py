@@ -6,7 +6,7 @@ Provides intelligent matching and learning path generation.
 """
 
 from typing import Dict, List, Optional, Any
-from app.orm import orm
+from app.orm_supabase import orm
 from .learner_profile import LearnerProfile, LearnerProfileManager
 from .skill_tree import SkillTree, SkillTreeManager
 

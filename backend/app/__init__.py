@@ -32,7 +32,7 @@ def create_app(config_name="default"):
     from app.advanced_routes import advanced_bp
     from app.analytics_routes import analytics_bp
     from app.auth_routes import auth_bp
-    from app.claude_routes import claude_bp
+    from app.ai_routes import ai_bp  # New unified AI routes (Claude + Gemini)
     from app.data_routes import data_bp
     from app.frontend_routes import frontend_bp
     from app.gamification_routes import gamification_bp
@@ -48,7 +48,7 @@ def create_app(config_name="default"):
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
     app.register_blueprint(auth_bp)
-    app.register_blueprint(claude_bp, url_prefix="/api")
+    app.register_blueprint(ai_bp, url_prefix="/api")  # New unified AI routes
     app.register_blueprint(data_bp)
     app.register_blueprint(health_bp, url_prefix="/health")
     app.register_blueprint(admin_bp)

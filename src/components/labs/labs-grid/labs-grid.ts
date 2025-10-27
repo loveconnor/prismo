@@ -63,9 +63,11 @@ export class LabsGridComponent implements OnInit, OnDestroy {
           this.userProgressService.getUserLabProgress()
             .pipe(takeUntil(this.destroy$))
             .subscribe(progress => {
-              this.labs = labs.map(lab => this.convertServiceLabToLab(lab, progress));
-              this.loading = false;
-              this.cdr.detectChanges();
+              setTimeout(() => {
+                this.labs = labs.map(lab => this.convertServiceLabToLab(lab, progress));
+                this.loading = false;
+                this.cdr.detectChanges();
+              });
             });
         }
       });
@@ -89,15 +91,20 @@ export class LabsGridComponent implements OnInit, OnDestroy {
       .subscribe({
         next: ({ labs, progress }) => {
           // Convert ServiceLab to Lab format with real progress data
-          this.labs = labs.map(lab => this.convertServiceLabToLab(lab, progress));
-          this.loading = false;
-          this.cdr.detectChanges();
+          // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+          setTimeout(() => {
+            this.labs = labs.map(lab => this.convertServiceLabToLab(lab, progress));
+            this.loading = false;
+            this.cdr.detectChanges();
+          });
         },
         error: (error) => {
           console.error('Error loading labs:', error);
-          this.error = 'Failed to load labs';
-          this.loading = false;
-          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.error = 'Failed to load labs';
+            this.loading = false;
+            this.cdr.detectChanges();
+          });
         }
       });
   }

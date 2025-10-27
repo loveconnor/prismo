@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Any
 from dataclasses import dataclass
 from decimal import Decimal
-from app.orm import orm
+from app.orm_supabase import orm
 
 
 @dataclass
@@ -48,30 +48,22 @@ class LearnerProfileManager:
     
     def get_or_create_profile(self, user_id: str) -> LearnerProfile:
         """Get existing learner profile or create new one"""
-        # Try to get existing profile from user preferences
-        result = orm.user_preferences.scan(
-            filter_expression="user_id = :user_id AND preference_type = :type",
-            expression_values={
-                ":user_id": user_id,
-                ":type": "learner_profile"
-            }
-        )
+        # Get user and check if learner_profile exists in preferences JSONB
+        user = orm.users.get_by_id(user_id)
         
-        if result.items:
-            profile_data = result.items[0].to_dict()
-            # Convert Decimal values back to float for the dataclass
-            raw_data = profile_data['profile_data']
+        if user and user.to_dict().get('preferences', {}).get('learner_profile'):
+            raw_data = user.to_dict()['preferences']['learner_profile']
             return LearnerProfile(
                 user_id=raw_data['user_id'],
-                total_modules_attempted=raw_data['total_modules_attempted'],
-                total_modules_completed=raw_data['total_modules_completed'],
-                average_completion_time=float(raw_data['average_completion_time']),
-                failure_rate=float(raw_data['failure_rate']),
-                preferred_difficulty=raw_data['preferred_difficulty'],
-                learning_pace=raw_data['learning_pace'],
-                last_activity=raw_data['last_activity'],
-                created_at=raw_data['created_at'],
-                updated_at=raw_data['updated_at']
+                total_modules_attempted=raw_data.get('total_modules_attempted', 0),
+                total_modules_completed=raw_data.get('total_modules_completed', 0),
+                average_completion_time=float(raw_data.get('average_completion_time', 0)),
+                failure_rate=float(raw_data.get('failure_rate', 0)),
+                preferred_difficulty=raw_data.get('preferred_difficulty', 'beginner'),
+                learning_pace=raw_data.get('learning_pace', 'normal'),
+                last_activity=raw_data.get('last_activity', ''),
+                created_at=raw_data.get('created_at', ''),
+                updated_at=raw_data.get('updated_at', '')
             )
         
         # Create new profile
@@ -126,38 +118,32 @@ class LearnerProfileManager:
         return profile
     
     def save_profile(self, profile: LearnerProfile):
-        """Save learner profile to database"""
-        profile_data = {
-            "id": str(uuid.uuid4()),
+        """Save learner profile to database in users.preferences JSONB field"""
+        # Get current user data
+        user = orm.users.get_by_id(profile.user_id)
+        if not user:
+            raise Exception(f"User {profile.user_id} not found")
+        
+        # Get current preferences or create empty dict
+        user_dict = user.to_dict()
+        preferences = user_dict.get('preferences', {})
+        
+        # Update learner_profile in preferences
+        preferences['learner_profile'] = {
             "user_id": profile.user_id,
-            "preference_type": "learner_profile",
-            "profile_data": {
-                "user_id": profile.user_id,
-                "total_modules_attempted": profile.total_modules_attempted,
-                "total_modules_completed": profile.total_modules_completed,
-                "average_completion_time": Decimal(str(profile.average_completion_time)),
-                "failure_rate": Decimal(str(profile.failure_rate)),
-                "preferred_difficulty": profile.preferred_difficulty,
-                "learning_pace": profile.learning_pace,
-                "last_activity": profile.last_activity,
-                "created_at": profile.created_at,
-                "updated_at": profile.updated_at
-            }
+            "total_modules_attempted": profile.total_modules_attempted,
+            "total_modules_completed": profile.total_modules_completed,
+            "average_completion_time": float(profile.average_completion_time),
+            "failure_rate": float(profile.failure_rate),
+            "preferred_difficulty": profile.preferred_difficulty,
+            "learning_pace": profile.learning_pace,
+            "last_activity": profile.last_activity,
+            "created_at": profile.created_at,
+            "updated_at": profile.updated_at
         }
         
-        # Update or create
-        existing = orm.user_preferences.scan(
-            filter_expression="user_id = :user_id AND preference_type = :type",
-            expression_values={
-                ":user_id": profile.user_id,
-                ":type": "learner_profile"
-            }
-        )
-        
-        if existing.items:
-            orm.user_preferences.update(existing.items[0].to_dict()['id'], profile_data)
-        else:
-            orm.user_preferences.create(profile_data)
+        # Update user with new preferences
+        orm.users.update(profile.user_id, {"preferences": preferences})
     
     def reset_stale_profile(self, user_id: str) -> LearnerProfile:
         """Reset learner profile if it's stale due to inactivity"""

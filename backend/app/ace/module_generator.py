@@ -12,8 +12,8 @@ import asyncio
 import time
 from datetime import datetime
 from typing import Dict, List, Any, Optional
-from app.orm import orm
-from app.claude_routes import get_claude_response
+from app.orm_supabase import orm
+from app.ai_routes import get_ai_response
 from .learner_profile import LearnerProfile, LearnerProfileManager
 from .skill_tree import SkillTreeManager
 
@@ -443,15 +443,15 @@ After every learning widget, insert confidence-meter then feedback-box widgets. 
             # Wait for rate limiter before making request
             await self.rate_limiter.acquire()
             
-            # Make the API call using claude_routes function
+            # Make the API call using ai_routes function
             loop = asyncio.get_event_loop()
             generated_text = await loop.run_in_executor(
                 None,
-                lambda: get_claude_response(prompt, system_prompt, max_tokens=200000)
+                lambda: get_ai_response(prompt, system_prompt, max_tokens=200000)
             )
             
             if generated_text:
-                print(f"✓ Claude returned response ({len(generated_text)} chars)")
+                print(f"✓ AI returned response ({len(generated_text)} chars)")
                 
                 # Clean up the response (remove markdown if present)
                 generated_text = generated_text.strip()

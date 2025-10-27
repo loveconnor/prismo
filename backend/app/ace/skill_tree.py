@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Dict, List, Any
 from dataclasses import dataclass, field
 from decimal import Decimal
-from app.orm import orm
+from app.orm_supabase import orm
 
 
 @dataclass
@@ -97,19 +97,16 @@ class SkillTreeManager:
     
     def get_or_create_skill_tree(self, user_id: str) -> SkillTree:
         """Get existing skill tree or create new one"""
-        # Try to get existing skill tree
-        result = orm.skill_progress.scan(
-            filter_expression="user_id = :user_id",
-            expression_values={":user_id": user_id}
-        )
+        # Get user and check if skill_tree exists in preferences JSONB
+        user = orm.users.get_by_id(user_id)
         
-        if result.items:
-            skill_tree_data = result.items[0].to_dict()
+        if user and user.to_dict().get('preferences', {}).get('skill_tree'):
+            skill_tree_data = user.to_dict()['preferences']['skill_tree']
             skill_tree = SkillTree(user_id=user_id, updated_at=skill_tree_data.get('updated_at', ''))
             
             # Reconstruct skills from stored data
             for skill_name, skill_data in skill_tree_data.get('skills', {}).items():
-                # Convert Decimal back to float for the dataclass
+                # Convert to float for the dataclass
                 skill_data_copy = skill_data.copy()
                 skill_data_copy['proficiency_level'] = float(skill_data_copy.get('proficiency_level', 0))
                 skill_tree.skills[skill_name] = SkillNode(**skill_data_copy)
@@ -184,36 +181,37 @@ class SkillTreeManager:
         return skill_tree
     
     def save_skill_tree(self, skill_tree: SkillTree):
-        """Save skill tree to database"""
+        """Save skill tree to database in users.preferences JSONB field"""
+        # Get current user data
+        user = orm.users.get_by_id(skill_tree.user_id)
+        if not user:
+            raise Exception(f"User {skill_tree.user_id} not found")
+        
         # Convert SkillNode objects to dictionaries
         skills_data = {}
         for skill_name, skill_node in skill_tree.skills.items():
             skills_data[skill_name] = {
                 "skill_name": skill_node.skill_name,
-                "proficiency_level": Decimal(str(skill_node.proficiency_level)),
+                "proficiency_level": float(skill_node.proficiency_level),
                 "times_practiced": skill_node.times_practiced,
                 "last_practiced": skill_node.last_practiced,
                 "prerequisite_skills": skill_node.prerequisite_skills,
                 "dependent_skills": skill_node.dependent_skills
             }
         
-        skill_tree_data = {
-            "id": str(uuid.uuid4()),
+        # Get current preferences or create empty dict
+        user_dict = user.to_dict()
+        preferences = user_dict.get('preferences', {})
+        
+        # Update skill_tree in preferences
+        preferences['skill_tree'] = {
             "user_id": skill_tree.user_id,
             "skills": skills_data,
             "updated_at": skill_tree.updated_at
         }
         
-        # Update or create
-        existing = orm.skill_progress.scan(
-            filter_expression="user_id = :user_id",
-            expression_values={":user_id": skill_tree.user_id}
-        )
-        
-        if existing.items:
-            orm.skill_progress.update(existing.items[0].to_dict()['id'], skill_tree_data)
-        else:
-            orm.skill_progress.create(skill_tree_data)
+        # Update user with new preferences
+        orm.users.update(skill_tree.user_id, {"preferences": preferences})
     
     def analyze_skill_gaps(self, user_id: str, required_skills: List[str]) -> Dict[str, Any]:
         """Analyze skill gaps for a user given required skills"""

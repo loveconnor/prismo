@@ -2,7 +2,7 @@ import os
 import traceback
 from datetime import datetime
 
-from app.aws_config import aws_config
+# from app.aws_config import aws_config  # AWS config removed - using Supabase now
 from flask import Blueprint, jsonify
 
 
@@ -415,27 +415,27 @@ def check_claude_health():
                 "connection_test": "failed",
             }
 
-        # Import Claude function from claude_routes
+        # Import AI function from ai_routes
         try:
-            from app.claude_routes import get_claude_response
+            from app.ai_routes import get_ai_response
         except ImportError:
             return {
                 "status": "unhealthy",
-                "service": "claude",
+                "service": "ai",
                 "timestamp": datetime.utcnow().isoformat() + "Z",
-                "error": "Claude routes module not available",
+                "error": "AI routes module not available",
                 "connection_test": "failed",
             }
 
         # Test with a simple message
-        response = get_claude_response("Hello", max_tokens=10)
+        response = get_ai_response("Hello", max_tokens=10)
 
         if response:
             return {
                 "status": "healthy",
-                "service": "claude",
+                "service": "ai",
                 "timestamp": datetime.utcnow().isoformat() + "Z",
-                "model": "anthropic.claude-haiku-4-5-20251001-v1:0",
+                "model": "gemini or claude",
                 "api_token_configured": True,
                 "test_response_length": len(response),
                 "connection_test": "successful",

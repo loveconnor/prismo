@@ -1,7 +1,7 @@
 """
 Module Generator Routes
 
-API endpoints for AI-powered module generation using AWS Bedrock
+API endpoints for AI-powered module generation using Gemini/Claude
 """
 
 import asyncio
@@ -9,7 +9,7 @@ import json
 import os
 from datetime import datetime
 from flask import Blueprint, jsonify, request
-from app.auth_service import CognitoAuthService
+from app.auth_service_supabase import SupabaseAuthService
 from app.ace_engine import ace_engine
 import traceback
 
@@ -17,7 +17,7 @@ import traceback
 module_generator_bp = Blueprint("module_generator", __name__)
 
 # Initialize auth service
-auth_service = CognitoAuthService()
+auth_service = SupabaseAuthService()
 
 
 def save_module_to_filesystem(module: dict, module_id: str):
