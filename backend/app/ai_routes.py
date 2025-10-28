@@ -96,8 +96,23 @@ def get_gemini_response(message, system_prompt=None, max_tokens=1000):
         
         if "candidates" in data and len(data["candidates"]) > 0:
             candidate = data["candidates"][0]
-            if "content" in candidate and "parts" in candidate["content"]:
-                return candidate["content"]["parts"][0]["text"]
+            
+            # Check for MAX_TOKENS finish reason
+            finish_reason = candidate.get("finishReason")
+            if finish_reason == "MAX_TOKENS":
+                print(f"WARNING: Gemini response hit MAX_TOKENS limit. Consider increasing max_tokens parameter.")
+            
+            # Try to extract content from various response formats
+            if "content" in candidate:
+                content = candidate["content"]
+                if "parts" in content and len(content["parts"]) > 0:
+                    return content["parts"][0].get("text", "")
+                elif "text" in content:
+                    return content["text"]
+            
+            # If we hit MAX_TOKENS but got no content, return error message
+            if finish_reason == "MAX_TOKENS":
+                return None
         
         print(f"Unexpected Gemini response format: {data}")
         return None
@@ -353,8 +368,8 @@ Be concise, friendly, and educational. Limit to 3-5 most important comments."""
         if context:
             message += f"\n\nContext: {context}"
 
-        # Get review from AI
-        response = get_ai_response(message, system_prompt, max_tokens=2000, provider=provider)
+        # Get review from AI (increased max_tokens to avoid truncation)
+        response = get_ai_response(message, system_prompt, max_tokens=4000, provider=provider)
 
         if response:
             # Parse the JSON response
@@ -638,9 +653,23 @@ def execute_java_code(code):
             f.write(code)
         
         try:
-            # Compile the Java code
+            # Get custom JAR libraries
+            from app.libraries_routes import get_enabled_libraries
+            jar_files = get_enabled_libraries('java')
+            
+            print(f"[Execute Java - ai_routes] Custom JAR files: {jar_files}")
+            
+            # Build classpath with custom libraries
+            classpath = temp_dir
+            if jar_files:
+                classpath = temp_dir + os.pathsep + os.pathsep.join(jar_files)
+                print(f"[Execute Java - ai_routes] Classpath: {classpath}")
+            
+            # Compile the Java code with custom libraries in classpath
+            compile_cmd = ['javac', '-cp', classpath, source_file]
+            print(f"[Execute Java - ai_routes] Compile command: {' '.join(compile_cmd)}")
             compile_result = subprocess.run(
-                ['javac', source_file],
+                compile_cmd,
                 capture_output=True,
                 text=True,
                 timeout=10,  # 10 second compile timeout
@@ -651,9 +680,10 @@ def execute_java_code(code):
                 # Compilation failed
                 return None, f"Compilation Error:\n{compile_result.stderr}"
             
-            # Execute the compiled program
+            # Execute the compiled program with custom libraries in classpath
+            run_cmd = ['java', '-cp', classpath, class_name]
             run_result = subprocess.run(
-                ['java', class_name],
+                run_cmd,
                 capture_output=True,
                 text=True,
                 timeout=5,  # 5 second execution timeout
@@ -685,6 +715,156 @@ def execute_java_code(code):
         return None, f"Error executing Java code: {str(e)}"
 
 
+def has_main_entry_point(code, language):
+    """
+    Detect if code has a main entry point (main method/function)
+    
+    Returns:
+        bool: True if code has main entry point, False otherwise
+    """
+    language = language.lower()
+    
+    if language in ["python", "py"]:
+        # Check for if __name__ == "__main__":
+        return bool(re.search(r'if\s+__name__\s*==\s*["\']__main__["\']', code))
+    
+    elif language in ["javascript", "js"]:
+        # JavaScript doesn't have a standard main, but check for common patterns
+        # If code has function calls at top level or IIFE, consider it has entry point
+        # For function-only code, there should be no top-level execution
+        lines = code.split('\n')
+        has_top_level_execution = False
+        for line in lines:
+            stripped = line.strip()
+            # Skip comments and empty lines
+            if not stripped or stripped.startswith('//') or stripped.startswith('/*'):
+                continue
+            # Skip function declarations and class declarations
+            if stripped.startswith('function ') or stripped.startswith('class ') or stripped.startswith('const ') or stripped.startswith('let ') or stripped.startswith('var '):
+                continue
+            # If we find something else that's not a declaration, it's likely top-level execution
+            if stripped and not stripped.startswith('}'):
+                has_top_level_execution = True
+                break
+        return has_top_level_execution
+    
+    elif language == "java":
+        # Check for public static void main
+        return bool(re.search(r'public\s+static\s+void\s+main\s*\(\s*String\s*\[\s*\]\s*\w+\s*\)', code))
+    
+    elif language in ["cpp", "c++"]:
+        # Check for int main or void main
+        return bool(re.search(r'(int|void)\s+main\s*\(', code))
+    
+    return False
+
+
+def generate_test_cases_with_ai(code, language, context="", provider=None):
+    """
+    Use AI to generate test cases for function-only code
+    
+    Args:
+        code: The user's code (functions only)
+        language: Programming language
+        context: Optional context about what the code should do
+        provider: AI provider to use (claude or gemini)
+        
+    Returns:
+        list: Generated test cases in the format expected by run_test_cases
+    """
+    if provider is None:
+        provider = DEFAULT_AI_PROVIDER
+    
+    system_prompt = f"""You are an expert programming instructor. Generate comprehensive test cases for the provided {language} code.
+
+The code contains function/method definitions but no main entry point. Generate test cases that:
+1. Test basic functionality
+2. Test edge cases (empty inputs, zero, negative numbers, etc.)
+3. Test boundary conditions
+4. Cover common use cases
+
+Return ONLY a JSON array of test cases in this exact format:
+[
+  {{
+    "id": "test-1",
+    "input": "code to call the function with specific inputs",
+    "expectedOutput": "expected output as a string",
+    "description": "brief description of what this tests"
+  }}
+]
+
+For Python: Use print() statements to output results
+For JavaScript: Use console.log() statements  
+For Java: Create a simple main method that calls the functions
+For C++: Create a simple main function that calls the functions
+
+Generate 3-5 test cases. Be concise."""
+
+    message = f"""Generate test cases for this {language} code:
+
+```{language}
+{code}
+```
+"""
+    
+    if context:
+        message += f"\n\nContext: {context}"
+
+    try:
+        response = get_ai_response(message, system_prompt, max_tokens=1500, provider=provider)
+        
+        if response:
+            # Extract JSON from response
+            # Try to find JSON array in the response
+            json_match = re.search(r'\[[\s\S]*\]', response)
+            if json_match:
+                test_cases = json.loads(json_match.group())
+                print(f"Generated {len(test_cases)} test cases with AI ({provider})")
+                return test_cases
+            else:
+                print("Could not extract JSON from AI response")
+                return []
+    except Exception as e:
+        print(f"Error generating test cases with AI: {e}")
+        return []
+    
+    return []
+
+
+def run_test_cases(code, language, test_cases):
+    """Run test cases against the code"""
+    results = []
+    
+    for test in test_cases:
+        test_id = test.get("id", "")
+        test_input = test.get("input", "")
+        expected_output = test.get("expectedOutput", "")
+        
+        # Simple approach: append the input to the code and capture output
+        test_code = f"{code}\n{test_input}"
+        
+        if language in ["python", "py"]:
+            output, error = execute_python_code(test_code)
+        elif language in ["javascript", "js"]:
+            output, error = execute_javascript_code(test_code)
+        elif language == "java":
+            output, error = execute_java_code(test_code)
+        else:
+            output, error = None, f"Test execution not supported for {language}"
+        
+        actual_output = (output or "").strip()
+        expected = expected_output.strip()
+        
+        results.append({
+            "id": test_id,
+            "passed": actual_output == expected and not error,
+            "actualOutput": actual_output if not error else f"Error: {error}",
+            "expectedOutput": expected
+        })
+    
+    return results
+
+
 @ai_bp.route("/ai/execute-code", methods=["POST"])
 def execute_code():
     """
@@ -706,6 +886,12 @@ def execute_code():
     }
     """
     try:
+        # Extract user_id from token for custom library support
+        from app.module_generator_routes import get_user_id_from_token
+        user_id = get_user_id_from_token()
+        if user_id:
+            print(f"[Execute Code] Authenticated user: {user_id}")
+        
         data = request.get_json()
 
         if not data or "code" not in data:
@@ -723,6 +909,8 @@ def execute_code():
         code = data["code"]
         language = data.get("language", "javascript").lower()
         test_cases = data.get("testCases", [])
+        context = data.get("context", "")
+        provider = data.get("provider", DEFAULT_AI_PROVIDER)
 
         if language not in ["javascript", "js", "python", "py", "cpp", "c++", "java"]:
             return (
@@ -731,12 +919,28 @@ def execute_code():
                     "output": None,
                     "error": f"Unsupported language: {language}",
                     "executionTime": 0,
-                    "testResults": []
+                    "testResults": [],
+                    "autoGeneratedTests": False
                 }),
                 400,
             )
 
         start_time = time.time()
+        auto_generated_tests = False
+        
+        # Check if code has no main entry point and no test cases provided
+        has_main = has_main_entry_point(code, language)
+        print(f"[Execute Code] Language: {language}, Has main: {has_main}, Test cases provided: {len(test_cases) if test_cases else 0}")
+        
+        if not test_cases and not has_main:
+            print(f"[Auto-Test] No main entry point detected in {language} code. Generating test cases with AI ({provider})...")
+            test_cases = generate_test_cases_with_ai(code, language, context, provider)
+            auto_generated_tests = len(test_cases) > 0
+            if auto_generated_tests:
+                print(f"[Auto-Test] Successfully generated {len(test_cases)} test cases")
+                print(f"[Auto-Test] Test cases: {test_cases}")
+            else:
+                print(f"[Auto-Test] Failed to generate test cases")
         
         # Execute code based on language
         if language in ["python", "py"]:
@@ -751,13 +955,20 @@ def execute_code():
         
         execution_time = int((time.time() - start_time) * 1000)
         
+        # Run test cases if provided or auto-generated
+        test_results = []
+        if test_cases and not error:
+            test_results = run_test_cases(code, language, test_cases)
+        
         if error:
             return jsonify({
                 "success": False,
                 "output": output,
                 "error": error,
                 "executionTime": execution_time,
-                "testResults": []
+                "testResults": test_results,
+                "autoGeneratedTests": auto_generated_tests,
+                "generatedTestCases": test_cases if auto_generated_tests else []
             }), 200
         
         return jsonify({
@@ -765,7 +976,9 @@ def execute_code():
             "output": output or "Code executed successfully (no output)",
             "error": None,
             "executionTime": execution_time,
-            "testResults": []
+            "testResults": test_results,
+            "autoGeneratedTests": auto_generated_tests,
+            "generatedTestCases": test_cases if auto_generated_tests else []
         })
 
     except Exception as e:
@@ -774,7 +987,9 @@ def execute_code():
             "output": None,
             "error": str(e),
             "executionTime": 0,
-            "testResults": []
+            "testResults": [],
+            "autoGeneratedTests": False,
+            "generatedTestCases": []
         }), 500
 
 

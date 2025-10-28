@@ -10,6 +10,7 @@ import { ButtonComponent } from '../../ui/button/button';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog';
 import { ThemeService } from '../../../services/theme.service';
 import { FontService, FontFamily, FontSize } from '../../../services/font.service';
+import { CustomLibrariesService, CustomLibrary } from '../../../services/custom-libraries.service';
 
 @Component({
   selector: 'app-settings-content',
@@ -44,10 +45,16 @@ export class SettingsContentComponent {
   showMasteryMap = true;
 
   showDeleteDialog = false;
+  
+  // Custom libraries
+  customLibraries: CustomLibrary[] = [];
+  uploadingLibrary = false;
+  selectedLanguage: string = 'java';
 
   constructor(
     private themeService: ThemeService,
-    private fontService: FontService
+    private fontService: FontService,
+    private customLibrariesService: CustomLibrariesService
   ) {
     // Initialize font settings from service
     this.fontFamily = this.fontService.getFontFamily();
@@ -75,6 +82,11 @@ export class SettingsContentComponent {
     } catch (error) {
       console.error('Failed to load display name:', error);
     }
+    
+    // Subscribe to custom libraries
+    this.customLibrariesService.libraries$.subscribe(libraries => {
+      this.customLibraries = libraries;
+    });
   }
 
   readonly timeZoneOptions: SelectOption[] = [
@@ -96,6 +108,13 @@ export class SettingsContentComponent {
     { value: 'small', label: 'Small' },
     { value: 'medium', label: 'Medium' },
     { value: 'large', label: 'Large' }
+  ];
+  
+  readonly languageOptions: SelectOption[] = [
+    { value: 'java', label: 'Java (.jar)' },
+    { value: 'python', label: 'Python (.py, .whl)' },
+    { value: 'javascript', label: 'JavaScript (.js)' },
+    { value: 'cpp', label: 'C++ (.a, .so)' }
   ];
 
   onThemeChange(value: string): void {
@@ -266,5 +285,94 @@ export class SettingsContentComponent {
     return this.isDark
       ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10'
       : 'text-red-600 hover:text-red-700 hover:bg-red-50';
+  }
+  
+  // Custom library methods
+  onLibraryFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+    
+    // Validate file size (max 50MB for libraries)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+      console.error('Library file must be less than 50MB');
+      alert('Library file must be less than 50MB');
+      return;
+    }
+
+    this.uploadingLibrary = true;
+    
+    this.customLibrariesService.uploadLibrary(file, this.selectedLanguage).subscribe({
+      next: (response) => {
+        this.uploadingLibrary = false;
+        if (response.success) {
+          console.log('Library uploaded successfully:', response.library);
+          // Reset file input
+          input.value = '';
+        } else {
+          console.error('Failed to upload library:', response.error);
+          alert(`Failed to upload library: ${response.error}`);
+        }
+      },
+      error: (error) => {
+        this.uploadingLibrary = false;
+        console.error('Error uploading library:', error);
+        alert('Error uploading library. Please try again.');
+        // Reset file input
+        input.value = '';
+      }
+    });
+  }
+  
+  onLanguageChange(value: string): void {
+    this.selectedLanguage = value;
+  }
+  
+  toggleLibraryEnabled(library: CustomLibrary): void {
+    this.customLibrariesService.toggleLibrary(library.id, !library.enabled).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          console.error('Failed to toggle library:', response.error);
+          alert(`Failed to toggle library: ${response.error}`);
+        }
+      },
+      error: (error) => {
+        console.error('Error toggling library:', error);
+        alert('Error toggling library. Please try again.');
+      }
+    });
+  }
+  
+  deleteLibrary(library: CustomLibrary): void {
+    if (!confirm(`Are you sure you want to delete ${library.filename}?`)) {
+      return;
+    }
+    
+    this.customLibrariesService.deleteLibrary(library.id).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          console.error('Failed to delete library:', response.error);
+          alert(`Failed to delete library: ${response.error}`);
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting library:', error);
+        alert('Error deleting library. Please try again.');
+      }
+    });
+  }
+  
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+  
+  getLibrariesForLanguage(language: string): CustomLibrary[] {
+    return this.customLibraries.filter(lib => lib.language === language);
   }
 }

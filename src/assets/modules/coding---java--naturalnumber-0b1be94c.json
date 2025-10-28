@@ -1,0 +1,285 @@
+{
+  "name": "coding---java,-naturalnumber-0b1be94c",
+  "title": "Mastering Java's NaturalNumber Operations",
+  "description": "Learn to implement and utilize core methods of a `NaturalNumber` class in Java, focusing on immutability and basic arithmetic operations.",
+  "skills": [
+    "coding",
+    "java",
+    "object-oriented-programming",
+    "arithmetic",
+    "basic-syntax"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Hint Panel",
+        "description": "Progressive hint disclosure with multiple tiers",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Need Help?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "Remember that a `NaturalNumber` is defined as a non-negative integer. How would you check if a number is zero?",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "For `isZero()`, you need to compare the `value` field of the `NaturalNumber` object to the integer 0. For `add()`, you'll need to create a new `NaturalNumber` using the sum of the current object's `value` and the `other` object's `value`.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "For `isZero()`, the implementation is simply `return this.value == 0;`. For `add()`, it should be `return new NaturalNumber(this.value + other.getValue());`",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Implement isZero()",
+        "language": "java",
+        "prompt": "The `NaturalNumber` class represents non-negative integers. Implement the `isZero()` method, which should return `true` if the `NaturalNumber` object represents the value zero, and `false` otherwise. Do not modify the constructor or main method.",
+        "starterCode": "public class NaturalNumber {\n    private int value;\n\n    public NaturalNumber(int initialValue) {\n        if (initialValue < 0) {\n            throw new IllegalArgumentException(\"NaturalNumber cannot be negative.\");\n        }\n        this.value = initialValue;\n    }\n\n    public boolean isZero() {\n        // YOUR CODE HERE\n        return false; \n    }\n\n    // Do not modify main or other existing methods\n    public static void main(String[] args) {\n        NaturalNumber zero = new NaturalNumber(0);\n        NaturalNumber five = new NaturalNumber(5);\n        System.out.println(\"Is zero (0) zero? \" + zero.isZero());\n        System.out.println(\"Is five (5) zero? \" + five.isZero());\n    }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Is zero (0) zero? true\nIs five (5) zero? false\n",
+            "hidden": false
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Correct!",
+        "message": "You successfully implemented the `isZero()` method.",
+        "explanation": "This demonstrates your understanding of basic object state checking and boolean return types.",
+        "nextSteps": [
+          "Proceed to implement more complex operations.",
+          "Consider edge cases for other methods you might implement (e.g., negative numbers for `subtract`)."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in checking object states?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Implement Addition (add())",
+        "language": "java",
+        "prompt": "Now, implement the `add()` method. This method should take another `NaturalNumber` object as input and return a *new* `NaturalNumber` object representing the sum of the current object and the input. Ensure the original objects are not modified (immutability).",
+        "starterCode": "public class NaturalNumber {\n    private int value;\n\n    public NaturalNumber(int initialValue) {\n        if (initialValue < 0) {\n            throw new IllegalArgumentException(\"NaturalNumber cannot be negative.\");\n        }\n        this.value = initialValue;\n    }\n\n    public int getValue() {\n        return this.value;\n    }\n\n    public NaturalNumber add(NaturalNumber other) {\n        // YOUR CODE HERE\n        return new NaturalNumber(0); // Placeholder, replace this\n    }\n\n    // Do not modify main or other existing methods\n    public static void main(String[] args) {\n        NaturalNumber num1 = new NaturalNumber(10);\n        NaturalNumber num2 = new NaturalNumber(20);\n        NaturalNumber sum = num1.add(num2);\n        System.out.println(\"10 + 20 = \" + sum.getValue());\n\n        NaturalNumber num3 = new NaturalNumber(0);\n        NaturalNumber num4 = new NaturalNumber(7);\n        NaturalNumber sum2 = num3.add(num4);\n        System.out.println(\"0 + 7 = \" + sum2.getValue());\n    }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "10 + 20 = 30\n0 + 7 = 7\n",
+            "hidden": false
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You have successfully implemented the `add()` method, demonstrating immutability.",
+        "explanation": "Creating a new `NaturalNumber` object for the result is crucial for maintaining the immutability of `NaturalNumber` instances, a common practice in functional programming and for thread-safe objects.",
+        "nextSteps": [
+          "Consider how you would implement other arithmetic operations like `subtract()` or `multiply()`.",
+          "Explore how immutability affects object design and performance in larger applications."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0",
+        "category": "core"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in implementing object methods that return new instances?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-27T01:19:30.285578",
+    "module_id": "6ff101e0-b841-4de5-a34a-7df9d0b7f90e",
+    "saved_to_filesystem": true
+  }
+}

@@ -36,7 +36,7 @@ export interface GenerateLabBackgroundRequest {
 })
 export class StepContextService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:5000/api/claude';
+  private baseUrl = 'http://localhost:5000/ai';
   private cache = new Map<string, StepContext>();
 
   /**

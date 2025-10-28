@@ -42,6 +42,7 @@ def create_app(config_name="default"):
     from app.module_generator_routes import module_generator_bp
     from app.oauth_routes import oauth_bp
     from app.routes import api_bp, main_bp
+    from app.libraries_routes import libraries_bp
 
     # Register frontend routes first (for SPA routing)
     app.register_blueprint(frontend_bp)
@@ -59,5 +60,6 @@ def create_app(config_name="default"):
     app.register_blueprint(gamification_bp)
     app.register_blueprint(advanced_bp)
     app.register_blueprint(oauth_bp)
+    app.register_blueprint(libraries_bp)
 
     return app

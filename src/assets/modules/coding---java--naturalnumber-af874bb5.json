@@ -1,0 +1,387 @@
+{
+  "name": "coding---java,-naturalnumber-af874bb5",
+  "title": "Mastering Java's NaturalNumber Component",
+  "description": "This lab focuses on understanding and utilizing the `NaturalNumber` component in Java, covering fundamental operations like checking for zero, addition, and multiplication.",
+  "skills": [
+    "NaturalNumber",
+    "coding",
+    "Java",
+    "arithmetic",
+    "basic-syntax"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Need Help?",
+        "description": "Progressive hint disclosure with multiple tiers",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Stuck on a problem?",
+        "hints": [
+          {
+            "id": "nn-hint-1",
+            "tier": 1,
+            "text": "Remember that `NaturalNumber` objects are immutable. Operations like `add` or `multiply` return a *new* `NaturalNumber` instance rather than modifying the original.",
+            "revealed": false
+          },
+          {
+            "id": "nn-hint-2",
+            "tier": 2,
+            "text": "For specific methods, consult the `NaturalNumber` interface documentation. Look for methods that perform the required arithmetic or comparison.",
+            "revealed": false
+          },
+          {
+            "id": "nn-hint-3",
+            "tier": 3,
+            "text": "The `isZero()` method checks if a `NaturalNumber` is zero. For addition, use `n1.add(n2)`. For multiplication, use `n1.multiply(n2)`.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Check for Zero",
+        "description": "Implement a method to check if a NaturalNumber is zero.",
+        "skills": [
+          "NaturalNumber",
+          "coding",
+          "basic-syntax"
+        ],
+        "difficulty": 2,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "language": "java",
+        "prompt": "Implement the `checkIfZero` method. It should take a `NaturalNumber` as input and return `true` if it represents the value zero, `false` otherwise. Use the `isZero()` method of the `NaturalNumber` class.",
+        "starterCode": "import components.naturalnumber.NaturalNumber;\nimport components.naturalnumber.NaturalNumber2;\n\npublic class NaturalNumberUtils {\n    /**\n     * Checks if the given NaturalNumber represents zero.\n     *\n     * @param n The NaturalNumber to check.\n     * @return true if n is zero, false otherwise.\n     */\n    public static boolean checkIfZero(NaturalNumber n) {\n        // YOUR CODE HERE\n        return false;\n    }\n}",
+        "testCases": [
+          {
+            "input": "NaturalNumber zero = new NaturalNumber2();\nNaturalNumber one = new NaturalNumber2(1);\nSystem.out.println(NaturalNumberUtils.checkIfZero(zero));\nSystem.out.println(NaturalNumberUtils.checkIfZero(one));",
+            "expectedOutput": "true\nfalse",
+            "hidden": false
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback for Check for Zero",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent!",
+        "message": "You successfully implemented the `checkIfZero` method.",
+        "explanation": "Understanding how to check for the zero value is fundamental for NaturalNumber operations.",
+        "nextSteps": [
+          "Proceed to the next task to practice addition.",
+          "Review the `NaturalNumber` API for other comparison methods."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in using `isZero()` with NaturalNumbers?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "NaturalNumber Addition",
+        "description": "Implement a method to add two NaturalNumber objects.",
+        "skills": [
+          "NaturalNumber",
+          "coding",
+          "arithmetic"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "language": "java",
+        "prompt": "Complete the `addTwoNumbers` method. It should take two `NaturalNumber` objects, `n1` and `n2`, and return a new `NaturalNumber` representing their sum. Remember `NaturalNumber` objects are immutable; operations return new instances.",
+        "starterCode": "import components.naturalnumber.NaturalNumber;\nimport components.naturalnumber.NaturalNumber2;\n\npublic class NaturalNumberUtils {\n    /**\n     * Adds two NaturalNumber objects.\n     *\n     * @param n1 The first NaturalNumber.\n     * @param n2 The second NaturalNumber.\n     * @return A new NaturalNumber representing n1 + n2.\n     */\n    public static NaturalNumber addTwoNumbers(NaturalNumber n1, NaturalNumber n2) {\n        // YOUR CODE HERE\n        return new NaturalNumber2(); // Placeholder, replace with actual addition\n    }\n}",
+        "testCases": [
+          {
+            "input": "NaturalNumber two = new NaturalNumber2(2);\nNaturalNumber three = new NaturalNumber2(3);\nNaturalNumber sum = NaturalNumberUtils.addTwoNumbers(two, three);\nSystem.out.println(sum.equals(new NaturalNumber2(5)));",
+            "expectedOutput": "true",
+            "hidden": false
+          },
+          {
+            "input": "NaturalNumber ten = new NaturalNumber2(10);\nNaturalNumber zero = new NaturalNumber2();\nNaturalNumber sum2 = NaturalNumberUtils.addTwoNumbers(ten, zero);\nSystem.out.println(sum2.equals(new NaturalNumber2(10)));",
+            "expectedOutput": "true",
+            "hidden": true
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback for NaturalNumber Addition",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Nicely done!",
+        "message": "You correctly implemented NaturalNumber addition.",
+        "explanation": "This demonstrates your understanding of immutable objects and basic arithmetic with the component.",
+        "nextSteps": [
+          "Move on to multiplication.",
+          "Consider how subtraction might differ from addition."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Unsure",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in performing addition with NaturalNumbers?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "NaturalNumber Multiplication",
+        "description": "Implement a method to multiply two NaturalNumber objects.",
+        "skills": [
+          "NaturalNumber",
+          "coding",
+          "arithmetic"
+        ],
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "language": "java",
+        "prompt": "Implement the `multiplyTwoNumbers` method. It should take two `NaturalNumber` objects, `n1` and `n2`, and return a new `NaturalNumber` representing their product. Ensure your solution handles edge cases like multiplication by zero.",
+        "starterCode": "import components.naturalnumber.NaturalNumber;\nimport components.naturalnumber.NaturalNumber2;\n\npublic class NaturalNumberUtils {\n    /**\n     * Multiplies two NaturalNumber objects.\n     *\n     * @param n1 The first NaturalNumber.\n     * @param n2 The second NaturalNumber.\n     * @return A new NaturalNumber representing n1 * n2.\n     */\n    public static NaturalNumber multiplyTwoNumbers(NaturalNumber n1, NaturalNumber n2) {\n        // YOUR CODE HERE\n        return new NaturalNumber2(); // Placeholder, replace with actual multiplication\n    }\n}",
+        "testCases": [
+          {
+            "input": "NaturalNumber two = new NaturalNumber2(2);\nNaturalNumber four = new NaturalNumber2(4);\nNaturalNumber product = NaturalNumberUtils.multiplyTwoNumbers(two, four);\nSystem.out.println(product.equals(new NaturalNumber2(8)));",
+            "expectedOutput": "true",
+            "hidden": false
+          },
+          {
+            "input": "NaturalNumber five = new NaturalNumber2(5);\nNaturalNumber zero = new NaturalNumber2();\nNaturalNumber product2 = NaturalNumberUtils.multiplyTwoNumbers(five, zero);\nSystem.out.println(product2.equals(new NaturalNumber2()));",
+            "expectedOutput": "true",
+            "hidden": true
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback for NaturalNumber Multiplication",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Fantastic!",
+        "message": "You've successfully handled NaturalNumber multiplication, including edge cases.",
+        "explanation": "This demonstrates a solid grasp of `NaturalNumber` operations and handling zero values.",
+        "nextSteps": [
+          "Explore other `NaturalNumber` methods like `subtract` or `divide`.",
+          "Consider how these operations might be implemented internally."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Mastered it!",
+        "question": "How confident are you in multiplying NaturalNumbers and understanding their immutability?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 2700
+  },
+  "estimated_duration": 2700,
+  "version": "1.0.0",
+  "difficulty": "practice",
+  "_metadata": {
+    "generated_at": "2025-10-27T01:15:08.500138",
+    "module_id": "10dbda58-0300-48af-8a22-99d39502abe5",
+    "saved_to_filesystem": true
+  }
+}

@@ -27,6 +27,7 @@ Prismo is a full-stack web application that combines Angular 20 and Python Flask
 - **Google Gemini**: Alternative AI provider for diverse perspectives
 - **Unified AI API**: Single interface for multiple AI providers
 - **Code Execution Sandbox**: Safe execution environment for student code
+- **Intelligent Test Generation**: Auto-generates test cases for functions without main methods
 
 ### 📊 Analytics & Insights
 - **Learning Analytics**: Track time spent, completion rates, and progress
@@ -258,6 +259,33 @@ Adaptive Content Engine for personalized learning:
 - **Learner Profiles**: Stored in user preferences JSONB
 - **Adaptive Recommendations**: Based on performance
 - **Mastery Tracking**: Skill level progression
+
+### Intelligent Test Case Generation
+When students write code that contains only function/method definitions (no main method or entry point), the system automatically:
+- **Detects Function-Only Code**: Identifies when code lacks a main execution entry point (Java's `main()`, Python's `if __name__ == "__main__"`, etc.)
+- **AI-Generated Test Cases**: Uses Claude or Gemini to generate appropriate test cases based on:
+  - Function signatures and parameters
+  - Expected behavior from function names and context
+  - Common edge cases and boundary conditions
+- **Automatic Execution**: Wraps functions with test code to validate correctness
+- **Supported Languages**: JavaScript, Python, Java, C++
+
+**Example Flow:**
+```python
+# Student writes only a function
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+# AI automatically generates and runs test cases:
+# Test 1: factorial(5) → expects 120
+# Test 2: factorial(0) → expects 1
+# Test 3: factorial(1) → expects 1
+# Test 4: factorial(10) → expects 3628800
+```
+
+This enables students to focus on writing functions without boilerplate code, while still receiving comprehensive feedback on correctness.
 
 ---
 

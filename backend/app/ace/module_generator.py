@@ -70,7 +70,8 @@ class ModuleGenerator:
     
     
     async def generate_module(self, user_id: str, topic: str, target_skills: List[str], 
-                       difficulty: str = "beginner", estimated_time: int = 1800) -> Dict[str, Any]:
+                       difficulty: str = "beginner", estimated_time: int = 1800, 
+                       custom_context: str = None) -> Dict[str, Any]:
         """Generate a new module using AWS Bedrock in the exact required JSON format"""
         profile = self.profile_manager.get_or_create_profile(user_id)
         skill_tree = self.skill_manager.get_or_create_skill_tree(user_id)
@@ -80,7 +81,7 @@ class ModuleGenerator:
 
         # Prepare context for AI generation
         generation_context = self._prepare_generation_context(
-            user_id, topic, target_skills, difficulty, profile, skill_tree
+            user_id, topic, target_skills, difficulty, profile, skill_tree, custom_context
         )
         
         # Use AWS Bedrock to generate the module
@@ -91,7 +92,7 @@ class ModuleGenerator:
         return module
     
     def _prepare_generation_context(self, user_id: str, topic: str, target_skills: List[str], 
-                                  difficulty: str, profile: LearnerProfile, skill_tree) -> str:
+                                  difficulty: str, profile: LearnerProfile, skill_tree, custom_context: str = None) -> str:
         """Prepare context information for the AI to generate appropriate modules"""
         
         # Get relevant widgets for the target skills
@@ -101,6 +102,11 @@ class ModuleGenerator:
 TOPIC: {topic} | SKILLS: {', '.join(target_skills)} | DIFFICULTY: {difficulty}
 RECOMMENDED_WIDGETS: {', '.join(relevant_widget_names[:10])}
 SKILL_STATUS: mastered={', '.join(skill_tree.get_mastered_skills()[:3])}, next={', '.join(skill_tree.get_recommended_next_skills()[:2])}"""
+        
+        # Add custom library context if provided
+        if custom_context:
+            context += f"\nCUSTOM_LIBRARIES: {custom_context}"
+        
         return context
     
     def _get_widget_schema_reference(self) -> str:

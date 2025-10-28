@@ -210,6 +210,137 @@
         <p>This section is coming soon.</p>
       </div>
     </ng-container>
+    
+    <ng-container *ngSwitchCase="'code-execution'">
+      <app-settings-section title="Custom Libraries">
+        <app-settings-row
+          label="Upload library files"
+          description="Upload JAR files, Python packages, or other dependencies to use in code labs."
+        >
+          <div class="flex flex-col gap-3 w-full">
+            <!-- Language selector and upload button -->
+            <div class="flex items-center gap-2 flex-wrap">
+              <app-select
+                [(ngModel)]="selectedLanguage"
+                [options]="languageOptions"
+                className="w-36 bg-zinc-800 border-zinc-700 text-zinc-200"
+                [contentClassName]="selectContentClasses"
+                [optionClassName]="selectOptionClasses"
+                (selectionChange)="onLanguageChange($event)"
+              ></app-select>
+              
+              <input 
+                #libraryFileInput
+                type="file" 
+                (change)="onLibraryFileSelected($event)"
+                class="hidden"
+              >
+              <app-button
+                type="button"
+                variant="outline"
+                [className]="uploadButtonClasses"
+                [disabled]="uploadingLibrary"
+                (click)="libraryFileInput.click()"
+              >
+                @if (uploadingLibrary) {
+                  <span>Uploading...</span>
+                } @else {
+                  <span>Upload Library</span>
+                }
+              </app-button>
+            </div>
+            
+            <!-- Libraries list -->
+            @if (getLibrariesForLanguage(selectedLanguage).length > 0) {
+              <div class="space-y-2 mt-2 max-h-[300px] overflow-y-auto pr-2">
+                @for (lib of getLibrariesForLanguage(selectedLanguage); track lib.id) {
+                  <div 
+                    class="flex items-center justify-between p-3 rounded-lg border"
+                    [class.bg-zinc-800]="isDark"
+                    [class.border-zinc-700]="isDark"
+                    [class.bg-white]="!isDark"
+                    [class.border-zinc-200]="!isDark"
+                  >
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                      <app-switch
+                        [(ngModel)]="lib.enabled"
+                        (ngModelChange)="toggleLibraryEnabled(lib)"
+                        [className]="'data-[state=checked]:bg-[#BC78F9]'"
+                      ></app-switch>
+                      
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                          <p 
+                            class="font-medium text-sm truncate"
+                            [class.text-zinc-200]="isDark"
+                            [class.text-zinc-900]="!isDark"
+                          >
+                            {{ lib.filename }}
+                          </p>
+                          <span 
+                            class="text-xs px-1.5 py-0.5 rounded"
+                            [class.bg-blue-500/20]="isDark"
+                            [class.text-blue-300]="isDark"
+                            [class.bg-blue-100]="!isDark"
+                            [class.text-blue-700]="!isDark"
+                          >
+                            {{ lib.language }}
+                          </span>
+                        </div>
+                        <p 
+                          class="text-xs mt-0.5"
+                          [class.text-zinc-400]="isDark"
+                          [class.text-zinc-600]="!isDark"
+                        >
+                          {{ formatFileSize(lib.size) }} • Uploaded {{ lib.uploadedAt | date:'short' }}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <app-button
+                      type="button"
+                      variant="ghost"
+                      [className]="'text-red-400 hover:text-red-300 hover:bg-red-500/10 px-2'"
+                      (click)="deleteLibrary(lib)"
+                    >
+                      <span class="text-sm">Delete</span>
+                    </app-button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p 
+                class="text-sm text-center py-4"
+                [class.text-zinc-400]="isDark"
+                [class.text-zinc-500]="!isDark"
+              >
+                No custom libraries uploaded yet. Upload a library file to get started.
+              </p>
+            }
+          </div>
+        </app-settings-row>
+        
+        <app-settings-row
+          label="How it works"
+          description="Custom libraries are automatically included when compiling and running code in labs."
+        >
+          <div 
+            class="text-xs p-3 rounded-lg w-full"
+            [class.bg-zinc-800]="isDark"
+            [class.text-zinc-300]="isDark"
+            [class.bg-zinc-50]="!isDark"
+            [class.text-zinc-700]="!isDark"
+          >
+            <ul class="space-y-1.5 list-disc list-inside">
+              <li><strong>Java:</strong> JAR files added to classpath</li>
+              <li><strong>Python:</strong> Modules available for import</li>
+              <li><strong>JavaScript:</strong> Packages via require/import</li>
+              <li><strong>C++:</strong> Libraries linked during compilation</li>
+            </ul>
+          </div>
+        </app-settings-row>
+      </app-settings-section>
+    </ng-container>
   </div>
 
   <app-confirm-dialog

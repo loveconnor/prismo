@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { provideIcons, NgIconComponent } from '@ng-icons/core';
@@ -39,13 +39,19 @@ export class LabsComponent implements OnInit, OnDestroy {
   private labsService = inject(LabsService);
   private userProgressService = inject(UserProgressService);
   private toastService = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
   
   searchQuery = '';
   filter: LabFilter = 'all';
   sortBy: LabSortBy = 'recent';
   createOpen = false;
-  stats: LabsStatItem[] = [];
+  stats: LabsStatItem[] = [
+    { label: 'Total Labs', value: 0, trend: 'Loading...', iconType: 'arrow' },
+    { label: 'In Progress', value: 0, trend: 'Loading...', iconType: 'progress' },
+    { label: 'Completed', value: 0, trend: 'Loading...', iconType: 'check' },
+    { label: 'Total Time', value: '0h', trend: 'Loading...', iconType: 'arrow' }
+  ];
   labsGridComponent?: LabsGridComponent; // Reference to grid for refreshing
 
   ngOnInit() {
@@ -106,35 +112,34 @@ export class LabsComponent implements OnInit, OnDestroy {
             ? Math.round((completedLabs / totalLabs) * 100) 
             : 0;
 
-          // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
-          setTimeout(() => {
-            this.stats = [
-              { 
-                label: 'Total Labs', 
-                value: totalLabs, 
-                trend: `${labs.filter(l => l.source === 'module').length} AI-generated`, 
-                iconType: 'arrow' 
-              },
-              { 
-                label: 'In Progress', 
-                value: inProgressLabs, 
-                trend: inProgressLabs > 0 ? 'Active now' : 'No active labs', 
-                iconType: 'progress' 
-              },
-              { 
-                label: 'Completed', 
-                value: completedLabs, 
-                trend: `${completionPercentage}% completion`, 
-                iconType: 'check' 
-              },
-              { 
-                label: 'Total Time', 
-                value: displayHours > 0 ? `${displayHours}h` : '0h', 
-                trend: 'Learning time', 
-                iconType: 'arrow' 
-              }
-            ];
-          });
+          // Update stats directly
+          this.stats = [
+            { 
+              label: 'Total Labs', 
+              value: totalLabs, 
+              trend: `${labs.filter(l => l.source === 'module').length} AI-generated`, 
+              iconType: 'arrow' 
+            },
+            { 
+              label: 'In Progress', 
+              value: inProgressLabs, 
+              trend: inProgressLabs > 0 ? 'Active now' : 'No active labs', 
+              iconType: 'progress' 
+            },
+            { 
+              label: 'Completed', 
+              value: completedLabs, 
+              trend: `${completionPercentage}% completion`, 
+              iconType: 'check' 
+            },
+            { 
+              label: 'Total Time', 
+              value: displayHours > 0 ? `${displayHours}h` : '0h', 
+              trend: 'Learning time', 
+              iconType: 'arrow' 
+            }
+          ];
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error loading stats:', error);

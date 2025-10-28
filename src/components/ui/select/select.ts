@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, forwardRef, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { OverlayModule, ConnectedPosition } from '@angular/cdk/overlay';
@@ -25,6 +25,8 @@ export interface SelectOption {
   ]
 })
 export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
+  constructor(private cdr: ChangeDetectorRef) {}
+  
   @Input() options: SelectOption[] = [];
   @Input() placeholder = 'Select an option';
   @Input() disabled = false;
@@ -80,7 +82,11 @@ export class SelectComponent implements ControlValueAccessor, AfterViewInit, OnD
 
   ngAfterViewInit(): void {
     this.updateSelectedOption();
-    this.triggerWidth = this.triggerRef?.nativeElement?.offsetWidth ?? 0;
+    // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => {
+      this.triggerWidth = this.triggerRef?.nativeElement?.offsetWidth ?? 0;
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {

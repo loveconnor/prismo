@@ -1,0 +1,339 @@
+{
+  "name": "coding---java,-natural-number-2449c742",
+  "title": "Mastering Natural Numbers in Java",
+  "description": "Learn to identify and work with natural numbers in Java by implementing methods to check for natural numbers and calculate their sums.",
+  "skills": [
+    "coding",
+    "Java",
+    "basic-syntax",
+    "arithmetic"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Need Help?",
+        "description": "Progressive hint disclosure with multiple tiers",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Stuck on Natural Numbers?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "Remember, natural numbers are positive integers (1, 2, 3, ...). How can you check if a number meets this condition?",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "For `isNaturalNumber`, use a simple conditional statement (if-else) to check if the input is greater than zero. For `sumOfNaturalNumbers`, consider a loop or the mathematical formula for sum of an arithmetic series.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "For `isNaturalNumber(int num)`, return `num > 0`. For `sumOfNaturalNumbers(int N)`, use a `for` loop from 1 to N, adding each number. Handle `N <= 0` by returning 0.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Identify Natural Numbers",
+        "description": "Write a Java method to determine if an integer is a natural number.",
+        "skills": [
+          "programming",
+          "basic-syntax",
+          "conditional-logic"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Is It Natural?",
+        "language": "java",
+        "prompt": "In mathematics, natural numbers are typically defined as positive integers (1, 2, 3, ...). Implement the `isNaturalNumber` method in the `NaturalNumberChecker` class. This method should take an `int` as input and return `true` if it's a natural number, and `false` otherwise.",
+        "starterCode": "public class NaturalNumberChecker {\n    public boolean isNaturalNumber(int number) {\n        // Your code here\n        return false;\n    }\n\n    public static void main(String[] args) {\n        NaturalNumberChecker checker = new NaturalNumberChecker();\n        System.out.println(\"Is 5 a natural number? \" + checker.isNaturalNumber(5)); // Expected: true\n        System.out.println(\"Is 0 a natural number? \" + checker.isNaturalNumber(0)); // Expected: false\n        System.out.println(\"Is -3 a natural number? \" + checker.isNaturalNumber(-3)); // Expected: false\n    }\n}",
+        "testCases": [
+          {
+            "input": "5",
+            "expectedOutput": "true",
+            "isHidden": false,
+            "testName": "Test Positive Integer"
+          },
+          {
+            "input": "0",
+            "expectedOutput": "false",
+            "isHidden": false,
+            "testName": "Test Zero"
+          },
+          {
+            "input": "-10",
+            "expectedOutput": "false",
+            "isHidden": false,
+            "testName": "Test Negative Integer"
+          },
+          {
+            "input": "1",
+            "expectedOutput": "true",
+            "isHidden": true,
+            "testName": "Test Smallest Natural Number"
+          },
+          {
+            "input": "1000",
+            "expectedOutput": "true",
+            "isHidden": true,
+            "testName": "Test Large Positive Integer"
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You've successfully implemented the logic to identify natural numbers. This is a fundamental concept in many programming challenges.",
+        "explanation": "Checking if a number is greater than zero (`number > 0`) is the most straightforward way to determine if it's a natural number according to the common definition of positive integers.",
+        "nextSteps": [
+          "Consider edge cases like `Integer.MIN_VALUE` and `Integer.MAX_VALUE`.",
+          "Proceed to the next challenge to apply your understanding.",
+          "Review Java's primitive data types and their ranges."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you in identifying natural numbers in Java?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Sum of Natural Numbers",
+        "description": "Implement a Java method to calculate the sum of the first N natural numbers.",
+        "skills": [
+          "programming",
+          "loops",
+          "arithmetic",
+          "error-handling"
+        ],
+        "category": "coding",
+        "difficulty": 4,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Sum 'em Up!",
+        "language": "java",
+        "prompt": "Now, let's apply your understanding. Implement the `sumOfNaturalNumbers` method in the `NaturalNumberCalculator` class. This method should take an `int N` as input and return the sum of the first `N` natural numbers (1 to N). If `N` is not a natural number (i.e., `N <= 0`), the method should return 0.",
+        "starterCode": "public class NaturalNumberCalculator {\n    public int sumOfNaturalNumbers(int N) {\n        // Your code here\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        NaturalNumberCalculator calculator = new NaturalNumberCalculator();\n        System.out.println(\"Sum of first 3 natural numbers: \" + calculator.sumOfNaturalNumbers(3)); // Expected: 6\n        System.out.println(\"Sum of first 1 natural numbers: \" + calculator.sumOfNaturalNumbers(1)); // Expected: 1\n        System.out.println(\"Sum of first 0 natural numbers: \" + calculator.sumOfNaturalNumbers(0)); // Expected: 0\n        System.out.println(\"Sum of first -5 natural numbers: \" + calculator.sumOfNaturalNumbers(-5)); // Expected: 0\n    }\n}",
+        "testCases": [
+          {
+            "input": "3",
+            "expectedOutput": "6",
+            "isHidden": false,
+            "testName": "Test N = 3"
+          },
+          {
+            "input": "1",
+            "expectedOutput": "1",
+            "isHidden": false,
+            "testName": "Test N = 1"
+          },
+          {
+            "input": "0",
+            "expectedOutput": "0",
+            "isHidden": false,
+            "testName": "Test N = 0"
+          },
+          {
+            "input": "-5",
+            "expectedOutput": "0",
+            "isHidden": false,
+            "testName": "Test Negative N"
+          },
+          {
+            "input": "10",
+            "expectedOutput": "55",
+            "isHidden": true,
+            "testName": "Test N = 10"
+          },
+          {
+            "input": "100",
+            "expectedOutput": "5050",
+            "isHidden": true,
+            "testName": "Test Large N"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Fantastic!",
+        "message": "You've successfully calculated the sum of natural numbers, handling both valid and invalid inputs gracefully.",
+        "explanation": "This problem demonstrates the use of loops (or a mathematical formula for optimization) and conditional logic to ensure correct behavior for all possible inputs.",
+        "nextSteps": [
+          "Research the mathematical formula for the sum of the first N natural numbers (N*(N+1)/2) and implement it for efficiency.",
+          "Explore other common number-related algorithms (e.g., factorial, Fibonacci sequence).",
+          "Practice writing JUnit tests for your methods."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Unsure",
+        "maxLabel": "Totally Got It!",
+        "question": "How confident are you in calculating sums of natural numbers and handling edge cases?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-27T01:04:24.286475",
+    "module_id": "4bdd697c-a5fb-4838-b485-7cb6bdc7d343",
+    "saved_to_filesystem": true
+  }
+}

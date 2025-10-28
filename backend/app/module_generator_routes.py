@@ -229,6 +229,30 @@ def generate_module():
         print(f"  Difficulty: {difficulty}")
         print(f"  Estimated time: {estimated_time}s")
         
+        # Check for custom libraries and build context
+        custom_context = None
+        topic_lower = topic.lower()
+        
+        # Detect language from topic or skills
+        if 'java' in topic_lower or 'java' in [s.lower() for s in target_skills]:
+            from app.libraries_routes import get_enabled_libraries
+            from app.supabase_config import supabase_admin
+            
+            # Get enabled Java libraries for this user
+            result = supabase_admin.table('custom_libraries')\
+                .select('filename')\
+                .eq('user_id', user_id)\
+                .eq('language', 'java')\
+                .eq('enabled', True)\
+                .execute()
+            
+            if result.data:
+                library_names = [lib['filename'] for lib in result.data]
+                custom_context = f"User has uploaded custom Java libraries: {', '.join(library_names)}. " \
+                               f"These libraries are available in the classpath for code execution. " \
+                               f"You can use classes from these libraries in code examples and exercises."
+                print(f"  Custom libraries context: {library_names}")
+        
         # Generate the module using ACE Engine
         # Use asyncio to run the async function
         loop = asyncio.new_event_loop()
@@ -241,7 +265,8 @@ def generate_module():
                     topic=topic,
                     target_skills=target_skills,
                     difficulty=difficulty,
-                    estimated_time=estimated_time
+                    estimated_time=estimated_time,
+                    custom_context=custom_context
                 )
             )
         finally:

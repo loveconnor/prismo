@@ -1,0 +1,283 @@
+{
+  "name": "coding---java-64b90342",
+  "title": "Java Fundamentals: Variables and Basic Arithmetic",
+  "description": "Learn to declare variables, assign values, and perform fundamental arithmetic operations in Java.",
+  "skills": [
+    "coding",
+    "java",
+    "variables",
+    "arithmetic",
+    "basic-syntax"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Need Help?",
+        "description": "Progressive hint disclosure with multiple tiers",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Stuck? Here are some hints!",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "Remember that Java is a strongly typed language. You need to specify the data type when declaring a variable.",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "To declare an integer variable, use the `int` keyword. For example: `int myVariable = 10;`.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "The `System.out.println()` method is used to print output to the console. You can concatenate strings and variables using the `+` operator.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Declare Variables and Sum",
+        "description": "Write Java code to declare two integer variables, assign values, and print their sum.",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax",
+          "variables",
+          "arithmetic"
+        ],
+        "category": "coding",
+        "difficulty": 2,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Task 1: Variable Declaration and Addition",
+        "language": "java",
+        "prompt": "Declare two integer variables, `num1` and `num2`. Assign `15` to `num1` and `25` to `num2`. Then, calculate their sum and print the result to the console in the format: \"The sum is: [sum_value]\".",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Your code here\n\n    }\n}",
+        "testCases": [
+          {
+            "id": "test-1",
+            "name": "Check Sum Output",
+            "input": "",
+            "expectedOutput": "The sum is: 40\n",
+            "is  Code": false,
+            "matchType": "exact"
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback for Task 1",
+        "description": "Shows correctness, explanation, and next steps for the variable declaration task.",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You've successfully declared variables, performed addition, and printed the result.",
+        "explanation": "This demonstrates a solid understanding of basic Java syntax and arithmetic operations. Keep up the great work!",
+        "nextSteps": [
+          "Review Java data types",
+          "Experiment with other arithmetic operators (subtraction, multiplication, division)",
+          "Try declaring variables of different types"
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence for Task 1",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in declaring variables and performing basic arithmetic in Java?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Valid Variable Declaration",
+        "description": "Identify the correct syntax for declaring a variable in Java.",
+        "skills": [
+          "comprehension",
+          "reasoning",
+          "syntax"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Task 2: Identify Correct Syntax",
+        "question": "Which of the following is a valid way to declare and initialize an integer variable named `count` with the value `100` in Java?",
+        "options": [
+          "int count = 100;",
+          "count int = 100;",
+          "integer count = 100;",
+          "count = 100 int;"
+        ],
+        "correctAnswer": "int count = 100;"
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback for Task 2",
+        "description": "Shows correctness, explanation, and next steps for the multiple-choice question.",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Correct!",
+        "message": "You correctly identified the valid variable declaration syntax.",
+        "explanation": "In Java, you specify the data type (e.g., `int`) before the variable name, followed by an assignment operator (`=`) and the value, ending with a semicolon. `int count = 100;` follows this rule.",
+        "nextSteps": [
+          "Practice declaring variables with other data types like `double` or `String`.",
+          "Learn about Java's naming conventions for variables.",
+          "Explore different ways to initialize variables."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence for Task 2",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in identifying correct Java variable declaration syntax?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "multiple-choice"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-27T01:09:22.726878",
+    "module_id": "3d30d31c-9875-483f-8f6b-c5c7f52b47cf",
+    "saved_to_filesystem": true
+  }
+}

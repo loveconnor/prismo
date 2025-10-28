@@ -9,7 +9,8 @@ import {
   lucideShield,
   lucideBrain,
   lucideChartBar,
-  lucideBookOpen
+  lucideBookOpen,
+  lucideCode
 } from '@ng-icons/lucide';
 import { ButtonComponent } from '../../ui/button/button';
 import { cn } from '../../../lib/utils';
@@ -44,6 +45,12 @@ const NAV_GROUPS: NavGroup[] = [
       // { id: 'progress', icon: 'lucideChartBar', label: 'Progress Tracking' },
       // { id: 'curriculum', icon: 'lucideBookOpen', label: 'Curriculum Access' }
     ]
+  },
+  {
+    label: 'Development',
+    items: [
+      { id: 'code-execution', icon: 'lucideCode', label: 'Code Execution' }
+    ]
   }
 ];
 
@@ -60,7 +67,8 @@ const NAV_GROUPS: NavGroup[] = [
       lucideShield,
       lucideBrain,
       lucideChartBar,
-      lucideBookOpen
+      lucideBookOpen,
+      lucideCode
     })
   ],
   templateUrl: './settings-left-nav.html',

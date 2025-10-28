@@ -1,0 +1,308 @@
+{
+  "name": "coding---java-ea28f387",
+  "title": "Conditional Logic in Java: Mastering If Statements",
+  "description": "Learn to control program flow in Java using if, else if, and else statements to make decisions based on conditions.",
+  "skills": [
+    "if statements",
+    "conditional logic",
+    "Java programming",
+    "boolean expressions"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Need Help?",
+        "description": "Progressive hint disclosure with multiple tiers",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Need Help?",
+        "hints": [
+          {
+            "id": "hint-1",
+            "tier": 1,
+            "text": "Remember that 'if' statements execute a block of code only if a specified condition is true.",
+            "revealed": false
+          },
+          {
+            "id": "hint-2",
+            "tier": 2,
+            "text": "Use comparison operators like ==, !=, <, >, <=, >= to form your conditions. For 'else if' and 'else', consider the order of your checks.",
+            "revealed": false
+          },
+          {
+            "id": "hint-3",
+            "tier": 3,
+            "text": "The basic structure is if (condition) { /* code */ } else if (anotherCondition) { /* code */ } else { /* code */ }. Make sure your conditions cover all possible scenarios.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Check if a Number is Positive",
+        "language": "java",
+        "starterCode": "public class NumberChecker {\n    public String checkNumber(int num) {\n        // Your code here\n        return \"\";\n    }\n}",
+        "prompt": "Implement the `checkNumber` method. It should take an integer `num` as input. If `num` is greater than 0, return the string \"Positive\". Otherwise, return \"Not Positive\".",
+        "testCases": [
+          {
+            "input": "public class NumberChecker {\n    public String checkNumber(int num) {\n        if (num > 0) return \"Positive\";\n        else return \"Not Positive\";\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        NumberChecker checker = new new NumberChecker();\n        System.out.println(checker.checkNumber(5));\n    }\n}",
+            "expectedOutput": "Positive"
+          },
+          {
+            "input": "public class NumberChecker {\n    public String checkNumber(int num) {\n        if (num > 0) return \"Positive\";\n        else return \"Not Positive\";\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        NumberChecker checker = new new NumberChecker();\n        System.out.println(checker.checkNumber(-3));\n    }\n}",
+            "expectedOutput": "Not Positive"
+          },
+          {
+            "input": "public class NumberChecker {\n    public String checkNumber(int num) {\n        if (num > 0) return \"Positive\";\n        else return \"Not Positive\";\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        NumberChecker checker = new new NumberChecker();\n        System.out.println(checker.checkNumber(0));\n    }\n}",
+            "expectedOutput": "Not Positive"
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you in using basic `if-else` statements?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You've successfully implemented your first conditional logic using `if-else`.",
+        "explanation": "This exercise demonstrates how `if-else` statements allow your program to make binary decisions based on a single condition.",
+        "nextSteps": [
+          "Proceed to the next challenge to explore more complex conditions.",
+          "Review Java comparison operators if needed.",
+          "Consider how you might handle more than two outcomes."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Code Editor",
+        "description": "Interactive code editor with run and reset functionality",
+        "skills": [
+          "programming",
+          "debugging",
+          "syntax"
+        ],
+        "category": "coding",
+        "difficulty": 3,
+        "estimated_time": 300,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Determine Grade based on Score",
+        "language": "java",
+        "starterCode": "public class GradeCalculator {\n    public char getGrade(int score) {\n        // Your code here\n        return ' ';\n    }\n}",
+        "prompt": "Implement the `getGrade` method. It should take an integer `score` (0-100). Return 'A' for scores 90-100, 'B' for 80-89, 'C' for 70-79, 'D' for 60-69, and 'F' for scores below 60.",
+        "testCases": [
+          {
+            "input": "public class GradeCalculator {\n    public char getGrade(int score) {\n        if (score >= 90) return 'A';\n        else if (score >= 80) return 'B';\n        else if (score >= 70) return 'C';\n        else if (score >= 60) return 'D';\n        else return 'F';\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        GradeCalculator calculator = new GradeCalculator();\n        System.out.println(calculator.getGrade(95));\n    }\n}",
+            "expectedOutput": "A"
+          },
+          {
+            "input": "public class GradeCalculator {\n    public char getGrade(int score) {\n        if (score >= 90) return 'A';\n        else if (score >= 80) return 'B';\n        else if (score >= 70) return 'C';\n        else if (score >= 60) return 'D';\n        else return 'F';\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        GradeCalculator calculator = new GradeCalculator();\n        System.out.println(calculator.getGrade(82));\n    }\n}",
+            "expectedOutput": "B"
+          },
+          {
+            "input": "public class GradeCalculator {\n    public char getGrade(int score) {\n        if (score >= 90) return 'A';\n        else if (score >= 80) return 'B';\n        else if (score >= 70) return 'C';\n        else if (score >= 60) return 'D';\n        else return 'F';\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        GradeCalculator calculator = new GradeCalculator();\n        System.out.println(calculator.getGrade(70));\n    }\n}",
+            "expectedOutput": "C"
+          },
+          {
+            "input": "public class GradeCalculator {\n    public char getGrade(int score) {\n        if (score >= 90) return 'A';\n        else if (score >= 80) return 'B';\n        else if (score >= 70) return 'C';\n        else if (score >= 60) return 'D';\n        else return 'F';\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        GradeCalculator calculator = new GradeCalculator();\n        System.out.println(calculator.getGrade(55));\n    }\n}",
+            "expectedOutput": "F"
+          },
+          {
+            "input": "public class GradeCalculator {\n    public char getGrade(int score) {\n        if (score >= 90) return 'A';\n        else if (score >= 80) return 'B';\n        else if (score >= 70) return 'C';\n        else if (score >= 60) return 'D';\n        else return 'F';\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        GradeCalculator calculator = new GradeCalculator();\n        System.out.println(calculator.getGrade(100));\n    }\n}",
+            "expectedOutput": "A"
+          },
+          {
+            "input": "public class GradeCalculator {\n    public char getGrade(int score) {\n        if (score >= 90) return 'A';\n        else if (score >= 80) return 'B';\n        else if (score >= 70) return 'C';\n        else if (score >= 60) return 'D';\n        else return 'F';\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        GradeCalculator calculator = new GradeCalculator();\n        System.out.println(calculator.getGrade(60));\n    }\n}",
+            "expectedOutput": "D"
+          }
+        ]
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Meter",
+        "description": "Self-rating slider for confidence assessment",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not Confident",
+        "maxLabel": "Very Confident",
+        "question": "How confident are you in using `if-else if-else` statements to handle multiple conditions?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback Box",
+        "description": "Shows correctness, explanation, and next steps",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Fantastic!",
+        "message": "You've successfully handled multiple conditions using `if-else if-else`.",
+        "explanation": "This demonstrates how `if-else if-else` statements are crucial for scenarios requiring more than two possible outcomes, allowing for a series of conditional checks.",
+        "nextSteps": [
+          "Explore nested `if` statements for more complex logic.",
+          "Practice combining conditions using logical operators (`&&`, `||`, `!`).",
+          "Think about edge cases for conditional statements."
+        ]
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-27T00:22:53.957023",
+    "module_id": "bcdd9449-337c-4e57-ac4f-de7d4bb4e130",
+    "saved_to_filesystem": true
+  }
+}

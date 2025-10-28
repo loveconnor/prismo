@@ -1,0 +1,391 @@
+{
+  "name": "coding---java-4f946b60",
+  "title": "Java Fundamentals: Printing and Variables",
+  "description": "Learn to write basic Java programs, including printing output to the console and declaring and using variables for arithmetic operations.",
+  "skills": [
+    "coding",
+    "java",
+    "basic-syntax",
+    "arithmetic"
+  ],
+  "widgets": [
+    {
+      "id": "hint-panel",
+      "metadata": {
+        "id": "hint-panel",
+        "title": "Need Help?",
+        "description": "Progressive hint disclosure with multiple tiers",
+        "skills": [
+          "problem-solving",
+          "guidance"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "scaffold",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "hint_progression": true,
+          "time_extension": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Stuck? Here are some hints!",
+        "hints": [
+          {
+            "id": "java-hint-1",
+            "tier": 1,
+            "text": "Remember that every executable Java program needs a `main` method within a class.",
+            "revealed": false
+          },
+          {
+            "id": "java-hint-2",
+            "tier": 2,
+            "text": "To print output to the console in Java, you typically use `System.out.println();`.",
+            "revealed": false
+          },
+          {
+            "id": "java-hint-3",
+            "tier": 3,
+            "text": "For the \"Hello, Java!\" exercise, your code should look like: `System.out.println(\"Hello, Java!\");` inside the main method.",
+            "revealed": false
+          }
+        ],
+        "maxHintsPerTier": 1
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Your First Java Program: Hello, World!",
+        "description": "Write a basic Java program to print a message to the console.",
+        "skills": [
+          "programming",
+          "syntax",
+          "java"
+        ],
+        "difficulty": 3,
+        "estimated_time": 180,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Hello, Java!",
+        "language": "java",
+        "prompt": "Write a Java program that prints \"Hello, Java!\" to the console. Ensure your code is inside the `main` method.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "Hello, Java!\n",
+            "caseName": "Output check",
+            "isHidden": false
+          }
+        ]
+      },
+      "position": 1,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback on Hello, Java!",
+        "description": "Shows correctness, explanation, and next steps for the 'Hello, Java!' program.",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Excellent Work!",
+        "message": "You've successfully written your first Java program!",
+        "explanation": "This exercise demonstrated how to create a basic Java class with a `main` method and use `System.out.println()` to display output.",
+        "nextSteps": [
+          "Now, let's explore how to declare and use variables in Java.",
+          "Consider experimenting with printing different messages."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment.",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in writing a basic Java program to print output?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "multiple-choice",
+      "metadata": {
+        "id": "multiple-choice",
+        "title": "Understanding Java Variables",
+        "description": "Test your knowledge of Java variable declaration and initialization.",
+        "skills": [
+          "comprehension",
+          "reasoning",
+          "java"
+        ],
+        "category": "core",
+        "difficulty": 2,
+        "estimated_time": 60,
+        "input_type": "checkbox",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Variable Declaration Quiz",
+        "question": "Which of the following is the correct way to declare an integer variable named 'age' and initialize it with the value 30 in Java?",
+        "options": [
+          {
+            "text": "int age = 30;",
+            "isCorrect": true
+          },
+          {
+            "text": "age = 30;",
+            "isCorrect": false
+          },
+          {
+            "text": "integer age = 30;",
+            "isCorrect": false
+          },
+          {
+            "text": "var age: int = 30;",
+            "isCorrect": false
+          }
+        ],
+        "correctAnswer": "int age = 30;"
+      },
+      "position": 2,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback on Variable Quiz",
+        "description": "Shows correctness, explanation, and next steps for the variable quiz.",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Correct!",
+        "message": "You correctly identified the syntax for declaring and initializing an integer variable.",
+        "explanation": "In Java, you specify the data type (e.g., `int`), then the variable name, and then assign a value using the assignment operator (`=`), ending with a semicolon.",
+        "nextSteps": [
+          "Practice declaring different types of variables.",
+          "Move on to using variables in calculations."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment.",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in declaring and initializing variables in Java?"
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "code-editor",
+      "metadata": {
+        "id": "code-editor",
+        "title": "Basic Arithmetic Operations",
+        "description": "Declare variables and perform basic arithmetic (addition) in Java.",
+        "skills": [
+          "programming",
+          "arithmetic",
+          "variables",
+          "java"
+        ],
+        "difficulty": 4,
+        "estimated_time": 240,
+        "input_type": "code",
+        "output_type": "visualization",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true,
+          "hint_progression": true,
+          "alternative_widgets": [
+            "step-prompt"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "title": "Calculate the Sum",
+        "language": "java",
+        "prompt": "Declare two integer variables, `num1` and `num2`, and initialize them to 10 and 5 respectively. Calculate their sum and store it in a new integer variable called `sum`. Finally, print the value of `sum` to the console.",
+        "starterCode": "public class Calculator {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}",
+        "testCases": [
+          {
+            "input": "",
+            "expectedOutput": "15\n",
+            "caseName": "Sum calculation check",
+            "isHidden": false
+          }
+        ]
+      },
+      "position": 3,
+      "dependencies_met": true
+    },
+    {
+      "id": "feedback-box",
+      "metadata": {
+        "id": "feedback-box",
+        "title": "Feedback on Arithmetic Task",
+        "description": "Shows correctness, explanation, and next steps for the arithmetic task.",
+        "skills": [
+          "reflection",
+          "learning"
+        ],
+        "difficulty": 2,
+        "estimated_time": 45,
+        "input_type": "text",
+        "output_type": "feedback",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "type": "success",
+        "title": "Fantastic!",
+        "message": "You successfully performed variable declaration, arithmetic, and printed the result.",
+        "explanation": "This exercise reinforced your understanding of variable types, assignment, and basic mathematical operations in Java. You can combine these concepts to build more complex programs.",
+        "nextSteps": [
+          "Explore other arithmetic operations (subtraction, multiplication, division).",
+          "Try using different data types like `double` for decimal numbers.",
+          "Learn about user input in Java."
+        ]
+      },
+      "dependencies_met": true
+    },
+    {
+      "id": "confidence-meter",
+      "metadata": {
+        "id": "confidence-meter",
+        "title": "Confidence Check",
+        "description": "Self-rating slider for confidence assessment.",
+        "skills": [
+          "self-assessment",
+          "metacognition"
+        ],
+        "difficulty": 2,
+        "estimated_time": 20,
+        "input_type": "slider",
+        "output_type": "progress",
+        "dependencies": [],
+        "adaptive_hooks": {
+          "difficulty_adjustment": true
+        },
+        "version": "1.0.0"
+      },
+      "props": {
+        "minLabel": "Not confident",
+        "maxLabel": "Very confident",
+        "question": "How confident are you in performing basic arithmetic with variables in Java?"
+      },
+      "dependencies_met": true
+    }
+  ],
+  "completion_criteria": {
+    "required_widgets": [
+      "code-editor",
+      "multiple-choice",
+      "code-editor"
+    ],
+    "min_completion_percentage": 80,
+    "max_attempts": 3,
+    "time_limit": 1800
+  },
+  "estimated_duration": 1800,
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "_metadata": {
+    "generated_at": "2025-10-27T00:58:01.825124",
+    "module_id": "c4af4752-4a66-4faa-ae26-7798a206566b",
+    "saved_to_filesystem": true
+  }
+}
